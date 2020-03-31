@@ -30,6 +30,7 @@ $string['videourl_help'] = '<h2>Youtube</h2><p>Add a Youtube URL you want to add
 $string['videourl_error'] = 'Super Video URL';
 $string['pluginadministration'] = 'Super Videos';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';
+$string['showrel'] = 'Suggested videos';
 $string['showrel_desc'] = 'Show suggested videos when the video ends (Youtube only)';
 $string['showcontrols'] = 'Controls';
 $string['showcontrols_desc'] = 'Show player controls';
