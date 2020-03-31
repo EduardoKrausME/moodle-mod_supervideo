@@ -31,8 +31,12 @@ $string['videourl_error'] = 'Super Video URL';
 $string['pluginadministration'] = 'Super Videos';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';
 $string['showrel_desc'] = 'Show suggested videos when the video finishes';
+$string['showrel_desc'] = 'Show suggested videos when the video finishes';
+$string['showcontrols_desc'] = 'Show player controls';
 $string['showcontrols_desc'] = 'Show player controls';
 $string['showshowinfo_desc'] = 'Show title of the video and the actions of the player';
+$string['showshowinfo_desc'] = 'Show title of the video and the actions of the player';
+$string['autoplay_desc'] = 'Autoplay';
 $string['autoplay_desc'] = 'Autoplay';
 $string['video_size'] = 'Video size';
 
