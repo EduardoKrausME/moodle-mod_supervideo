@@ -19,7 +19,7 @@
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 
@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/supervideo/backup/moodle2/backup_supervideo_s
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class backup_supervideo_activity_task extends backup_activity_task {

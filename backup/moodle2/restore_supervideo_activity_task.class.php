@@ -19,7 +19,7 @@
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/supervideo/backup/moodle2/restore_supervideo_
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class restore_supervideo_activity_task extends restore_activity_task {

@@ -18,7 +18,7 @@
  * form file
  *
  * @package    mod_supervideo
- * @copyright  2015 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * class mod_supervideo_mod_for
  *
  * @package   mod_supervideo
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright 2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class mod_supervideo_mod_form extends moodleform_mod {
@@ -57,7 +57,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule('videourl', null, 'required', null, 'client');
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
 
-
         // Adding the standard "intro" and "introformat" fields.
         if ($CFG->branch >= 29) {
             $this->standard_intro_elements();
@@ -67,16 +66,16 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $config = get_config('supervideo');
 
-        $mform->addElement('advcheckbox', 'showrel', get_string('showrel', 'supervideo'));
+        $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'supervideo'));
         $mform->setDefault('showrel', $config->showrel);
 
-        $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols', 'supervideo'));
+        $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'supervideo'));
         $mform->setDefault('showcontrols', $config->showcontrols);
 
-        $mform->addElement('advcheckbox', 'showshowinfo', get_string('showshowinfo', 'supervideo'));
+        $mform->addElement('advcheckbox', 'showshowinfo', get_string('showshowinfo_desc', 'supervideo'));
         $mform->setDefault('showshowinfo', $config->showshowinfo);
 
-        $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay', 'supervideo'));
+        $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);
 
         $sizeoptions = array(
@@ -84,7 +83,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             1 => 'HD (16x9)',
             2 => 'HD (16x10)'
         );
-        $mform->addElement('select', 'videosize', 'Tamanho do vídeo', $sizeoptions);
+        $mform->addElement('select', 'videosize', get_string('video_size', 'supervideo'), $sizeoptions);
         $mform->setType('videosize', PARAM_INT);
         $mform->setDefault('videosize', 1);
 

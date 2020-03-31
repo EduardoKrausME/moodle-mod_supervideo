@@ -18,12 +18,13 @@
  * view file
  *
  * @package    mod_supervideo
- * @copyright  2015 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_once(dirname(__FILE__) . '/lib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $n = optional_param('n', 0, PARAM_INT);
@@ -75,26 +76,26 @@ echo $OUTPUT->heading(format_string($supervideo->name), 2, 'main', 'supervideohe
 
 echo '<div id="supervideoworkaround">';
 
-$videoId = false;
+$videoid = false;
 $engine = "";
 if (strpos($supervideo->videourl, "youtube")) {
     if (preg_match('/[\?|&]v=([a-zA-Z0-9\-_]{11})/', $supervideo->videourl, $output)) {
-        $videoId = $output[1];
+        $videoid = $output[1];
         $engine = "youtube";
     }
 } else if (strpos($supervideo->videourl, "youtu.be")) {
     if (preg_match('/youtu.be\/([a-zA-Z0-9\-_]{11})/', $supervideo->videourl, $output)) {
-        $videoId = $output[1];
+        $videoid = $output[1];
         $engine = "youtube";
     }
 } else if (strpos($supervideo->videourl, "vimeo")) {
     if (preg_match('/vimeo.com\/(\d+)/', $supervideo->videourl, $output)) {
-        $videoId = $output[1];
+        $videoid = $output[1];
         $engine = "vimeo";
     }
 } else if (strpos($supervideo->videourl, "drive.google.com")) {
     if (preg_match('/([a-zA-Z0-9\-_]{33})/', $supervideo->videourl, $output)) {
-        $videoId = $output[1];
+        $videoid = $output[1];
         $engine = "drive";
     }
 }
@@ -107,7 +108,7 @@ if ($supervideo->videosize == 0) {
     $size = 'width="720" height="450"';
 }
 
-if ($videoId) {
+if ($videoid) {
     if ($engine == "youtube" || $engine == "drive") {
         $urlparameters = array();
 
@@ -137,15 +138,15 @@ if ($videoId) {
         $parameters = implode('&amp;', $urlparameters);
 
         if ($engine == "youtube") {
-            $url = "https://www.youtube.com/embed/{$videoId}?{$parameters}";
-            echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size} 
-                      frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      src=\"{$url}\"></iframe>";
+            $url = "https://www.youtube.com/embed/{$videoid}?{$parameters}";
+            echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size}";
+            echo "        frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen";
+            echo "        src=\"{$url}\"></iframe>";
         } else if ($engine == "drive") {
-            $url = "https://drive.google.com/file/d/{$videoId}/preview?{$parameters}";
-            echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size}
-                      frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      src=\"{$url}\"></iframe>";
+            $url = "https://drive.google.com/file/d/{$videoid}/preview?{$parameters}";
+            echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size}";
+            echo "    frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen";
+            echo "    src=\"{$url}\"></iframe>";
         }
     } else if ($engine == "vimeo") {
         $urlparametersvimeo = array();
@@ -164,7 +165,7 @@ if ($videoId) {
 
         $parametersvimeo = implode('&amp;', $urlparametersvimeo);
 
-        $url = "https://player.vimeo.com/video/{$videoId}?{$parametersvimeo}";
+        $url = "https://player.vimeo.com/video/{$videoid}?{$parametersvimeo}";
         echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size}
                       frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen
                       src=\"{$url}\"></iframe>";

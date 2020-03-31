@@ -18,7 +18,7 @@
  * setting file
  *
  * @package mod_supervideo
- * @copyright  2015 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,14 +28,14 @@ if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showrel',
-        'Show Rel', get_string('showrel', 'supervideo'), 0));
+        get_string('showrel', 'supervideo'), get_string('showrel_desc', 'supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showcontrols',
-        'Show Controls', get_string('showcontrols', 'supervideo'), 0));
+        get_string('showcontrols', 'supervideo'), get_string('showcontrols_desc', 'supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showshowinfo',
-        'Show Info', get_string('showshowinfo', 'supervideo'), 0));
+        get_string('showshowinfo', 'supervideo'), get_string('showshowinfo_desc', 'supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/autoplay',
-        'Auto Play', get_string('autoplay', 'supervideo'), 0));
+        get_string('autoplay', 'supervideo'), get_string('autoplay_desc', 'supervideo'), 0));
 }

@@ -18,7 +18,7 @@
  * lang file
  *
  * @package    mod_supervideo
- * @copyright  2015 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,10 +30,15 @@ $string['videourl_help'] = '<h2>Youtube</h2><p>Adicione uma URL do Youtube que v
 $string['videourl_error'] = 'URL do Super Vídeo';
 $string['pluginadministration'] = 'Super Vídeo';
 $string['modulename_help'] = 'Este módulo adiciona um Vídeos Youtube, Google Drive ou Vimeo dentro do Moodle.';
-$string['showrel'] = 'Mostrar vídeos sugeridos quando o vídeo terminar (somente Youtube)';
-$string['showcontrols'] = 'Mostrar controles do player';
-$string['showshowinfo'] = 'Mostrar título do vídeo e as ações do player';
-$string['autoplay'] = 'Reproduzir ao carregar';
+$string['showrel'] = 'Sugestão de vídeos';
+$string['showrel_desc'] = 'Mostrar vídeos sugeridos quando o vídeo terminar (somente Youtube)';
+$string['showcontrols'] = 'Controles';
+$string['showcontrols_desc'] = 'Mostrar controles do player';
+$string['showshowinfo'] = 'Mostrar título';
+$string['showshowinfo_desc'] = 'Mostrar título do vídeo e as ações do player';
+$string['autoplay'] = 'Reproduzir automaticamnete';
+$string['autoplay_desc'] = 'Reproduzir automaticamnete carregar o player';
+$string['video_size'] = 'Tamanho do vídeo';
 
 $string['idnotfound'] = 'Youtube ID not Found';
 

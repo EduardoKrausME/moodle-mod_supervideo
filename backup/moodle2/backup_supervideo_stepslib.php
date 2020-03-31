@@ -19,7 +19,7 @@
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @package   mod_supervideo
  * @category  backup
- * @copyright 2016 Eduardo Kraus ME <kraus@eduardokraus.com>
+ * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class backup_supervideo_activity_structure_step extends backup_activity_structure_step {
