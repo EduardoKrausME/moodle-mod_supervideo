@@ -18,7 +18,7 @@
  * form file
  *
  * @package    mod_supervideo
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * class mod_supervideo_mod_for
  *
  * @package   mod_supervideo
- * @copyright 2020 Eduardo kraus (http://eduardokraus.com)
+ * @copyright 2023 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class mod_supervideo_mod_form extends moodleform_mod {

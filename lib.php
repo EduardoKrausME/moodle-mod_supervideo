@@ -18,7 +18,7 @@
  * lib file
  *
  * @package    mod_supervideo
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * @param string $feature
+ *
  * @return bool|int|null
  */
 function supervideo_supports($feature) {
@@ -51,8 +52,9 @@ function supervideo_supports($feature) {
 /**
  * function supervideo_add_instance
  *
- * @param stdClass $supervideo
+ * @param stdClass                     $supervideo
  * @param mod_supervideo_mod_form|null $mform
+ *
  * @return bool|int
  * @throws dml_exception
  */
@@ -69,8 +71,9 @@ function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $
 /**
  * function supervideo_update_instance
  *
- * @param stdClass $supervideo
+ * @param stdClass                     $supervideo
  * @param mod_supervideo_mod_form|null $mform
+ *
  * @return bool
  * @throws dml_exception
  */
@@ -89,6 +92,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
  * function supervideo_delete_instance
  *
  * @param int $id
+ *
  * @return bool
  * @throws dml_exception
  */
@@ -111,6 +115,7 @@ function supervideo_delete_instance($id) {
  * @param stdClass $user
  * @param stdClass $mod
  * @param stdClass $supervideo
+ *
  * @return stdClass
  */
 function supervideo_user_outline($course, $user, $mod, $supervideo) {
@@ -127,6 +132,7 @@ function supervideo_user_outline($course, $user, $mod, $supervideo) {
  * @param stdClass $user
  * @param stdClass $mod
  * @param stdClass $supervideo
+ *
  * @throws coding_exception
  * @throws dml_exception
  */
@@ -134,7 +140,7 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
     global $DB;
 
     if ($logs = $DB->get_records('log', array('userid' => $user->id, 'module' => 'supervideo',
-        'action' => 'view', 'info' => $supervideo->id), 'time ASC')) {
+                                              'action' => 'view', 'info' => $supervideo->id), 'time ASC')) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
@@ -150,7 +156,9 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
 
 /**
  * function supervideo_get_coursemodule_info
+ *
  * @param stdClass $coursemodule
+ *
  * @return cached_cm_info
  * @throws dml_exception
  */

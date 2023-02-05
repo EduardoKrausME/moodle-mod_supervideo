@@ -18,7 +18,7 @@
  * view file
  *
  * @package    mod_supervideo
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -47,7 +47,7 @@ require_capability('mod/supervideo:view', $context);
 
 $event = \mod_supervideo\event\course_module_viewed::create(array(
     'objectid' => $PAGE->cm->instance,
-    'context' => $PAGE->context,
+    'context'  => $PAGE->context,
 ));
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $supervideo);
@@ -65,8 +65,7 @@ $completion->set_module_viewed($cm);
 $config = get_config('supervideo');
 
 $PAGE->set_url('/mod/supervideo/view.php', array('id' => $cm->id));
-$PAGE->requires->js('/mod/supervideo/assets/util.js', true);
-$PAGE->requires->css('/mod/supervideo/assets/supervideo.css');
+$PAGE->requires->css('/mod/supervideo/style.css');
 $PAGE->set_title($course->shortname . ': ' . $supervideo->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($supervideo);
@@ -169,6 +168,8 @@ if ($videoid) {
         echo "<iframe id=\"videohd{$supervideo->videosize}\" {$size}
                       frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen
                       src=\"{$url}\"></iframe>";
+
+        $PAGE->requires->js_call_amd('mod_supervideo/resize', 'start');
     }
 } else {
     echo "<div class=\"alert alert-warning\">

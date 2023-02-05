@@ -18,7 +18,7 @@
  * lang file
  *
  * @package    mod_supervideo
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -44,3 +44,5 @@ $string['idnotfound'] = 'Youtube ID not Found';
 
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';
+
+$string['privacy:metadata'] = 'The supervideo resource plugin does not store any personal data.';

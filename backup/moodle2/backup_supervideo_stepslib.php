@@ -17,10 +17,10 @@
 /**
  * Backup files
  *
- * @package   mod_supervideo
- * @category  backup
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @package    mod_supervideo
+ * @category   backup
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
+ * @license    https://www.eduardokraus.com/
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -28,10 +28,10 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Define the complete supervideo structure for backup, with file and id annotations
  *
- * @package   mod_supervideo
- * @category  backup
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @package    mod_supervideo
+ * @category   backup
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
+ * @license    https://www.eduardokraus.com/
  */
 class backup_supervideo_activity_structure_step extends backup_activity_structure_step {
 

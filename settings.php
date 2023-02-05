@@ -17,8 +17,8 @@
 /**
  * setting file
  *
- * @package mod_supervideo
- * @copyright  2020 Eduardo kraus (http://eduardokraus.com)
+ * @package    mod_supervideo
+ * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

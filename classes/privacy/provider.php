@@ -15,27 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * install file
- *
- * @package    mod_supervideo
- * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Privacy Subsystem implementation for mod_supervideo.
  */
+
+namespace mod_supervideo\privacy;
 
 defined('MOODLE_INTERNAL') || die();
-
 /**
- * Post installation procedure
+ * The mod_supervideo module does not store any data.
  *
- * @see upgrade_plugins_modules()
+ * @package  mod_supervideo
+ * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_supervideo_install() {
-}
+class provider implements \core_privacy\local\metadata\null_provider {
 
-/**
- * Post installation recovery procedure
- *
- * @see upgrade_plugins_modules()
- */
-function xmldb_supervideo_install_recovery() {
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
 }
