@@ -68,7 +68,6 @@ $PAGE->set_url('/mod/supervideo/view.php', array('id' => $cm->id));
 $PAGE->requires->css('/mod/supervideo/style.css');
 $PAGE->set_title($course->shortname . ': ' . $supervideo->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_activity_record($supervideo);
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading(format_string($supervideo->name), 2, 'main', 'supervideoheading');
