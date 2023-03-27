@@ -299,14 +299,16 @@ class supervideo_view extends \table_sql {
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $subsql = "SELECT COUNT(sv.id) AS cont
-                             FROM {supervideo_view} sv
-                             JOIN {user} u ON u.id = sv.user_id
-                            WHERE sv.cm_id   = :cm_id
-                              AND sv.user_id = :user_id
-                              AND percent    > 0
-                                  {$where}";
-                $countsql = "SELECT COUNT(*) FROM ( {$subsql} ) AS c";
+                $countsql = "SELECT COUNT(*) 
+                               FROM ( 
+                                    SELECT COUNT(sv.id) AS cont
+                                     FROM {supervideo_view} sv
+                                     JOIN {user} u ON u.id = sv.user_id
+                                    WHERE sv.cm_id   = :cm_id
+                                      AND sv.user_id = :user_id
+                                      AND percent    > 0
+                                          {$where}
+                               ) AS c";
                 $total = $DB->get_field_sql($countsql, $params);
                 $this->pagesize($pagesize, $total);
             } else {
@@ -315,7 +317,7 @@ class supervideo_view extends \table_sql {
         } else {
             $this->sql = "SELECT sv.user_id, sv.cm_id, MAX(sv.currenttime) currenttime, MAX(sv.duration) duration,
                                  MAX(sv.percent) percent, MAX(sv.timecreated) timecreated,
-                                 u.firstname, u.lastname, u.email
+                                 u.firstname, u.lastname, u.email,
                                  (
                                     SELECT COUNT(*)
                                       FROM {supervideo_view} sv1
@@ -331,12 +333,14 @@ class supervideo_view extends \table_sql {
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $subsql = "SELECT COUNT(sv.id) AS cont
-                             FROM {supervideo_view} sv
-                             JOIN {user} u ON u.id = sv.user_id
-                            WHERE sv.cm_id = :cm_id {$where}
-                         GROUP BY sv.user_id";
-                $countsql = "SELECT COUNT(*) FROM ( {$subsql} ) AS c";
+                $countsql = "SELECT COUNT(*) 
+                               FROM ( 
+                                    SELECT COUNT(sv.id) AS cont
+                                      FROM {supervideo_view} sv
+                                      JOIN {user} u ON u.id = sv.user_id
+                                     WHERE sv.cm_id = :cm_id {$where}
+                                  GROUP BY sv.user_id
+                               ) AS c";
                 $total = $DB->get_field_sql($countsql, $params);
                 $this->pagesize($pagesize, $total);
             } else {
