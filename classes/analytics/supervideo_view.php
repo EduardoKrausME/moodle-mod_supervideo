@@ -66,6 +66,8 @@ class supervideo_view {
         } catch (\dml_exception $e) {
             return (object)['id' => 0];
         }
+
+        return $supervideo_view;
     }
 
     /**

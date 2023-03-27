@@ -20,7 +20,9 @@
 
 namespace mod_supervideo\report;
 
+use html_writer;
 use mod_supervideo\util\url;
+use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -139,6 +141,37 @@ class supervideo_view extends \table_sql {
 
         $this->define_columns($columns);
         $this->define_headers($headers);
+    }
+
+    /**
+     * Fullname is treated as a special columname in tablelib and should always
+     * be treated the same as the fullname of a user.
+     * @uses $this->useridfield if the userid field is not expected to be id
+     * then you need to override $this->useridfield to point at the correct
+     * field for the user id.
+     *
+     * @param object $linha the data from the db containing all fields from the
+     *                      users table necessary to construct the full name of the user in
+     *                      current language.
+     *
+     * @return string contents of cell in column 'fullname', for this row.
+     * @throws \moodle_exception
+     */
+    function col_fullname($linha) {
+        global $COURSE;
+
+        $name = fullname($linha);
+        if ($this->download) {
+            return $name;
+        }
+
+        if ($COURSE->id == SITEID) {
+            $profileurl = new moodle_url('/user/profile.php', array('id' => $linha->user_id));
+        } else {
+            $profileurl = new moodle_url('/user/view.php',
+                array('id' => $linha->user_id, 'course' => $COURSE->id));
+        }
+        return html_writer::link($profileurl, $name);
     }
 
     /**
