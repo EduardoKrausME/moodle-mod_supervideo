@@ -39,7 +39,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $PAGE, $COURSE;;
+
+        $PAGE->requires->css('/mod/supervideo/style.css');
 
         $mform = $this->_form;
 
@@ -52,7 +54,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('text', 'videourl',
-            get_string('videourl', 'supervideo'), array('size' => '60'), array('usefilepicker' => true));
+            get_string('videourl', 'mod_supervideo'), array('size' => '60'), array('usefilepicker' => true));
         $mform->setType('videourl', PARAM_TEXT);
         $mform->addRule('videourl', null, 'required', null, 'client');
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
@@ -66,47 +68,107 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $config = get_config('supervideo');
 
-        $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'supervideo'));
+        $sizeoptions = array(
+            0 => 'Vídeo ED (4x3)',
+            1 => 'Vídeo HD (16x9)',
+
+            5 => 'PDF / DOC / XLS',
+            6 => 'Vídeo 4x3',
+            7 => 'Vídeo 16x9',
+
+        );
+        $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
+        $mform->setType('videosize', PARAM_INT);
+        $mform->setDefault('videosize', 11);
+
+        $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'mod_supervideo'));
         $mform->setDefault('showrel', $config->showrel);
 
-        $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'supervideo'));
+        $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'mod_supervideo'));
         $mform->setDefault('showcontrols', $config->showcontrols);
 
-        $mform->addElement('advcheckbox', 'showshowinfo', get_string('showshowinfo_desc', 'supervideo'));
+        $mform->addElement('advcheckbox', 'showshowinfo', get_string('showshowinfo_desc', 'mod_supervideo'));
         $mform->setDefault('showshowinfo', $config->showshowinfo);
 
-        $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'supervideo'));
+        $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);
 
-        $sizeoptions = array(
-            0 => 'ED (3x4)',
-            1 => 'HD (16x9)',
-            2 => 'HD (16x10)'
-        );
-        $mform->addElement('select', 'videosize', get_string('video_size', 'supervideo'), $sizeoptions);
-        $mform->setType('videosize', PARAM_INT);
-        $mform->setDefault('videosize', 1);
+
+        // Grade Element.
+        $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
+
+        $values = [
+            0 => get_string('grade_approval_0', 'mod_supervideo'),
+            1 => get_string('grade_approval_1', 'mod_supervideo'),
+        ];
+        $mform->addElement('select', 'grade_approval', get_string('grade_approval', 'mod_supervideo'), $values);
+
+        $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
+            grade_get_categories_menu($COURSE->id, false));
+        $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
+        $mform->disabledIf('gradecat', 'grade_approval', 'eq', '0');
+
+        $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+        $mform->addHelpButton('gradepass', 'gradepass', 'grades');
+        $mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
 
         // Add standard grading elements.
-        $this->standard_grading_coursemodule_elements();
+        // $this->standard_grading_coursemodule_elements();
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
+
+
+        $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init');
     }
 
     /**
-     * function validation
+     * @return array
+     * @throws coding_exception
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $mform->addElement('text', 'complet_percent', get_string('complet_percent', 'mod_supervideo'), ['size' => 4]);
+        $mform->addHelpButton('complet_percent', 'complet_percent', 'mod_supervideo');
+        $mform->setType('complet_percent', PARAM_INT);
+
+        return ['complet_percent'];
+
+    }
+
+    /**
+     * @param array $data
      *
-     * @param stdClass $data
-     * @param stdClass $files
+     * @return bool
+     */
+    public function completion_rule_enabled($data) {
+        return $data['complet_percent'];
+    }
+
+
+    /**
+     * @param $data
+     * @param $files
      *
-     * @return mixed
+     * @return array
+     * @throws coding_exception
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        if (!isset($data['videourl']) || empty($data['videourl'])) {
+            $errors['videourl'] = get_string('required');
+        }
+
+        $url_parse = \mod_supervideo\util\url::parse($data['videourl']);
+        if ($url_parse->engine == "") {
+            $errors['videourl'] = get_string('idnotfound', 'mod_supervideo');
+        }
+
         return $errors;
     }
 

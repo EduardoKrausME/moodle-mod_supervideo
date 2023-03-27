@@ -6,18 +6,17 @@
  */
 
 
-require_once ( '../../config.php' );
+require_once('../../config.php');
 
-
-$module_videotime = $DB->get_record ( 'modules', [ 'name' => 'videotime' ] );
-if(!$module_videotime){
+$module_videotime = $DB->get_record('modules', ['name' => 'videotime']);
+if (!$module_videotime) {
     die("Você não tem o MOD_VIDEOTIME instalado");
 }
-$module_supervideo   = $DB->get_record ( 'modules', [ 'name' => 'supervideo' ] );
+$module_supervideo = $DB->get_record('modules', ['name' => 'supervideo']);
 
-$videotimes = $DB->get_records ( "videotime" );
+$videotimes = $DB->get_records("videotime");
 
-foreach ( $videotimes as $videotime ) {
+foreach ($videotimes as $videotime) {
 
     $supervideo = (object)[
         'course'       => $videotime->course,
@@ -25,31 +24,31 @@ foreach ( $videotimes as $videotime ) {
         'intro'        => $videotime->intro,
         'introformat'  => $videotime->introformat,
         'videourl'     => $videotime->vimeo_url,
-        'videosize'    => 1,
         'showrel'      => 0,
-        'showcontrols' => 0,
+        'videosize'    => 1,
+        'showcontrols' => 1,
         'showshowinfo' => 0,
         'autoplay'     => 0,
         'timemodified' => $videotime->timemodified,
     ];
 
-    $supervideo->id = $DB->insert_record ( "supervideo", $supervideo );
+    $supervideo->id = $DB->insert_record("supervideo", $supervideo);
 
 
-    $course_modules = $DB->get_record ( "course_modules",
+    $course_modules = $DB->get_record("course_modules",
         [
             'module'   => $module_videotime->id,
             'instance' => $videotime->id
-        ] );
+        ]);
 
-    if ( $course_modules ) {
-        $course_modules->module   = $module_supervideo->id;
+    if ($course_modules) {
+        $course_modules->module = $module_supervideo->id;
         $course_modules->instance = $supervideo->id;
 
         echo '<pre>';
-        print_r ( $course_modules );
+        print_r($course_modules);
         echo '</pre>';
 
-        $DB->update_record ( 'course_modules', $course_modules );
+        $DB->update_record('course_modules', $course_modules);
     }
 }

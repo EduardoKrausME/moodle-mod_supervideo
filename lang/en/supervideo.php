@@ -40,7 +40,31 @@ $string['autoplay'] = 'Play automatically';
 $string['autoplay_desc'] = 'Automatically play the player load';
 $string['video_size'] = 'Video size';
 
-$string['idnotfound'] = 'Youtube ID not Found';
+$string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
+$string['seu_view'] = 'Your View map:';
+
+$string['report'] = 'Views report';
+$string['report_userid'] = 'User ID';
+$string['report_nome'] = 'Full name';
+$string['report_email'] = 'Email';
+$string['report_tempo'] = 'Watched time';
+$string['report_duracao'] = 'Video duration';
+$string['report_porcentagem'] = 'Percentage seen';
+$string['report_mapa'] = 'View Map';
+$string['report_comecou'] = 'Started watching when';
+$string['report_terminou'] = 'Finished watching when';
+$string['report_visualizacoes'] = 'Visualizations';
+$string['report_assistiu'] = 'Watched when';
+$string['report_all'] = 'All views for this student';
+
+$string['grade_approval'] = 'Set grade for';
+$string['grade_approval_0'] = 'No grades';
+$string['grade_approval_1'] = 'Grade based on percentage of video views';
+
+$string['complet_percent'] = 'Requires percentage';
+$string['complet_percent_help'] = 'Set complete when student views set percentage of video';
+
+$string['no_data'] = 'No records';
 
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';

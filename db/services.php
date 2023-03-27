@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version file
+ * services file
  *
  * @package    mod_supervideo
  * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
@@ -24,10 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023032502;
-$plugin->requires = 2014051200;
-$plugin->release = '2.3.2';
-$plugin->component = 'mod_supervideo';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->cron = 0;
-$plugin->dependencies = array();
+$functions = [
+    'mod_supervideo_services_save_progress' => [
+        'classpath'   => 'mod/supervideo/classes/services.php',
+        'classname'   => 'mod_supervideo\services',
+        'methodname'  => 'save_progress',
+        'description' => 'Save progress video.',
+        'type'        => 'write',
+        'ajax'        => true,
+    ]
+];

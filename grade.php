@@ -15,19 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version file
+ * index file
  *
  * @package    mod_supervideo
  * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require_once("../../config.php");
 
-$plugin->version = 2023032502;
-$plugin->requires = 2014051200;
-$plugin->release = '2.3.2';
-$plugin->component = 'mod_supervideo';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->cron = 0;
-$plugin->dependencies = array();
+$id = required_param('id', PARAM_INT);
+$userid = optional_param('userid', null, PARAM_INT);
+
+$cm = get_coursemodule_from_id('supervideo', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+
+$PAGE->set_url('/mod/supervideo/grade.php', ['id' => $cm->id]);
+
+if ($userid) {
+    redirect(new moodle_url('/mod/supervideo/report.php', ['id' => $cm->id]));
+} else {
+    redirect(new moodle_url('/mod/supervideo/view.php', ['id' => $cm->id]));
+}

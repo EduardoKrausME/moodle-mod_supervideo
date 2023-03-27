@@ -43,14 +43,49 @@ function xmldb_supervideo_upgrade($oldversion) {
 
     if ($oldversion < 2019010303) {
 
-        $supervideo = new xmldb_table('supervideo');
+        $table_supervideo = new xmldb_table('supervideo');
 
         $fieldurl = new xmldb_field('supervideoid', XMLDB_TYPE_CHAR, 255);
-        if ($dbman->field_exists($supervideo, $fieldurl)) {
-            $dbman->rename_field($supervideo, $fieldurl, 'url');
+        if ($dbman->field_exists($table_supervideo, $fieldurl)) {
+            $dbman->rename_field($table_supervideo, $fieldurl, 'url');
         }
 
         upgrade_plugin_savepoint(true, 2019010303, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2023032502) {
+
+        $table_supervideo_view = new xmldb_table('supervideo_view');
+
+        $table_supervideo_view->add_field('id',           XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table_supervideo_view->add_field('cm_id',        XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('user_id',      XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('currenttime',  XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('duration',     XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('percent',      XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('mapa',         XMLDB_TYPE_CHAR, 'small', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('timecreated',  XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
+        $table_supervideo_view->add_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
+
+        $table_supervideo_view->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        if (!$dbman->table_exists($table_supervideo_view)) {
+            $dbman->create_table($table_supervideo_view);
+        }
+
+        $table_supervideo = new xmldb_table('supervideo');
+
+        $field_grade_approval = new xmldb_field('grade_approval', XMLDB_TYPE_INTEGER, 10);
+        if (!$dbman->field_exists($table_supervideo, $field_grade_approval)) {
+            $dbman->add_field($table_supervideo, $field_grade_approval);
+        }
+
+        $field_complet_percent = new xmldb_field('complet_percent', XMLDB_TYPE_INTEGER, 10);
+        if (!$dbman->field_exists($table_supervideo, $field_complet_percent)) {
+            $dbman->add_field($table_supervideo, $field_complet_percent);
+        }
+
+        upgrade_plugin_savepoint(true, 2023032502, 'mod', 'supervideo');
     }
 
     return true;

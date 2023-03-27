@@ -28,14 +28,18 @@ if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showrel',
-        get_string('showrel', 'supervideo'), get_string('showrel_desc', 'supervideo'), 0));
+        get_string('showrel', 'mod_supervideo'),
+        get_string('showrel_desc', 'mod_supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showcontrols',
-        get_string('showcontrols', 'supervideo'), get_string('showcontrols_desc', 'supervideo'), 0));
+        get_string('showcontrols', 'mod_supervideo'),
+        get_string('showcontrols_desc', 'mod_supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/showshowinfo',
-        get_string('showshowinfo', 'supervideo'), get_string('showshowinfo_desc', 'supervideo'), 0));
+        get_string('showshowinfo', 'mod_supervideo'),
+        get_string('showshowinfo_desc', 'mod_supervideo'), 0));
 
     $settings->add(new admin_setting_configcheckbox('supervideo/autoplay',
-        get_string('autoplay', 'supervideo'), get_string('autoplay_desc', 'supervideo'), 0));
+        get_string('autoplay', 'mod_supervideo'),
+        get_string('autoplay_desc', 'mod_supervideo'), 0));
 }

@@ -49,7 +49,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($strname);
 
 if (!$supervideos = get_all_instances_in_course('supervideo', $course)) {
-    notice(get_string('nosupervideos', 'supervideo'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(get_string('nosupervideos', 'mod_supervideo'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $usesections = course_format_uses_sections($course->format);
