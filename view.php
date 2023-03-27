@@ -46,7 +46,7 @@ require_capability('mod/supervideo:view', $context);
 
 $event = \mod_supervideo\event\course_module_viewed::create(array(
     'objectid' => $PAGE->cm->instance,
-    'context'  => $PAGE->context,
+    'context' => $PAGE->context,
 ));
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $supervideo);
@@ -62,7 +62,6 @@ $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-
 $extra = "";
 if (has_capability('moodle/course:manageactivities', $context)) {
     $extra = "<a class='report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
@@ -72,22 +71,22 @@ echo $OUTPUT->heading(format_string($supervideo->name) . " " . $extra, 2, 'main'
 
 echo '<div id="supervideo_area_embed">';
 
-$parse_url = \mod_supervideo\util\url::parse($supervideo->videourl);
+$parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
-$supervideo_view = \mod_supervideo\analytics\supervideo_view::create($cm->id);
+$supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 
-if ($parse_url->videoid) {
-    if ($parse_url->engine == "youtube") {
+if ($parseurl->videoid) {
+    if ($parseurl->engine == "youtube") {
 
         $uniqueid = uniqid();
         echo "<script src='https://www.youtube.com/iframe_api'></script>
-              <div id='{$parse_url->engine}-{$uniqueid}'></div>";
+              <div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'youtube', [
-            (int)$supervideo_view->id,
-            $supervideo_view->currenttime,
-            "{$parse_url->engine}-{$uniqueid}",
-            $parse_url->videoid,
+            (int)$supervideoview->id,
+            $supervideoview->currenttime,
+            "{$parseurl->engine}-{$uniqueid}",
+            $parseurl->videoid,
             $supervideo->videosize,
             $supervideo->showrel ? 1 : 0,
             $supervideo->showcontrols ? 1 : 0,
@@ -95,7 +94,7 @@ if ($parse_url->videoid) {
             $supervideo->autoplay ? 1 : 0
         ]);
 
-    } else if ($parse_url->engine == "google-drive") {
+    } else if ($parseurl->engine == "google-drive") {
         $urlparameters = array(
             $supervideo->showrel ? 'rel=1' : 'rel=0',
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
@@ -106,17 +105,17 @@ if ($parse_url->videoid) {
         $parameters = implode('&amp;', $urlparameters);
 
         $uniqueid = uniqid();
-        echo "<iframe id='{$parse_url->engine}-{$uniqueid}' width='100%' height='680'
+        echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      src='https://drive.google.com/file/d/{$parse_url->videoid}/preview?{$parameters}'></iframe>";
+                      src='https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parameters}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
-            (int)$supervideo_view->id,
-            "{$parse_url->engine}-{$uniqueid}",
+            (int)$supervideoview->id,
+            "{$parseurl->engine}-{$uniqueid}",
             $supervideo->videosize
         ]);
 
-    } else if ($parse_url->engine == "vimeo") {
+    } else if ($parseurl->engine == "vimeo") {
         $urlparametersvimeo = [
             $supervideo->showcontrols ? 'title=true' : 'title=false',
             $supervideo->autoplay ? 'autoplay=true' : 'autoplay=false',
@@ -127,15 +126,15 @@ if ($parse_url->videoid) {
 
         $uniqueid = uniqid();
         echo "<script src='https://player.vimeo.com/api/player.js'></script>
-              <iframe id='{$parse_url->engine}-{$uniqueid}' width='640' height='480'
+              <iframe id='{$parseurl->engine}-{$uniqueid}' width='640' height='480'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      src='https://player.vimeo.com/video/{$parse_url->videoid}?{$parametersvimeo}'></iframe>";
+                      src='https://player.vimeo.com/video/{$parseurl->videoid}?{$parametersvimeo}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'vimeo', [
-            $supervideo_view->id,
-            $supervideo_view->currenttime,
-            $parse_url->videoid,
-            "{$parse_url->engine}-{$uniqueid}"
+            $supervideoview->id,
+            $supervideoview->currenttime,
+            $parseurl->videoid,
+            "{$parseurl->engine}-{$uniqueid}"
         ]);
     }
 } else {
@@ -145,38 +144,33 @@ if ($parse_url->videoid) {
           </div>";
 }
 
-echo $OUTPUT->heading(get_string('seu_view', 'mod_supervideo').' <span></span>', 3, 'main-view', 'sua-view');
-echo "<div id='mapa-visualizacao' data-mapa='" . base64_encode($supervideo_view->mapa) . "'></div>";
+echo $OUTPUT->heading(get_string('seu_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'sua-view');
+echo "<div id='mapa-visualizacao' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>";
 echo '</div>';
 echo $OUTPUT->footer();
 
-
 if (@$_SERVER['HTTP_X_SERVER_NAVIO_CACHE'] == 'naviocache') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0 ) {
+    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
         echo "<div class='text-center text-warning'>Servidor COM cache no Navio</div>";
     }
     $CFG->wwwroot = 'http://157.230.104.111';
 
 } else if (@$_SERVER['HTTP_X_SERVER_NAVIO_CACHE'] == 'naviocache2') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0 ) {
+    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
         echo "<div class='text-center text-warning'>Servidor COM cache no Navio</div>";
     }
     $CFG->wwwroot = 'http://naviocache-sapura-homolog.leobr.net';
-}
-
-else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0 ) {
+} else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto') {
+    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
         echo "<div class='text-center text-warning'>Servidor SEM cache no Navio</div>";
     }
     $CFG->wwwroot = 'http://64.226.100.132';
-}else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto2') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0 ) {
+} else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto2') {
+    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
         echo "<div class='text-center text-warning'>Servidor SEM cache no Navio</div>";
     }
     $CFG->wwwroot = 'http://naviodireto-sapura-homolog.leobr.net';
-}
-
-else {
+} else {
     $CFG->wwwroot = 'https://sapura-homolog.leobr.net';
     $CFG->sslproxy = true;
 }

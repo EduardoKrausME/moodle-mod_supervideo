@@ -24,7 +24,7 @@ use external_function_parameters;
 use external_single_structure;
 use mod_supervideo\analytics\supervideo_view;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 
@@ -41,18 +41,18 @@ class services extends \external_api {
      */
     public static function save_progress_parameters() {
         return new \external_function_parameters([
-            'view_id'     => new \external_value(PARAM_INT, 'The instance id', VALUE_REQUIRED),
+            'view_id' => new \external_value(PARAM_INT, 'The instance id', VALUE_REQUIRED),
             'currenttime' => new \external_value(PARAM_INT, 'The current time', VALUE_REQUIRED),
-            'duration'    => new \external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
-            'percent'     => new \external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
-            'mapa'        => new \external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED)
+            'duration' => new \external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
+            'percent' => new \external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
+            'mapa' => new \external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED)
         ]);
     }
 
     /**
      * Record watch time
      *
-     * @param int $view_id
+     * @param int $viewid
      * @param int $currenttime
      * @param int $duration
      * @param int $percent
@@ -62,22 +62,22 @@ class services extends \external_api {
      * @return array
      * @throws \invalid_parameter_exception
      */
-    public static function save_progress($view_id, $currenttime, $duration, $percent, $mapa) {
+    public static function save_progress($viewid, $currenttime, $duration, $percent, $mapa) {
 
         $params = self::validate_parameters(self::save_progress_parameters(), [
-            'view_id'     => $view_id,
+            'view_id' => $viewid,
             'currenttime' => $currenttime,
-            'duration'    => $duration,
-            'percent'     => $percent,
-            'mapa'        => $mapa,
+            'duration' => $duration,
+            'percent' => $percent,
+            'mapa' => $mapa,
         ]);
-        $view_id = $params['view_id'];
+        $viewid = $params['view_id'];
         $currenttime = $params['currenttime'];
         $duration = $params['duration'];
         $percent = $params['percent'];
 
         try {
-            supervideo_view::update($view_id, $currenttime, $duration, $percent, $mapa);
+            supervideo_view::update($viewid, $currenttime, $duration, $percent, $mapa);
             return ['success' => true, 'exec' => "OK"];
         } catch (\Exception $e) {
             return ['success' => false, 'exec' => $e->getMessage()];
@@ -92,7 +92,7 @@ class services extends \external_api {
     public static function save_progress_returns() {
         return new \external_single_structure([
             'success' => new \external_value(PARAM_BOOL),
-            'exec'    => new \external_value(PARAM_RAW),
+            'exec' => new \external_value(PARAM_RAW),
         ]);
     }
 }

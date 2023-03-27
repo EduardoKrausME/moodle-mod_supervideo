@@ -22,15 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 $functions = [
     'mod_supervideo_services_save_progress' => [
-        'classpath'   => 'mod/supervideo/classes/services.php',
-        'classname'   => 'mod_supervideo\services',
-        'methodname'  => 'save_progress',
+        'classpath' => 'mod/supervideo/classes/services.php',
+        'classname' => 'mod_supervideo\services',
+        'methodname' => 'save_progress',
         'description' => 'Save progress video.',
-        'type'        => 'write',
-        'ajax'        => true,
+        'type' => 'write',
+        'ajax' => true,
     ]
 ];

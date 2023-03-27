@@ -23,8 +23,6 @@
  * @license    https://www.eduardokraus.com/
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Define the complete supervideo structure for backup, with file and id annotations
  *

@@ -69,4 +69,4 @@ $string['no_data'] = 'Sem registros';
 $string['supervideo:addinstance'] = 'Crie novas atividades com Vídeo';
 $string['supervideo:view'] = 'Ver e interagir com o vídeo';
 
-$string['privacy:metadata'] = 'O plug-in supervídeo não armazena nenhum dado pessoal.';
+$string['privacy:metadata'] = 'O plug-in supervídeo não envia nenhum dado pessoal a terceiros.';

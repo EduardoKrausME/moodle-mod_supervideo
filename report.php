@@ -34,7 +34,6 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('moodle/course:manageactivities', $context);
 
-
 $table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id, $supervideo);
 
 if (!$table->is_downloading()) {
@@ -44,17 +43,17 @@ if (!$table->is_downloading()) {
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
-    $linkVoltar = "";
-    if ($table->user_id) {
-        $linkVoltar = " <a href='?id={$table->cm_id}' class='report-link'>Voltar</a>";
+    $linkvoltar = "";
+    if ($table->userid) {
+        $linkvoltar = " <a href='?id={$table->cmid}' class='report-link'>Voltar</a>";
     }
-    echo $OUTPUT->heading(get_string('report') . ": " . format_string($supervideo->name) . $linkVoltar, 2, 'main', 'supervideoheading');
-}
 
+    $title = get_string('report') . ": " . format_string($supervideo->name) . $linkvoltar;
+    echo $OUTPUT->heading($title, 2, 'main', 'supervideoheading');
+}
 
 $table->define_baseurl("{$CFG->wwwroot}/mod/supervideo/report.php?id={$cm->id}");
 $table->out(40, true);
-
 
 if (!$table->is_downloading()) {
     echo $OUTPUT->footer();

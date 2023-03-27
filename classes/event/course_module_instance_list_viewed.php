@@ -24,8 +24,6 @@
 
 namespace mod_supervideo\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_supervideo instance list viewed event class.
  *

@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @param string $feature
  *
@@ -65,11 +63,11 @@ function supervideo_grade_item_update($supervideo, $grades = null) {
     require_once($CFG->libdir . '/gradelib.php');
 
     $params = [
-        'itemname'  => $supervideo->name,
-        'idnumber'  => $supervideo->cmidnumber,
+        'itemname' => $supervideo->name,
+        'idnumber' => $supervideo->cmidnumber,
         'gradetype' => GRADE_TYPE_VALUE,
-        'grademax'  => 100,
-        'grademin'  => 0
+        'grademax' => 100,
+        'grademin' => 0
     ];
 
     if ($grades === 'reset') {
@@ -121,19 +119,18 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
 
     $params = ['cm_id' => $cm->id];
 
-    $extra_where = ' ';
+    $extrawhere = ' ';
     if ($userid > 0) {
-        $extra_where .= ' AND user_id = :user_id';
+        $extrawhere .= ' AND user_id = :user_id';
         $params['user_id'] = $userid;
     }
 
     $sql = "SELECT user_id as userid, MAX(percent) as rawgrade
               FROM {supervideo_view}
-             WHERE cm_id = :cm_id {$extra_where}
+             WHERE cm_id = :cm_id {$extrawhere}
              GROUP BY user_id";
     return $DB->get_records_sql($sql, $params);
 }
-
 
 /**
  * @param stdClass                     $supervideo
@@ -231,38 +228,36 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
                    u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename, u.email
               FROM {supervideo_view} sv
               JOIN {user} u ON u.id = sv.user_id
-             WHERE sv.cm_id   = :cm_id 
-               AND sv.user_id = :user_id 
-               AND percent    > 0 
+             WHERE sv.cm_id   = :cm_id
+               AND sv.user_id = :user_id
+               AND percent    > 0
           ORDER BY sv.timecreated ASC";
     $param = [
-        'cm_id'   => $mod->id,
+        'cm_id' => $mod->id,
         'user_id' => $user->id,
     ];
     if ($registros = $DB->get_records_sql($sql, $param)) {
-        echo "<table>
-                <tr>
-                    <th>" . get_string('report_userid', 'mod_supervideo') . "</th> 
-                    <th>" . get_string('report_nome', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_email', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_tempo', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_duracao', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_porcentagem', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_comecou', 'mod_supervideo') . "</th>
-                    <th>" . get_string('report_terminou', 'mod_supervideo') . "</th>
-                </tr>";
+        echo "<table><tr>";
+        echo "      <th>" . get_string('report_userid', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_nome', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_email', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_tempo', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_duracao', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_porcentagem', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_comecou', 'mod_supervideo') . "</th>";
+        echo "      <th>" . get_string('report_terminou', 'mod_supervideo') . "</th>";
+        echo "  </tr>";
         foreach ($registros as $registro) {
-            echo "
-                <tr>
-                    <td>" . $registro->user_id . "</td>
-                    <td>" . fullname($registro) . "</td>
-                    <td>" . $registro->email . "</td>
-                    <td>" . formatTime($registro->currenttime) . "</td>
-                    <td>" . formatTime($registro->duration) . "</td>
-                    <td>" . $registro->percent . "%</td>
-                    <td>" . userdate($registro->timecreated) . "</td>
-                    <td>" . userdate($registro->timemodified) . "</td>
-                </tr>";
+            echo "<tr>";
+            echo "  <td>" . $registro->user_id . "</td>";
+            echo "  <td>" . fullname($registro) . "</td>";
+            echo "  <td>" . $registro->email . "</td>";
+            echo "  <td>" . formatTime($registro->currenttime) . "</td>";
+            echo "  <td>" . formatTime($registro->duration) . "</td>";
+            echo "  <td>" . $registro->percent . "%</td>";
+            echo "  <td>" . userdate($registro->timecreated) . "</td>";
+            echo "  <td>" . userdate($registro->timemodified) . "</td>";
+            echo "</tr>";
         }
         echo "</table>";
 
@@ -311,7 +306,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
     $keys = $supervideonode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
+    if ($i === false && array_key_exists(0, $keys)) {
         $beforekey = $keys[0];
     } else if (array_key_exists($i + 1, $keys)) {
         $beforekey = $keys[$i + 1];

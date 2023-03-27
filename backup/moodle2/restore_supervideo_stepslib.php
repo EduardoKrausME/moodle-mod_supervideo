@@ -23,8 +23,6 @@
  * @license    https://www.eduardokraus.com/
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Structure step to restore one supervideo activity
  *

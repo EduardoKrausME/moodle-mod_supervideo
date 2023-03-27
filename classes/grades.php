@@ -20,34 +20,32 @@
 
 namespace mod_supervideo;
 
-
 class grades {
 
     private static $supervideo = null;
 
     /**
-     * @param $cm_id
+     * @param $cmid
      *
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function update($cm_id, $percent) {
+    public static function update($cmid, $percent) {
         global $DB, $CFG;
 
         require_once("{$CFG->libdir}/completionlib.php");
 
-        $cm = get_coursemodule_from_id('supervideo', $cm_id, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('supervideo', $cmid, 0, false, MUST_EXIST);
         $course = get_course($cm->course);
         self::$supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
         $completion = new \completion_info($course);
         if ($completion->is_enabled($cm)) {
             if ($percent >= self::$supervideo->complet_percent) {
-                // echo "Completouuuu  {$percent} >= ".self::$supervideo->complet_percent;
                 $completion->update_state($cm, COMPLETION_COMPLETE);
-            } // else echo "não percent ";
-        } // else echo "is_not_enabled ";
+            }
+        }
     }
 
     public static function supervideo_get_completion_state($cm) {

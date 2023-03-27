@@ -22,30 +22,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 // Modify capabilities as needed and remove this comment.
 $capabilities = array(
     'mod/supervideo:addinstance' => array(
-        'riskbitmask'          => RISK_XSS,
-        'captype'              => 'write',
-        'contextlevel'         => CONTEXT_COURSE,
-        'archetypes'           => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
-            'manager'        => CAP_ALLOW
+            'manager' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
     'mod/supervideo:view' => array(
-        'captype'      => 'read',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy'       => array(
-            'guest'          => CAP_ALLOW,
-            'student'        => CAP_ALLOW,
-            'teacher'        => CAP_ALLOW,
+        'legacy' => array(
+            'guest' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager'        => CAP_ALLOW
+            'manager' => CAP_ALLOW
         )
     )
 );

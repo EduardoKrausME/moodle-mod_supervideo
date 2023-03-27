@@ -20,13 +20,12 @@
 
 namespace mod_supervideo\privacy;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_supervideo module does not store any data.
  *
- * @package  mod_supervideo
+ * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
- * @license  http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {
 
@@ -36,7 +35,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return  string
      */
-    public static function get_reason() : string {
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }

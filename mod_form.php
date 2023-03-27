@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
@@ -93,7 +93,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);
 
-
         // Grade Element.
         $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
 
@@ -112,15 +111,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
 
-        // Add standard grading elements.
-        // $this->standard_grading_coursemodule_elements();
-
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
-
 
         $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init');
     }
@@ -149,7 +144,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         return $data['complet_percent'];
     }
 
-
     /**
      * @param $data
      * @param $files
@@ -164,8 +158,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $errors['videourl'] = get_string('required');
         }
 
-        $url_parse = \mod_supervideo\util\url::parse($data['videourl']);
-        if ($url_parse->engine == "") {
+        $urlparse = \mod_supervideo\util\url::parse($data['videourl']);
+        if ($urlparse->engine == "") {
             $errors['videourl'] = get_string('idnotfound', 'mod_supervideo');
         }
 

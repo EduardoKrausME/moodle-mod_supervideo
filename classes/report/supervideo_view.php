@@ -24,8 +24,6 @@ use html_writer;
 use mod_supervideo\util\url;
 use moodle_url;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
@@ -36,26 +34,26 @@ class supervideo_view extends \table_sql {
     /**
      * @var int
      */
-    public $cm_id = 0;
+    public $cmid = 0;
     /**
      * @var int
      */
-    public $user_id = 0;
+    public $userid = 0;
 
     /**
      * supervideo_view constructor.
      *
      * @param $uniqueid
-     * @param $cm_id
+     * @param $cmid
      * @param $supervideo
      *
      * @throws \coding_exception
      */
-    public function __construct($uniqueid, $cm_id, $supervideo) {
+    public function __construct($uniqueid, $cmid, $supervideo) {
         parent::__construct($uniqueid);
 
-        $this->cm_id = $cm_id;
-        $this->user_id = optional_param('u', false, PARAM_INT);
+        $this->cmid = $cmid;
+        $this->userid = optional_param('u', false, PARAM_INT);
 
         $this->is_downloadable(true);
         $this->show_download_buttons_at([TABLE_P_BOTTOM]);
@@ -66,7 +64,7 @@ class supervideo_view extends \table_sql {
             $this->is_downloading($download, 'Visualizações de Vídeos do Plugin Super Vídeo', $supervideo->name);
         }
 
-        if ($this->user_id) {
+        if ($this->userid) {
             $columns = [
                 'user_id',
                 'fullname',
@@ -157,7 +155,7 @@ class supervideo_view extends \table_sql {
      * @return string contents of cell in column 'fullname', for this row.
      * @throws \moodle_exception
      */
-    function col_fullname($linha) {
+    public function col_fullname($linha) {
         global $COURSE;
 
         $name = fullname($linha);
@@ -221,19 +219,19 @@ class supervideo_view extends \table_sql {
      * @return string
      */
     public function col_mapa($linha) {
-        $htmlMapa = "<div id='mapa-visualizacao' class='report'>";
+        $htmlmapa = "<div id='mapa-visualizacao' class='report'>";
 
         $mapas = json_decode($linha->mapa);
         $id = 0;
         foreach ($mapas as $mapa) {
             if ($mapa) {
-                $htmlMapa .= "<div id='mapa-visualizacao-" . $id++ . "' style='opacity:1'></div>";
+                $htmlmapa .= "<div id='mapa-visualizacao-" . $id++ . "' style='opacity:1'></div>";
             } else {
-                $htmlMapa .= "<div id='mapa-visualizacao-" . $id++ . "'></div>";
+                $htmlmapa .= "<div id='mapa-visualizacao-" . $id++ . "'></div>";
             }
         }
-        $htmlMapa .= "</div>";
-        return $htmlMapa;
+        $htmlmapa .= "</div>";
+        return $htmlmapa;
     }
 
     /**
@@ -266,7 +264,6 @@ class supervideo_view extends \table_sql {
         return \html_writer::link($profileurl, get_string('report_all', 'mod_supervideo'));
     }
 
-
     /**
      * @param int  $pagesize
      * @param bool $useinitialsbar
@@ -276,40 +273,40 @@ class supervideo_view extends \table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
 
-        $params = ["cm_id" => $this->cm_id];
+        $params = ["cm_id" => $this->cmid];
 
-        $sql_where = $this->get_sql_where();
-        $where = $sql_where[0] ? "AND {$sql_where[0]}" : "";
-        $params = array_merge($params, $sql_where[1]);
+        $sqlwhere = $this->get_sql_where();
+        $where = $sqlwhere[0] ? "AND {$sqlwhere[0]}" : "";
+        $params = array_merge($params, $sqlwhere[1]);
 
         $order = $this->get_sort_for_table($this->uniqueid);
         if (!$order) {
             $order = "sv.user_id";
         }
 
-        if ($this->user_id) {
-            $params['user_id'] = $this->user_id;
+        if ($this->userid) {
+            $params['user_id'] = $this->userid;
 
             $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
-                                 u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename, u.email
+                                 u.firstname, u.lastname, u.email,
+                                 u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                             FROM {supervideo_view} sv
                             JOIN {user} u ON u.id = sv.user_id
-                           WHERE sv.cm_id   = :cm_id 
-                             AND sv.user_id = :user_id 
-                             AND percent    > 0 
+                           WHERE sv.cm_id   = :cm_id
+                             AND sv.user_id = :user_id
+                             AND percent    > 0
                                  {$where}
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $countsql = "SELECT COUNT(*) FROM (
-                                 SELECT COUNT(sv.id) AS cont
-                                   FROM {supervideo_view} sv
-                                   JOIN {user} u ON u.id = sv.user_id
-                                  WHERE sv.cm_id   = :cm_id 
-                                    AND sv.user_id = :user_id 
-                                    AND percent    > 0 
-                                        {$where}
-                             ) AS c";
+                $subsql = "SELECT COUNT(sv.id) AS cont
+                             FROM {supervideo_view} sv
+                             JOIN {user} u ON u.id = sv.user_id
+                            WHERE sv.cm_id   = :cm_id
+                              AND sv.user_id = :user_id
+                              AND percent    > 0
+                                  {$where}";
+                $countsql = "SELECT COUNT(*) FROM ( {$subsql} ) AS c";
                 $total = $DB->get_field_sql($countsql, $params);
                 $this->pagesize($pagesize, $total);
             } else {
@@ -318,8 +315,15 @@ class supervideo_view extends \table_sql {
         } else {
             $this->sql = "SELECT sv.user_id, sv.cm_id, MAX(sv.currenttime) currenttime, MAX(sv.duration) duration,
                                  MAX(sv.percent) percent, MAX(sv.timecreated) timecreated,
-                                 (SELECT COUNT(*) FROM {supervideo_view} sv1 WHERE sv1.cm_id = sv.cm_id AND sv1.user_id = sv.user_id AND sv1.percent > 0 ) AS quantidade,
-                                 u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename, u.email
+                                 u.firstname, u.lastname, u.email
+                                 (
+                                    SELECT COUNT(*)
+                                      FROM {supervideo_view} sv1
+                                     WHERE sv1.cm_id = sv.cm_id
+                                       AND sv1.user_id = sv.user_id
+                                       AND sv1.percent > 0
+                                 ) AS quantidade,
+                                 u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                             FROM {supervideo_view} sv
                             JOIN {user} u ON u.id = sv.user_id
                            WHERE sv.cm_id = :cm_id {$where}
@@ -327,13 +331,12 @@ class supervideo_view extends \table_sql {
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $countsql = "SELECT COUNT(*) FROM (
-                                 SELECT COUNT(sv.id) AS cont
-                                   FROM {supervideo_view} sv
-                                   JOIN {user} u ON u.id = sv.user_id
-                                  WHERE sv.cm_id = :cm_id {$where}
-                               GROUP BY sv.user_id
-                             ) AS c";
+                $subsql = "SELECT COUNT(sv.id) AS cont
+                             FROM {supervideo_view} sv
+                             JOIN {user} u ON u.id = sv.user_id
+                            WHERE sv.cm_id = :cm_id {$where}
+                         GROUP BY sv.user_id";
+                $countsql = "SELECT COUNT(*) FROM ( {$subsql} ) AS c";
                 $total = $DB->get_field_sql($countsql, $params);
                 $this->pagesize($pagesize, $total);
             } else {

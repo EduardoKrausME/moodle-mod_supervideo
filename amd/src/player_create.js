@@ -133,7 +133,6 @@ define(["jquery", "core/ajax"], function($, Ajax) {
             }
         },
 
-
         _internal_last_currenttime : -1,
         _internal_last_percent     : -1,
         _internal_assistido        : [],
@@ -161,7 +160,6 @@ define(["jquery", "core/ajax"], function($, Ajax) {
                 } catch (e) {
                     supervideo_view_mapa = [];
                 }
-
 
                 for (var i = 0; i < 100; i++) {
 

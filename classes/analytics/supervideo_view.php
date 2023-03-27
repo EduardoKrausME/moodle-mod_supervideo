@@ -22,8 +22,6 @@ namespace mod_supervideo\analytics;
 
 use mod_supervideo\grades;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
@@ -31,47 +29,42 @@ defined('MOODLE_INTERNAL') || die();
  */
 class supervideo_view {
     /**
-     * @param $cm_id
+     * @param $cmid
      *
      * @return object
      * @throws \dml_exception
      */
-    public static function create($cm_id) {
+    public static function create($cmid) {
         global $USER, $DB;
 
-        $sql = "SELECT * 
-                  FROM {supervideo_view} 
-                 WHERE cm_id   = :cm_id 
-                   AND user_id = :user_id 
-              ORDER BY id DESC 
-                 LIMIT 1";
-        $supervideo_view = $DB->get_record_sql($sql, ["cm_id" => $cm_id, "user_id" => $USER->id]);
-        if ($supervideo_view && $supervideo_view->percent < 80) {
-            return $supervideo_view;
+        $sql = "SELECT * FROM {supervideo_view} WHERE cm_id   = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
+        $supervideoview = $DB->get_record_sql($sql, ["cm_id" => $cmid, "user_id" => $USER->id]);
+        if ($supervideoview && $supervideoview->percent < 80) {
+            return $supervideoview;
         }
 
-        $supervideo_view = (object)[
-            "cm_id"        => $cm_id,
-            "user_id"      => $USER->id,
-            "currenttime"  => 0,
-            "duration"     => 0,
-            "percent"      => 0,
-            "mapa"         => "{}",
-            "timecreated"  => time(),
+        $supervideoview = (object)[
+            "cm_id" => $cmid,
+            "user_id" => $USER->id,
+            "currenttime" => 0,
+            "duration" => 0,
+            "percent" => 0,
+            "mapa" => "{}",
+            "timecreated" => time(),
             "timemodified" => time(),
         ];
 
         try {
-            $supervideo_view->id = $DB->insert_record("supervideo_view", $supervideo_view);
+            $supervideoview->id = $DB->insert_record("supervideo_view", $supervideoview);
         } catch (\dml_exception $e) {
             return (object)['id' => 0];
         }
 
-        return $supervideo_view;
+        return $supervideoview;
     }
 
     /**
-     * @param $view_id
+     * @param $viewid
      * @param $currenttime
      * @param $duration
      * @param $percent
@@ -83,22 +76,22 @@ class supervideo_view {
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public static function update($view_id, $currenttime, $duration, $percent, $mapa) {
+    public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
         global $DB;
 
-        $supervideo_view = $DB->get_record('supervideo_view', ['id' => $view_id]);
+        $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid]);
 
-        grades::update($supervideo_view->cm_id, $percent);
+        grades::update($supervideoview->cm_id, $percent);
 
-        $supervideo_view = (object)[
-            "id"           => $view_id,
-            "currenttime"  => $currenttime,
-            "duration"     => $duration,
-            "percent"      => $percent,
-            "mapa"         => $mapa,
+        $supervideoview = (object)[
+            "id" => $viewid,
+            "currenttime" => $currenttime,
+            "duration" => $duration,
+            "percent" => $percent,
+            "mapa" => $mapa,
             "timemodified" => time(),
         ];
 
-        return $DB->update_record("supervideo_view", $supervideo_view);
+        return $DB->update_record("supervideo_view", $supervideoview);
     }
 }

@@ -69,4 +69,4 @@ $string['no_data'] = 'No records';
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';
 
-$string['privacy:metadata'] = 'The supervideo resource plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The supervideo plugin does not send any personal data to third parties.';
