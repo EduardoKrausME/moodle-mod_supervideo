@@ -53,7 +53,6 @@
             <INDEXES>
                 <INDEX NAME="cm_id"   UNIQUE="false" FIELDS="cm_id"/>
                 <INDEX NAME="user_id" UNIQUE="false" FIELDS="user_id"/>
-                <INDEX NAME="state"   UNIQUE="false" FIELDS="state"/>
             </INDEXES>
         </TABLE>
 
