@@ -24,8 +24,6 @@ define(["jquery"], function($) {
         fitem_id_autoplay     : null,
 
         init : function(engine) {
-            // console.log("aaa");
-
 
             mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
@@ -42,7 +40,9 @@ define(["jquery"], function($) {
         },
 
         upload_file : function(engine) {
-            $("#id_videourl").after($("#fitem_element_videofile").html());
+            var fitem_element_videofile = $("#fitem_element_videofile");
+            $("#id_videourl").after(fitem_element_videofile.html());
+            fitem_element_videofile.html("");
 
             $("#videofile_file").change(function() {
                 var filePartes = $(this).val().split("\\");

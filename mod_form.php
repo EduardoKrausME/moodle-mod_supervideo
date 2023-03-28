@@ -61,7 +61,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
 
         $mform->addElement('html', "
-                <div id='fitem_element_videofile' style='display:none'>
+                <div id='fitem_element_videofile' style='displa-y:none'>
                     <div id='fitem_id_videofile'>
                         <div class='input-wrapper'>    
                             Ou
@@ -166,6 +166,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
         return $data['complet_percent'];
     }
 
+    private $FILES = null;
+    public function data_preprocessing(&$defaultvalues) {
+        $this->FILES = $_FILES;
+    }
+
     /**
      * @param $data
      * @param $files
@@ -187,9 +192,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         if ($urlparse->engine == "resource") {
 
-            if (@$_FILES['videofile']['error'] === 0) {
+            if (!$this->_cm && @$this->FILES['videofile']['error'] !== 0) {
+                $errors['videourl'] = 'Erro: Nenhum arquivo recebido!';
 
-                $extension = pathinfo($_FILES['videofile']['name'], PATHINFO_EXTENSION);
+            } else if (@$this->FILES['videofile']['error'] === 0) {
+                $extension = pathinfo($this->FILES['videofile']['name'], PATHINFO_EXTENSION);
                 $extension = strtolower($extension);
 
                 if ($extension == "mp4" || $extension == "mp3") {
@@ -197,8 +204,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 } else {
                     $errors['videourl'] = 'Somente arquivos MP3 e MP4 são permitidos!';
                 }
+
             } else {
-                switch ($_FILES['videofile']['error']) {
+                switch ($this->FILES['videofile']['error']) {
                     case UPLOAD_ERR_INI_SIZE:
                         $errors['videourl'] = 'Erro 1: O arquivo enviado excede o limite definido na diretiva upload_max_filesize do php.ini.';
                         break;
@@ -211,7 +219,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                     case UPLOAD_ERR_NO_FILE:
                         $errors['videourl'] = 'Valor: 4; Nenhum arquivo foi carregado.';
                         break;
-                        case UPLOAD_ERR_NO_TMP_DIR:
+                    case UPLOAD_ERR_NO_TMP_DIR:
                         $errors['videourl'] = 'Erro 6: Pasta temporária ausênte.';
                         break;
                     case UPLOAD_ERR_CANT_WRITE:
@@ -227,7 +235,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-
         return $errors;
     }
 
@@ -237,16 +244,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @throws coding_exception
      * @throws file_exception
      */
-    public function data_preprocessing(&$defaultvalues) {
+    public function data_postprocessing($data) {
 
-        $videourl = optional_param("videourl", "", PARAM_TEXT);
-
-        $urlparse = \mod_supervideo\util\url::parse($videourl);
+        $urlparse = \mod_supervideo\util\url::parse($data->videourl);
         if ($urlparse->engine == "resource") {
 
-            if (@$_FILES['videofile']['error'] === 0) {
+            if (@$this->FILES['videofile']['error'] === 0) {
 
-                $extension = pathinfo($_FILES['videofile']['name'], PATHINFO_EXTENSION);
+                $extension = pathinfo($this->FILES['videofile']['name'], PATHINFO_EXTENSION);
                 $extension = strtolower($extension);
 
                 if ($extension == "mp4" || $extension == "mp3") {
@@ -271,13 +276,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
                         $fileDelete->delete();
                     }
 
-                    $fs->create_file_from_string($fileinfo, file_get_contents($_FILES['videofile']['tmp_name']));
+                    $fs->create_file_from_string($fileinfo, file_get_contents($this->FILES['videofile']['tmp_name']));
                 }
             }
         }
     }
 }
-
-echo '<pre>';
-print_r($urlparse);
-echo '</pre>';
