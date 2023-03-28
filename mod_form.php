@@ -239,9 +239,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $urlparse = \mod_supervideo\util\url::parse($videourl);
         if ($urlparse->engine == "resource") {
 
-            echo '<pre>';
-            print_r($_FILES);
-            echo '</pre>';
             if (@$_FILES['videofile']['error'] === 0) {
 
                 $extension = pathinfo($_FILES['videofile']['name'], PATHINFO_EXTENSION);
