@@ -44,6 +44,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $PAGE->requires->css('/mod/supervideo/style.css');
 
         $mform = $this->_form;
+        $mform->updateAttributes(array('enctype' => 'multipart/form-data'));
 
         // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -207,7 +208,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
                     case UPLOAD_ERR_PARTIAL:
                         $errors['videourl'] = 'Erro 3: O upload do arquivo foi feito parcialmente.';
                         break;
-                    case UPLOAD_ERR_NO_TMP_DIR:
+                    case UPLOAD_ERR_NO_FILE:
+                        $errors['videourl'] = 'Valor: 4; Nenhum arquivo foi carregado.';
+                        break;
+                        case UPLOAD_ERR_NO_TMP_DIR:
                         $errors['videourl'] = 'Erro 6: Pasta temporária ausênte.';
                         break;
                     case UPLOAD_ERR_CANT_WRITE:
@@ -222,6 +226,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 }
             }
         }
+
 
         return $errors;
     }
@@ -272,3 +277,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
     }
 }
+
+echo '<pre>';
+print_r($urlparse);
+echo '</pre>';

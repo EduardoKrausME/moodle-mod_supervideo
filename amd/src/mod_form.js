@@ -44,8 +44,6 @@ define(["jquery"], function($) {
         upload_file : function(engine) {
             $("#id_videourl").after($("#fitem_element_videofile").html());
 
-            $(".mform").attr("enctype", "multipart/form-data");
-
             $("#videofile_file").change(function() {
                 var filePartes = $(this).val().split("\\");
                 var filename = filePartes[filePartes.length - 1];

@@ -62,6 +62,9 @@
         display: none;
     }
     .input-wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
         #fitem_id_videofile_file {
             user-select: none;
         }
