@@ -60,10 +60,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
 
         $mform->addElement('html', "
-                <div id='fitem_id_videofile' class='fitem required fitem_ftext' style='display:none'>
-                    <div class='fitemtitle'><label for='id_videofile'>Ou</label></div>
-                    <div class='felement ftext' data-fieldtype='text'>
-                        <div class='input-wrapper'>
+                <div id='fitem_element_videofile' style='display:none'>
+                    <div id='fitem_id_videofile'>
+                        <div class='input-wrapper'>    
+                            Ou
                             <label for='videofile_file'>
                                 Selecione um Áudio MP3 ou um Vídeo MP4 do seu computador
                             </label>
@@ -239,6 +239,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $urlparse = \mod_supervideo\util\url::parse($videourl);
         if ($urlparse->engine == "resource") {
 
+            echo '<pre>';
+            print_r($_FILES);
+            echo '</pre>';
             if (@$_FILES['videofile']['error'] === 0) {
 
                 $extension = pathinfo($_FILES['videofile']['name'], PATHINFO_EXTENSION);

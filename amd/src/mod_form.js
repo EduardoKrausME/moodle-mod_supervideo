@@ -42,9 +42,9 @@ define(["jquery"], function($) {
         },
 
         upload_file : function(engine) {
-            $("#fitem_id_videofile").show();
+            $("#id_videourl").after($("#fitem_element_videofile").html());
 
-            $("#mform1").attr("enctype", "multipart/form-data");
+            $(".mform").attr("enctype", "multipart/form-data");
 
             $("#videofile_file").change(function() {
                 var filePartes = $(this).val().split("\\");

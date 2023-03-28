@@ -382,7 +382,7 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
  * @throws moodle_exception
  * @throws require_login_exception
  */
-function supervideo_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function supervideo_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = array()) {
 
     // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
     if ($context->contextlevel != CONTEXT_MODULE) {
