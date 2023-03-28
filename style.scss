@@ -57,3 +57,23 @@
         font-weight: 700;
     }
 }
+#fitem_id_videofile {
+    input[type='file'] {
+        display: none;
+    }
+    .input-wrapper {
+        #fitem_id_videofile_file {
+            user-select: none;
+        }
+        label {
+            background-color: #3498db;
+            border-radius: 5px;
+            color: #fff;
+            margin: 0 10px 10px;
+            padding: 6px 20px;
+            &:hover {
+                background-color: #2980b9
+            }
+        }
+    }
+}

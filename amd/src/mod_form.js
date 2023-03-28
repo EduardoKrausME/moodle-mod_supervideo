@@ -22,8 +22,8 @@ define(["jquery"], function($) {
         fitem_id_showshowinfo : null,
         fitem_id_autoplay     : null,
 
-        init : function() {
-            console.log("aaa");
+        init : function(engine) {
+            // console.log("aaa");
 
             mod_form.id_videourl = $("#id_videourl");
             mod_form.fitem_id_videosize = $("#fitem_id_videosize");
@@ -34,17 +34,48 @@ define(["jquery"], function($) {
 
             mod_form.id_videourl.change(mod_form.id_videourl_change);
             mod_form.id_videourl_change();
+
+            mod_form.upload_file(engine);
+        },
+
+        upload_file : function(engine) {
+            $("#fitem_id_videofile").show();
+
+            $("#mform1").attr("enctype", "multipart/form-data");
+
+            $("#videofile_file").change(function() {
+                var filePartes = $(this).val().split("\\");
+                var filename = filePartes[filePartes.length - 1];
+
+                $('#videofile_file-name').html(filename);
+
+                mod_form.id_videourl.val("[resource-file:" + filename + "]");
+                mod_form.id_videourl.prop("readonly", true);
+
+                mod_form.id_videourl_change();
+            });
         },
 
         id_videourl_change : function() {
             var url = mod_form.id_videourl.val();
 
-            if (mod_form.testUrlYouTube(url)) {
-                console.log("testUrlYouTube");
+            if (mod_form.testUrlResource(url)) {
+                // console.log("testUrlYouTube");
+                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols.show();
+                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_autoplay.show();
+
+                mod_form.id_videourl.prop("readonly", true);
+
+            } else if (mod_form.testUrlYouTube(url)) {
+                // console.log("testUrlYouTube");
                 mod_form.fitem_id_videosize.show();
                 mod_form.fitem_id_videosize.find("option").hide();
                 mod_form.fitem_id_videosize.find("[value=0]").show();
                 mod_form.fitem_id_videosize.find("[value=1]").show();
+                mod_form.fitem_id_videosize.val(1);
 
                 mod_form.fitem_id_showrel.show();
                 mod_form.fitem_id_showcontrols.show();
@@ -52,7 +83,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlVimeo(url)) {
-                console.log("testUrlVimeo");
+                // console.log("testUrlVimeo");
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();
@@ -60,25 +91,32 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlDrive(url)) {
-                console.log("testUrlDrive");
+                // console.log("testUrlDrive");
                 mod_form.fitem_id_videosize.show();
                 mod_form.fitem_id_videosize.find("option").hide();
                 mod_form.fitem_id_videosize.find("[value=5]").show();
                 mod_form.fitem_id_videosize.find("[value=6]").show();
                 mod_form.fitem_id_videosize.find("[value=7]").show();
+                mod_form.fitem_id_videosize.val(7);
 
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showshowinfo.hide();
                 mod_form.fitem_id_autoplay.hide();
             } else {
-                console.log("else");
+                // console.log("else");
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showshowinfo.hide();
                 mod_form.fitem_id_autoplay.hide();
             }
+        },
+
+        testUrlResource : function(url) {
+            var re = /(\[resource-file:).*/i;
+            var matches = re.exec(url);
+            return matches && matches[1];
         },
 
         testUrlYouTube : function(url) {

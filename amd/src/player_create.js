@@ -15,48 +15,6 @@
 
 define(["jquery", "core/ajax"], function($, Ajax) {
     return progress = {
-        vimeo : function(view_id, return_currenttime, vimeoid, elementId) {
-
-            progress._internal_view_id = view_id;
-
-            var iframe = document.getElementById(elementId);
-            var player = new Vimeo.Player(iframe);
-
-            if (return_currenttime) {
-                player.setCurrentTime(return_currenttime);
-            }
-
-            document.addEventListener("setCurrentTime", function(event) {
-                player.setCurrentTime(event.detail.goCurrentTime);
-            });
-
-            player.on('ended', function() {
-                // console.log("Ended");
-            });
-
-            Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function(dimensions) {
-                var width = dimensions[0];
-                var height = dimensions[1];
-
-                console.log([width, height]);
-
-                progress._internal_resize(width, height);
-            });
-
-            var duration = 0;
-            setInterval(function() {
-                if (duration > 1) {
-                    player.getCurrentTime().then(function(_currenttime) {
-                        _currenttime = parseInt(_currenttime);
-                        progress._internal_saveprogress(player.setCurrentTime, _currenttime, duration);
-                    });
-                } else {
-                    player.getDuration().then(function(_duration) {
-                        duration = _duration;
-                    });
-                }
-            }, 300);
-        },
 
         youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showrel, showcontrols, showshowinfo, autoplay) {
 
@@ -97,9 +55,103 @@ define(["jquery", "core/ajax"], function($, Ajax) {
             setInterval(function() {
                 if (player && player.getCurrentTime != undefined) {
                     var _currenttime = parseInt(player.getCurrentTime());
-                    progress._internal_saveprogress(player.seekTo, _currenttime, player.getDuration());
+                    progress._internal_saveprogress(_currenttime, player.getDuration());
                 }
             }, 150)
+        },
+
+        resource_audio : function(view_id, return_currenttime, elementId, autoplay) {
+            var config = {
+                controls : [
+                    'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'airplay', 'duration'
+                ],
+                tooltips : {controls : true, seek : true},
+                settings : ['speed', 'loop'],
+                autoplay : autoplay,
+                storage  : {enabled : true, key : "id-" + view_id},
+                speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
+            };
+            var player = new Plyr("#" + elementId, config);
+            window.player = player;
+            if (return_currenttime) {
+                player.currentTime = return_currenttime;
+            }
+            document.addEventListener("setCurrentTime", function(event) {
+                player.currentTime = event.detail.goCurrentTime;
+            });
+
+            setInterval(function() {
+                progress._internal_saveprogress(player.currentTime, player.duration);
+            }, 200);
+        },
+        resource_video : function(view_id, return_currenttime, elementId, videosize, autoplay) {
+
+            var config = {
+                controls : [
+                    'play-large', 'play', 'current-time', 'progress', 'duration', 'mute', 'volume',
+                    'settings', 'pip', 'airplay', 'fullscreen'
+                ],
+                tooltips : {controls : true, seek : true},
+                settings : ['speed', 'loop'],
+                autoplay : autoplay,
+                storage  : {enabled : true, key : "id-" + view_id},
+                speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
+            };
+            var player = new Plyr("#" + elementId, config);
+            window.player = player;
+            if (return_currenttime) {
+                player.currentTime = return_currenttime;
+            }
+            document.addEventListener("setCurrentTime", function(event) {
+                player.currentTime = event.detail.goCurrentTime;
+            });
+
+            setInterval(function() {
+                progress._internal_saveprogress(player.currentTime, player.duration);
+            }, 200);
+        },
+
+        vimeo : function(view_id, return_currenttime, vimeoid, elementId) {
+
+            progress._internal_view_id = view_id;
+
+            var iframe = document.getElementById(elementId);
+            var player = new Vimeo.Player(iframe);
+
+            if (return_currenttime) {
+                player.setCurrentTime(return_currenttime);
+            }
+
+            document.addEventListener("setCurrentTime", function(event) {
+                player.setCurrentTime(event.detail.goCurrentTime);
+            });
+
+            player.on('ended', function() {
+                // console.log("Ended");
+            });
+
+            Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function(dimensions) {
+                var width = dimensions[0];
+                var height = dimensions[1];
+
+                console.log([width, height]);
+
+                progress._internal_resize(width, height);
+            });
+
+            var duration = 0;
+            setInterval(function() {
+                if (duration > 1) {
+                    player.getCurrentTime().then(function(_currenttime) {
+                        _currenttime = parseInt(_currenttime);
+                        progress._internal_saveprogress(_currenttime, duration);
+                    });
+                } else {
+                    player.getDuration().then(function(_duration) {
+                        duration = _duration;
+                    });
+                }
+            }, 300);
         },
 
         drive : function(view_id, elementId, videosize) {
@@ -137,7 +189,7 @@ define(["jquery", "core/ajax"], function($, Ajax) {
         _internal_last_percent     : -1,
         _internal_assistido        : [],
         _internal_view_id          : 0,
-        _internal_saveprogress     : function(setCurrentTime, currenttime, duration) {
+        _internal_saveprogress     : function(currenttime, duration) {
 
             if (!duration) {
                 return 0;

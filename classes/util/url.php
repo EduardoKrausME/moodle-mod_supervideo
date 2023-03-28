@@ -28,7 +28,11 @@ class url {
     public static function parse($videourl) {
         $url = new url();
 
-        if (strpos($videourl, "youtube")) {
+        if (strpos($videourl, "[resource-file") === 0) {
+            $item = substr($videourl, 0, -1);
+            $url->videoid = strtolower(pathinfo($item, PATHINFO_EXTENSION));
+            $url->engine = "resource";
+        } else if (strpos($videourl, "youtube")) {
             if (preg_match('/[\?|&]v=([a-zA-Z0-9\-_]{11})/', $videourl, $output)) {
                 $url->videoid = $output[1];
                 $url->engine = "youtube";

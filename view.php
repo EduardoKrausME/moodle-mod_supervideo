@@ -75,10 +75,13 @@ $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
 $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 
-if ($parseurl->videoid) {
-    if ($parseurl->engine == "youtube") {
+//echo '<pre>';
+//print_r($parseurl);
+//echo '</pre>';
 
-        $uniqueid = uniqid();
+if ($parseurl->videoid) {
+    $uniqueid = uniqid();
+    if ($parseurl->engine == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>
               <div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
@@ -94,6 +97,40 @@ if ($parseurl->videoid) {
             $supervideo->autoplay ? 1 : 0
         ]);
 
+    } else if ($parseurl->engine == "resource") {
+        $url = moodle_url::make_pluginfile_url($context->id, "mod_supervideo", 'video', $cm->id, '/', 'video.mp4', false);
+
+        $controls = $supervideo->showcontrols ? "controls" : "";
+        $autoplay = $supervideo->autoplay ? "autoplay" : "";
+
+        echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
+        echo "<script src='https://unpkg.com/plyr@3'></script>";
+        echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
+
+        if ($parseurl->videoid == "mp3") {
+            echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$url}' type='audio/mp3'>
+                  </audio>";
+
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->autoplay ? 1 : 0
+            ]);
+        } else if ($parseurl->videoid == "mp4") {
+            echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$url}' type='video/mp4'>
+                  </video>";
+
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->videosize,
+                $supervideo->autoplay ? 1 : 0
+            ]);
+        }
     } else if ($parseurl->engine == "google-drive") {
         $urlparameters = array(
             $supervideo->showrel ? 'rel=1' : 'rel=0',
@@ -104,7 +141,6 @@ if ($parseurl->videoid) {
 
         $parameters = implode('&amp;', $urlparameters);
 
-        $uniqueid = uniqid();
         echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       src='https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parameters}'></iframe>";
@@ -124,7 +160,6 @@ if ($parseurl->videoid) {
 
         $parametersvimeo = implode('&amp;', $urlparametersvimeo);
 
-        $uniqueid = uniqid();
         echo "<script src='https://player.vimeo.com/api/player.js'></script>
               <iframe id='{$parseurl->engine}-{$uniqueid}' width='640' height='480'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
