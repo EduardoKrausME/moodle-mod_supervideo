@@ -15,6 +15,7 @@
 
 define(["jquery"], function($) {
     return mod_form = {
+        id_name               : null,
         id_videourl           : null,
         fitem_id_videosize    : null,
         fitem_id_showrel      : null,
@@ -25,6 +26,8 @@ define(["jquery"], function($) {
         init : function(engine) {
             // console.log("aaa");
 
+
+            mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
             mod_form.fitem_id_videosize = $("#fitem_id_videosize");
             mod_form.fitem_id_showrel = $("#fitem_id_showrel");
@@ -48,6 +51,10 @@ define(["jquery"], function($) {
                 var filename = filePartes[filePartes.length - 1];
 
                 $('#videofile_file-name').html(filename);
+
+                if (mod_form.id_name.val() == "") {
+                    mod_form.id_name.val(filename.slice(0, -4));
+                }
 
                 mod_form.id_videourl.val("[resource-file:" + filename + "]");
                 mod_form.id_videourl.prop("readonly", true);
