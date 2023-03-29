@@ -61,6 +61,9 @@ define(["jquery", "core/ajax"], function($, Ajax) {
         },
 
         resource_audio : function(view_id, return_currenttime, elementId, autoplay) {
+
+            progress._internal_view_id = view_id;
+
             var config = {
                 controls : [
                     'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'airplay', 'duration'
@@ -85,6 +88,8 @@ define(["jquery", "core/ajax"], function($, Ajax) {
             }, 200);
         },
         resource_video : function(view_id, return_currenttime, elementId, videosize, autoplay) {
+
+            progress._internal_view_id = view_id;
 
             var config = {
                 controls : [

@@ -28,6 +28,9 @@ $string['modulenameplural'] = 'Super Videos';
 $string['videourl'] = 'Video URL Super';
 $string['videourl_help'] = '<h2>Youtube</h2><p>Add a Youtube URL you want to add to the course:</p><address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc<br />https://www.youtube.com/watch?v=kwjhXQUpyvA</address><h2>Google Drive</h2><p>In Google Drive, click share video and set permissions and paste the link here.</p><h2>Vimeo</h2><p>Add a Vimeo URL you want to add to the course:</p><address>Ex: https://vimeo.com/300138942<br />https://vimeo.com/368389657</address>';
 $string['videourl_error'] = 'Super Video URL';
+
+$string['videofile'] = 'Ou selecione um arquivo MP3 ou MP4';
+
 $string['pluginadministration'] = 'Super Videos';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';
 $string['showrel'] = 'Suggested videos';

@@ -75,13 +75,70 @@ $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
 $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 
-//echo '<pre>';
-//print_r($parseurl);
-//echo '</pre>';
 
 if ($parseurl->videoid) {
     $uniqueid = uniqid();
-    if ($parseurl->engine == "youtube") {
+
+
+    if ($parseurl->engine == "link") {
+
+        $controls = $supervideo->showcontrols ? "controls" : "";
+        $autoplay = $supervideo->autoplay ? "autoplay" : "";
+
+        echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
+        echo "<script src='https://unpkg.com/plyr@3'></script>";
+        echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
+
+        echo "<video style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$parseurl->videoid}' type='video/mp4'>
+                  </video>";
+
+        $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
+            (int)$supervideoview->id,
+            $supervideoview->currenttime,
+            "{$parseurl->engine}-{$uniqueid}",
+            $supervideo->videosize,
+            $supervideo->autoplay ? 1 : 0
+        ]);
+
+    } else if ($parseurl->engine == "resource") {
+        $files = get_file_storage()->get_area_files($context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+        $file = reset($files);
+        $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
+        $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false);
+
+        $controls = $supervideo->showcontrols ? "controls" : "";
+        $autoplay = $supervideo->autoplay ? "autoplay" : "";
+
+        echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
+        echo "<script src='https://unpkg.com/plyr@3'></script>";
+        echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
+
+        if ($parseurl->videoid == "mp3") {
+            echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$fullurl}' type='audio/mp3'>
+                  </audio>";
+
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->autoplay ? 1 : 0
+            ]);
+        } else if ($parseurl->videoid == "mp4") {
+            echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$fullurl}' type='video/mp4'>
+                  </video>";
+
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->videosize,
+                $supervideo->autoplay ? 1 : 0
+            ]);
+        }
+    } else if ($parseurl->engine == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>
               <div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
@@ -97,40 +154,6 @@ if ($parseurl->videoid) {
             $supervideo->autoplay ? 1 : 0
         ]);
 
-    } else if ($parseurl->engine == "resource") {
-        $url = moodle_url::make_pluginfile_url($context->id, "mod_supervideo", 'video', $cm->id, '/', 'video.mp4', false);
-
-        $controls = $supervideo->showcontrols ? "controls" : "";
-        $autoplay = $supervideo->autoplay ? "autoplay" : "";
-
-        echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
-        echo "<script src='https://unpkg.com/plyr@3'></script>";
-        echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
-
-        if ($parseurl->videoid == "mp3") {
-            echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                      <source src='{$url}' type='audio/mp3'>
-                  </audio>";
-
-            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                "{$parseurl->engine}-{$uniqueid}",
-                $supervideo->autoplay ? 1 : 0
-            ]);
-        } else if ($parseurl->videoid == "mp4") {
-            echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                      <source src='{$url}' type='video/mp4'>
-                  </video>";
-
-            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                "{$parseurl->engine}-{$uniqueid}",
-                $supervideo->videosize,
-                $supervideo->autoplay ? 1 : 0
-            ]);
-        }
     } else if ($parseurl->engine == "google-drive") {
         $urlparameters = array(
             $supervideo->showrel ? 'rel=1' : 'rel=0',

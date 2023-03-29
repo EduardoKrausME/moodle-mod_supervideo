@@ -51,7 +51,7 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019010303, 'mod', 'supervideo');
     }
 
-    if ($oldversion < 2023032502) {
+    if ($oldversion < 2023032506) {
 
         $tablesupervideoview = new xmldb_table('supervideo_view');
 
@@ -83,7 +83,12 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->add_field($tablesupervideo, $fieldcompletpercent);
         }
 
-        upgrade_plugin_savepoint(true, 2023032502, 'mod', 'supervideo');
+        $fieldvideofile = new xmldb_field('videofile', XMLDB_TYPE_INTEGER, 10);
+        if (!$dbman->field_exists($tablesupervideo, $fieldvideofile)) {
+            $dbman->add_field($tablesupervideo, $fieldvideofile);
+        }
+
+        upgrade_plugin_savepoint(true, 2023032506, 'mod', 'supervideo');
     }
 
     return true;

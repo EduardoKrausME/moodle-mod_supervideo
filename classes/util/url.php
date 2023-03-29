@@ -28,7 +28,10 @@ class url {
     public static function parse($videourl) {
         $url = new url();
 
-        if (strpos($videourl, "[resource-file") === 0) {
+        if (strpos($videourl, "[link]:") === 0) {
+            $url->videoid = substr($videourl, 7);
+            $url->engine = "link";
+        } else if (strpos($videourl, "[resource-file") === 0) {
             $item = substr($videourl, 0, -1);
             $url->videoid = strtolower(pathinfo($item, PATHINFO_EXTENSION));
             $url->engine = "resource";

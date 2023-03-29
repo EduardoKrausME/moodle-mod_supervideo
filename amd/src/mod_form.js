@@ -40,15 +40,9 @@ define(["jquery"], function($) {
         },
 
         upload_file : function(engine) {
-            var fitem_element_videofile = $("#fitem_element_videofile");
-            $("#id_videourl").after(fitem_element_videofile.html());
-            fitem_element_videofile.html("");
 
-            $("#videofile_file").change(function() {
-                var filePartes = $(this).val().split("\\");
-                var filename = filePartes[filePartes.length - 1];
-
-                $('#videofile_file-name').html(filename);
+            $("#id_videofile").change(function() {
+                var filename = $('.filepicker-filename').text();
 
                 if (mod_form.id_name.val() == "") {
                     mod_form.id_name.val(filename.slice(0, -4));

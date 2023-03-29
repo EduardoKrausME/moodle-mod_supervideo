@@ -57,26 +57,18 @@
         font-weight: 700;
     }
 }
-#fitem_id_videofile {
-    input[type='file'] {
-        display: none;
-    }
-    .input-wrapper {
-        display: flex;
-        align-items: center;
-        margin-top: 8px;
-        #fitem_id_videofile_file {
-            user-select: none;
-        }
-        label {
-            background-color: #3498db;
-            border-radius: 5px;
-            color: #fff;
-            margin: 0 10px 10px;
-            padding: 6px 20px;
-            &:hover {
-                background-color: #2980b9
-            }
-        }
-    }
+.plyr--video {
+    width: 100%;
+}
+.plyr__control {
+    margin: 0;
+    
+    text-shadow: none;
+    -webkit-text-shadow: none;
+    
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    
+    appearance: none;
+    -webkit-appearance: none;
 }

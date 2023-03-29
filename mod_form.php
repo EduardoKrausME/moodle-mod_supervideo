@@ -46,7 +46,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform = $this->_form;
         $mform->updateAttributes(array('enctype' => 'multipart/form-data'));
 
-        // Adding the "general" fieldset, where all the common settings are showed.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size' => '48'), array());
@@ -55,24 +54,18 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('text', 'videourl',
-            get_string('videourl', 'mod_supervideo'), array('size' => '60'), array('usefilepicker' => true));
+            get_string('videourl', 'mod_supervideo'), array('size' => '60'), []);
         $mform->setType('videourl', PARAM_TEXT);
         $mform->addRule('videourl', null, 'required', null, 'client');
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
 
-        $mform->addElement('html', "
-                <div id='fitem_element_videofile' style='displa-y:none'>
-                    <div id='fitem_id_videofile'>
-                        <div class='input-wrapper'>    
-                            Ou
-                            <label for='videofile_file'>
-                                Selecione um Áudio MP3 ou um Vídeo MP4 do seu computador
-                            </label>
-                            <input id='videofile_file' type='file' name='videofile'/>
-                            <span id='videofile_file-name'></span>
-                        </div>
-                    </div>
-                </div>");
+
+        $filemanager_options = [
+            'accepted_types' => ['.mp3', '.mp4'],
+            'maxbytes' => 0
+        ];
+        $mform->addElement('filepicker', 'videofile', get_string('videofile', 'mod_supervideo'), null, $filemanager_options);
+        $mform->addHelpButton('packagefile', 'videofile', 'mod_supervideo');
 
         // Adding the standard "intro" and "introformat" fields.
         if ($CFG->branch >= 29) {
@@ -142,6 +135,21 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine]);
     }
 
+    function data_preprocessing(&$default_values) {
+        $draftitemid = file_get_submitted_draft_itemid('videofile');
+        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'package', 0);
+        $defaultvalues['videofile'] = $draftitemid;
+    }
+
+    function definition_after_data() {
+        if ($this->current->instance) {
+            // supervideo not migrated yet
+            return;
+        }
+
+        parent::definition_after_data();
+    }
+
     /**
      * @return array
      * @throws coding_exception
@@ -166,10 +174,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         return $data['complet_percent'];
     }
 
-    private $FILES = null;
-    public function data_preprocessing(&$defaultvalues) {
-        $this->FILES = $_FILES;
-    }
 
     /**
      * @param $data
@@ -179,6 +183,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function validation($data, $files) {
+        global $CFG;
+
+//        echo '<pre>';
+//        print_r($data);
+//        echo '</pre>';die();
 
         $errors = parent::validation($data, $files);
         if (!isset($data['videourl']) || empty($data['videourl'])) {
@@ -192,93 +201,20 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         if ($urlparse->engine == "resource") {
 
-            if (!$this->_cm && @$this->FILES['videofile']['error'] !== 0) {
-                $errors['videourl'] = 'Erro: Nenhum arquivo recebido!';
-
-            } else if (@$this->FILES['videofile']['error'] === 0) {
-                $extension = pathinfo($this->FILES['videofile']['name'], PATHINFO_EXTENSION);
-                $extension = strtolower($extension);
-
-                if ($extension == "mp4" || $extension == "mp3") {
-                    // OK
-                } else {
-                    $errors['videourl'] = 'Somente arquivos MP3 e MP4 são permitidos!';
-                }
-
+            if (empty($data['videofile'])) {
+                // Field missing.
+                $errors['videofile'] = get_string('required');
             } else {
-                switch ($this->FILES['videofile']['error']) {
-                    case UPLOAD_ERR_INI_SIZE:
-                        $errors['videourl'] = 'Erro 1: O arquivo enviado excede o limite definido na diretiva upload_max_filesize do php.ini.';
-                        break;
-                    case UPLOAD_ERR_FORM_SIZE:
-                        $errors['videourl'] = 'Erro 2: O arquivo excede o limite definido em MAX_FILE_SIZE no formulário.';
-                        break;
-                    case UPLOAD_ERR_PARTIAL:
-                        $errors['videourl'] = 'Erro 3: O upload do arquivo foi feito parcialmente.';
-                        break;
-                    case UPLOAD_ERR_NO_FILE:
-                        $errors['videourl'] = 'Valor: 4; Nenhum arquivo foi carregado.';
-                        break;
-                    case UPLOAD_ERR_NO_TMP_DIR:
-                        $errors['videourl'] = 'Erro 6: Pasta temporária ausênte.';
-                        break;
-                    case UPLOAD_ERR_CANT_WRITE:
-                        $errors['videourl'] = 'Erro 7: Falha em escrever o arquivo no HD. ' .
-                            'Provavelmente o HD esteja lotado ou com falhas.';
-                        break;
-                    case UPLOAD_ERR_EXTENSION:
-                        $errors['videourl'] = 'Erro 8: Uma extensão do PHP interrompeu o upload do arquivo. ' .
-                            'O PHP não fornece uma maneira de determinar qual extensão causou a interrupção. ' .
-                            'Examinar a lista das extensões carregadas com o phpinfo() pode ajudar.';
-                        break;
+                $files = $this->get_draft_files('videofile');
+                if (count($files) < 1) {
+                    // No file uploaded.
+                    $errors['videofile'] = get_string('required');
+                } else {
+
                 }
             }
         }
 
         return $errors;
-    }
-
-    /**
-     * @param  array $defaultvalues
-     *
-     * @throws coding_exception
-     * @throws file_exception
-     */
-    public function data_postprocessing($data) {
-
-        $urlparse = \mod_supervideo\util\url::parse($data->videourl);
-        if ($urlparse->engine == "resource") {
-
-            if (@$this->FILES['videofile']['error'] === 0) {
-
-                $extension = pathinfo($this->FILES['videofile']['name'], PATHINFO_EXTENSION);
-                $extension = strtolower($extension);
-
-                if ($extension == "mp4" || $extension == "mp3") {
-                    $fs = get_file_storage();
-                    $fileinfo = [
-                        'contextid' => $this->get_context()->id,
-                        'component' => 'mod_supervideo',
-                        'filearea' => 'video',
-                        'itemid' => $this->_cm->id,
-                        'filepath' => '/',
-                        'filename' => 'video.mp4'
-                    ];
-
-                    $fileDelete = get_file_storage()->get_file(
-                        $fileinfo['contextid'],
-                        $fileinfo['component'],
-                        $fileinfo['filearea'],
-                        $fileinfo['itemid'],
-                        $fileinfo['filepath'],
-                        $fileinfo['filename']);
-                    if ($fileDelete) {
-                        $fileDelete->delete();
-                    }
-
-                    $fs->create_file_from_string($fileinfo, file_get_contents($this->FILES['videofile']['tmp_name']));
-                }
-            }
-        }
     }
 }

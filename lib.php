@@ -138,17 +138,40 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
  *
  * @return bool|int
  * @throws dml_exception
+ * @throws coding_exception
  */
 function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $mform = null) {
     global $DB;
 
     $supervideo->timecreated = time();
-
     $supervideo->id = $DB->insert_record('supervideo', $supervideo);
 
     supervideo_grade_item_update($supervideo);
+    supervideo_set_mainfile($supervideo);
 
     return $supervideo->id;
+}
+
+/**
+ * @param $supervideo
+ *
+ * @throws coding_exception
+ */
+function supervideo_set_mainfile($supervideo) {
+    $fs = get_file_storage();
+    $cmid = $supervideo->coursemodule;
+    $draftitemid = $supervideo->videofile;
+
+    $context = context_module::instance($cmid);
+    if ($draftitemid) {
+        $options = ['subdirs' => true, 'embed' => true];
+        file_save_draft_area_files($draftitemid, $context->id, 'mod_supervideo', 'content', $supervideo->id, $options);
+    }
+    $files = $fs->get_area_files($context->id, 'mod_supervideo', 'content', 0, 'sortorder', false);
+    if (count($files) == 1) {
+        $file = reset($files);
+        file_set_sortorder($context->id, 'mod_supervideo', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
+    }
 }
 
 /**
@@ -180,6 +203,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
  *
  * @return bool
  * @throws dml_exception
+ * @throws coding_exception
  */
 function supervideo_delete_instance($id) {
     global $DB;
@@ -187,28 +211,12 @@ function supervideo_delete_instance($id) {
     if (!$supervideo = $DB->get_record('supervideo', array('id' => $id))) {
         return false;
     }
-
-    $cm = get_coursemodule_from_id('supervideo', $supervideo->id);
-    $fileinfo = [
-        'contextid' => $this->get_context()->id,
-        'component' => 'mod_supervideo',
-        'filearea' => 'video',
-        'itemid' => context_module::instance($cm->id)->id,
-        'filepath' => '/',
-        'filename' => 'video.mp4'
-    ];
-
     $fs = get_file_storage();
-    $fileDelete = $fs->get_file(
-        $fileinfo['contextid'],
-        $fileinfo['component'],
-        $fileinfo['filearea'],
-        $fileinfo['itemid'],
-        $fileinfo['filepath'],
-        $fileinfo['filename']);
+    $cm = get_coursemodule_from_id('supervideo', $supervideo->id);
+    $files = $fs->get_area_files(context_module::instance($cm->id)->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
 
-    if ($fileDelete) {
-        $fileDelete->delete();
+    foreach ($files as $file) {
+        $file->delete();
     }
 
     $DB->delete_records('supervideo', array('id' => $supervideo->id));
@@ -415,6 +423,11 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
     $fs = get_file_storage();
     $file = $fs->get_file($context->id, 'mod_supervideo', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
+        echo '<pre>';
+        print_r([$context->id, 'mod_supervideo', $filearea, $itemid, $filepath, $filename]);
+        echo '</pre>';
+
+        die("aaaa3");
         return false; // The file does not exist.
     }
 
