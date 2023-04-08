@@ -64,7 +64,9 @@ echo $OUTPUT->header();
 
 $extra = "";
 if (has_capability('moodle/course:manageactivities', $context)) {
-    $extra = "<a class='report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
+    $extra = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
+}elseif (has_capability('mod/supervideo:view', $context)) {
+    $extra = "<a class='supervideo-report-link' href='report.php?id={$cm->id}&u={$USER->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
 }
 
 echo $OUTPUT->heading(format_string($supervideo->name) . " " . $extra, 2, 'main', 'supervideoheading');
@@ -102,7 +104,7 @@ if ($parseurl->videoid) {
         ]);
 
     } else if ($parseurl->engine == "resource") {
-        $files = get_file_storage()->get_area_files($context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+        $files = get_file_storage()->get_area_files($context->id, 'mod_supervideo', 'content', 0, 'sortorder DESC, id ASC', false);
         $file = reset($files);
         $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
         $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false);
@@ -202,33 +204,11 @@ if ($parseurl->videoid) {
           </div>";
 }
 
+
+$config = get_config('supervideo');
+$extra = $config->showmapa ? "" : "style='display:none;opacity:0;height:0;'";
 echo $OUTPUT->heading(get_string('seu_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'sua-view');
-echo "<div id='mapa-visualizacao' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>";
+echo "<div id='mapa-visualizacao' data-mapa='" . base64_encode($supervideoview->mapa) . "' {$extra}></div>";
+
 echo '</div>';
 echo $OUTPUT->footer();
-
-if (@$_SERVER['HTTP_X_SERVER_NAVIO_CACHE'] == 'naviocache') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
-        echo "<div class='text-center text-warning'>Servidor COM cache no Navio</div>";
-    }
-    $CFG->wwwroot = 'http://157.230.104.111';
-
-} else if (@$_SERVER['HTTP_X_SERVER_NAVIO_CACHE'] == 'naviocache2') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
-        echo "<div class='text-center text-warning'>Servidor COM cache no Navio</div>";
-    }
-    $CFG->wwwroot = 'http://naviocache-sapura-homolog.leobr.net';
-} else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
-        echo "<div class='text-center text-warning'>Servidor SEM cache no Navio</div>";
-    }
-    $CFG->wwwroot = 'http://64.226.100.132';
-} else if (@$_SERVER['HTTP_X_SERVER_NAVIO'] == 'naviodireto2') {
-    if (strpos($_SERVER['SCRIPT_NAME'], "index.php") > 0 || strpos($_SERVER['SCRIPT_NAME'], "view.php") > 0) {
-        echo "<div class='text-center text-warning'>Servidor SEM cache no Navio</div>";
-    }
-    $CFG->wwwroot = 'http://naviodireto-sapura-homolog.leobr.net';
-} else {
-    $CFG->wwwroot = 'https://sapura-homolog.leobr.net';
-    $CFG->sslproxy = true;
-}
