@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/supervideo/db" VERSION="20090722" COMMENT="XMLDB file for supervideo module"
+<XMLDB PATH="mod/supervideo/db" VERSION="20230406" COMMENT="XMLDB file for supervideo module."
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
     <TABLES>
-
-        <TABLE NAME="supervideo" COMMENT="Each record is a supervideo resource">
+        <TABLE NAME="supervideo" COMMENT="Each record is a supervideo resource.">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="videourl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="videofile" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="videosize" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showrel" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showcontrols" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showshowinfo" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="autoplay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="grade_approval" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="complet_percent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
@@ -32,11 +30,9 @@
                 <INDEX NAME="showcontrols" UNIQUE="false" FIELDS="showcontrols"/>
                 <INDEX NAME="showshowinfo" UNIQUE="false" FIELDS="showshowinfo"/>
                 <INDEX NAME="autoplay" UNIQUE="false" FIELDS="autoplay"/>
-
             </INDEXES>
         </TABLE>
-
-        <TABLE NAME="supervideo_view" COMMENT="Save student Video views (Youtube/Vimeo)">
+        <TABLE NAME="supervideo_view" COMMENT="Save student Video views (Youtube/Vimeo/Google Drive/Upload).">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="cm_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -44,7 +40,7 @@
                 <FIELD NAME="currenttime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="duration" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="percent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="mapa" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="mapa" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
@@ -56,6 +52,5 @@
                 <INDEX NAME="user_id" UNIQUE="false" FIELDS="user_id"/>
             </INDEXES>
         </TABLE>
-
     </TABLES>
 </XMLDB>
