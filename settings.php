@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
+    $settings->add(new admin_setting_configcheckbox('supervideo/showmapa',
+        get_string('showmapa', 'mod_supervideo'),
+        get_string('showmapa_desc', 'mod_supervideo'), 1));
+
     $settings->add(new admin_setting_configcheckbox('supervideo/showrel',
         get_string('showrel', 'mod_supervideo'),
         get_string('showrel_desc', 'mod_supervideo'), 0));
