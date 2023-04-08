@@ -20,8 +20,6 @@
 
 namespace mod_supervideo\analytics;
 
-use mod_supervideo\grades;
-
 /**
  * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
@@ -77,21 +75,23 @@ class supervideo_view {
      * @throws \moodle_exception
      */
     public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
-        global $DB;
+        global $DB, $USER;
 
-        $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid]);
+        $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
-        grades::update($supervideoview->cm_id, $percent);
+        if ($supervideoview) {
 
-        $supervideoview = (object)[
-            "id" => $viewid,
-            "currenttime" => $currenttime,
-            "duration" => $duration,
-            "percent" => $percent,
-            "mapa" => $mapa,
-            "timemodified" => time(),
-        ];
+            $supervideoview = (object)[
+                "id" => $viewid,
+                "currenttime" => $currenttime,
+                "duration" => $duration,
+                "percent" => $percent,
+                "mapa" => $mapa,
+                "timemodified" => time(),
+            ];
 
-        return $DB->update_record("supervideo_view", $supervideoview);
+            return $DB->update_record("supervideo_view", $supervideoview);
+        }
+        return false;
     }
 }
