@@ -26,15 +26,22 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
+$u = optional_param('u', 0, PARAM_INT);
 $cm = get_coursemodule_from_id('supervideo', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $supervideo = $DB->get_record('supervideo', array('id' => $cm->instance), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-require_capability('moodle/course:manageactivities', $context);
+require_capability('mod/supervideo:view', $context);
 
-$table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id, $supervideo);
+if (!has_capability('moodle/course:manageactivities', $context)) {
+    if (!$u) {
+        redirect("?id={$id}&u={$USER->id}");
+    }
+}
+
+$table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id,$u, $supervideo);
 
 if (!$table->is_downloading()) {
     $PAGE->set_url('/mod/supervideo/report.php', array('id' => $cm->id));
@@ -45,7 +52,7 @@ if (!$table->is_downloading()) {
 
     $linkvoltar = "";
     if ($table->userid) {
-        $linkvoltar = " <a href='?id={$table->cmid}' class='report-link'>Voltar</a>";
+        $linkvoltar = " <a href='?id={$table->cmid}' class='supervideo-report-link'>Voltar</a>";
     }
 
     $title = get_string('report') . ": " . format_string($supervideo->name) . $linkvoltar;
