@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Supervideo View implementation for mod_supervideo.
- */
-
 namespace mod_supervideo\report;
 
 use html_writer;
@@ -25,6 +21,8 @@ use mod_supervideo\util\url;
 use moodle_url;
 
 /**
+ * Supervideo View implementation for mod_supervideo.
+ *
  * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -49,11 +47,11 @@ class supervideo_view extends \table_sql {
      *
      * @throws \coding_exception
      */
-    public function __construct($uniqueid, $cmid, $supervideo) {
+    public function __construct($uniqueid, $cmid, $userid, $supervideo) {
         parent::__construct($uniqueid);
 
         $this->cmid = $cmid;
-        $this->userid = optional_param('u', false, PARAM_INT);
+        $this->userid = $userid;
 
         $this->is_downloadable(true);
         $this->show_download_buttons_at([TABLE_P_BOTTOM]);
@@ -61,7 +59,7 @@ class supervideo_view extends \table_sql {
         $download = optional_param('download', null, PARAM_ALPHA);
         if ($download) {
             raise_memory_limit(MEMORY_EXTRA);
-            $this->is_downloading($download, 'Visualizações de Vídeos do Plugin Super Vídeo', $supervideo->name);
+            $this->is_downloading($download, get_string('report_download_title', 'mod_supervideo'), $supervideo->name);
         }
 
         if ($this->userid) {
@@ -291,7 +289,7 @@ class supervideo_view extends \table_sql {
                                  u.firstname, u.lastname, u.email,
                                  u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                             FROM {supervideo_view} sv
-                            JOIN {user} u ON u.id = sv.user_id
+                            JOIN {user}             u ON u.id = sv.user_id
                            WHERE sv.cm_id   = :cm_id
                              AND sv.user_id = :user_id
                              AND percent    > 0
@@ -329,7 +327,7 @@ class supervideo_view extends \table_sql {
                             FROM {supervideo_view} sv
                             JOIN {user} u ON u.id = sv.user_id
                            WHERE sv.cm_id = :cm_id {$where}
-                        GROUP BY sv.user_id
+                        GROUP BY sv.user_id, sv.cm_id
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
