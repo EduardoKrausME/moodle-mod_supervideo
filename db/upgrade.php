@@ -73,11 +73,6 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $tablesupervideo = new xmldb_table('supervideo');
 
-        $fieldgradeapproval = new xmldb_field('grade_approval', XMLDB_TYPE_INTEGER, 10);
-        if (!$dbman->field_exists($tablesupervideo, $fieldgradeapproval)) {
-            $dbman->add_field($tablesupervideo, $fieldgradeapproval);
-        }
-
         $fieldcompletpercent = new xmldb_field('complet_percent', XMLDB_TYPE_INTEGER, 10);
         if (!$dbman->field_exists($tablesupervideo, $fieldcompletpercent)) {
             $dbman->add_field($tablesupervideo, $fieldcompletpercent);
