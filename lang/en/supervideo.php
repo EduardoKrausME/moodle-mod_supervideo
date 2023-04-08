@@ -28,11 +28,12 @@ $string['modulenameplural'] = 'Super Videos';
 $string['videourl'] = 'Video URL Super';
 $string['videourl_help'] = '<h2>Youtube</h2><p>Add a Youtube URL you want to add to the course:</p><address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc<br />https://www.youtube.com/watch?v=kwjhXQUpyvA</address><h2>Google Drive</h2><p>In Google Drive, click share video and set permissions and paste the link here.</p><h2>Vimeo</h2><p>Add a Vimeo URL you want to add to the course:</p><address>Ex: https://vimeo.com/300138942<br />https://vimeo.com/368389657</address>';
 $string['videourl_error'] = 'Super Video URL';
-
 $string['videofile'] = 'Ou selecione um arquivo MP3 ou MP4';
-
+$string['videofile_help'] = 'You can upload an MP3 or MP4 file, host it on MoodleData and show it in the Super Video player';
 $string['pluginadministration'] = 'Super Videos';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';
+$string['showmapa'] = 'Show Map';
+$string['showmapa_desc'] = 'If checked, show the map after the video player!';
 $string['showrel'] = 'Suggested videos';
 $string['showrel_desc'] = 'Show suggested videos when the video ends (Youtube only)';
 $string['showcontrols'] = 'Controls';
@@ -46,6 +47,7 @@ $string['video_size'] = 'Video size';
 $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
 $string['seu_view'] = 'Your View map:';
 
+$string['report_download_title'] = 'Super Video Plugin Video Views';
 $string['report'] = 'Views report';
 $string['report_userid'] = 'User ID';
 $string['report_nome'] = 'Full name';
@@ -60,10 +62,6 @@ $string['report_visualizacoes'] = 'Visualizations';
 $string['report_assistiu'] = 'Watched when';
 $string['report_all'] = 'All views for this student';
 
-$string['grade_approval'] = 'Set grade for';
-$string['grade_approval_0'] = 'No grades';
-$string['grade_approval_1'] = 'Grade based on percentage of video views';
-
 $string['complet_percent'] = 'Requires percentage';
 $string['complet_percent_help'] = 'Set complete when student views set percentage of video';
 
@@ -72,4 +70,12 @@ $string['no_data'] = 'No records';
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';
 
-$string['privacy:metadata'] = 'The supervideo plugin does not send any personal data to third parties.';
+$string['privacy:metadata:supervideo_view'] = 'Save View Map sessions';
+$string['privacy:metadata:supervideo_view:cm_id'] = 'ID of module being saved';
+$string['privacy:metadata:supervideo_view:user_id'] = 'User ID';
+$string['privacy:metadata:supervideo_view:currenttime'] = 'Current player time saved for if student views video again';
+$string['privacy:metadata:supervideo_view:duration'] = 'Total video duration';
+$string['privacy:metadata:supervideo_view:percent'] = 'Percentage of the map watched. From 0 to 100';
+$string['privacy:metadata:supervideo_view:map'] = 'Viewmap JSON';
+$string['privacy:metadata:supervideo_view:timecreated'] = 'Record creation timestamp';
+$string['privacy:metadata:supervideo_view:timemodified'] = 'Timestamp of last record modification';

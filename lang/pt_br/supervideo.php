@@ -28,11 +28,12 @@ $string['modulenameplural'] = 'Super Vídeo';
 $string['videourl'] = 'URL do vídeo do Youtube<br>Ou Link do vídeo do Vímeo<br>Ou Link do Google Drive';
 $string['videourl_help'] = '<h2>Youtube</h2><p>Adicione uma URL do Youtube que voc&ecirc; deseja adicionar ao curso:</p><address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br/>https://www.youtube.com/watch?v=kwjhXQUpyvA</address><h2>Google Drive</h2><p>No Google Drive, clique em compartilhar v&iacute;deo e defina as permiss&otilde;es e cole o link aqui.</p><h2>Vimeo</h2><p>Adicione uma URL do Vimeo que voc&ecirc; deseja adicionar ao curso:</p><address>Ex: https://vimeo.com/300138942<br/>https://vimeo.com/368389657</address>';
 $string['videourl_error'] = 'URL do Super Vídeo';
-
 $string['videofile'] = 'Ou selecione um arquivo MP3 ou MP4';
-
+$string['videofile_help'] = 'Você pode fazer upload de um arquivo MP3 ou MP4, hospeda-lo na MoodleData e mostrar no player do Super Vídeo';
 $string['pluginadministration'] = 'Super Vídeo';
 $string['modulename_help'] = 'Este módulo adiciona um Vídeos Youtube, Google Drive ou Vimeo dentro do Moodle.';
+$string['showmapa'] = 'Mostrar Mapa';
+$string['showmapa_desc'] = 'Se marcado, mostra o mapa após o player do vídeo!';
 $string['showrel'] = 'Sugestão de vídeos';
 $string['showrel_desc'] = 'Mostrar vídeos sugeridos quando o vídeo terminar (somente Youtube)';
 $string['showcontrols'] = 'Controles';
@@ -46,6 +47,7 @@ $string['video_size'] = 'Tamanho do Player';
 $string['idnotfound'] = 'Link não reconhecido como Youtube, Google Drive ou Vimeo';
 $string['seu_view'] = 'Seu mapa de Visualização:';
 
+$string['report_download_title']='Visualizações de Vídeos do Plugin Super Vídeo';
 $string['report'] = 'Relatório de visualizações';
 $string['report_userid'] = 'User ID';
 $string['report_nome'] = 'Nome Completo';
@@ -60,10 +62,6 @@ $string['report_visualizacoes'] = 'Visualizações';
 $string['report_assistiu'] = 'Assistiu quando';
 $string['report_all'] = 'Todos as visualizações deste aluno';
 
-$string['grade_approval'] = 'Definir nota para';
-$string['grade_approval_0'] = 'Sem notas';
-$string['grade_approval_1'] = 'Nota baseado na porcentagem da visuaização do vídeo';
-
 $string['complet_percent'] = 'Requer porcentagem';
 $string['complet_percent_help'] = 'Definir como concluído quando o aluno visualizar a porcentagem do vídeo definida';
 
@@ -72,4 +70,12 @@ $string['no_data'] = 'Sem registros';
 $string['supervideo:addinstance'] = 'Crie novas atividades com Vídeo';
 $string['supervideo:view'] = 'Ver e interagir com o vídeo';
 
-$string['privacy:metadata'] = 'O plug-in supervídeo não envia nenhum dado pessoal a terceiros.';
+$string['privacy:metadata:supervideo_view'] = 'Guarda as sessões do Mapa de visualização';
+$string['privacy:metadata:supervideo_view:cm_id'] = 'ID do módulo que está sendo guardado';
+$string['privacy:metadata:supervideo_view:user_id'] = 'ID do usuário';
+$string['privacy:metadata:supervideo_view:currenttime'] = 'Tempo atual do player, guardado para se o aluno voltar a asisstir o vídeo';
+$string['privacy:metadata:supervideo_view:duration'] = 'Duração total do vídeo';
+$string['privacy:metadata:supervideo_view:percent'] = 'Porcentagem do mapa assistido. De 0 à 100';
+$string['privacy:metadata:supervideo_view:mapa'] = 'JSON do mapa de visualização';
+$string['privacy:metadata:supervideo_view:timecreated'] = 'Timestamp da criação do registro';
+$string['privacy:metadata:supervideo_view:timemodified'] = 'Timestamp da ultima modificação do registro';
