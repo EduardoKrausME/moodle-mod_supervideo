@@ -129,6 +129,11 @@ if ($parseurl->videoid) {
                     $supervideo->autoplay ? 1 : 0
                 ]);
             }
+        } else {
+            $message = "Arquivo não localizado!";
+            $notification = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
+            $notification->set_show_closebutton(false);
+            echo \html_writer::span($PAGE->get_renderer('core')->render($notification));
         }
     } else if ($parseurl->engine == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>
