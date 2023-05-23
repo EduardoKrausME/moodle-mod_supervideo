@@ -32,6 +32,5 @@ $functions = [
         'description' => 'Save progress video.',
         'type' => 'write',
         'ajax' => true,
-        'capabilities'  => 'mod/supervideo:view'
     ]
 ];
