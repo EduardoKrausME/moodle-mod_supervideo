@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2023040700;
+$plugin->version = 2023052000;
 $plugin->requires = 2014051200;
-$plugin->release = '2.4.5';
+$plugin->release = '2.4.6';
 $plugin->component = 'mod_supervideo';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->cron = 0;
-$plugin->dependencies = array();
+$plugin->dependencies = [];
