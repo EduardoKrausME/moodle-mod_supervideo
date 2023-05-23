@@ -47,8 +47,13 @@
         }
     }
 }
-#fitem_id_complet_percent .ftext::after {
-    content: ' %';
+#fitem_id_complet_percent .felement {
+    align-items: center !important;
+    &::after {
+        content: ' %';
+        margin-left: 6px;
+        font-size: 1.1em;
+    }
 }
 #sua-view {
     margin-bottom: 0 !important;
@@ -57,8 +62,6 @@
         font-weight: 700;
     }
 }
-
-// Plyr.io
 .plyr--video {
     width: 100%;
 }
