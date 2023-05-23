@@ -20,6 +20,8 @@
 
 namespace mod_supervideo\analytics;
 
+use mod_supervideo\grades;
+
 /**
  * @package   mod_supervideo
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
@@ -35,7 +37,7 @@ class supervideo_view {
     public static function create($cmid) {
         global $USER, $DB;
 
-        $sql = "SELECT * FROM {supervideo_view} WHERE cm_id   = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
+        $sql = "SELECT * FROM {supervideo_view} WHERE cm_id = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
         $supervideoview = $DB->get_record_sql($sql, ["cm_id" => $cmid, "user_id" => $USER->id]);
         if ($supervideoview && $supervideoview->percent < 80) {
             return $supervideoview;
@@ -80,6 +82,7 @@ class supervideo_view {
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
+            grades::update($supervideoview->cm_id, $percent);
 
             $supervideoview = (object)[
                 "id" => $viewid,

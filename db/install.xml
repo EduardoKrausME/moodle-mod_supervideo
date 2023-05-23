@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="mod/supervideo/db" VERSION="20230406" COMMENT="XMLDB file for supervideo module."
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
->
+       xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
         <TABLE NAME="supervideo" COMMENT="Each record is a supervideo resource.">
             <FIELDS>
@@ -17,6 +16,7 @@
                 <FIELD NAME="showcontrols" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showshowinfo" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="autoplay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="grade_approval" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="complet_percent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             </FIELDS>
@@ -51,6 +51,17 @@
                 <INDEX NAME="cm_id" UNIQUE="false" FIELDS="cm_id"/>
                 <INDEX NAME="user_id" UNIQUE="false" FIELDS="user_id"/>
             </INDEXES>
+        </TABLE>
+        <TABLE NAME="supervideo_auth" COMMENT="Stores tokens for authenticating users for different actions">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="user_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the user that created the token"/>
+                <FIELD NAME="created_at" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp for when token was created"/>
+                <FIELD NAME="secret" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="Secret used to generate the authentication token"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
         </TABLE>
     </TABLES>
 </XMLDB>

@@ -86,7 +86,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         );
         $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
-        $mform->setType('videosize', PARAM_INT);
         $mform->setDefault('videosize', 1);
 
         $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'mod_supervideo'));
@@ -100,6 +99,25 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);
+
+        // Grade Element.
+        $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
+
+        $values = [
+            0 => get_string('grade_approval_0', 'mod_supervideo'),
+            1 => get_string('grade_approval_1', 'mod_supervideo'),
+        ];
+        $mform->addElement('select', 'grade_approval', get_string('grade_approval', 'mod_supervideo'), $values);
+
+        $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
+            grade_get_categories_menu($COURSE->id, false));
+        $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
+        $mform->disabledIf('gradecat', 'grade_approval', 'eq', '0');
+
+        $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'), ['size' => 4]);
+        $mform->addHelpButton('gradepass', 'gradepass', 'grades');
+        $mform->setType('gradepass', PARAM_INT);
+        $mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
@@ -119,7 +137,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
     function data_preprocessing(&$default_values) {
         $draftitemid = file_get_submitted_draft_itemid('videofile');
-        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', 0);
+        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $default_values['id']);
         $defaultvalues['videofile'] = $draftitemid;
     }
 
@@ -165,15 +183,24 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function validation($data, $files) {
-        global $CFG;
-
-        //        echo '<pre>';
-        //        print_r($data);
-        //        echo '</pre>';die();
 
         $errors = parent::validation($data, $files);
         if (!isset($data['videourl']) || empty($data['videourl'])) {
             $errors['videourl'] = get_string('required');
+        }
+
+        if ($data['complet_percent'] != '') {
+            $data['complet_percent'] = intval($data['complet_percent']);
+            if ($data['complet_percent'] < 1 || $data['complet_percent'] > 100) {
+                $errors['complet_percent'] = get_string('complet_percent_error');
+            }
+        }
+
+        if ($data['gradepass'] != '') {
+            $data['gradepass'] = intval($data['gradepass']);
+            if ($data['gradepass'] < 1 || $data['gradepass'] > 100) {
+                $errors['gradepass'] = get_string('complet_percent_error');
+            }
         }
 
         $urlparse = \mod_supervideo\util\url::parse($data['videourl']);

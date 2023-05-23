@@ -61,7 +61,7 @@ function xmldb_supervideo_upgrade($oldversion) {
         $tablesupervideoview->add_field('currenttime', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $tablesupervideoview->add_field('duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
         $tablesupervideoview->add_field('percent', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $tablesupervideoview->add_field('mapa', XMLDB_TYPE_CHAR, 'small', null, XMLDB_NOTNULL);
+        $tablesupervideoview->add_field('mapa', XMLDB_TYPE_CHAR, null, null, XMLDB_NOTNULL);
         $tablesupervideoview->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
         $tablesupervideoview->add_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
 
@@ -73,17 +73,37 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $tablesupervideo = new xmldb_table('supervideo');
 
+        $fieldgradeapproval = new xmldb_field('grade_approval', XMLDB_TYPE_INTEGER, 10);
+        if (!$dbman->field_exists($tablesupervideo, $fieldgradeapproval)) {
+            $dbman->add_field($tablesupervideo, $fieldgradeapproval);
+        }
+
         $fieldcompletpercent = new xmldb_field('complet_percent', XMLDB_TYPE_INTEGER, 10);
         if (!$dbman->field_exists($tablesupervideo, $fieldcompletpercent)) {
             $dbman->add_field($tablesupervideo, $fieldcompletpercent);
         }
 
-        $fieldvideofile = new xmldb_field('videofile', XMLDB_TYPE_INTEGER, 10);
-        if (!$dbman->field_exists($tablesupervideo, $fieldvideofile)) {
-            $dbman->add_field($tablesupervideo, $fieldvideofile);
-        }
-
         upgrade_plugin_savepoint(true, 2023032506, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2023052000) {
+
+        // Add auth table.
+        $table = new xmldb_table('supervideo_auth');
+
+        // Add fields.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
+        $table->add_field('created_at', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
+        $table->add_field('secret', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL);
+
+        // Add keys and index.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Create table if it does not exist.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
     }
 
     return true;
