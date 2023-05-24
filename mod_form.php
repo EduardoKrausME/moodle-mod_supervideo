@@ -100,24 +100,24 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);
 
-        // Grade Element.
-        $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
-
-        $values = [
-            0 => get_string('grade_approval_0', 'mod_supervideo'),
-            1 => get_string('grade_approval_1', 'mod_supervideo'),
-        ];
-        $mform->addElement('select', 'grade_approval', get_string('grade_approval', 'mod_supervideo'), $values);
-
-        $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
-            grade_get_categories_menu($COURSE->id, false));
-        $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
-        $mform->disabledIf('gradecat', 'grade_approval', 'eq', '0');
-
-        $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'), ['size' => 4]);
-        $mform->addHelpButton('gradepass', 'gradepass', 'grades');
-        $mform->setType('gradepass', PARAM_INT);
-        $mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
+        //// Grade Element.
+        //$mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
+        //
+        //$values = [
+        //    0 => get_string('grade_approval_0', 'mod_supervideo'),
+        //    1 => get_string('grade_approval_1', 'mod_supervideo'),
+        //];
+        //$mform->addElement('select', 'grade_approval', get_string('grade_approval', 'mod_supervideo'), $values);
+        //
+        //$mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
+        //    grade_get_categories_menu($COURSE->id, false));
+        //$mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
+        //$mform->disabledIf('gradecat', 'grade_approval', 'eq', '0');
+        //
+        //$mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'), ['size' => 4]);
+        //$mform->addHelpButton('gradepass', 'gradepass', 'grades');
+        //$mform->setType('gradepass', PARAM_INT);
+        //$mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
