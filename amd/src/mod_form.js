@@ -64,6 +64,8 @@ define(["jquery"], function($) {
 
             console.log(url);
 
+            mod_form.id_videourl.prop("readonly", false);
+
             if (mod_form.testUrlResource(url)) {
                 // console.log("testUrlYouTube");
                 mod_form.fitem_id_videofile.hide();
@@ -112,9 +114,17 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showshowinfo.hide();
                 mod_form.fitem_id_autoplay.hide();
+            }else if (mod_form.testUrlExternalFile(url)) {
+                // console.log("testUrlExternalFile");
+                mod_form.fitem_id_videofile.hide();
+                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols.hide();
+                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_autoplay.show();
             } else {
                 // console.log("else");
-                mod_form.fitem_id_videofile.show();
+                mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
@@ -141,6 +151,12 @@ define(["jquery"], function($) {
         },
         testUrlDrive   : function(url) {
             var re = /https:\/\/(docs.google.com)\//i;
+            var matches = re.exec(url);
+            return matches && matches[1];
+        },
+
+        testUrlExternalFile : function(url) {
+            var re = /^https?.*\.(mp3|mp4)/i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
