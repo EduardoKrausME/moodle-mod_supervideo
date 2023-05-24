@@ -27,16 +27,20 @@ define(["jquery"], function($) {
 
             mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
-            mod_form.fitem_id_videosize = $("#fitem_id_videosize");
-            mod_form.fitem_id_showrel = $("#fitem_id_showrel");
-            mod_form.fitem_id_showcontrols = $("#fitem_id_showcontrols");
-            mod_form.fitem_id_showshowinfo = $("#fitem_id_showshowinfo");
-            mod_form.fitem_id_autoplay = $("#fitem_id_autoplay");
+
+            mod_form.fitem_id_videofile = mod_form.find_fitem("videofile");
+            mod_form.fitem_id_videosize = mod_form.find_fitem("videosize");
+            mod_form.fitem_id_showrel = mod_form.find_fitem("showrel");
+            mod_form.fitem_id_showcontrols = mod_form.find_fitem("showcontrols");
+            mod_form.fitem_id_showshowinfo = mod_form.find_fitem("showshowinfo");
+            mod_form.fitem_id_autoplay = mod_form.find_fitem("autoplay");
 
             mod_form.id_videourl.change(mod_form.id_videourl_change);
             mod_form.id_videourl_change();
 
             mod_form.upload_file(engine);
+
+            console.log("Boraaaaa");
         },
 
         upload_file : function(engine) {
@@ -58,8 +62,11 @@ define(["jquery"], function($) {
         id_videourl_change : function() {
             var url = mod_form.id_videourl.val();
 
+            console.log(url);
+
             if (mod_form.testUrlResource(url)) {
                 // console.log("testUrlYouTube");
+                mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();
@@ -70,6 +77,7 @@ define(["jquery"], function($) {
 
             } else if (mod_form.testUrlYouTube(url)) {
                 // console.log("testUrlYouTube");
+                mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.show();
                 mod_form.fitem_id_videosize.find("option").hide();
                 mod_form.fitem_id_videosize.find("[value=0]").show();
@@ -83,6 +91,7 @@ define(["jquery"], function($) {
 
             } else if (mod_form.testUrlVimeo(url)) {
                 // console.log("testUrlVimeo");
+                mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();
@@ -91,6 +100,7 @@ define(["jquery"], function($) {
 
             } else if (mod_form.testUrlDrive(url)) {
                 // console.log("testUrlDrive");
+                mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.show();
                 mod_form.fitem_id_videosize.find("option").hide();
                 mod_form.fitem_id_videosize.find("[value=5]").show();
@@ -104,6 +114,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_autoplay.hide();
             } else {
                 // console.log("else");
+                mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
@@ -132,6 +143,37 @@ define(["jquery"], function($) {
             var re = /https:\/\/(docs.google.com)\//i;
             var matches = re.exec(url);
             return matches && matches[1];
+        },
+
+        find_fitem : function(fitem_id) {
+            if (document.getElementById("fitem__id" + fitem_id)) {
+                return mod_form.fitem_id_autoplay = $("#fitem__id" + fitem_id);
+            }
+
+            var element = $("#id_" + fitem_id).parent();
+
+            element = element.parent();
+            if (element.hasClass("fitem")) {
+                return element;
+            }
+            element = element.parent();
+            if (element.hasClass("fitem")) {
+                return element;
+            }
+            element = element.parent();
+            if (element.hasClass("fitem")) {
+                return element;
+            }
+            element = element.parent();
+            if (element.hasClass("fitem")) {
+                return element;
+            }
+            element = element.parent();
+            if (element.hasClass("fitem")) {
+                return element;
+            }
+
+            return $("#id_" + fitem_id).parent();
         }
     };
 });
