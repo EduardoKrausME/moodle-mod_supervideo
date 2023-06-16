@@ -57,7 +57,7 @@ define(["jquery", "core/ajax"], function($, Ajax) {
                     var _currenttime = parseInt(player.getCurrentTime());
                     progress._internal_saveprogress(_currenttime, player.getDuration());
                 }
-            }, 150)
+            }, 200)
         },
 
         resource_audio : function(view_id, return_currenttime, elementId, autoplay) {
@@ -156,7 +156,7 @@ define(["jquery", "core/ajax"], function($, Ajax) {
                         duration = _duration;
                     });
                 }
-            }, 300);
+            }, 200);
         },
 
         drive : function(view_id, elementId, videosize) {
@@ -200,9 +200,12 @@ define(["jquery", "core/ajax"], function($, Ajax) {
                 return 0;
             }
 
-            if (progress._internal_last_currenttime == currenttime) {
-                return;
+            if (currenttime > 100) {
+                if (progress._internal_last_currenttime == currenttime) {
+                    return;
+                }
             }
+
             progress._internal_last_currenttime = currenttime;
 
             if (progress._internal_assistido.length == 0) {
