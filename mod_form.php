@@ -189,17 +189,17 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $errors['videourl'] = get_string('required');
         }
 
-        if ($data['complet_percent'] != '') {
+        if (isset($data['complet_percent']) && $data['complet_percent'] != '') {
             $data['complet_percent'] = intval($data['complet_percent']);
             if ($data['complet_percent'] < 1 || $data['complet_percent'] > 100) {
-                $errors['complet_percent'] = get_string('complet_percent_error');
+                $errors['complet_percent'] = get_string('complet_percent_error', 'mod_supervideo');
             }
         }
 
-        if ($data['gradepass'] != '') {
+        if (isset($data['gradepass']) && $data['gradepass'] != '') {
             $data['gradepass'] = intval($data['gradepass']);
             if ($data['gradepass'] < 1 || $data['gradepass'] > 100) {
-                $errors['gradepass'] = get_string('complet_percent_error');
+                $errors['gradepass'] = get_string('complet_percent_error', 'mod_supervideo');
             }
         }
 
@@ -215,7 +215,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $errors['videofile'] = get_string('required');
             } else {
                 $files = $this->get_draft_files('videofile');
-                if (count($files) < 1) {
+                if ($files && count($files) < 1) {
                     // No file uploaded.
                     $errors['videofile'] = get_string('required');
                 } else {

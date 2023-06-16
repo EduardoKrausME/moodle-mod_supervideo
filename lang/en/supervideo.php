@@ -30,26 +30,22 @@ $string['dnduploadlabel-mp3'] = 'Add Audio with Super Video';
 $string['dnduploadlabel-mp4'] = 'Add Video with Super Video';
 $string['dnduploadlabeltext'] = 'Add video with Super Video';
 
-$string['videourl'] = '
-        Youtube Video URL<br>
-        Vimeo Video URL<br>
-        Google Drive URL Link<br>
-        URL of a external MP4|MP3 link.';
-$string['videourl_help'] = '
-        <h4>Youtube</h4>
-        <p>Add a Youtube URL that you used. want to add to the course:</p>
-        <address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br>
-                     https://www.youtube.com/watch?v=kwjhXQUpyvA</address>
-        <h4>Google Drive</h4>
-        <p>In Google Drive, click share video and set permissions and paste the link here.</p>
-        <h4>Vimeo</h4>
-        <p>Add a Vimeo URL that you used. want to add to the course:</p>
-        <address>Ex: https://vimeo.com/300138942<br>
-                     https://vimeo.com/368389657</address>
-        <h4>External video or audio</h4>
-        <p>Add a URL of a video you have hosted on your own server:</p>
-        <address>Ex: https://host.com.br/file/video.mp4<br>
-                     https://host.com.br/file/video.mp3</address>';
+$string['videourl'] = 'Youtube, Vimeo, Google Drive, external URL or MP4/MP3 file.';
+$string['videourl_help'] =
+    '<h4>Youtube</h4>' .
+    '<p>Add a Youtube URL that you used. want to add to the course:</p>' .
+    '<address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br>' .
+    '             https://youtu.be/kwjhXQUpyvA</address>' .
+    '<h4>Google Drive</h4>' .
+    '<p>In Google Drive, click share video and set permissions and paste the link here.</p>' .
+    '<h4>Vimeo</h4>' .
+    '<p>Add a Vimeo URL that you used. want to add to the course:</p>' .
+    '<address>Ex: https://vimeo.com/300138942<br>' .
+    '             https://vimeo.com/368389657</address>' .
+    '<h4>External video or audio</h4>' .
+    '<p>Add a URL of a video you have hosted on your own server:</p>' .
+    '<address>Ex: https://host.com.br/file/video.mp4<br>' .
+    '             https://host.com.br/file/video.mp3</address>';
 $string['videourl_error'] = 'Super Video URL';
 $string['videofile'] = 'Or select an MP3 or MP4 file';
 $string['videofile_help'] = 'You can upload an MP3 or MP4 file, host it on MoodleData and show it in the Super Video player';
@@ -68,7 +64,8 @@ $string['autoplay_desc'] = 'Automatically play the player load';
 $string['video_size'] = 'Video size';
 
 $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
-$string['seu_view'] = 'Your View map:';
+$string['seu_mapa_view'] = 'Your View map:';
+$string['seu_mapa_ir_para'] = 'Go to {$a}';
 
 $string['report'] = 'Views report';
 $string['report_userid'] = 'User ID';

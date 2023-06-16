@@ -27,6 +27,7 @@ require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $n = optional_param('n', 0, PARAM_INT);
+$mobile = optional_param('mobile', 0, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id('supervideo', $id, 0, false, MUST_EXIST);
@@ -38,6 +39,12 @@ if ($id) {
     $cm = get_coursemodule_from_instance('supervideo', $supervideo->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
+}
+
+$secret = optional_param('secret', false, PARAM_TEXT);
+if ($secret) {
+    $user_id = optional_param('user_id', "", PARAM_INT);
+    \mod_supervideo\output\mobile::valid_token($user_id, $secret);
 }
 
 require_course_login($course, true, $cm);
@@ -56,25 +63,37 @@ $event->trigger();
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$PAGE->set_url('/mod/supervideo/view.php', array('id' => $cm->id));
+$params = [
+    'n' => $n,
+    'id' => $id,
+    'mobile' => $mobile
+];
+$PAGE->set_url('/mod/supervideo/view.php', $params);
 $PAGE->requires->css('/mod/supervideo/style.css');
 $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
 
-$extra = "";
-if (has_capability('moodle/course:manageactivities', $context)) {
-    $extra = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
+if ($mobile) {
+    $PAGE->set_pagelayout('embedded');
 }
 
-echo $OUTPUT->heading(format_string($supervideo->name) . " " . $extra, 2, 'main', 'supervideoheading');
+$link_report = "";
+echo $OUTPUT->header();
 
-echo '<div id="supervideo_area_embed">';
+if (has_capability('moodle/course:manageactivities', $context)) {
+    $link_report = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
+}
+
+if ($supervideo->showshowinfo) {
+    echo $OUTPUT->heading(format_string($supervideo->name) . " " . $link_report, 2, 'main', 'supervideoheading');
+    $link_report = "";
+}
+
+echo '<div id="supervideo_area_embed" class="d-flex flex-column align-items-center">';
 
 $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
 $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
-
 
 if ($parseurl->videoid) {
     $uniqueid = uniqid();
@@ -209,11 +228,18 @@ if ($parseurl->videoid) {
           </div>";
 }
 
-
 $config = get_config('supervideo');
-$extra = $config->showmapa ? "" : "style='display:none;opacity:0;height:0;'";
-echo $OUTPUT->heading(get_string('seu_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'sua-view');
-echo "<div id='mapa-visualizacao' data-mapa='" . base64_encode($supervideoview->mapa) . "' {$extra}></div>";
+if ($config->showmapa) {
+    $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
+    echo "<div id='mapa-visualizacao'>
+              <div class='mapa' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>
+              {$text}
+              <div class='clique'></div>
+          </div>";
+}
+if ($link_report) {
+    echo "<div>{$link_report}</div>";
+}
 
 echo '</div>';
 echo $OUTPUT->footer();

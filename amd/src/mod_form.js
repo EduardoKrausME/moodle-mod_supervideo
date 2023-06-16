@@ -39,6 +39,8 @@ define(["jquery"], function($) {
             mod_form.id_videourl_change();
 
             mod_form.upload_file(engine);
+
+            // console.log("Boraaaaa");
         },
 
         upload_file : function(engine) {
@@ -60,13 +62,13 @@ define(["jquery"], function($) {
         id_videourl_change : function() {
             var url = mod_form.id_videourl.val();
 
-            console.log(url);
+            // console.log(url);
 
             mod_form.id_videourl.prop("readonly", false);
 
             if (mod_form.testUrlResource(url)) {
-                // console.log("testUrlResource");
-                mod_form.fitem_id_videofile.hide();
+                // console.log("testUrlYouTube");
+                mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();

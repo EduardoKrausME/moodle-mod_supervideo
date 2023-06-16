@@ -30,26 +30,22 @@ $string['dnduploadlabel-mp3'] = 'Adicionar Áudio com o Super Vídeo';
 $string['dnduploadlabel-mp4'] = 'Adicionar Vídeo com o Super Vídeo';
 $string['dnduploadlabeltext'] = 'Adicionar vídeo com o Super Vídeo';
 
-$string['videourl'] = '
-       URL do vídeo do Youtube<br>
-       URL do vídeo do Vímeo<br>
-       URL Link do Google Drive<br>
-       URL de um link externo de um MP4|MP3.';
-$string['videourl_help'] = '
-        <h4>Youtube</h4>
-        <p>Adicione uma URL do Youtube que voc&ecirc; deseja adicionar ao curso:</p>
-        <address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br>
-                     https://www.youtube.com/watch?v=kwjhXQUpyvA</address>
-        <h4>Google Drive</h4>
-        <p>No Google Drive, clique em compartilhar v&iacute;deo e defina as permiss&otilde;es e cole o link aqui.</p>
-        <h4>Vimeo</h4>
-        <p>Adicione uma URL do Vimeo que voc&ecirc; deseja adicionar ao curso:</p>
-        <address>Ex: https://vimeo.com/300138942<br>
-                     https://vimeo.com/368389657</address>
-        <h4>Vídeo ou áudio externo</h4>
-        <p>Adicione uma URL de um vídeo que você tem hospedado em seu próprio servidor:</p>
-        <address>Ex: https://host.com.br/file/video.mp4<br>
-                     https://host.com.br/file/video.mp3</address>';
+$string['videourl'] = 'Youtube, Vímeo, Google Drive, link externo ou MP4/MP3';
+$string['videourl_help'] =
+    '<h4>Youtube</h4>' .
+    '<p>Adicione uma URL do Youtube que voc&ecirc; deseja adicionar ao curso:</p>' .
+    '<address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br>' .
+    '             https://youtu.be/kwjhXQUpyvA</address>' .
+    '<h4>Google Drive</h4>' .
+    '<p>No Google Drive, clique em compartilhar v&iacute;deo e defina as permiss&otilde;es e cole o link aqui.</p>' .
+    '<h4>Vimeo</h4>' .
+    '<p>Adicione uma URL do Vimeo que voc&ecirc; deseja adicionar ao curso:</p>' .
+    '<address>Ex: https://vimeo.com/300138942<br>' .
+    '             https://vimeo.com/368389657</address>' .
+    '<h4>Vídeo ou áudio externo</h4>' .
+    '<p>Adicione uma URL de um vídeo que você tem hospedado em seu próprio servidor:</p>' .
+    '<address>Ex: https://host.com.br/file/video.mp4<br>' .
+    '             https://host.com.br/file/video.mp3</address>';
 $string['videourl_error'] = 'URL do Super Vídeo';
 $string['videofile'] = 'Ou selecione um arquivo MP3 ou MP4';
 $string['videofile_help'] = 'Você pode fazer upload de um arquivo MP3 ou MP4, hospeda-lo na MoodleData e mostrar no player do Super Vídeo';
@@ -68,7 +64,8 @@ $string['autoplay_desc'] = 'Reproduzir automaticamnete carregar o player';
 $string['video_size'] = 'Tamanho do Player';
 
 $string['idnotfound'] = 'Link não reconhecido como Youtube, Google Drive ou Vimeo';
-$string['seu_view'] = 'Seu mapa de Visualização:';
+$string['seu_mapa_view'] = 'Seu mapa de Visualização:';
+$string['seu_mapa_ir_para'] = 'Ir para {$a}';
 
 $string['report'] = 'Relatório de visualizações';
 $string['report_userid'] = 'User ID';

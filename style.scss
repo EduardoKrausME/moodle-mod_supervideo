@@ -21,22 +21,54 @@
     display: none;
 }
 #mapa-visualizacao {
-    display: flex;
-    margin: 0 13px;
+    margin: 5px 13px;
     background: rgba(206, 206, 206, 0.5);
     padding: 1px;
-    div {
-        height: 4px;
-        background: #e60076;
+    width: 100%;
+    position: relative;
+    .mapa,
+    .clique {
+        display: flex;
         width: 100%;
-        opacity: 0;
-        transition: opacity 200ms;
-        cursor: pointer;
-        &:hover {
-            background: #6e0038;
-            opacity: 1;
-            margin: -5px 0;
-            height: 14px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        div {
+            height: 100%;
+            background: #e60076;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 200ms;
+        }
+    }
+    .clique {
+        z-index: 3;
+        div {
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0);
+            &:hover {
+                background: rgba(0, 0, 0, 0.2);
+                opacity: 1;
+            }
+        }
+    }
+    #seu-mapa-view {
+        margin: -3px 0 !important;
+        padding-bottom: 0;
+        font-size: 8px;
+        position: relative;
+        z-index: 2;
+        color: #000;
+        text-align: center;
+        transition: all ease 0.3s;
+        span {
+            font-weight: 700;
+        }
+    }
+    &:hover {
+        #seu-mapa-view {
+            font-size: 15px;
+            margin: 3px 0 !important;
         }
     }
     &.report {
@@ -55,13 +87,6 @@
         font-size: 1.1em;
     }
 }
-#sua-view {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-    span {
-        font-weight: 700;
-    }
-}
 .plyr--video {
     width: 100%;
 }
@@ -76,4 +101,9 @@
     
     appearance: none;
     -webkit-appearance: none;
+}
+@media (max-width: 750px) {
+    .plyr__volume {
+        display: none !important;
+    }
 }
