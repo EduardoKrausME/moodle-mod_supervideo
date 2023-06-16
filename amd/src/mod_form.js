@@ -39,8 +39,6 @@ define(["jquery"], function($) {
             mod_form.id_videourl_change();
 
             mod_form.upload_file(engine);
-
-            console.log("Boraaaaa");
         },
 
         upload_file : function(engine) {
@@ -67,7 +65,7 @@ define(["jquery"], function($) {
             mod_form.id_videourl.prop("readonly", false);
 
             if (mod_form.testUrlResource(url)) {
-                // console.log("testUrlYouTube");
+                // console.log("testUrlResource");
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
@@ -124,7 +122,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_autoplay.show();
             } else {
                 // console.log("else");
-                mod_form.fitem_id_videofile.hide();
+                mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
