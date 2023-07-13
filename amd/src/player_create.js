@@ -186,6 +186,8 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
             } else {
                 progress._internal_resize(480, 640);
             }
+
+            $("#mapa-visualizacao").hide();
         },
 
         _internal_resize : function(width, height) {

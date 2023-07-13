@@ -200,6 +200,8 @@ if ($parseurl->videoid) {
             $supervideo->videosize
         ]);
 
+        $config->showmapa = false;
+
     } else if ($parseurl->engine == "vimeo") {
         $urlparametersvimeo = [
             $supervideo->showcontrols ? 'title=true' : 'title=false',
