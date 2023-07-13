@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
+define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return progress = {
 
         youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showrel, showcontrols, showshowinfo, autoplay) {
@@ -75,7 +75,7 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                 storage  : {enabled : true, key : "id-" + view_id},
                 speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
             };
-            var player = new Plyr("#" + elementId, config);
+            var player = new PlayerRender("#" + elementId, config);
             window.player = player;
             if (return_currenttime) {
                 var video = document.getElementById(elementId);
@@ -109,7 +109,7 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                 storage  : {enabled : true, key : "id-" + view_id},
                 speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
             };
-            var player = new Plyr("#" + elementId, config);
+            var player = new PlayerRender("#" + elementId, config);
             window.player = player;
             if (return_currenttime) {
                 var video = document.getElementById(elementId);

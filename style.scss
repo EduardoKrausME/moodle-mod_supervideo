@@ -87,6 +87,8 @@
         font-size: 1.1em;
     }
 }
+@import "style_player";
+
 .plyr--video {
     width: 100%;
 }
@@ -101,6 +103,9 @@
     
     appearance: none;
     -webkit-appearance: none;
+}
+.plyr--full-ui.plyr--video .plyr__control--overlaid {
+    zoom: 1.4;
 }
 @media (max-width: 750px) {
     .plyr__volume {

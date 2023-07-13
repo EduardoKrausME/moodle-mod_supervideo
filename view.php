@@ -104,10 +104,6 @@ if ($parseurl->videoid) {
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
 
-        echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
-        echo "<script src='https://unpkg.com/plyr@3'></script>";
-        echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
-
         echo "<video style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
                       <source src='{$parseurl->videoid}' type='video/mp4'>
                   </video>";
@@ -129,10 +125,6 @@ if ($parseurl->videoid) {
 
             $controls = $supervideo->showcontrols ? "controls" : "";
             $autoplay = $supervideo->autoplay ? "autoplay" : "";
-
-            echo "<script src='https://cdn.polyfill.io/v2/polyfill.min.js?features=es6,Array.prototype.includes,CustomEvent,Object.entries,Object.values,URL'></script>";
-            echo "<script src='https://unpkg.com/plyr@3'></script>";
-            echo "<link rel='stylesheet' href='https://unpkg.com/plyr@3/dist/plyr.css'>";
 
             if ($parseurl->videoid == "mp3") {
                 echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
