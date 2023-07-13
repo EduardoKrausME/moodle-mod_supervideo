@@ -38,6 +38,7 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                         } else {
                             progress._internal_resize(4, 3);
                         }
+                        progress._internal_max_height();
 
                         if (return_currenttime) {
                             player.seekTo(return_currenttime);
@@ -57,7 +58,7 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                     var _currenttime = parseInt(player.getCurrentTime());
                     progress._internal_saveprogress(_currenttime, player.getDuration());
                 }
-            }, 150)
+            }, 150);
         },
 
         resource_audio : function(view_id, return_currenttime, elementId, autoplay) {
@@ -77,18 +78,16 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
             var player = new Plyr("#" + elementId, config);
             window.player = player;
             if (return_currenttime) {
-                // console.log(return_currenttime);
                 var video = document.getElementById(elementId);
                 video.addEventListener("loadedmetadata", function(event) {
-                    // console.log(return_currenttime);
                     player.currentTime = return_currenttime;
                 });
                 player.currentTime = return_currenttime;
             }
 
-            // document.addEventListener("setCurrentTime", function(event) {
-            //     player.currentTime = event.detail.goCurrentTime;
-            // });
+            document.addEventListener("setCurrentTime", function(event) {
+                player.currentTime = event.detail.goCurrentTime;
+            });
 
             setInterval(function() {
                 progress._internal_saveprogress(player.currentTime, player.duration);
@@ -113,11 +112,11 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
             var player = new Plyr("#" + elementId, config);
             window.player = player;
             if (return_currenttime) {
-                // console.log(return_currenttime);
                 var video = document.getElementById(elementId);
                 video.addEventListener("loadedmetadata", function(event) {
-                    // console.log(return_currenttime);
                     player.currentTime = return_currenttime;
+
+                    progress._internal_max_height();
                 });
                 player.currentTime = return_currenttime;
             }
@@ -153,9 +152,8 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                 var width = dimensions[0];
                 var height = dimensions[1];
 
-                // console.log([width, height]);
-
                 progress._internal_resize(width, height);
+                progress._internal_max_height();
             });
 
             var duration = 0;
@@ -181,8 +179,10 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
 
             if (videosize == 6) {
                 progress._internal_resize(4, 3);
+                progress._internal_max_height();
             } else if (videosize == 7) {
                 progress._internal_resize(16, 9);
+                progress._internal_max_height();
             } else {
                 progress._internal_resize(480, 640);
             }
@@ -201,6 +201,33 @@ define(["jquery", "core/ajax", "core/str"], function($, Ajax, str) {
                     width  : videoBoxWidth,
                     height : videoBoxHeight,
                 });
+            }
+        },
+
+        _internal_max_height : function() {
+            $(window).resize(_resizePage);
+            _resizePage();
+
+            function _resizePage() {
+
+                var $supervideo_area_embed = $("#supervideo_area_embed");
+
+                $supervideo_area_embed.css({
+                    "max-height" : "inherit",
+                    "height"     : "inherit",
+                });
+
+                var header_height = ($("#header") && $("#header").height()) || 60;
+                var window_height = $(window).height();
+
+                var player_max_height = window_height - header_height;
+
+                if ($supervideo_area_embed.height() > player_max_height) {
+                    $supervideo_area_embed.css({
+                        "max-height" : player_max_height,
+                        "height"     : player_max_height
+                    });
+                }
             }
         },
 
