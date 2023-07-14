@@ -87,6 +87,7 @@ class supervideo_view extends \table_sql {
                 get_string('report_comecou', 'mod_supervideo'),
                 get_string('report_terminou', 'mod_supervideo'),
             ];
+
             if (url::parse($supervideo->videourl)->engine == "drive") {
                 unset($columns[8]);
                 unset($columns[6]);
@@ -99,6 +100,9 @@ class supervideo_view extends \table_sql {
                 unset($headers[5]);
                 unset($headers[4]);
                 unset($headers[3]);
+            } else if ($this->is_downloading()) {
+                unset($columns[6]);
+                unset($headers[6]);
             }
         } else {
             $columns = [
@@ -265,7 +269,7 @@ class supervideo_view extends \table_sql {
     }
 
     /**
-     * @param int  $pagesize
+     * @param int $pagesize
      * @param bool $useinitialsbar
      *
      * @throws \dml_exception

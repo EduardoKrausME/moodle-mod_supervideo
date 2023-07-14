@@ -367,7 +367,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
 function supervideo_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get('coursereports');
     if (has_capability('mod/supervideo:view_report', $context)) {
-        $url = new moodle_url('/mod/supervideo/index.php', ['id' => $course->id]);
+        $url = new moodle_url('/mod/supervideo/reports.php', ['course' => $course->id]);
         $node->add(get_string('pluginname', 'supervideo'), $url, navigation_node::TYPE_SETTING, null, null,
             new pix_icon('i/report', ''));
     }
