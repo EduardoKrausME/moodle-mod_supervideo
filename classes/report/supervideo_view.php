@@ -49,11 +49,11 @@ class supervideo_view extends \table_sql {
      *
      * @throws \coding_exception
      */
-    public function __construct($uniqueid, $cmid, $supervideo) {
+    public function __construct($uniqueid, $cmid, $userid, $supervideo) {
         parent::__construct($uniqueid);
 
         $this->cmid = $cmid;
-        $this->userid = optional_param('u', false, PARAM_INT);
+        $this->userid = $userid;
 
         $this->is_downloadable(true);
         $this->show_download_buttons_at([TABLE_P_BOTTOM]);

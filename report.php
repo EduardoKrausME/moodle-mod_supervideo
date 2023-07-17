@@ -35,7 +35,11 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/supervideo:view_report', $context);
 
-$table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id, $supervideo);
+if (!has_capability('moodle/course:manageactivities', $context, $USER)) {
+    $userid = $USER->id;
+}
+
+$table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id, $userid, $supervideo);
 
 if (!$table->is_downloading()) {
     $PAGE->set_url('/mod/supervideo/report.php', array('id' => $cm->id));
