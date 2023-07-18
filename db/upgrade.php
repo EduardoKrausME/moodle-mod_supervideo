@@ -104,6 +104,19 @@ function xmldb_supervideo_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
+
+        upgrade_plugin_savepoint(true, 2023052000, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2023071800) {
+
+        $table = new xmldb_table('supervideo');
+        $field = new xmldb_field("showinfo", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, 'showcontrols');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'showinfo');
+        }
+
+        upgrade_plugin_savepoint(true, 2023071800, 'mod', 'supervideo');
     }
 
     return true;

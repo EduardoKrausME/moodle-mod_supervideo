@@ -14,7 +14,7 @@
                 <FIELD NAME="videosize" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showrel" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showcontrols" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="showshowinfo" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="showinfo" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="autoplay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="grade_approval" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="complet_percent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
@@ -28,7 +28,7 @@
                 <INDEX NAME="videosize" UNIQUE="false" FIELDS="videosize"/>
                 <INDEX NAME="showrel" UNIQUE="false" FIELDS="showrel"/>
                 <INDEX NAME="showcontrols" UNIQUE="false" FIELDS="showcontrols"/>
-                <INDEX NAME="showshowinfo" UNIQUE="false" FIELDS="showshowinfo"/>
+                <INDEX NAME="showinfo" UNIQUE="false" FIELDS="showinfo"/>
                 <INDEX NAME="autoplay" UNIQUE="false" FIELDS="autoplay"/>
             </INDEXES>
         </TABLE>

@@ -80,7 +80,7 @@ function supervideo_grade_item_update($supervideo, $grades = null) {
 
 /**
  * @param      $supervideo
- * @param int  $userid
+ * @param int $userid
  * @param bool $nullifnone
  *
  * @return null
@@ -133,7 +133,7 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
 }
 
 /**
- * @param stdClass                     $supervideo
+ * @param stdClass $supervideo
  * @param mod_supervideo_mod_form|null $mform
  *
  * @return bool|int
@@ -178,7 +178,7 @@ function supervideo_set_mainfile($supervideo) {
 /**
  * function supervideo_update_instance
  *
- * @param stdClass                     $supervideo
+ * @param stdClass $supervideo
  * @param mod_supervideo_mod_form|null $mform
  *
  * @return bool
@@ -327,7 +327,7 @@ function supervideo_get_coursemodule_info($coursemodule) {
 
 /**
  * @param settings_navigation $settings
- * @param navigation_node     $supervideonode
+ * @param navigation_node $supervideonode
  *
  * @return void
  * @throws \coding_exception
@@ -381,13 +381,13 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
 /**
  * Serve the files from the supervideo file areas
  *
- * @param stdClass $course        the course object
- * @param stdClass $cm            the course module object
- * @param stdClass $context       the context
- * @param string   $filearea      the name of the file area
- * @param array    $args          extra arguments (itemid, path)
- * @param bool     $forcedownload whether or not force download
- * @param array    $options       additional options affecting the file serving
+ * @param stdClass $course the course object
+ * @param stdClass $cm the course module object
+ * @param stdClass $context the context
+ * @param string $filearea the name of the file area
+ * @param array $args extra arguments (itemid, path)
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  *
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  * @throws coding_exception
@@ -521,7 +521,7 @@ function supervideo_dndupload_handle($uploadinfo) {
     $data->videosize = 1;
     $data->showrel = 0;
     $data->showcontrols = 1;
-    $data->showshowinfo = 0;
+    $data->showinfo = 0;
     $data->autoplay = 0;
     $data->grade_approval = 0;
 

@@ -84,7 +84,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
     $link_report = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
 }
 
-if ($supervideo->showshowinfo) {
+if ($supervideo->showinfo) {
     echo $OUTPUT->heading(format_string($supervideo->name) . " " . $link_report, 2, 'main', 'supervideoheading');
     $link_report = "";
 }
@@ -168,7 +168,7 @@ if ($parseurl->videoid) {
             $supervideo->videosize,
             $supervideo->showrel ? 1 : 0,
             $supervideo->showcontrols ? 1 : 0,
-            $supervideo->showshowinfo ? 1 : 0,
+            $supervideo->showinfo ? 1 : 0,
             $supervideo->autoplay ? 1 : 0
         ]);
 
@@ -176,7 +176,7 @@ if ($parseurl->videoid) {
         $urlparameters = array(
             $supervideo->showrel ? 'rel=1' : 'rel=0',
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
-            $supervideo->showshowinfo ? 'showinfo=1' : 'showinfo=0',
+            $supervideo->showinfo ? 'showinfo=1' : 'showinfo=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
         );
 

@@ -94,8 +94,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'mod_supervideo'));
         $mform->setDefault('showcontrols', $config->showcontrols);
 
-        $mform->addElement('advcheckbox', 'showshowinfo', get_string('showshowinfo_desc', 'mod_supervideo'));
-        $mform->setDefault('showshowinfo', $config->showshowinfo);
+        $mform->addElement('advcheckbox', 'showinfo', get_string('showinfo_desc', 'mod_supervideo'));
+        $mform->setDefault('showinfo', $config->showinfo);
 
         $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
         $mform->setDefault('autoplay', $config->autoplay);

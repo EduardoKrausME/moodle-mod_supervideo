@@ -46,7 +46,7 @@ foreach ($videotimes as $videotime) {
         'showrel' => 0,
         'videosize' => 1,
         'showcontrols' => 1,
-        'showshowinfo' => 0,
+        'showinfo' => 0,
         'autoplay' => 0,
         'timemodified' => $videotime->timemodified,
     ];

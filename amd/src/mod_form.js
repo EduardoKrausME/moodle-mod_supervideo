@@ -20,7 +20,7 @@ define(["jquery"], function($) {
         fitem_id_videosize    : null,
         fitem_id_showrel      : null,
         fitem_id_showcontrols : null,
-        fitem_id_showshowinfo : null,
+        fitem_id_showinfo : null,
         fitem_id_autoplay     : null,
 
         init : function(engine) {
@@ -32,7 +32,7 @@ define(["jquery"], function($) {
             mod_form.fitem_id_videosize = mod_form.find_fitem("videosize");
             mod_form.fitem_id_showrel = mod_form.find_fitem("showrel");
             mod_form.fitem_id_showcontrols = mod_form.find_fitem("showcontrols");
-            mod_form.fitem_id_showshowinfo = mod_form.find_fitem("showshowinfo");
+            mod_form.fitem_id_showinfo = mod_form.find_fitem("showinfo");
             mod_form.fitem_id_autoplay = mod_form.find_fitem("autoplay");
 
             mod_form.id_videourl.change(mod_form.id_videourl_change);
@@ -72,7 +72,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay.show();
 
                 mod_form.id_videourl.prop("readonly", true);
@@ -88,7 +88,7 @@ define(["jquery"], function($) {
 
                 mod_form.fitem_id_showrel.show();
                 mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showshowinfo.show();
+                mod_form.fitem_id_showinfo.show();
                 mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlVimeo(url)) {
@@ -97,7 +97,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showshowinfo.show();
+                mod_form.fitem_id_showinfo.show();
                 mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlDrive(url)) {
@@ -112,7 +112,7 @@ define(["jquery"], function($) {
 
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay.hide();
             }else if (mod_form.testUrlExternalFile(url)) {
                 // console.log("testUrlExternalFile");
@@ -120,7 +120,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay.show();
             } else {
                 // console.log("else");
@@ -128,7 +128,7 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.hide();
                 mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showshowinfo.hide();
+                mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay.hide();
             }
         },
