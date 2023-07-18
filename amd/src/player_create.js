@@ -25,10 +25,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 videoId          : videoid,
                 width            : '100%',
                 playerVars       : {
-                    showrel      : showrel,
-                    showcontrols : showcontrols,
-                    showshowinfo : showshowinfo,
-                    autoplay     : autoplay
+                    rel      : showrel,
+                    controls : showcontrols,
+                    showinfo : showshowinfo,
+                    autoplay : autoplay,
                 },
                 events           : {
                     'onReady'       : function(event) {
@@ -192,18 +192,32 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         _internal_resize : function(width, height) {
 
-            $(window).resize(_resizePage);
-            _resizePage();
-
             function _resizePage() {
                 var videoBoxWidth = $("#supervideo_area_embed").width();
                 var videoBoxHeight = videoBoxWidth * height / width;
 
                 $("#supervideo_area_embed iframe").css({
-                    width  : videoBoxWidth,
+                    //width  : videoBoxWidth,
                     height : videoBoxHeight,
                 });
             }
+
+            $(window).resize(_resizePage);
+            _resizePage();
+
+
+            var element = $("#supervideo_area_embed");
+            var lastWidth = element.width();
+            setInterval(function() {
+                if (lastWidth === element.width()) return;
+                lastWidth = element.width();
+
+                _resizePage();
+            }, 500);
+
+
+            return element;
+
         },
 
         _internal_max_height : function() {
