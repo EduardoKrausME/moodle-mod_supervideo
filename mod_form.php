@@ -191,14 +191,20 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         if (isset($data['complet_percent']) && $data['complet_percent'] != '') {
             $data['complet_percent'] = intval($data['complet_percent']);
-            if ($data['complet_percent'] < 1 || $data['complet_percent'] > 100) {
+            if ($data['complet_percent'] < 1) {
+                $data['complet_percent'] = "";
+            }
+            if ($data['complet_percent'] > 100) {
                 $errors['complet_percent'] = get_string('complet_percent_error', 'mod_supervideo');
             }
         }
 
         if (isset($data['gradepass']) && $data['gradepass'] != '') {
             $data['gradepass'] = intval($data['gradepass']);
-            if ($data['gradepass'] < 1 || $data['gradepass'] > 100) {
+            if ($data['gradepass'] < 1) {
+                $data['gradepass'] = "";
+            }
+            if ($data['gradepass'] > 100) {
                 $errors['gradepass'] = get_string('complet_percent_error', 'mod_supervideo');
             }
         }
