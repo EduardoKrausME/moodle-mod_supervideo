@@ -74,8 +74,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
-        $config = get_config('supervideo');
-
         $sizeoptions = array(
             0 => 'Vídeo ED (4x3)',
             1 => 'Vídeo HD (16x9)',
@@ -88,17 +86,27 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
         $mform->setDefault('videosize', 1);
 
-        $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'mod_supervideo'));
-        $mform->setDefault('showrel', $config->showrel);
+        $config = get_config('supervideo');
 
-        $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'mod_supervideo'));
-        $mform->setDefault('showcontrols', $config->showcontrols);
+        if ($config->showrel <= 1) {
+            $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'mod_supervideo'));
+            $mform->setDefault('showrel', $config->showrel);
+        }
 
-        $mform->addElement('advcheckbox', 'showinfo', get_string('showinfo_desc', 'mod_supervideo'));
-        $mform->setDefault('showinfo', $config->showinfo);
+        if ($config->showcontrols <= 1) {
+            $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'mod_supervideo'));
+            $mform->setDefault('showcontrols', $config->showcontrols);
+        }
 
-        $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
-        $mform->setDefault('autoplay', $config->autoplay);
+        if ($config->showinfo <= 1) {
+            $mform->addElement('advcheckbox', 'showinfo', get_string('showinfo_desc', 'mod_supervideo'));
+            $mform->setDefault('showinfo', $config->showinfo);
+        }
+
+        if ($config->autoplay <= 1) {
+            $mform->addElement('advcheckbox', 'autoplay', get_string('autoplay_desc', 'mod_supervideo'));
+            $mform->setDefault('autoplay', $config->autoplay);
+        }
 
         //// Grade Element.
         //$mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));

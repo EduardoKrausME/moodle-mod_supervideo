@@ -91,6 +91,11 @@ $string['complet_percent_error'] = 'Aceito valores de de 1 à 100';
 
 $string['no_data'] = 'Sem registros';
 
+$string['settings_opcional_desmarcado'] = 'No FORM aparecerá desativado e o professor poderá ativar ou desativar';
+$string['settings_opcional_marcado'] = 'No FORM aparecerá ativado e o professor poderá ativar ou desativar';
+$string['settings_obrigatorio_desmarcado'] = 'Será desativado para todos e não há como editar no FORM';
+$string['settings_obrigatorio_marcado'] = 'Será ativado para todos e não há como editar no FORM';
+
 $string['supervideo:addinstance'] = 'Crie novas atividades com Vídeo';
 $string['supervideo:view'] = 'Ver e interagir com o vídeo';
 

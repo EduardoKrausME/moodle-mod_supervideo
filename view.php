@@ -98,6 +98,31 @@ $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 if ($parseurl->videoid) {
     $uniqueid = uniqid();
 
+    $config = get_config('supervideo');
+    if ($config->showrel == 2) {
+        $supervideo->showrel = 0;
+    } else if ($config->showrel == 3) {
+        $supervideo->showrel = 1;
+    }
+
+    if ($config->showcontrols == 2) {
+        $supervideo->showcontrols = 0;
+    } else if ($config->showcontrols == 3) {
+        $supervideo->showcontrols = 1;
+    }
+
+    if ($config->showinfo == 2) {
+        $supervideo->showinfo = 0;
+    } else if ($config->showinfo == 3) {
+        $supervideo->showinfo = 1;
+    }
+
+    if ($config->autoplay == 2) {
+        $supervideo->autoplay = 0;
+    } else if ($config->autoplay == 3) {
+        $supervideo->autoplay = 1;
+    }
+
 
     if ($parseurl->engine == "link") {
 
@@ -215,24 +240,23 @@ if ($parseurl->videoid) {
             "{$parseurl->engine}-{$uniqueid}"
         ]);
     }
+
+    if ($config->showmapa) {
+        $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
+        echo "<div id='mapa-visualizacao'>
+                  <div class='mapa' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>
+                  {$text}
+                  <div class='clique'></div>
+              </div>";
+    }
+    if ($link_report) {
+        echo "<div>{$link_report}</div>";
+    }
 } else {
     echo "<div class='alert alert-warning'>
               <i class='fa fa-exclamation-circle'></i>
               <div>" . get_string('idnotfound', 'mod_supervideo') . "</div>
           </div>";
-}
-
-$config = get_config('supervideo');
-if ($config->showmapa) {
-    $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
-    echo "<div id='mapa-visualizacao'>
-              <div class='mapa' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>
-              {$text}
-              <div class='clique'></div>
-          </div>";
-}
-if ($link_report) {
-    echo "<div>{$link_report}</div>";
 }
 
 echo '</div>';

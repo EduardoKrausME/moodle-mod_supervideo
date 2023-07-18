@@ -20,7 +20,7 @@ define(["jquery"], function($) {
         fitem_id_videosize    : null,
         fitem_id_showrel      : null,
         fitem_id_showcontrols : null,
-        fitem_id_showinfo : null,
+        fitem_id_showinfo     : null,
         fitem_id_autoplay     : null,
 
         init : function(engine) {
@@ -70,10 +70,11 @@ define(["jquery"], function($) {
                 // console.log("testUrlYouTube");
                 mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
-                mod_form.fitem_id_showrel.hide();
-                mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showinfo.hide();
-                mod_form.fitem_id_autoplay.show();
+
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
                 mod_form.id_videourl.prop("readonly", true);
 
@@ -86,19 +87,20 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.find("[value=1]").show();
                 mod_form.fitem_id_videosize.val(1);
 
-                mod_form.fitem_id_showrel.show();
-                mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showinfo.show();
-                mod_form.fitem_id_autoplay.show();
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.show();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.show();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlVimeo(url)) {
                 // console.log("testUrlVimeo");
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
-                mod_form.fitem_id_showrel.hide();
-                mod_form.fitem_id_showcontrols.show();
-                mod_form.fitem_id_showinfo.show();
-                mod_form.fitem_id_autoplay.show();
+
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.show();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlDrive(url)) {
                 // console.log("testUrlDrive");
@@ -110,26 +112,28 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.find("[value=7]").show();
                 mod_form.fitem_id_videosize.val(7);
 
-                mod_form.fitem_id_showrel.hide();
-                mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showinfo.hide();
-                mod_form.fitem_id_autoplay.hide();
-            }else if (mod_form.testUrlExternalFile(url)) {
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();
+            } else if (mod_form.testUrlExternalFile(url)) {
                 // console.log("testUrlExternalFile");
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
-                mod_form.fitem_id_showrel.hide();
-                mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showinfo.hide();
-                mod_form.fitem_id_autoplay.show();
+
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
             } else {
                 // console.log("else");
                 mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
-                mod_form.fitem_id_showrel.hide();
-                mod_form.fitem_id_showcontrols.hide();
-                mod_form.fitem_id_showinfo.hide();
-                mod_form.fitem_id_autoplay.hide();
+
+                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
+                mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
+                mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
+                mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();
             }
         },
 

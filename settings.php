@@ -27,23 +27,30 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
-    $settings->add(new admin_setting_configcheckbox('supervideo/showmapa',
+    $options = array(
+        0 => get_string('settings_opcional_desmarcado', 'mod_supervideo'),
+        1 => get_string('settings_opcional_marcado', 'mod_supervideo'),
+        2 => get_string('settings_obrigatorio_desmarcado', 'mod_supervideo'),
+        3 => get_string('settings_obrigatorio_marcado', 'mod_supervideo'),
+    );
+
+    $settings->add(new admin_setting_configselect('supervideo/showmapa',
         get_string('showmapa', 'mod_supervideo'),
-        get_string('showmapa_desc', 'mod_supervideo'), 1));
+        get_string('showmapa_desc', 'mod_supervideo'), 1, $options));
 
-    $settings->add(new admin_setting_configcheckbox('supervideo/showrel',
+    $settings->add(new admin_setting_configselect('supervideo/showrel',
         get_string('showrel', 'mod_supervideo'),
-        get_string('showrel_desc', 'mod_supervideo'), 0));
+        get_string('showrel_desc', 'mod_supervideo'), 0, $options));
 
-    $settings->add(new admin_setting_configcheckbox('supervideo/showcontrols',
+    $settings->add(new admin_setting_configselect('supervideo/showcontrols',
         get_string('showcontrols', 'mod_supervideo'),
-        get_string('showcontrols_desc', 'mod_supervideo'), 0));
+        get_string('showcontrols_desc', 'mod_supervideo'), 1, $options));
 
-    $settings->add(new admin_setting_configcheckbox('supervideo/showinfo',
+    $settings->add(new admin_setting_configselect('supervideo/showinfo',
         get_string('showinfo', 'mod_supervideo'),
-        get_string('showinfo_desc', 'mod_supervideo'), 0));
+        get_string('showinfo_desc', 'mod_supervideo'), 0, $options));
 
-    $settings->add(new admin_setting_configcheckbox('supervideo/autoplay',
+    $settings->add(new admin_setting_configselect('supervideo/autoplay',
         get_string('autoplay', 'mod_supervideo'),
-        get_string('autoplay_desc', 'mod_supervideo'), 0));
+        get_string('autoplay_desc', 'mod_supervideo'), 0, $options));
 }

@@ -91,7 +91,22 @@ $string['complet_percent_error'] = 'Accept values from 1 to 100';
 
 $string['no_data'] = 'No records';
 
+$string['settings_opcional_desmarcado'] = 'The FORM will appear deactivated and the teacher can activate or deactivate';
+$string['settings_opcional_marcado'] = 'On the FORM it will appear activated and the teacher can activate or deactivate it';
+$string['settings_obrigatorio_desmarcado'] = 'It will be disabled for everyone and there is no way to edit it on the FORM';
+$string['settings_obrigatorio_marcado'] = 'It will be activated for everyone and there is no way to edit it on the FORM';
+
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';
 
 $string['privacy:metadata'] = 'The supervideo plugin does not send any personal data to third parties.';
+
+$string['privacy:metadata:supervideo_view'] = 'A record of the messages sent during a chat session';
+$string['privacy:metadata:supervideo_view:cm_id'] = '';
+$string['privacy:metadata:supervideo_view:user_id'] = '';
+$string['privacy:metadata:supervideo_view:currenttime'] = '';
+$string['privacy:metadata:supervideo_view:duration'] = '';
+$string['privacy:metadata:supervideo_view:percent'] = '';
+$string['privacy:metadata:supervideo_view:mapa'] = '';
+$string['privacy:metadata:supervideo_view:timecreated'] = '';
+$string['privacy:metadata:supervideo_view:timemodified'] = '';
