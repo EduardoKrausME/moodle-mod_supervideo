@@ -89,7 +89,7 @@ if ($supervideo->showshowinfo) {
     $link_report = "";
 }
 
-echo '<div id="supervideo_area_embed" class="d-flex flex-column align-items-center">';
+echo '<div id="supervideo_area_embed">';
 
 $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
@@ -105,8 +105,8 @@ if ($parseurl->videoid) {
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
 
         echo "<video style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                      <source src='{$parseurl->videoid}' type='video/mp4'>
-                  </video>";
+                  <source src='{$parseurl->videoid}' type='video/mp4'>
+              </video>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
             (int)$supervideoview->id,
@@ -128,8 +128,8 @@ if ($parseurl->videoid) {
 
             if ($parseurl->videoid == "mp3") {
                 echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                      <source src='{$fullurl}' type='audio/mp3'>
-                  </audio>";
+                          <source src='{$fullurl}' type='audio/mp3'>
+                      </audio>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                     (int)$supervideoview->id,
@@ -139,8 +139,8 @@ if ($parseurl->videoid) {
                 ]);
             } else if ($parseurl->videoid == "mp4") {
                 echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                      <source src='{$fullurl}' type='video/mp4'>
-                  </video>";
+                          <source src='{$fullurl}' type='video/mp4'>
+                      </video>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                     (int)$supervideoview->id,
