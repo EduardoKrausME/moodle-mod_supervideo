@@ -60,7 +60,7 @@ $string['showcontrols_desc'] = 'Mostrar controles do player';
 $string['showshowinfo'] = 'Mostrar título';
 $string['showshowinfo_desc'] = 'Mostrar título do vídeo e as ações do player';
 $string['autoplay'] = 'Reproduzir automaticamente';
-$string['autoplay_desc'] = 'Reproduzir automaticamente carregar o player';
+$string['autoplay_desc'] = 'Reproduzir automaticamente ao carregar o player';
 $string['video_size'] = 'Tamanho do Player';
 
 $string['idnotfound'] = 'Link não reconhecido como Youtube, Google Drive ou Vimeo';
