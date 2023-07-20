@@ -51,7 +51,16 @@ class grades {
                 "userid" => $USER->id,
                 "rawgrade" => $percent
             ];
-            self::grade_item_update($supervideo, $grade);
+
+            $grades = grade_get_grades($course->id, 'mod', 'supervideo', $supervideo->id, $USER->id);
+            if (isset($grades->items[0]->grades)) {
+                foreach ($grades->items[0]->grades as $gradeitem) {
+                    if (intval($percent) > intval($gradeitem->grade)) {
+                        self::grade_item_update($supervideo, $grade);
+                        break;
+                    }
+                }
+            }
         }
     }
 
