@@ -21,7 +21,7 @@
     display: none;
 }
 #mapa-visualizacao {
-    margin: 5px 13px;
+    margin: 5px 0;
     background: rgba(206, 206, 206, 0.5);
     padding: 1px;
     width: 100%;
@@ -103,13 +103,13 @@
 }
 .plyr__control {
     margin: 0;
-    
+
     text-shadow: none;
     -webkit-text-shadow: none;
-    
+
     box-shadow: none;
     -webkit-box-shadow: none;
-    
+
     appearance: none;
     -webkit-appearance: none;
 }
