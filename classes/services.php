@@ -26,6 +26,7 @@ use mod_supervideo\analytics\supervideo_view;
 
 defined('MOODLE_INTERNAL') || die;
 
+global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 /**

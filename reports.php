@@ -43,7 +43,7 @@ $sql = "SELECT cm.*, sv.name
           FROM {course_modules} cm
           JOIN {modules}        md ON md.id = cm.module
           JOIN {supervideo}     sv ON sv.id = cm.instance
-         WHERE sv.course = :course 
+         WHERE sv.course = :course
            AND md.name   = 'supervideo'";
 $supervideos = $DB->get_records_sql($sql, ["course" => $courseid]);
 $reportnode = ["children" => []];

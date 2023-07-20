@@ -43,8 +43,8 @@ if ($id) {
 
 $secret = optional_param('secret', false, PARAM_TEXT);
 if ($secret) {
-    $user_id = optional_param('user_id', "", PARAM_INT);
-    \mod_supervideo\output\mobile::valid_token($user_id, $secret);
+    $userid = optional_param('user_id', "", PARAM_INT);
+    \mod_supervideo\output\mobile::valid_token($userid, $secret);
 }
 
 require_course_login($course, true, $cm);
@@ -77,16 +77,17 @@ if ($mobile) {
     $PAGE->set_pagelayout('embedded');
 }
 
-$link_report = "";
+$linkreport = "";
 echo $OUTPUT->header();
 
 if (has_capability('moodle/course:manageactivities', $context)) {
-    $link_report = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" . get_string('report', 'mod_supervideo') . "</a>";
+    $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
+        get_string('report', 'mod_supervideo') . "</a>";
 }
 
 if ($supervideo->showinfo) {
-    echo $OUTPUT->heading(format_string($supervideo->name) . " " . $link_report, 2, 'main', 'supervideoheading');
-    $link_report = "";
+    echo $OUTPUT->heading(format_string($supervideo->name) . " " . $linkreport, 2, 'main', 'supervideoheading');
+    $linkreport = "";
 }
 
 echo '<div id="supervideo_area_embed">';
@@ -142,7 +143,8 @@ if ($parseurl->videoid) {
         ]);
 
     } else if ($parseurl->engine == "resource") {
-        $files = get_file_storage()->get_area_files($context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+        $files = get_file_storage()->get_area_files(
+            $context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
         $file = reset($files);
         if ($file) {
             $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
@@ -249,8 +251,8 @@ if ($parseurl->videoid) {
                   <div class='clique'></div>
               </div>";
     }
-    if ($link_report) {
-        echo "<div>{$link_report}</div>";
+    if ($linkreport) {
+        echo "<div>{$linkreport}</div>";
     }
 } else {
     echo "<div class='alert alert-warning'>

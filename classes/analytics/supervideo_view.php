@@ -64,10 +64,10 @@ class supervideo_view {
     }
 
     /**
-     * @param $viewid
-     * @param $currenttime
-     * @param $duration
-     * @param $percent
+     * @param int $viewid
+     * @param int $currenttime
+     * @param int $duration
+     * @param int $percent
      *
      * @param $mapa
      *

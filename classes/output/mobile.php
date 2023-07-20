@@ -16,8 +16,6 @@
 
 namespace mod_supervideo\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 use mod_supervideo;
 
 class mobile {
@@ -50,18 +48,18 @@ class mobile {
     }
 
     /**
-     * @param $user_id
+     * @param $userid
      * @return string
      * @throws \Exception
      */
-    private static function create_embed_token($user_id) {
+    private static function create_embed_token($userid) {
         global $DB;
 
         $secret = md5(uniqid(0)) . md5(uniqid(1));
         $token = substr($secret, 0, rand(54, 64));
 
         $data = (object)[
-            'user_id' => $user_id,
+            'user_id' => $userid,
             'secret' => $token,
             'created_at' => time()
         ];
@@ -79,7 +77,7 @@ class mobile {
     public static function valid_token($userid, $secret) {
         global $DB;
 
-        // Delete expired
+        // Delete expired.
         $where = ['threshold' => time() - 60];
         $DB->delete_records_select('supervideo_auth', 'created_at < :threshold', $where);
 

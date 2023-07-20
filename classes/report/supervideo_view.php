@@ -303,8 +303,8 @@ class supervideo_view extends \table_sql {
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $countsql = "SELECT COUNT(*) 
-                               FROM ( 
+                $countsql = "SELECT COUNT(*)
+                               FROM (
                                     SELECT COUNT(sv.id) AS cont
                                      FROM {supervideo_view} sv
                                      JOIN {user} u ON u.id = sv.user_id
@@ -337,8 +337,8 @@ class supervideo_view extends \table_sql {
                         ORDER BY {$order}";
 
             if ($pagesize != -1) {
-                $countsql = "SELECT COUNT(*) 
-                               FROM ( 
+                $countsql = "SELECT COUNT(*)
+                               FROM (
                                     SELECT COUNT(sv.id) AS cont
                                       FROM {supervideo_view} sv
                                       JOIN {user} u ON u.id = sv.user_id
