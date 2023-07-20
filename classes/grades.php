@@ -22,45 +22,63 @@ namespace mod_supervideo;
 
 class grades {
 
-    private static $supervideo = null;
-
     /**
-     * @param $cmid
+     * @param int $cmid
+     * @param int $percent
      *
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception
      */
     public static function update($cmid, $percent) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
 
         require_once("{$CFG->libdir}/completionlib.php");
 
         $cm = get_coursemodule_from_id('supervideo', $cmid, 0, false, MUST_EXIST);
         $course = get_course($cm->course);
-        self::$supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
+        $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
         $completion = new \completion_info($course);
         if ($completion->is_enabled($cm)) {
-            if ($percent >= self::$supervideo->complet_percent) {
+            if ($percent >= $supervideo->complet_percent) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
         }
+
+        if ($supervideo->grade_approval == 1) {
+            $grade = [
+                "userid" => $USER->id,
+                "rawgrade" => $percent
+            ];
+            self::grade_item_update($supervideo, $grade);
+        }
     }
 
-    public static function supervideo_get_completion_state($cm) {
-        global $DB;
+    /**
+     * @param \stdClass $supervideo
+     * @param \stdClass $grades
+     *
+     * @return int
+     */
+    public static function grade_item_update($supervideo, $grades = null) {
+        global $CFG;
 
-        if (!self::$supervideo) {
-            self::$supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $params = [
+            'itemname' => $supervideo->name,
+            'idnumber' => $supervideo->cmidnumber,
+            'gradetype' => GRADE_TYPE_VALUE,
+            'grademax' => 100,
+            'grademin' => 0
+        ];
+
+        if ($grades === 'reset') {
+            $params['reset'] = true;
+            $grades = null;
         }
 
-        if (self::$supervideo->complet_percent) {
-            if (self::$supervideo->complet_percent < self::$supervideo->complet_percent) {
-                return false;
-            }
-        }
-
-        return true;
+        return grade_update('mod/supervideo', $supervideo->course, 'mod', 'supervideo', $supervideo->id, 0, $grades, $params);
     }
 }

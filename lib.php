@@ -51,35 +51,9 @@ function supervideo_supports($feature) {
     }
 }
 
-/**
- * @param      $supervideo
- * @param null $grades
- *
- * @return int
- */
-function supervideo_grade_item_update($supervideo, $grades = null) {
-    global $CFG;
-
-    require_once($CFG->libdir . '/gradelib.php');
-
-    $params = [
-        'itemname' => $supervideo->name,
-        'idnumber' => $supervideo->cmidnumber,
-        'gradetype' => GRADE_TYPE_VALUE,
-        'grademax' => 100,
-        'grademin' => 0
-    ];
-
-    if ($grades === 'reset') {
-        $params['reset'] = true;
-        $grades = null;
-    }
-
-    return grade_update('mod/supervideo', $supervideo->course, 'mod', 'supervideo', $supervideo->id, 0, $grades, $params);
-}
 
 /**
- * @param      $supervideo
+ * @param stdClass $supervideo
  * @param int $userid
  * @param bool $nullifnone
  *
@@ -96,12 +70,12 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
     }
 
     if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
-        supervideo_grade_item_update($supervideo, $grades);
+        \mod_supervideo\grades::grade_item_update($supervideo, $grades);
     }
 }
 
 /**
- * @param     $supervideo
+ * @param stdClass $supervideo
  * @param int $userid
  *
  * @return array|bool
@@ -147,14 +121,14 @@ function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $
     $supervideo->timecreated = time();
     $supervideo->id = $DB->insert_record('supervideo', $supervideo);
 
-    supervideo_grade_item_update($supervideo);
+    \mod_supervideo\grades::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $supervideo->id;
 }
 
 /**
- * @param $supervideo
+ * @param stdClass $supervideo
  *
  * @throws coding_exception
  */
@@ -192,7 +166,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
 
     $result = $DB->update_record('supervideo', $supervideo);
 
-    supervideo_grade_item_update($supervideo);
+    \mod_supervideo\grades::grade_item_update($supervideo);
 
     return $result;
 }
@@ -216,7 +190,8 @@ function supervideo_delete_instance($id) {
     $fs = get_file_storage();
     $cm = get_coursemodule_from_id('supervideo', $supervideo->id);
     if ($cm) {
-        $files = $fs->get_area_files(context_module::instance($cm->id)->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+        $files = $fs->get_area_files(context_module::instance($cm->id)->id, 'mod_supervideo', 'content',
+            $supervideo->id, 'sortorder DESC, id ASC', false);
 
         foreach ($files as $file) {
             $file->delete();
@@ -357,9 +332,9 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
 }
 
 /**
- * @param $navigation
- * @param $course
- * @param $context
+ * @param \navigation_node $navigation
+ * @param stdClass $course
+ * @param \context $context
  *
  * @throws coding_exception
  * @throws moodle_exception
@@ -373,10 +348,19 @@ function supervideo_extend_navigation_course($navigation, $course, $context) {
     }
 }
 
+/**
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param int $userid
+ * @param string $type
+ *
+ * @return bool
+ *
+ * @throws dml_exception
+ */
 function supervideo_get_completion_state($course, $cm, $userid, $type) {
-    return \mod_supervideo\grades::supervideo_get_completion_state($cm);
+    return \mod_supervideo\completion::get_completion_state($course, $cm, $userid);
 }
-
 
 /**
  * Serve the files from the supervideo file areas
@@ -390,6 +374,7 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
  * @param array $options additional options affecting the file serving
  *
  * @return bool false if the file not found, just send the file otherwise and do not return anything
+ *
  * @throws coding_exception
  * @throws moodle_exception
  * @throws require_login_exception
@@ -401,7 +386,8 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
         return false;
     }
 
-    // Make sure the user is logged in and has access to the module (plugins that are not course modules should leave out the 'cm' part).
+    // Make sure the user is logged in and has access to the module
+    // (plugins that are not course modules should leave out the 'cm' part).
     require_login($course, true, $cm);
 
     // Check the relevant capabilities - these may vary depending on the filearea being accessed.
@@ -418,49 +404,22 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
     // Extract the filename / filepath from the $args array.
     $filename = array_pop($args); // The last item in the $args array.
     if (!$args) {
-        $filepath = '/'; // $args is empty => the path is '/'
+        // Variable $args is empty => the path is '/'.
+        $filepath = '/';
     } else {
-        $filepath = '/' . implode('/', $args) . '/'; // $args contains elements of the filepath
+        // Variable $args contains elements of the filepath.
+        $filepath = '/' . implode('/', $args) . '/';
     }
 
     // Retrieve the file from the Files API.
     $fs = get_file_storage();
     $file = $fs->get_file($context->id, 'mod_supervideo', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
-        echo '<pre>';
-        print_r([$context->id, 'mod_supervideo', $filearea, $itemid, $filepath, $filename]);
-        echo '</pre>';
-
-        die("aaaa3");
         return false; // The file does not exist.
     }
 
     // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering.
     send_stored_file($file, 86400, 0, $forcedownload, $options);
-}
-
-/**
- * Register the ability to handle drag and drop file uploads
- * @return array containing details of the files / types the mod can handle
- * @throws coding_exception
- */
-function _supervideo_dndupload_register() {
-    $ret = [
-        'files' => [
-            'extension' => '.mp4',
-            'message' => get_string('dnduploadlabel-mp4', 'mod_supervideo')
-        ],
-        [
-            'extension' => '.mp3',
-            'message' => get_string('dnduploadlabel-mp3', 'mod_supervideo')
-        ]
-    ];
-
-    $strdndtext = get_string('dnduploadlabeltext', 'mod_supervideo');
-    return array_merge($ret, array('types' => array(
-        ['identifier' => 'text/html', 'message' => $strdndtext, 'noname' => true],
-        ['identifier' => 'text', 'message' => $strdndtext, 'noname' => true]
-    )));
 }
 
 /**
@@ -501,7 +460,7 @@ function supervideo_dndupload_register() {
 /**
  * Handle a file that has been uploaded
  *
- * @param object $uploadinfo details of the file / content that has been uploaded
+ * @param stdClass $uploadinfo details of the file / content that has been uploaded
  *
  * @return int instance id of the newly created mod
  * @throws coding_exception
@@ -536,7 +495,8 @@ function supervideo_dndupload_handle($uploadinfo) {
 
             $data->videourl = "[resource-file:{$file->get_filename()}]";
             $options = ['subdirs' => true, 'embed' => true];
-            file_save_draft_area_files($uploadinfo->draftitemid, $context->id, 'mod_supervideo', 'content', $data->instance, $options);
+            file_save_draft_area_files(
+                $uploadinfo->draftitemid, $context->id, 'mod_supervideo', 'content', $data->instance, $options);
 
             supervideo_update_instance($data, null);
         }
