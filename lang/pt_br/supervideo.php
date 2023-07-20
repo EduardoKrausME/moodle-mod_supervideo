@@ -80,6 +80,8 @@ $string['report_terminou'] = 'Terminou de assistir quando';
 $string['report_visualizacoes'] = 'Visualizações';
 $string['report_assistiu'] = 'Assistiu quando';
 $string['report_all'] = 'Todos as visualizações deste aluno';
+$string['report_filename'] = 'Visualização de vídeos do Plugin Super vídeo - {$a}';
+$string['report_filename_geral'] = 'Geral';
 
 $string['grade_approval'] = 'Definir nota para';
 $string['grade_approval_0'] = 'Sem notas';

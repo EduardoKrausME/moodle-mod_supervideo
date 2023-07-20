@@ -80,6 +80,8 @@ $string['report_terminou'] = 'Finished watching when';
 $string['report_visualizacoes'] = 'Visualizations';
 $string['report_assistiu'] = 'Watched when';
 $string['report_all'] = 'All views for this student';
+$string['report_filename'] = 'Super Video Plugin video preview - {$a}';
+$string['report_filename_geral'] = 'General';
 
 $string['grade_approval'] = 'Set grade for';
 $string['grade_approval_0'] = 'No grades';

@@ -53,8 +53,14 @@ if (!$table->is_downloading()) {
         $linkvoltar = " <a href='?id={$table->cmid}' class='supervideo-report-link'>Voltar</a>";
     }
 
-    $title = get_string('report') . ": " . format_string($supervideo->name) . $linkvoltar;
-    echo $OUTPUT->heading($title, 2, 'main', 'supervideoheading');
+    if ($userid) {
+        $user = $DB->get_record('user', ['id' => $userid]);
+        $title = get_string('report_filename', 'mod_supervideo', fullname($user));
+    } else {
+        $geral = get_string('report_filename_geral', 'mod_supervideo');
+        $title = get_string('report_filename', 'mod_supervideo', $geral);
+    }
+    echo $OUTPUT->heading("{$title}{$linkvoltar}", 2, 'main', 'supervideoheading');
 }
 
 $table->define_baseurl("{$CFG->wwwroot}/mod/supervideo/report.php?id={$cm->id}&u={$userid}");

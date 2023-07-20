@@ -50,6 +50,8 @@ class supervideo_view extends \table_sql {
      * @throws \coding_exception
      */
     public function __construct($uniqueid, $cmid, $userid, $supervideo) {
+        global $DB;
+
         parent::__construct($uniqueid);
 
         $this->cmid = $cmid;
@@ -61,7 +63,14 @@ class supervideo_view extends \table_sql {
         $download = optional_param('download', null, PARAM_ALPHA);
         if ($download) {
             raise_memory_limit(MEMORY_EXTRA);
-            $this->is_downloading($download, 'Visualizações de Vídeos do Plugin Super Vídeo', $supervideo->name);
+            if ($this->userid) {
+                $user = $DB->get_record('user', ['id' => $this->userid]);
+                $filename = get_string('report_filename', 'mod_supervideo', fullname($user));
+            } else {
+                $geral = get_string('report_filename_geral', 'mod_supervideo');
+                $filename = get_string('report_filename', 'mod_supervideo', $geral);
+            }
+            $this->is_downloading($download, $filename, $supervideo->name);
         }
 
         if ($this->userid) {
