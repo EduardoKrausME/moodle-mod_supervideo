@@ -231,7 +231,7 @@ if ($parseurl->videoid) {
         $parametersvimeo = implode('&amp;', $urlparametersvimeo);
 
         echo "<script src='https://player.vimeo.com/api/player.js'></script>
-              <iframe id='{$parseurl->engine}-{$uniqueid}' width='640' height='480'
+              <iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='480'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       src='https://player.vimeo.com/video/{$parseurl->videoid}?{$parametersvimeo}'></iframe>";
 

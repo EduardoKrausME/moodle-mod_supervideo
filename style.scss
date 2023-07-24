@@ -16,6 +16,9 @@
         top: 2px;
         z-index: 2
     }
+    iframe {
+        width: 100%;
+    }
 }
 #page-mod-supervideo-report table.flexible .header .commands {
     display: none;
@@ -96,6 +99,13 @@
         font-size: 1.1em;
     }
 }
+#page-mod-supervideo-view {
+    .activity-description {
+        iframe {
+            width: 96% !important;
+        }
+    }
+}
 @import "style_player";
 
 .plyr--video {
@@ -103,13 +113,13 @@
 }
 .plyr__control {
     margin: 0;
-
+    
     text-shadow: none;
     -webkit-text-shadow: none;
-
+    
     box-shadow: none;
     -webkit-box-shadow: none;
-
+    
     appearance: none;
     -webkit-appearance: none;
 }
