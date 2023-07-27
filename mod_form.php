@@ -145,24 +145,79 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine]);
     }
 
+    /**
+     * Set up the completion checkbox which is not part of standard data.
+     *
+     * @param array $defaultvalues
+     *
+     */
     public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
+
         $draftitemid = file_get_submitted_draft_itemid('videofile');
         file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $defaultvalues['id']);
         $defaultvalues['videofile'] = $draftitemid;
+
+        $defaultvalues['completionpercentenabled'] = !empty($defaultvalues['completionpercent']) ? 1 : 0;
+        if (empty($defaultvalues['completionpercent'])) {
+            $defaultvalues['completionpercent'] = 1;
+        }
+    }
+
+    /**
+     * Allows modules to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        if (!empty($data->completionunlocked)) {
+            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completionpercentenabled) || !$autocompletion) {
+                $data->completionpercent = 0;
+            }
+        }
     }
 
     /**
      * @return array
      * @throws coding_exception
      */
-    public function add_completion_rules() {
+    public function add_completion_rules_oold() {
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'complet_percent', get_string('complet_percent', 'mod_supervideo'), ['size' => 4]);
-        $mform->addHelpButton('complet_percent', 'complet_percent', 'mod_supervideo');
-        $mform->setType('complet_percent', PARAM_INT);
+        $mform->addElement('text', 'completionpercent', get_string('completionpercent', 'mod_supervideo'), ['size' => 4]);
+        $mform->addHelpButton('completionpercent', 'completionpercent', 'mod_supervideo');
+        $mform->setType('completionpercent', PARAM_INT);
 
-        return ['complet_percent'];
+        return ['completionpercent'];
+    }
+
+    /**
+     * Display module-specific activity completion rules.
+     * Part of the API defined by moodleform_mod
+     * @return array Array of string IDs of added items, empty array if none
+     * @throws coding_exception
+     */
+    public function add_completion_rules() {
+        $mform = &$this->_form;
+        $group = [
+            $mform->createElement('checkbox', 'completionpercentenabled', '',
+                get_string('completionpercent_label', 'mod_supervideo')),
+            $mform->createElement('text', 'completionpercent',
+                get_string('completionpercent_label', 'mod_supervideo'), array('size' => '2')),
+            $mform->createElement('html', '%'),
+        ];
+
+        $mform->addGroup($group, 'completionpercentgroup', get_string('completionpercent', 'mod_supervideo'),
+            [' '], false);
+        $mform->disabledIf('completionpercent', 'completionpercentenabled', 'notchecked');
+        $mform->setDefault('completionpercent', 0);
+        $mform->setType('completionpercent', PARAM_INT);
+        return ['completionpercentgroup'];
     }
 
     /**
@@ -171,7 +226,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        return $data['complet_percent'];
+        return ($data['completionpercent'] > 0);
     }
 
 
@@ -189,13 +244,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $errors['videourl'] = get_string('required');
         }
 
-        if (isset($data['complet_percent']) && $data['complet_percent'] != '') {
-            $data['complet_percent'] = intval($data['complet_percent']);
-            if ($data['complet_percent'] < 1) {
-                $data['complet_percent'] = "";
+        if (isset($data['completionpercent']) && $data['completionpercent'] != '') {
+            $data['completionpercent'] = intval($data['completionpercent']);
+            if ($data['completionpercent'] < 1) {
+                $data['completionpercent'] = "";
             }
-            if ($data['complet_percent'] > 100) {
-                $errors['complet_percent'] = get_string('complet_percent_error', 'mod_supervideo');
+            if ($data['completionpercent'] > 100) {
+                $errors['completionpercent'] = get_string('completionpercent_error', 'mod_supervideo');
             }
         }
 
@@ -205,7 +260,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $data['gradepass'] = "";
             }
             if ($data['gradepass'] > 100) {
-                $errors['gradepass'] = get_string('complet_percent_error', 'mod_supervideo');
+                $errors['gradepass'] = get_string('completionpercent_error', 'mod_supervideo');
             }
         }
 

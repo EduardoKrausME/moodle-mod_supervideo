@@ -78,7 +78,7 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->add_field($tablesupervideo, $fieldgradeapproval);
         }
 
-        $fieldcompletpercent = new xmldb_field('complet_percent', XMLDB_TYPE_INTEGER, 10);
+        $fieldcompletpercent = new xmldb_field('completionpercent', XMLDB_TYPE_INTEGER, 10);
         if (!$dbman->field_exists($tablesupervideo, $fieldcompletpercent)) {
             $dbman->add_field($tablesupervideo, $fieldcompletpercent);
         }
@@ -111,13 +111,25 @@ function xmldb_supervideo_upgrade($oldversion) {
     if ($oldversion < 2023071800) {
 
         $table = new xmldb_table('supervideo');
-        $field = new xmldb_field("showinfo", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, 'showcontrols');
+        $field = new xmldb_field("showshowinfo", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, 'showcontrols');
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, 'showinfo');
         }
 
         upgrade_plugin_savepoint(true, 2023071800, 'mod', 'supervideo');
     }
+
+    if ($oldversion < 2023072700) {
+
+        $table = new xmldb_table('supervideo');
+        $field = new xmldb_field("complet_percent", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, 'grade_approval');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'completionpercent');
+        }
+
+        upgrade_plugin_savepoint(true, 2023072700, 'mod', 'supervideo');
+    }
+
 
     return true;
 }

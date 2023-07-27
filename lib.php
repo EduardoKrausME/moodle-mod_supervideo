@@ -30,11 +30,15 @@
 function supervideo_supports($feature) {
 
     switch ($feature) {
-        case FEATURE_MOD_ARCHETYPE:
-            return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
         case FEATURE_MOD_INTRO:
             return true;
-        case FEATURE_SHOW_DESCRIPTION:
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
             return true;
         case FEATURE_GRADE_HAS_GRADE:
             return true;
@@ -42,10 +46,14 @@ function supervideo_supports($feature) {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS:
+        case FEATURE_SHOW_DESCRIPTION:
             return true;
-        case FEATURE_COMPLETION_HAS_RULES:
+        case FEATURE_COMMENT:
             return true;
+        case FEATURE_MOD_ARCHETYPE:
+            return MOD_ARCHETYPE_RESOURCE;
+        case 'mod_purpose':
+            return 'content';
         default:
             return null;
     }
@@ -67,7 +75,7 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
 
     if ($supervideo->grade_approval) {
         if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
-            \mod_supervideo\grades::grade_item_update($supervideo, $grades);
+            \mod_supervideo\grade\grades_util::grade_item_update($supervideo, $grades);
         }
     }
 }
@@ -119,7 +127,7 @@ function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $
     $supervideo->timecreated = time();
     $supervideo->id = $DB->insert_record('supervideo', $supervideo);
 
-    \mod_supervideo\grades::grade_item_update($supervideo);
+    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $supervideo->id;
@@ -164,7 +172,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
 
     $result = $DB->update_record('supervideo', $supervideo);
 
-    \mod_supervideo\grades::grade_item_update($supervideo);
+    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
 
     return $result;
 }
@@ -286,13 +294,19 @@ function supervideo_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $supervideo = $DB->get_record('supervideo', ['id' => $coursemodule->instance],
-        'id, name, videourl, intro, introformat');
+        'id, name, videourl, intro, introformat, completionpercent');
 
     $info = new cached_cm_info();
-    $info->name = $supervideo->name;
+    if ($supervideo) {
+        $info->name = $supervideo->name;
+    }
 
     if ($coursemodule->showdescription) {
         $info->content = format_module_intro('supervideo', $supervideo, $coursemodule->id, false);
+    }
+
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $info->customdata['customcompletionrules']['completionpercent'] = $supervideo->completionpercent;
     }
 
     return $info;
@@ -344,20 +358,6 @@ function supervideo_extend_navigation_course($navigation, $course, $context) {
         $node->add(get_string('pluginname', 'supervideo'), $url, navigation_node::TYPE_SETTING, null, null,
             new pix_icon('i/report', ''));
     }
-}
-
-/**
- * @param stdClass $course
- * @param stdClass $cm
- * @param int $userid
- * @param string $type
- *
- * @return bool
- *
- * @throws dml_exception
- */
-function supervideo_get_completion_state($course, $cm, $userid, $type) {
-    return \mod_supervideo\completion::get_completion_state($course, $cm, $userid);
 }
 
 /**
@@ -507,3 +507,109 @@ function supervideo_dndupload_handle($uploadinfo) {
 
     return $data->instance;
 }
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ * @throws coding_exception
+ */
+function mod_supervideo_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules']) || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    throw new Exception("aaaa");
+
+    $descriptions = [];
+    $completionpercent = $cm->customdata['customcompletionrules']['completionpercent'] ?? 0;
+    $descriptions[] = "Requer {$completionpercent} %";
+    return $descriptions;
+}
+
+/**
+ * Sets the automatic completion state for this database item based on the
+ * count of on its entries.
+ * @since Moodle 3.3
+ * @param object $data The data object for this activity
+ * @param object $course Course
+ * @param object $cm course-module
+ * @throws moodle_exception
+ */
+function supervideo_update_completion_state($data, $course, $cm) {
+
+    throw new Exception("bbbb");
+
+    // If completion option is enabled, evaluate it and return true/false.
+    $completion = new completion_info($course);
+    if ($data->completionpercent && $completion->is_enabled($cm)) {
+        $numentries = data_numentries($data);
+        // Check the number of entries required against the number of entries already made.
+        if ($numentries >= $data->completionpercent) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        } else {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE);
+        }
+    }
+}
+
+/**
+ * Obtains the automatic completion state for this database item based on any conditions
+ * on its settings. The call for this is in completion lib where the modulename is appended
+ * to the function name. This is why there are unused parameters.
+ *
+ * @deprecated since Moodle 3.11
+ * @todo MDL-71196 Final deprecation in Moodle 4.3
+ * @see \mod_data\completion\custom_completion
+ * @since Moodle 3.3
+ * @param stdClass $course Course
+ * @param cm_info|stdClass $cm course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not, $type if conditions not set.
+ */
+function supervideo_get_completion_state($course, $cm, $userid, $type) {
+    global $DB, $PAGE;
+
+    // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
+
+    $result = $type; // Default return value
+    // Get data details.
+    if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
+        $data = $PAGE->activityrecord;
+    } else {
+        $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+    }
+    // If completion option is enabled, evaluate it and return true/false.
+    if ($data->completionpercent) {
+
+        //$sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
+        //$numentries = $DB->count_records_sql($sql, array($data->id, $userid));
+
+        $numentries = 10;
+
+        // Check the number of entries required against the number of entries already made.
+        if ($numentries >= $data->completionpercent) {
+            $result = true;
+        } else {
+            $result = false;
+        }
+    }
+    return $result;
+}
+
+///**
+// * @param stdClass $course
+// * @param stdClass $cm
+// * @param int $userid
+// * @param string $type
+// *
+// * @return bool
+// *
+// * @throws dml_exception
+// */
+//function supervideo_get_completion_state($course, $cm, $userid, $type) {
+//    return \mod_supervideo\completion\completion_util::get_completion_state($course, $cm, $userid);
+//}

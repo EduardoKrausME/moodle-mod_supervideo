@@ -18,9 +18,9 @@
  * Grades implementation for mod_supervideo.
  */
 
-namespace mod_supervideo;
+namespace mod_supervideo\grade;
 
-class grades {
+class grades_util {
 
     /**
      * @param int $cmid
@@ -41,7 +41,7 @@ class grades {
 
         $completion = new \completion_info($course);
         if ($completion->is_enabled($cm)) {
-            if ($percent >= $supervideo->complet_percent) {
+            if ($percent >= $supervideo->completionpercent) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
         }
@@ -52,6 +52,7 @@ class grades {
                 "rawgrade" => $percent
             ];
 
+            require_once("{$CFG->libdir}/gradelib.php");
             $grades = grade_get_grades($course->id, 'mod', 'supervideo', $supervideo->id, $USER->id);
             if (isset($grades->items[0]->grades)) {
                 foreach ($grades->items[0]->grades as $gradeitem) {
@@ -71,9 +72,6 @@ class grades {
      * @return int
      */
     public static function grade_item_update($supervideo, $grades = null) {
-        global $CFG;
-
-        require_once($CFG->libdir . '/gradelib.php');
 
         $params = [
             'itemname' => $supervideo->name,

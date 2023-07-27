@@ -20,7 +20,7 @@
 
 namespace mod_supervideo\analytics;
 
-use mod_supervideo\grades;
+use mod_supervideo\grade\grades_util;
 
 /**
  * @package   mod_supervideo
@@ -68,8 +68,7 @@ class supervideo_view {
      * @param int $currenttime
      * @param int $duration
      * @param int $percent
-     *
-     * @param $mapa
+     * @param int $mapa
      *
      * @return bool
      * @throws \coding_exception
@@ -77,13 +76,13 @@ class supervideo_view {
      * @throws \moodle_exception
      */
     public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
-            require_once(__DIR__ . "/../classes/grades.php");
-            grades::update($supervideoview->cm_id, $percent);
+            require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
+            grades_util::update($supervideoview->cm_id, $percent);
 
             $supervideoview = (object)[
                 "id" => $viewid,

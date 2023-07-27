@@ -20,10 +20,10 @@
  * Time: 18:47
  */
 
-namespace mod_supervideo;
+namespace mod_supervideo\completion;
 
 
-class completion {
+class completion_util {
 
     /**
      * @param \stdClass $course
@@ -37,14 +37,14 @@ class completion {
         global $CFG, $DB, $USER;
 
         $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
-        if ($supervideo->complet_percent) {
+        if ($supervideo->completionpercent) {
 
             require_once($CFG->libdir . '/gradelib.php');
             $grades = grade_get_grades($course->id, 'mod', 'supervideo', $supervideo->id, $USER->id);
 
             if (isset($grades->items[0]->grades)) {
                 foreach ($grades->items[0]->grades as $grade) {
-                    if (intval($supervideo->complet_percent) >= intval($grade->grade)) {
+                    if (intval($supervideo->completionpercent) >= intval($grade->grade)) {
                         return true;
                     }
                 }
