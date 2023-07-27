@@ -82,7 +82,7 @@ class supervideo_view {
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
-            require_once __DIR__ . "/../classes/grades.php";
+            require_once(__DIR__ . "/../classes/grades.php");
             grades::update($supervideoview->cm_id, $percent);
 
             $supervideoview = (object)[
