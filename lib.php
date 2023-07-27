@@ -65,12 +65,10 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
     global $CFG;
     require_once($CFG->libdir . '/gradelib.php');
 
-    if (!$supervideo->grade_approval) {
-        return null;
-    }
-
-    if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
-        \mod_supervideo\grades::grade_item_update($supervideo, $grades);
+    if ($supervideo->grade_approval) {
+        if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
+            \mod_supervideo\grades::grade_item_update($supervideo, $grades);
+        }
     }
 }
 
