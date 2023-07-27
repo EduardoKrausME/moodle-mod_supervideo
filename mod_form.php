@@ -108,6 +108,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         // Grade Element.
+        //$this->standard_grading_coursemodule_elements();
         $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
 
         $values = [
@@ -119,15 +120,18 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement('select', 'gradecat', get_string('gradecategoryonmodform', 'grades'),
             grade_get_categories_menu($COURSE->id, false));
         $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
-        $mform->disabledIf('gradecat', 'grade_approval', 'eq', '0');
+        $mform->hideIf('gradecat', 'grade_approval', 'eq', '0');
 
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'), ['size' => 4]);
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->setType('gradepass', PARAM_INT);
-        $mform->disabledIf('gradepass', 'grade_approval', 'eq', '0');
+        $mform->hideIf('gradepass', 'grade_approval', 'eq', '0');
 
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
+
+        $mform->hideIf('completionusegrade', 'grade_approval', 'eq', '0');
+        $mform->hideIf('completionpassgrade', 'grade_approval', 'eq', '0');
 
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
@@ -135,7 +139,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $engine = "";
         if ($this->_cm && $this->_cm->instance) {
             $supervideo = $DB->get_record("supervideo", ["id" => $this->_cm->instance]);
-
             $urlparse = \mod_supervideo\util\url::parse($supervideo->videourl);
             $engine = $urlparse->engine;
         }
@@ -146,15 +149,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $draftitemid = file_get_submitted_draft_itemid('videofile');
         file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $defaultvalues['id']);
         $defaultvalues['videofile'] = $draftitemid;
-    }
-
-    public function definition_after_data() {
-        if ($this->current->instance) {
-            // Supervideo not migrated yet.
-            return;
-        }
-
-        parent::definition_after_data();
     }
 
     /**
@@ -169,7 +163,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->setType('complet_percent', PARAM_INT);
 
         return ['complet_percent'];
-
     }
 
     /**
