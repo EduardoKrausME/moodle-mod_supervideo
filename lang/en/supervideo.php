@@ -31,21 +31,19 @@ $string['dnduploadlabel-mp4'] = 'Add Video with Super Video';
 $string['dnduploadlabeltext'] = 'Add video with Super Video';
 
 $string['videourl'] = 'Youtube, Vimeo, Google Drive, external URL or MP4/MP3 file.';
-$string['videourl_help'] = '' .
-    '<h4>Youtube</h4>' .
-    '<p>Add a Youtube URL that you used. want to add to the course:</p>' .
-    '<address>Ex: https://www.youtube.com/watch?v=SNhUMChfolc <br>' .
-    '             https://youtu.be/kwjhXQUpyvA</address>' .
-    '<h4>Google Drive</h4>' .
-    '<p>In Google Drive, click share video and set permissions and paste the link here.</p>' .
-    '<h4>Vimeo</h4>' .
-    '<p>Add a Vimeo URL that you used. want to add to the course:</p>' .
-    '<address>Ex: https://vimeo.com/300138942<br>' .
-    '             https://vimeo.com/368389657</address>' .
-    '<h4>External video or audio</h4>' .
-    '<p>Add a URL of a video you have hosted on your own server:</p>' .
-    '<address>Ex: https://host.com.br/file/video.mp4<br>' .
-    '             https://host.com.br/file/video.mp3</address>';
+$string['videourl_help'] = '<h4>Youtube</h4>
+<div>Add a Youtube URL that you used. want to add to the course:</div>
+<div><strong>Ex:</strong> https://www.youtube.com/watch?v=SNhUMChfolc</div>
+<div><strong>Ex:</strong> https://youtu.be/kwjhXQUpyvA</div>
+<h4>Google Drive</h4>
+<div>In Google Drive, click share video and set permissions and paste the link here.</div>
+<h4>Vimeo</h4>
+<div>Add a Vimeo URL that you used. want to add to the course:</div>
+<div><strong>Ex:</strong> https://vimeo.com/300138942</div>
+<h4>External video or audio</h4>
+<div>Add a URL of a video you have hosted on your own server:</div>
+<div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
+<div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['videourl_error'] = 'Super Video URL';
 $string['videofile'] = 'Or select an MP3 or MP4 file';
 $string['videofile_help'] = 'You can upload an MP3 or MP4 file, host it on MoodleData and show it in the Super Video player';
