@@ -184,8 +184,8 @@ if ($parseurl->videoid) {
             echo \html_writer::span($PAGE->get_renderer('core')->render($notification));
         }
     } else if ($parseurl->engine == "youtube") {
-        echo "<script src='https://www.youtube.com/iframe_api'></script>
-              <div id='{$parseurl->engine}-{$uniqueid}'></div>";
+        echo "<script src='https://www.youtube.com/iframe_api'></script>";
+        echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'youtube', [
             (int)$supervideoview->id,
@@ -200,18 +200,17 @@ if ($parseurl->videoid) {
         ]);
 
     } else if ($parseurl->engine == "google-drive") {
-        $urlparameters = array(
+        $parametersdrive = implode('&amp;', [
             $supervideo->showrel ? 'rel=1' : 'rel=0',
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
             $supervideo->showinfo ? 'showinfo=1' : 'showinfo=0',
-            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
-        );
-
-        $parameters = implode('&amp;', $urlparameters);
-
+            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
+        ]);
         echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      src='https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parameters}'></iframe>";
+                      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                      sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
+                      src='https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parametersdrive}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
             (int)$supervideoview->id,
@@ -222,17 +221,16 @@ if ($parseurl->videoid) {
         $config->showmapa = false;
 
     } else if ($parseurl->engine == "vimeo") {
-        $urlparametersvimeo = [
-            $supervideo->showcontrols ? 'title=true' : 'title=false',
-            $supervideo->autoplay ? 'autoplay=true' : 'autoplay=false',
-            $supervideo->showcontrols ? 'controls=true' : 'controls=false',
-        ];
-
-        $parametersvimeo = implode('&amp;', $urlparametersvimeo);
-
-        echo "<script src='https://player.vimeo.com/api/player.js'></script>
-              <iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='480'
+        $parametersvimeo = implode('&amp;', [
+            $supervideo->showcontrols ? 'title=1' : 'title=0',
+            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
+            $supervideo->showcontrols ? 'controls=1' : 'controls=0',
+        ]);
+        echo "<script src='https://player.vimeo.com/api/player.js'></script>";
+        echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='480'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
+                      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                      sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
                       src='https://player.vimeo.com/video/{$parseurl->videoid}?{$parametersvimeo}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'vimeo', [
