@@ -39,7 +39,7 @@ class supervideo_view {
 
         $sql = "SELECT * FROM {supervideo_view} WHERE cm_id = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
         $supervideoview = $DB->get_record_sql($sql, ["cm_id" => $cmid, "user_id" => $USER->id]);
-        if ($supervideoview && $supervideoview->percent < 80) {
+        if ($supervideoview && $supervideoview->percent < 95) {
             return $supervideoview;
         }
 
