@@ -769,9 +769,10 @@ a.plyr__control {
     display: block
 }
 .plyr--audio .plyr__controls {
-    background: #fff;
-    background: var(--plyr-audio-controls-background, #fff);
-    border-radius: inherit;
+    //background: #fff;
+    //background: var(--plyr-audio-controls-background, #fff);
+    background: #0000001c;
+    border-radius: 29px;
     color: #4a5464;
     color: var(--plyr-audio-control-color, #4a5464);
     padding: 10px;
