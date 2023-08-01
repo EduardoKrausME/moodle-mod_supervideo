@@ -243,14 +243,13 @@ if ($parseurl->videoid) {
         ]);
     }
 
-    if ($config->showmapa) {
-        $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
-        echo "<div id='mapa-visualizacao'>
-                  <div class='mapa' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>
-                  {$text}
-                  <div class='clique'></div>
-              </div>";
-    }
+    $classmapa = $config->showmapa ? "" : "style='display:none'";
+    $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
+    echo "<div id='mapa-visualizacao' {$classmapa}>
+              <div class='mapa' data-mapa='" . base64_encode($supervideoview->mapa) . "'></div>
+              {$text}
+              <div class='clique'></div>
+          </div>";
     if ($linkreport) {
         echo "<div>{$linkreport}</div>";
     }
