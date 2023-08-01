@@ -162,7 +162,8 @@ if ($parseurl->videoid) {
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     "{$parseurl->engine}-{$uniqueid}",
-                    $supervideo->autoplay ? 1 : 0
+                    $supervideo->autoplay ? true : false,
+                    $supervideo->showcontrols ? true : false,
                 ]);
             } else if ($parseurl->videoid == "mp4") {
                 echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
@@ -174,7 +175,8 @@ if ($parseurl->videoid) {
                     $supervideoview->currenttime,
                     "{$parseurl->engine}-{$uniqueid}",
                     $supervideo->videosize,
-                    $supervideo->autoplay ? 1 : 0
+                    $supervideo->autoplay ? true : false,
+                    $supervideo->showcontrols ? true : false,
                 ]);
             }
         } else {
