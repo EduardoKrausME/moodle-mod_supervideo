@@ -39,7 +39,7 @@ class supervideo_view {
 
         $sql = "SELECT * FROM {supervideo_view} WHERE cm_id = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
         $supervideoview = $DB->get_record_sql($sql, ["cm_id" => $cmid, "user_id" => $USER->id]);
-        if ($supervideoview && $supervideoview->percent < 95) {
+        if ($supervideoview && $supervideoview->percent < 90) {
             return $supervideoview;
         }
 
@@ -84,14 +84,11 @@ class supervideo_view {
             require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
             grades_util::update($supervideoview->cm_id, $percent);
 
-            $supervideoview = (object)[
-                "id" => $viewid,
-                "currenttime" => $currenttime,
-                "duration" => $duration,
-                "percent" => $percent,
-                "mapa" => $mapa,
-                "timemodified" => time(),
-            ];
+            $supervideoview->currenttime = $currenttime;
+            $supervideoview->duration = $duration;
+            $supervideoview->percent = $percent;
+            $supervideoview->mapa = $mapa;
+            $supervideoview->timemodified = time();
 
             return $DB->update_record("supervideo_view", $supervideoview);
         }
