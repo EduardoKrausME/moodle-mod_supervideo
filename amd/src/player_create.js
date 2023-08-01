@@ -81,20 +81,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 storage  : {enabled : true, key : "id-" + view_id},
                 speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
             };
-            console.log(showcontrols);
-            console.log(config);
             var player = new PlayerRender("#" + elementId, config);
-            window.player = player;
-            if (return_currenttime) {
-                var video = document.getElementById(elementId);
-                video.addEventListener("loadedmetadata", function(event) {
-                    player.currentTime = return_currenttime;
-                });
-                player.currentTime = return_currenttime;
-                if (!autoplay) {
-                    player.pause();
+            player.on("ready", function() {
+                if (return_currenttime) {
+                    player.currentTime = parseInt(return_currenttime);
+                    setTimeout(function() {
+                        player.currentTime = parseInt(return_currenttime);
+                    }, 1000);
+
+                    if (!autoplay) {
+                        player.pause();
+                    }
                 }
-            }
+            });
 
             document.addEventListener("setCurrentTime", function(event) {
                 player.currentTime = event.detail.goCurrentTime;
@@ -124,19 +123,27 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
             };
             var player = new PlayerRender("#" + elementId, config);
-            window.player = player;
-            if (return_currenttime) {
-                var video = document.getElementById(elementId);
-                video.addEventListener("loadedmetadata", function(event) {
-                    player.currentTime = return_currenttime;
 
-                    progress._internal_max_height();
-                });
-                player.currentTime = return_currenttime;
-                if (!autoplay) {
-                    player.pause();
+            player.on("ready", function() {
+                if (return_currenttime) {
+                    player.currentTime = parseInt(return_currenttime);
+                    setTimeout(function() {
+                        player.currentTime = parseInt(return_currenttime);
+                    }, 1000);
+
+                    if (!autoplay) {
+                        player.pause();
+                    }
                 }
-            }
+                progress._internal_max_height();
+            });
+
+
+            var video = document.getElementById(elementId);
+            video.addEventListener("loadedmetadata", function(event) {
+                progress._internal_max_height();
+            });
+
             document.addEventListener("setCurrentTime", function(event) {
                 player.currentTime = event.detail.goCurrentTime;
             });
@@ -307,16 +314,18 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
             progress._internal_last_percent = percent;
 
-            Ajax.call([{
-                methodname : 'mod_supervideo_services_save_progress',
-                args       : {
-                    view_id     : progress._internal_view_id,
-                    currenttime : parseInt(currenttime),
-                    duration    : parseInt(duration),
-                    percent     : parseInt(percent),
-                    mapa        : JSON.stringify(progress._internal_assistido)
-                }
-            }]);
+            if (currenttime) {
+                Ajax.call([{
+                    methodname : 'mod_supervideo_services_save_progress',
+                    args       : {
+                        view_id     : progress._internal_view_id,
+                        currenttime : parseInt(currenttime),
+                        duration    : parseInt(duration),
+                        percent     : parseInt(percent),
+                        mapa        : JSON.stringify(progress._internal_assistido)
+                    }
+                }]);
+            }
 
             if (percent >= 0) {
                 $("#seu-mapa-view span").html(percent + "%");
