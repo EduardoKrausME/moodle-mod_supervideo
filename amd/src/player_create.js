@@ -64,20 +64,25 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 150);
         },
 
-        resource_audio : function(view_id, return_currenttime, elementId, autoplay) {
+        resource_audio : function(view_id, return_currenttime, elementId, autoplay, showcontrols) {
 
             progress._internal_view_id = view_id;
 
             var config = {
-                controls : [
-                    'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'airplay', 'duration'
-                ],
-                tooltips : {controls : true, seek : true},
+                controls :
+                    showcontrols ? [
+                        'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'airplay', 'duration'
+                    ] : [
+                        'play'
+                    ],
+                tooltips : {controls : showcontrols, seek : showcontrols},
                 settings : ['speed', 'loop'],
                 autoplay : autoplay ? true : false,
                 storage  : {enabled : true, key : "id-" + view_id},
                 speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
             };
+            console.log(showcontrols);
+            console.log(config);
             var player = new PlayerRender("#" + elementId, config);
             window.player = player;
             if (return_currenttime) {
@@ -100,16 +105,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 200);
         },
 
-        resource_video : function(view_id, return_currenttime, elementId, videosize, autoplay) {
+        resource_video : function(view_id, return_currenttime, elementId, videosize, autoplay, showcontrols) {
 
             progress._internal_view_id = view_id;
 
             var config = {
-                controls : [
-                    'play-large', 'play', 'current-time', 'progress', 'duration', 'mute', 'volume',
-                    'settings', 'pip', 'airplay', 'fullscreen'
-                ],
-                tooltips : {controls : true, seek : true},
+                controls :
+                    showcontrols ? [
+                        'play-large', 'play', 'current-time', 'progress', 'duration', 'mute', 'volume',
+                        'settings', 'pip', 'airplay', 'fullscreen'
+                    ] : [
+                        'play-large', 'play'
+                    ],
+                tooltips : {controls : showcontrols, seek : showcontrols},
                 settings : ['speed', 'loop'],
                 autoplay : autoplay,
                 storage  : {enabled : true, key : "id-" + view_id},
