@@ -130,6 +130,17 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023072700, 'mod', 'supervideo');
     }
 
+    if ($oldversion < 2023080700) {
+
+        $table = new xmldb_table('supervideo');
+        $field = new xmldb_field("showrel", XMLDB_TYPE_INTEGER, 10);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2023080700, 'mod', 'supervideo');
+    }
+
 
     return true;
 }

@@ -476,7 +476,6 @@ function supervideo_dndupload_handle($uploadinfo) {
     $data->coursemodule = $uploadinfo->coursemodule;
 
     $data->videosize = 1;
-    $data->showrel = 0;
     $data->showcontrols = 1;
     $data->showinfo = 0;
     $data->autoplay = 0;

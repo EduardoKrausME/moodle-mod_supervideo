@@ -38,10 +38,6 @@ if ($ADMIN->fulltree) {
         3 => get_string('settings_obrigatorio_marcado', 'mod_supervideo'),
     );
 
-    $settings->add(new admin_setting_configselect('supervideo/showrel',
-        get_string('showrel', 'mod_supervideo'),
-        get_string('showrel_desc', 'mod_supervideo'), 0, $options));
-
     $settings->add(new admin_setting_configselect('supervideo/showcontrols',
         get_string('showcontrols', 'mod_supervideo'),
         get_string('showcontrols_desc', 'mod_supervideo'), 1, $options));

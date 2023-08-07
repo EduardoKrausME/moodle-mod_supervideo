@@ -87,11 +87,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $config = get_config('supervideo');
 
-        if ($config->showrel <= 1) {
-            $mform->addElement('advcheckbox', 'showrel', get_string('showrel_desc', 'mod_supervideo'));
-            $mform->setDefault('showrel', $config->showrel);
-        }
-
         if ($config->showcontrols <= 1) {
             $mform->addElement('advcheckbox', 'showcontrols', get_string('showcontrols_desc', 'mod_supervideo'));
             $mform->setDefault('showcontrols', $config->showcontrols);

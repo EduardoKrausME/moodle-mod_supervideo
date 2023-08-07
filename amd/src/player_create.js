@@ -16,7 +16,7 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return progress = {
 
-        youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showrel, showcontrols, showinfo, autoplay) {
+        youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showcontrols, showinfo, autoplay) {
 
             progress._internal_view_id = view_id;
 
@@ -25,7 +25,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 videoId          : videoid,
                 width            : '100%',
                 playerVars       : {
-                    rel      : showrel,
+                    rel      : 0,
                     controls : showcontrols,
                     showinfo : showinfo,
                     autoplay : autoplay,
@@ -39,13 +39,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                             progress._internal_resize(4, 3);
                         }
                         progress._internal_max_height();
-
-                        if (return_currenttime) {
-                            player.seekTo(return_currenttime);
-                            if (!autoplay) {
-                                player.pause();
-                            }
-                        }
                         document.addEventListener("setCurrentTime", function(event) {
                             player.seekTo(event.detail.goCurrentTime);
                         });

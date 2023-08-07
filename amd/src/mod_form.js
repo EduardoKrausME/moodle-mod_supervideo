@@ -18,7 +18,6 @@ define(["jquery"], function($) {
         id_name               : null,
         id_videourl           : null,
         fitem_id_videosize    : null,
-        fitem_id_showrel      : null,
         fitem_id_showcontrols : null,
         fitem_id_showinfo     : null,
         fitem_id_autoplay     : null,
@@ -30,7 +29,6 @@ define(["jquery"], function($) {
 
             mod_form.fitem_id_videofile = mod_form.find_fitem("videofile");
             mod_form.fitem_id_videosize = mod_form.find_fitem("videosize");
-            mod_form.fitem_id_showrel = mod_form.find_fitem("showrel");
             mod_form.fitem_id_showcontrols = mod_form.find_fitem("showcontrols");
             mod_form.fitem_id_showinfo = mod_form.find_fitem("showinfo");
             mod_form.fitem_id_autoplay = mod_form.find_fitem("autoplay");
@@ -71,7 +69,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -87,7 +84,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.find("[value=1]").show();
                 mod_form.fitem_id_videosize.val(1);
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.show();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.show();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -97,7 +93,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.show();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -112,7 +107,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videosize.find("[value=7]").show();
                 mod_form.fitem_id_videosize.val(7);
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();
@@ -121,7 +115,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_videosize.hide();
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -130,7 +123,6 @@ define(["jquery"], function($) {
                 mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_videosize.hide();
 
-                mod_form.fitem_id_showrel && mod_form.fitem_id_showrel.hide();
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_showinfo && mod_form.fitem_id_showinfo.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();

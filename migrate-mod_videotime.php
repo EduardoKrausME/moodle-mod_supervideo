@@ -43,7 +43,6 @@ foreach ($videotimes as $videotime) {
         'intro' => $videotime->intro,
         'introformat' => $videotime->introformat,
         'videourl' => $videotime->vimeo_url,
-        'showrel' => 0,
         'videosize' => 1,
         'showcontrols' => 1,
         'showinfo' => 0,

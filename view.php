@@ -100,11 +100,6 @@ if ($parseurl->videoid) {
     $uniqueid = uniqid();
 
     $config = get_config('supervideo');
-    if ($config->showrel == 2) {
-        $supervideo->showrel = 0;
-    } else if ($config->showrel == 3) {
-        $supervideo->showrel = 1;
-    }
 
     if ($config->showcontrols == 2) {
         $supervideo->showcontrols = 0;
@@ -195,7 +190,6 @@ if ($parseurl->videoid) {
             "{$parseurl->engine}-{$uniqueid}",
             $parseurl->videoid,
             $supervideo->videosize,
-            $supervideo->showrel ? 1 : 0,
             $supervideo->showcontrols ? 1 : 0,
             $supervideo->showinfo ? 1 : 0,
             $supervideo->autoplay ? 1 : 0
@@ -203,7 +197,6 @@ if ($parseurl->videoid) {
 
     } else if ($parseurl->engine == "google-drive") {
         $parametersdrive = implode('&amp;', [
-            $supervideo->showrel ? 'rel=1' : 'rel=0',
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
             $supervideo->showinfo ? 'showinfo=1' : 'showinfo=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
