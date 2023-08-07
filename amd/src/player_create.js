@@ -20,16 +20,23 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             progress._internal_view_id = view_id;
 
+            var playerVars = {
+                rel         : 0,
+                controls    : showcontrols,
+                showinfo    : showinfo,
+                autoplay    : autoplay,
+                playsinline : 1,
+            };
+
+            if (return_currenttime) {
+                playerVars.start = return_currenttime;
+            }
+
             var player = new YT.Player(elementId, {
                 suggestedQuality : 'large',
                 videoId          : videoid,
                 width            : '100%',
-                playerVars       : {
-                    rel      : 0,
-                    controls : showcontrols,
-                    showinfo : showinfo,
-                    autoplay : autoplay,
-                },
+                playerVars       : playerVars,
                 events           : {
                     'onReady'       : function(event) {
 
