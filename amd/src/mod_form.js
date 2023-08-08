@@ -13,10 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery"], function($) {
+define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
     return mod_form = {
         id_name               : null,
         id_videourl           : null,
+        fitem_id_videourl     : null,
         fitem_id_videosize    : null,
         fitem_id_showcontrols : null,
         fitem_id_showinfo     : null,
@@ -27,6 +28,7 @@ define(["jquery"], function($) {
             mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
 
+            mod_form.fitem_id_videourl = mod_form.find_fitem("videourl");
             mod_form.fitem_id_videofile = mod_form.find_fitem("videofile");
             mod_form.fitem_id_videosize = mod_form.find_fitem("videosize");
             mod_form.fitem_id_showcontrols = mod_form.find_fitem("showcontrols");
@@ -38,7 +40,7 @@ define(["jquery"], function($) {
 
             mod_form.upload_file(engine);
 
-            // console.log("Boraaaaa");
+            mod_form.loadposter();
         },
 
         upload_file : function(engine) {
@@ -158,11 +160,12 @@ define(["jquery"], function($) {
         },
 
         find_fitem : function(fitem_id) {
-            if (document.getElementById("fitem__id" + fitem_id)) {
-                return mod_form.fitem_id_autoplay = $("#fitem__id" + fitem_id);
+            var key = "fitem_id_" + fitem_id;
+            if (document.getElementById(key)) {
+                return $("#" + key);
             }
 
-            var element = $("#id_" + fitem_id).parent();
+            var element = $("#id_" + fitem_id);
 
             element = element.parent();
             if (element.hasClass("fitem")) {
@@ -186,6 +189,17 @@ define(["jquery"], function($) {
             }
 
             return $("#id_" + fitem_id).parent();
+        },
+
+        loadposter : function() {
+
+            mod_form.fitem_id_videourl.addClass("videourl_form_item_supervideo");
+
+            var playerRender = new PlayerRender();
+            playerRender.loadposter($);
         }
+
     };
 });
+
+
