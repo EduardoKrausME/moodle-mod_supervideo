@@ -342,6 +342,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         _internal_show_mapa       : false,
         _internal_progress_create : function(duration) {
+            var _duration = Math.floor(duration - 1);
+
             var $mapa = $("#mapa-visualizacao .mapa");
             if (!$mapa.length) {
                 return;
@@ -358,8 +360,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 supervideo_view_mapa = [];
             }
 
-            if (duration < 100) {
-                progress._internal_progress_length = Math.floor(duration);
+            if (_duration < 100) {
+                progress._internal_progress_length = Math.floor(_duration);
             }
             for (var i = 0; i < progress._internal_progress_length; i++) {
                 if (typeof supervideo_view_mapa[i] != "undefined") {
@@ -371,30 +373,28 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 $mapa.append($mapa_item);
 
                 // Mapa Clique
-                var mapaTitle = Math.floor(duration / progress._internal_progress_length * i);
+                var mapaTitle = Math.floor(_duration / progress._internal_progress_length * i);
 
                 var hours = Math.floor(mapaTitle / 3600);
                 var minutes = (Math.floor(mapaTitle / 60)) % 60;
                 var seconds = mapaTitle % 60;
 
-
                 var tempo = minutes + ":" + seconds;
                 if (hours) {
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
-                var $mapa_clique = $("<div id='mapa-visualizacao-" + i + "'>");
-                // $mapa_clique.attr("title", M.util.get_string('seu_mapa_ir_para', 'mod_supervideo', tempo));
-                $mapa_clique.attr("title", 'Ir para ' + tempo);
+                var $mapa_clique =
+                        $("<div id='mapa-visualizacao-" + i + "'>")
+                            .attr("title", 'Ir para ' + tempo)
+                            .attr("data-currenttime", mapaTitle)
+                            .click(function() {
+                                var _setCurrentTime = $(this).attr("data-currenttime");
+                                _setCurrentTime = parseInt(_setCurrentTime);
 
-                $mapa_clique.attr("data-currenttime", mapaTitle);
-
-                $mapa_clique.click(function() {
-                    var _setCurrentTime = $(this).attr("data-currenttime");
-
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent('setCurrentTime', true, true, {goCurrentTime : parseInt(_setCurrentTime)});
-                    document.dispatchEvent(event);
-                });
+                                var event = document.createEvent('CustomEvent');
+                                event.initCustomEvent('setCurrentTime', true, true, {goCurrentTime : _setCurrentTime});
+                                document.dispatchEvent(event);
+                            });
                 $("#mapa-visualizacao .clique").append($mapa_clique);
             }
         },
