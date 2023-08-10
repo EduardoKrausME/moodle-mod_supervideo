@@ -43,6 +43,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $PAGE->requires->css('/mod/supervideo/style.css');
 
+        $supervideo = null;
+        if ($this->_cm && $this->_cm->instance) {
+            $supervideo = $DB->get_record("supervideo", ["id" => $this->_cm->instance]);
+        }
+
         $mform = $this->_form;
         $mform->updateAttributes(array('enctype' => 'multipart/form-data'));
 
@@ -81,6 +86,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
             "4x3" => 'Vídeo 4x3',
             "16x9" => 'Vídeo 16x9',
         );
+        if ($supervideo) {
+            if (!isset($sizeoptions[$supervideo->videosize])) {
+                $sizeoptions[$supervideo->videosize] = $supervideo->videosize;
+            }
+        }
         $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
         $mform->setDefault('videosize', 1);
 
@@ -130,8 +140,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $this->add_action_buttons();
 
         $engine = "";
-        if ($this->_cm && $this->_cm->instance) {
-            $supervideo = $DB->get_record("supervideo", ["id" => $this->_cm->instance]);
+        if ($supervideo) {
             $urlparse = \mod_supervideo\util\url::parse($supervideo->videourl);
             $engine = $urlparse->engine;
         }

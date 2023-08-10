@@ -25,10 +25,18 @@
 defined('MOODLE_INTERNAL') || die;
 
 $functions = [
-    'mod_supervideo_services_save_progress' => [
-        'classpath' => 'mod/supervideo/classes/services.php',
-        'classname' => 'mod_supervideo\services',
-        'methodname' => 'save_progress',
+    'mod_supervideo_services_progress_save' => [
+        'classpath' => 'mod/supervideo/classes/service/progress.php',
+        'classname' => 'mod_supervideo\service\progres',
+        'methodname' => 'save',
+        'description' => 'Save progress video.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'mod_supervideo_services_opengraph_getinfo' => [
+        'classpath' => 'mod/supervideo/classes/service/opengraph.php',
+        'classname' => 'mod_supervideo\service\opengraph',
+        'methodname' => 'getinfo',
         'description' => 'Save progress video.',
         'type' => 'write',
         'ajax' => true,

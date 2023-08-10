@@ -42,9 +42,13 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                         if (videosize == 1) {
                             progress._internal_resize(16, 9);
-                        } else {
+                        } else if (videosize == 2) {
                             progress._internal_resize(4, 3);
+                        } else if (videosize.indexOf("x")) {
+                            var sizes = videosize.split("x");
+                            progress._internal_resize(sizes[0], sizes[1]);
                         }
+
                         progress._internal_max_height();
                         document.addEventListener("setCurrentTime", function(event) {
                             player.seekTo(event.detail.goCurrentTime);
@@ -201,14 +205,18 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             progress._internal_saveprogress(1, 1);
 
-            if (videosize == 6) {
+            if (videosize == 5) {
+                progress._internal_resize(480, 640);
+            } else if (videosize == 6) {
                 progress._internal_resize(4, 3);
                 progress._internal_max_height();
             } else if (videosize == 7) {
                 progress._internal_resize(16, 9);
                 progress._internal_max_height();
-            } else {
-                progress._internal_resize(480, 640);
+            } else if (videosize.indexOf("x")) {
+                var sizes = videosize.split("x");
+                progress._internal_resize(sizes[0], sizes[1]);
+                progress._internal_max_height();
             }
 
             $("#mapa-visualizacao").hide();
@@ -316,7 +324,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             if (currenttime) {
                 Ajax.call([{
-                    methodname : 'mod_supervideo_services_save_progress',
+                    methodname : 'mod_supervideo_services_progress_save',
                     args       : {
                         view_id     : progress._internal_view_id,
                         currenttime : parseInt(currenttime),

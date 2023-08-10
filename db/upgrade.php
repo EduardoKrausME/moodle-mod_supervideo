@@ -148,5 +148,26 @@ function xmldb_supervideo_upgrade($oldversion) {
     }
 
 
+    if ($oldversion < 2023081000) {
+
+        $table = new xmldb_table('supervideo');
+
+        $index = new xmldb_index('videosize', XMLDB_INDEX_NOTUNIQUE, array('videosize'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field("videosize", XMLDB_TYPE_CHAR, 15);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->change_field_type($table, $field);
+        }
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2023081000, 'mod', 'supervideo');
+    }
+
     return true;
 }
