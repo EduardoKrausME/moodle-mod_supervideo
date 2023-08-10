@@ -39,7 +39,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-        global $DB, $CFG, $PAGE, $COURSE;
+        global $DB, $CFG, $PAGE, $COURSE, $USER;
 
         $PAGE->requires->css('/mod/supervideo/style.css');
 
@@ -74,13 +74,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         $sizeoptions = array(
-            0 => 'Vídeo ED (4x3)',
             1 => 'Vídeo HD (16x9)',
+            2 => 'Vídeo ED (4x3)',
 
             5 => 'PDF / DOC / XLS',
-            6 => 'Vídeo 4x3',
-            7 => 'Vídeo 16x9',
-
+            "4x3" => 'Vídeo 4x3',
+            "16x9" => 'Vídeo 16x9',
         );
         $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
         $mform->setDefault('videosize', 1);
@@ -103,7 +102,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         // Grade Element.
-        //$this->standard_grading_coursemodule_elements();
         $mform->addElement('header', 'modstandardgrade', get_string('modgrade', 'grades'));
 
         $values = [
@@ -137,7 +135,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $urlparse = \mod_supervideo\util\url::parse($supervideo->videourl);
             $engine = $urlparse->engine;
         }
-        $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine]);
+        $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine, $USER->lang]);
     }
 
     /**

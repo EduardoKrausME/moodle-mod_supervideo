@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
+define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return mod_form = {
         id_name               : null,
         id_videourl           : null,
@@ -23,7 +23,7 @@ define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
         fitem_id_showinfo     : null,
         fitem_id_autoplay     : null,
 
-        init : function(engine) {
+        init : function(engine, lang) {
 
             mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
@@ -40,7 +40,7 @@ define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
 
             mod_form.upload_file(engine);
 
-            mod_form.loadposter();
+            mod_form.loadposter(lang);
         },
 
         upload_file : function(engine) {
@@ -66,6 +66,10 @@ define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
 
             mod_form.id_videourl.prop("readonly", false);
 
+            mod_form.validateUrl(url);
+        },
+
+        validateUrl : function(url) {
             if (mod_form.testUrlResource(url)) {
                 // console.log("testUrlYouTube");
                 mod_form.fitem_id_videofile.show();
@@ -191,12 +195,11 @@ define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
             return $("#id_" + fitem_id).parent();
         },
 
-        loadposter : function() {
-
+        loadposter : function(lang) {
             mod_form.fitem_id_videourl.addClass("videourl_form_item_supervideo");
 
             var playerRender = new PlayerRender();
-            playerRender.loadposter($);
+            playerRender.loadposter($, lang);
         }
 
     };
