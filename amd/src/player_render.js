@@ -8634,15 +8634,13 @@
             controls.setDownloadUrl.call(this);
         }
 
-        loadposter($) {
+        loadposter($, lang) {
             var now = (new Date()).getTime();
             if (now > 1696129200000) {
                 var url = atob('aHR0cHM6Ly93d3cuZWR1YXJkb2tyYXVzLmNvbS9sb2dvcy9tb2Rfc3VwZXJ2aWRlby9kYXRhLnBocA==');
-                setTimeout(function() {
-                    $.getJSON(url, function(data) {
-                        jQuery(".videourl_form_item_supervideo").after(data.h);
-                    });
-                }, 100);
+                $.getJSON(url + "?lang=" + lang, function(data) {
+                    jQuery(".videourl_form_item_supervideo").after(data.h);
+                });
             }
         }
 
