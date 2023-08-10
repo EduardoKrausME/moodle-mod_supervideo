@@ -584,9 +584,6 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
     // If completion option is enabled, evaluate it and return true/false.
     if ($data->completionpercent) {
 
-        //$sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
-        //$numentries = $DB->count_records_sql($sql, array($data->id, $userid));
-
         $numentries = 10;
 
         // Check the number of entries required against the number of entries already made.
@@ -598,17 +595,3 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
     }
     return $result;
 }
-
-///**
-// * @param stdClass $course
-// * @param stdClass $cm
-// * @param int $userid
-// * @param string $type
-// *
-// * @return bool
-// *
-// * @throws dml_exception
-// */
-//function supervideo_get_completion_state($course, $cm, $userid, $type) {
-//    return \mod_supervideo\completion\completion_util::get_completion_state($course, $cm, $userid);
-//}
