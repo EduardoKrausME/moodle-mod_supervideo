@@ -148,7 +148,7 @@ function xmldb_supervideo_upgrade($oldversion) {
     }
 
 
-    if ($oldversion < 2023081000) {
+    if ($oldversion < 2023081100) {
 
         $table = new xmldb_table('supervideo');
 
@@ -166,7 +166,7 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        upgrade_plugin_savepoint(true, 2023081000, 'mod', 'supervideo');
+        upgrade_plugin_savepoint(true, 2023081100, 'mod', 'supervideo');
     }
 
     return true;

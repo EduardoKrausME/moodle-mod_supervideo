@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version = 2023081001;
+$plugin->version = 2023081100;
 $plugin->requires = 2014051200;
 $plugin->release = '2.5.1';
 $plugin->component = 'mod_supervideo';
