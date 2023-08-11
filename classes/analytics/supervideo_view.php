@@ -39,9 +39,21 @@ class supervideo_view {
 
         $sql = "SELECT * FROM {supervideo_view} WHERE cm_id = :cm_id AND user_id = :user_id ORDER BY id DESC LIMIT 1";
         $supervideoview = $DB->get_record_sql($sql, ["cm_id" => $cmid, "user_id" => $USER->id]);
-        if ($supervideoview && $supervideoview->percent < 90) {
-            return $supervideoview;
+
+        if ($supervideoview) {
+            if ($supervideoview->currenttime > ($supervideoview->duration - 3)) {
+                return self::_create($cmid);
+            }
+            if ($supervideoview->percent < 90) {
+                return $supervideoview;
+            }
         }
+
+        return self::_create($cmid);
+    }
+
+    private static function _create($cmid) {
+        global $USER, $DB;
 
         $supervideoview = (object)[
             "cm_id" => $cmid,

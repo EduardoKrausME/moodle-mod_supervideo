@@ -62,8 +62,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             setInterval(function() {
                 if (player && player.getCurrentTime != undefined) {
-                    var _currenttime = parseInt(player.getCurrentTime());
-                    progress._internal_saveprogress(_currenttime, player.getDuration());
+                    progress._internal_saveprogress(player.getCurrentTime(), player.getDuration() - 1);
                 }
             }, 150);
         },
@@ -286,26 +285,30 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         _internal_progress_length    : 100,
         _internal_saveprogress       : function(currenttime, duration) {
 
+            currenttime = Math.floor(currenttime);
+            duration = Math.floor(duration);
+
+            if (!duration) {
+                return 0;
+            }
+
             if (duration && progress._internal_assistido.length == 0) {
                 progress._internal_progress_create(duration);
             }
 
-            if (!duration || !progress._internal_show_mapa) {
-                return 0;
-            }
-
             var percent = 0;
-            //if (currenttime != 0) {
             var posicao_video = parseInt(currenttime / duration * progress._internal_progress_length);
 
             if (progress._internal_last_posicao_video == posicao_video) {
                 return;
             }
             progress._internal_last_posicao_video = posicao_video;
-            progress._internal_assistido[posicao_video] = 1;
-            // console.log(progress._internal_assistido);
 
-            for (var j = 0; j < progress._internal_progress_length; j++) {
+            if (posicao_video) {
+                progress._internal_assistido[posicao_video] = 1;
+            }
+
+            for (var j = 1; j <= progress._internal_progress_length; j++) {
                 if (progress._internal_assistido[j]) {
                     percent++;
                     $("#mapa-visualizacao-" + j).css({opacity : 1});
@@ -315,7 +318,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             if (progress._internal_progress_length != 100) {
                 percent = Math.floor(percent / progress._internal_progress_length * 100);
             }
-            //}
 
             if (progress._internal_last_percent == percent) {
                 return;
@@ -340,15 +342,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
         },
 
-        _internal_show_mapa       : false,
         _internal_progress_create : function(duration) {
-            var _duration = Math.floor(duration - 1);
 
             var $mapa = $("#mapa-visualizacao .mapa");
             if (!$mapa.length) {
                 return;
             }
-            progress._internal_show_mapa = true;
 
             var supervideo_view_mapa = [];
             try {
@@ -360,10 +359,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 supervideo_view_mapa = [];
             }
 
-            if (_duration < 100) {
-                progress._internal_progress_length = Math.floor(_duration);
+            if (duration < 100) {
+                progress._internal_progress_length = Math.floor(duration);
             }
-            for (var i = 0; i < progress._internal_progress_length; i++) {
+            for (var i = 1; i <= progress._internal_progress_length; i++) {
                 if (typeof supervideo_view_mapa[i] != "undefined") {
                     progress._internal_assistido[i] = supervideo_view_mapa[i];
                 } else {
@@ -373,7 +372,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 $mapa.append($mapa_item);
 
                 // Mapa Clique
-                var mapaTitle = Math.floor(_duration / progress._internal_progress_length * i);
+                var mapaTitle = Math.floor(duration / progress._internal_progress_length * i);
 
                 var hours = Math.floor(mapaTitle / 3600);
                 var minutes = (Math.floor(mapaTitle / 60)) % 60;
