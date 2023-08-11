@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 $functions = [
     'mod_supervideo_services_progress_save' => [
         'classpath' => 'mod/supervideo/classes/service/progress.php',
-        'classname' => 'mod_supervideo\service\progres',
+        'classname' => 'mod_supervideo\service\progress',
         'methodname' => 'save',
         'description' => 'Save progress video.',
         'type' => 'write',
