@@ -72,14 +72,16 @@ class grades_util {
      * @return int
      */
     public static function grade_item_update($supervideo, $grades = null) {
-
         $params = [
             'itemname' => $supervideo->name,
-            'idnumber' => $supervideo->cmidnumber,
             'gradetype' => GRADE_TYPE_VALUE,
             'grademax' => 100,
             'grademin' => 0
         ];
+
+        if (isset($supervideo->cmidnumber)) {
+            $params['idnumber'] = $supervideo->cmidnumber;
+        }
 
         if ($grades === 'reset') {
             $params['reset'] = true;
