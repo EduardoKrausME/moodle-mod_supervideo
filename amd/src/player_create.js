@@ -16,14 +16,13 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return progress = {
 
-        youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showcontrols, showinfo, autoplay) {
+        youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showcontrols, autoplay) {
 
             progress._internal_view_id = view_id;
 
             var playerVars = {
                 rel         : 0,
                 controls    : showcontrols,
-                showinfo    : showinfo,
                 autoplay    : autoplay,
                 playsinline : 1,
             };

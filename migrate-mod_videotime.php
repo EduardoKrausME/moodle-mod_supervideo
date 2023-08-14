@@ -45,7 +45,6 @@ foreach ($videotimes as $videotime) {
         'videourl' => $videotime->vimeo_url,
         'videosize' => 1,
         'showcontrols' => 1,
-        'showinfo' => 0,
         'autoplay' => 0,
         'timemodified' => $videotime->timemodified,
     ];

@@ -147,7 +147,6 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023080701, 'mod', 'supervideo');
     }
 
-
     if ($oldversion < 2023081100) {
 
         $table = new xmldb_table('supervideo');
@@ -167,6 +166,23 @@ function xmldb_supervideo_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2023081100, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2023081101) {
+
+        $table = new xmldb_table('supervideo');
+
+        $index = new xmldb_index('showinfo', XMLDB_INDEX_NOTUNIQUE, array('showinfo'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field("showinfo", XMLDB_TYPE_INTEGER, 10);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2023081101, 'mod', 'supervideo');
     }
 
     return true;

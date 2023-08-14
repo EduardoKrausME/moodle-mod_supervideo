@@ -46,7 +46,7 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
         // Define the root element describing the supervideo instance.
         $supervideo = new backup_nested_element('supervideo', array('id'), array(
             'course', 'name', 'intro', 'introformat', 'videourl', 'videosize',
-            'showcontrols', 'showinfo', 'autoplay', 'grade_approval'));
+            'showcontrols', 'autoplay', 'grade_approval'));
 
         // If we had more elements, we would build the tree here.
 

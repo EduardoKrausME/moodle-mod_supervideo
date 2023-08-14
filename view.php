@@ -85,10 +85,7 @@ if (has_capability('moodle/course:manageactivities', $context)) {
         get_string('report', 'mod_supervideo') . "</a>";
 }
 
-if ($supervideo->showinfo) {
-    echo $OUTPUT->heading(format_string($supervideo->name) . " " . $linkreport, 2, 'main', 'supervideoheading');
-    $linkreport = "";
-}
+echo $OUTPUT->heading(format_string($supervideo->name) . " " . $linkreport, 2, 'main', 'supervideoheading');
 
 echo '<div id="supervideo_area_embed">';
 
@@ -105,12 +102,6 @@ if ($parseurl->videoid) {
         $supervideo->showcontrols = 0;
     } else if ($config->showcontrols == 3) {
         $supervideo->showcontrols = 1;
-    }
-
-    if ($config->showinfo == 2) {
-        $supervideo->showinfo = 0;
-    } else if ($config->showinfo == 3) {
-        $supervideo->showinfo = 1;
     }
 
     if ($config->autoplay == 2) {
@@ -191,14 +182,12 @@ if ($parseurl->videoid) {
             $parseurl->videoid,
             $supervideo->videosize,
             $supervideo->showcontrols ? 1 : 0,
-            $supervideo->showinfo ? 1 : 0,
             $supervideo->autoplay ? 1 : 0
         ]);
 
     } else if ($parseurl->engine == "google-drive") {
         $parametersdrive = implode('&amp;', [
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
-            $supervideo->showinfo ? 'showinfo=1' : 'showinfo=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
         ]);
         echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='680'
@@ -243,9 +232,6 @@ if ($parseurl->videoid) {
               {$text}
               <div class='clique'></div>
           </div>";
-    if ($linkreport) {
-        echo "<div>{$linkreport}</div>";
-    }
 } else {
     echo "<div class='alert alert-warning'>
               <i class='fa fa-exclamation-circle'></i>

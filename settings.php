@@ -42,10 +42,6 @@ if ($ADMIN->fulltree) {
         get_string('showcontrols', 'mod_supervideo'),
         get_string('showcontrols_desc', 'mod_supervideo'), 1, $options));
 
-    $settings->add(new admin_setting_configselect('supervideo/showinfo',
-        get_string('showinfo', 'mod_supervideo'),
-        get_string('showinfo_desc', 'mod_supervideo'), 0, $options));
-
     $settings->add(new admin_setting_configselect('supervideo/autoplay',
         get_string('autoplay', 'mod_supervideo'),
         get_string('autoplay_desc', 'mod_supervideo'), 0, $options));
