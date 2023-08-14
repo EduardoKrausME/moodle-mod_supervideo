@@ -36,7 +36,6 @@ require_once($CFG->libdir . '/externallib.php');
  * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class progress extends \external_api {
     /**
      * Describes the parameters for save
@@ -64,7 +63,10 @@ class progress extends \external_api {
      * @param     $mapa
      *
      * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
      * @throws \invalid_parameter_exception
+     * @throws \moodle_exception
      */
     public static function save($viewid, $currenttime, $duration, $percent, $mapa) {
 
@@ -80,12 +82,8 @@ class progress extends \external_api {
         $duration = $params['duration'];
         $percent = $params['percent'];
 
-        try {
-            supervideo_view::update($viewid, $currenttime, $duration, $percent, $mapa);
-            return ['success' => true, 'exec' => "OK"];
-        } catch (\Exception $e) {
-            return ['success' => false, 'exec' => $e->getMessage()];
-        }
+        supervideo_view::update($viewid, $currenttime, $duration, $percent, $mapa);
+        return ['success' => true, 'exec' => "OK"];
     }
 
     /**

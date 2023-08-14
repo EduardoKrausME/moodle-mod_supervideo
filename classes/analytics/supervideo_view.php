@@ -93,16 +93,18 @@ class supervideo_view {
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
-            require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
-            grades_util::update($supervideoview->cm_id, $percent);
-
             $supervideoview->currenttime = $currenttime;
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
             $supervideoview->mapa = $mapa;
             $supervideoview->timemodified = time();
 
-            return $DB->update_record("supervideo_view", $supervideoview);
+            $status = $DB->update_record("supervideo_view", $supervideoview);
+
+            require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
+            grades_util::update($supervideoview->cm_id, $percent);
+
+            return $status;
         }
         return false;
     }
