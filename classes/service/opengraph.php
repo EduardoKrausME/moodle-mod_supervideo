@@ -24,7 +24,7 @@ namespace mod_supervideo\service;
 
 use external_function_parameters;
 use external_single_structure;
-use mod_supervideo\analytics\supervideo_view;
+use mod_supervideo\util\opengraph_util;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -61,7 +61,8 @@ class opengraph extends \external_api {
             'url' => $url,
         ]);
 
-        $opengraph = \mod_supervideo\util\opengraph::fetch($params['url']);
+        require_once(__DIR__."/../util/opengraph_util.php");
+        $opengraph = opengraph_util::fetch($params['url']);
 
         return [
             'title' => $opengraph->get("title"),
