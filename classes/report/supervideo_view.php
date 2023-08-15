@@ -235,12 +235,12 @@ class supervideo_view extends \table_sql {
         $htmlmapa = "<div id='mapa-visualizacao' class='report'>";
 
         $mapas = json_decode($linha->mapa);
-        $id = 0;
-        foreach ($mapas as $mapa) {
+        foreach ($mapas as $id => $mapa) {
+            if ($id == 0) continue;
             if ($mapa) {
-                $htmlmapa .= "<div id='mapa-visualizacao-" . $id++ . "' style='opacity:1'></div>";
+                $htmlmapa .= "<div id='mapa-visualizacao-" . $id . "' style='opacity:1'></div>";
             } else {
-                $htmlmapa .= "<div id='mapa-visualizacao-" . $id++ . "'></div>";
+                $htmlmapa .= "<div id='mapa-visualizacao-" . $id . "'></div>";
             }
         }
         $htmlmapa .= "</div>";
