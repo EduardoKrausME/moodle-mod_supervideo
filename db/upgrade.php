@@ -151,27 +151,6 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $table = new xmldb_table('supervideo');
 
-        $index = new xmldb_index('videosize', XMLDB_INDEX_NOTUNIQUE, array('videosize'));
-        if ($dbman->index_exists($table, $index)) {
-            $dbman->drop_index($table, $index);
-        }
-
-        $field = new xmldb_field("videosize", XMLDB_TYPE_CHAR, 15);
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->change_field_type($table, $field);
-        }
-
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        upgrade_plugin_savepoint(true, 2023081100, 'mod', 'supervideo');
-    }
-
-    if ($oldversion < 2023081101) {
-
-        $table = new xmldb_table('supervideo');
-
         $index = new xmldb_index('showinfo', XMLDB_INDEX_NOTUNIQUE, array('showinfo'));
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
@@ -182,7 +161,36 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2023081101, 'mod', 'supervideo');
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2023081100, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2023081602) {
+
+        $table = new xmldb_table('supervideo');
+
+        $field1 = new xmldb_field("playersize", XMLDB_TYPE_CHAR, 15, null, false, false, "", "videourl");
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+
+            $sql = "UPDATE {supervideo} SET playersize = videosize";
+            $DB->execute($sql);
+        }
+
+        $index = new xmldb_index('videosize', XMLDB_INDEX_NOTUNIQUE, array('videosize'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field2 = new xmldb_field("videosize", XMLDB_TYPE_CHAR, 15);
+        if ($dbman->field_exists($table, $field2)) {
+            $dbman->drop_field($table, $field2);
+        }
+
+        upgrade_plugin_savepoint(true, 2023081602, 'mod', 'supervideo');
     }
 
     return true;

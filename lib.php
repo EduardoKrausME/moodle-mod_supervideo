@@ -125,6 +125,8 @@ function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $
 
     $supervideo->timemodified = time();
     $supervideo->timecreated = time();
+    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
+
     $supervideo->id = $DB->insert_record('supervideo', $supervideo);
 
     \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
@@ -169,6 +171,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
 
     $supervideo->timemodified = time();
     $supervideo->id = $supervideo->instance;
+    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
 
     $result = $DB->update_record('supervideo', $supervideo);
 
@@ -475,7 +478,7 @@ function supervideo_dndupload_handle($uploadinfo) {
     $data->introformat = FORMAT_HTML;
     $data->coursemodule = $uploadinfo->coursemodule;
 
-    $data->videosize = 1;
+    $data->playersize = 1;
     $data->showcontrols = 1;
     $data->autoplay = 0;
     $data->grade_approval = 0;

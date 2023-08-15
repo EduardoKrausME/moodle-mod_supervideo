@@ -18,7 +18,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         id_name               : null,
         id_videourl           : null,
         fitem_id_videourl     : null,
-        fitem_id_videosize    : null,
+        fitem_id_playersize   : null,
         fitem_id_showcontrols : null,
         fitem_id_autoplay     : null,
 
@@ -29,7 +29,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             mod_form.fitem_id_videourl = mod_form.find_fitem("videourl");
             mod_form.fitem_id_videofile = mod_form.find_fitem("videofile");
-            mod_form.fitem_id_videosize = mod_form.find_fitem("videosize");
+            mod_form.fitem_id_playersize = mod_form.find_fitem("playersize");
             mod_form.fitem_id_showcontrols = mod_form.find_fitem("showcontrols");
             mod_form.fitem_id_autoplay = mod_form.find_fitem("autoplay");
 
@@ -76,14 +76,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                 if (info.width && info.height) {
                     var val = info.width + "x" + info.height;
-                    $("#id_videosize")
+                    $("#id_playersize")
                         .append("<option value='" + val + "' selected>" + val + "</option>")
                         .val(val);
                     mod_form.validateUrl(url);
-                    mod_form.fitem_id_videosize.hide();
+                    mod_form.fitem_id_playersize.hide();
                 } else {
                     mod_form.validateUrl(url);
-                    mod_form.fitem_id_videosize.show();
+                    mod_form.fitem_id_playersize.show();
                 }
             });
 
@@ -94,7 +94,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             if (mod_form.testUrlResource(url)) {
                 // console.log("testUrlYouTube");
                 mod_form.fitem_id_videofile.show();
-                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_playersize.hide();
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -104,12 +104,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             } else if (mod_form.testUrlYouTube(url)) {
                 // console.log("testUrlYouTube");
                 mod_form.fitem_id_videofile.hide();
-                mod_form.fitem_id_videosize.show();
-                mod_form.fitem_id_videosize.find("option").show();
-                mod_form.fitem_id_videosize.find("[value=5]").hide();
-                mod_form.fitem_id_videosize.find("[value=4x3]").hide();
-                mod_form.fitem_id_videosize.find("[value=16x9]").hide();
-                mod_form.fitem_id_videosize.val(1);
+                mod_form.fitem_id_playersize.show();
+                mod_form.fitem_id_playersize.find("option").show();
+                mod_form.fitem_id_playersize.find("[value=5]").hide();
+                mod_form.fitem_id_playersize.find("[value=4x3]").hide();
+                mod_form.fitem_id_playersize.find("[value=16x9]").hide();
+                mod_form.fitem_id_playersize.val(1);
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -117,7 +117,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             } else if (mod_form.testUrlVimeo(url)) {
                 // console.log("testUrlVimeo");
                 mod_form.fitem_id_videofile.hide();
-                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_playersize.hide();
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.show();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -125,19 +125,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             } else if (mod_form.testUrlDrive(url)) {
                 // console.log("testUrlDrive");
                 mod_form.fitem_id_videofile.hide();
-                mod_form.fitem_id_videosize.show();
-                mod_form.fitem_id_videosize.find("option").hide();
-                mod_form.fitem_id_videosize.find("[value=5]").show();
-                mod_form.fitem_id_videosize.find("[value=4x3]").show();
-                mod_form.fitem_id_videosize.find("[value=16x9]").show();
-                mod_form.fitem_id_videosize.val(7);
+                mod_form.fitem_id_playersize.show();
+                mod_form.fitem_id_playersize.find("option").hide();
+                mod_form.fitem_id_playersize.find("[value=5]").show();
+                mod_form.fitem_id_playersize.find("[value=4x3]").show();
+                mod_form.fitem_id_playersize.find("[value=16x9]").show();
+                mod_form.fitem_id_playersize.val(7);
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();
             } else if (mod_form.testUrlExternalFile(url)) {
                 // console.log("testUrlExternalFile");
                 mod_form.fitem_id_videofile.hide();
-                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_playersize.hide();
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
@@ -145,7 +145,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             } else {
                 // console.log("else");
                 mod_form.fitem_id_videofile.show();
-                mod_form.fitem_id_videosize.hide();
+                mod_form.fitem_id_playersize.hide();
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();

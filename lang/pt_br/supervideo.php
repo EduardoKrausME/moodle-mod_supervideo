@@ -55,7 +55,7 @@ $string['showcontrols'] = 'Controles';
 $string['showcontrols_desc'] = 'Mostrar controles do player';
 $string['autoplay'] = 'Reproduzir automaticamente';
 $string['autoplay_desc'] = 'Reproduzir automaticamente ao carregar o player';
-$string['video_size'] = 'Tamanho do Player';
+$string['playersize'] = 'Tamanho do Player';
 
 $string['idnotfound'] = 'Link não reconhecido como Youtube, Google Drive ou Vimeo';
 $string['seu_mapa_view'] = 'Seu mapa de Visualização:';

@@ -86,13 +86,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
             "4x3" => 'Vídeo 4x3',
             "16x9" => 'Vídeo 16x9',
         );
-        if ($supervideo) {
-            if (!isset($sizeoptions[$supervideo->videosize])) {
-                $sizeoptions[$supervideo->videosize] = $supervideo->videosize;
+        if ($supervideo && $supervideo->playersize != 0) {
+            if (!isset($sizeoptions[$supervideo->playersize])) {
+                $sizeoptions[$supervideo->playersize] = $supervideo->playersize;
             }
         }
-        $mform->addElement('select', 'videosize', get_string('video_size', 'mod_supervideo'), $sizeoptions);
-        $mform->setDefault('videosize', 1);
+        $mform->addElement('select', 'playersize', get_string('playersize', 'mod_supervideo'), $sizeoptions);
+        $mform->setDefault('playersize', 1);
+        $mform->setType('playersize', PARAM_TEXT);
 
         $config = get_config('supervideo');
 

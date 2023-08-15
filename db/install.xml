@@ -11,7 +11,7 @@
                 <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="videourl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-                <FIELD NAME="videosize" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="playersize" TYPE="char" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="showcontrols" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="autoplay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="grade_approval" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
@@ -23,7 +23,7 @@
             </KEYS>
             <INDEXES>
                 <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
-                <INDEX NAME="videosize" UNIQUE="false" FIELDS="videosize"/>
+                <INDEX NAME="playersize" UNIQUE="false" FIELDS="playersize"/>
                 <INDEX NAME="showcontrols" UNIQUE="false" FIELDS="showcontrols"/>
                 <INDEX NAME="autoplay" UNIQUE="false" FIELDS="autoplay"/>
             </INDEXES>

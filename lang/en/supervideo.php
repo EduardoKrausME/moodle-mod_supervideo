@@ -55,7 +55,7 @@ $string['showcontrols'] = 'Controls';
 $string['showcontrols_desc'] = 'Show player controls';
 $string['autoplay'] = 'Play automatically';
 $string['autoplay_desc'] = 'Automatically play the player load';
-$string['video_size'] = 'Video size';
+$string['playersize'] = 'Video size';
 
 $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
 $string['seu_mapa_view'] = 'Your View map:';

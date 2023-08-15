@@ -16,7 +16,7 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return progress = {
 
-        youtube : function(view_id, return_currenttime, elementId, videoid, videosize, showcontrols, autoplay) {
+        youtube : function(view_id, return_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
 
             progress._internal_view_id = view_id;
 
@@ -39,12 +39,16 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 events           : {
                     'onReady'       : function(event) {
 
-                        if (videosize == 1) {
+                        console.log(playersize);
+                        console.log(playersize.indexOf("x"));
+
+                        if (playersize == 1) {
                             progress._internal_resize(16, 9);
-                        } else if (videosize == 2) {
+                        } else if (playersize == 2) {
                             progress._internal_resize(4, 3);
-                        } else if (videosize.indexOf("x")) {
-                            var sizes = videosize.split("x");
+                        } else if (playersize.indexOf("x")) {
+                            var sizes = playersize.split("x");
+                            console.log(sizes);
                             progress._internal_resize(sizes[0], sizes[1]);
                         }
 
@@ -106,7 +110,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 200);
         },
 
-        resource_video : function(view_id, return_currenttime, elementId, videosize, autoplay, showcontrols) {
+        resource_video : function(view_id, return_currenttime, elementId, playersize, autoplay, showcontrols) {
 
             progress._internal_view_id = view_id;
 
@@ -197,22 +201,22 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 300);
         },
 
-        drive : function(view_id, elementId, videosize) {
+        drive : function(view_id, elementId, playersize) {
 
             progress._internal_view_id = view_id;
 
             progress._internal_saveprogress(1, 1);
 
-            if (videosize == 5) {
+            if (playersize == 5) {
                 progress._internal_resize(480, 640);
-            } else if (videosize == 6) {
+            } else if (playersize == 6) {
                 progress._internal_resize(4, 3);
                 progress._internal_max_height();
-            } else if (videosize == 7) {
+            } else if (playersize == 7) {
                 progress._internal_resize(16, 9);
                 progress._internal_max_height();
-            } else if (videosize.indexOf("x")) {
-                var sizes = videosize.split("x");
+            } else if (playersize.indexOf("x")) {
+                var sizes = playersize.split("x");
                 progress._internal_resize(sizes[0], sizes[1]);
                 progress._internal_max_height();
             }

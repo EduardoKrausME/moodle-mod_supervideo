@@ -124,7 +124,7 @@ if ($parseurl->videoid) {
             (int)$supervideoview->id,
             $supervideoview->currenttime,
             "{$parseurl->engine}-{$uniqueid}",
-            $supervideo->videosize,
+            $supervideo->playersize,
             $supervideo->autoplay ? 1 : 0
         ]);
 
@@ -160,7 +160,7 @@ if ($parseurl->videoid) {
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     "{$parseurl->engine}-{$uniqueid}",
-                    $supervideo->videosize,
+                    $supervideo->playersize,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
                 ]);
@@ -180,7 +180,7 @@ if ($parseurl->videoid) {
             $supervideoview->currenttime,
             "{$parseurl->engine}-{$uniqueid}",
             $parseurl->videoid,
-            $supervideo->videosize,
+            $supervideo->playersize,
             $supervideo->showcontrols ? 1 : 0,
             $supervideo->autoplay ? 1 : 0
         ]);
@@ -199,7 +199,7 @@ if ($parseurl->videoid) {
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
             (int)$supervideoview->id,
             "{$parseurl->engine}-{$uniqueid}",
-            $supervideo->videosize
+            $supervideo->playersize
         ]);
 
         $config->showmapa = false;
