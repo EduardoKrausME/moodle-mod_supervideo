@@ -1,9 +1,15 @@
-.supervideo-report-link {
-    font-size: 16px;
-    font-weight: 400;
-    padding-top: 4px;
-    display: inline-block;
-    float: right;
+#supervideoheading {
+    display: flex;
+    align-items: center;
+    .supervideoheading-title {
+        width: 100%;
+    }
+    .supervideo-report-link {
+        font-size: 16px;
+        font-weight: 400;
+        padding-top: 4px;
+        display: inline-block;
+    }
 }
 #supervideo_area_embed {
     position: relative;

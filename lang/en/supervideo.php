@@ -61,6 +61,7 @@ $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
 $string['seu_mapa_view'] = 'Your View map:';
 $string['seu_mapa_ir_para'] = 'Go to {$a}';
 
+$string['report_title'] = 'Report';
 $string['report'] = 'Views report';
 $string['report_userid'] = 'User ID';
 $string['report_nome'] = 'Full name';

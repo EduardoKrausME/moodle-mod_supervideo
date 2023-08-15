@@ -77,15 +77,15 @@ if ($mobile) {
     $PAGE->set_pagelayout('embedded');
 }
 
-$linkreport = "";
 echo $OUTPUT->header();
 
+$linkreport = "";
 if (has_capability('moodle/course:manageactivities', $context)) {
     $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
-        get_string('report', 'mod_supervideo') . "</a>";
+        get_string('report_title', 'mod_supervideo') . "</a>";
 }
-
-echo $OUTPUT->heading(format_string($supervideo->name) . " " . $linkreport, 2, 'main', 'supervideoheading');
+$title = format_string($supervideo->name);
+echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, 'main', 'supervideoheading');
 
 echo '<div id="supervideo_area_embed">';
 
@@ -109,7 +109,6 @@ if ($parseurl->videoid) {
     } else if ($config->autoplay == 3) {
         $supervideo->autoplay = 1;
     }
-
 
     if ($parseurl->engine == "link") {
 

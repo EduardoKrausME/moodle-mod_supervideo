@@ -61,6 +61,7 @@ $string['idnotfound'] = 'Link não reconhecido como Youtube, Google Drive ou Vim
 $string['seu_mapa_view'] = 'Seu mapa de Visualização:';
 $string['seu_mapa_ir_para'] = 'Ir para {$a}';
 
+$string['report_title'] = 'Relatório';
 $string['report'] = 'Relatório de visualizações';
 $string['report_userid'] = 'User ID';
 $string['report_nome'] = 'Nome Completo';

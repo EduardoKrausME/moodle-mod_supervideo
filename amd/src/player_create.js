@@ -39,16 +39,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 events           : {
                     'onReady'       : function(event) {
 
-                        console.log(playersize);
-                        console.log(playersize.indexOf("x"));
-
                         if (playersize == 1) {
                             progress._internal_resize(16, 9);
                         } else if (playersize == 2) {
                             progress._internal_resize(4, 3);
                         } else if (playersize.indexOf("x")) {
                             var sizes = playersize.split("x");
-                            console.log(sizes);
                             progress._internal_resize(sizes[0], sizes[1]);
                         }
 
@@ -58,7 +54,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                         });
                     },
                     'onStateChange' : function(event) {
-                        //console.log(event);
                     }
                 }
             });
@@ -175,7 +170,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             });
 
             player.on('ended', function() {
-                // console.log("Ended");
             });
 
             Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function(dimensions) {
@@ -299,18 +293,20 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 progress._internal_progress_create(duration);
             }
 
-            var percent = 0;
-            var posicao_video = parseInt(currenttime / duration * progress._internal_progress_length);
-
-            if (progress._internal_last_posicao_video == posicao_video) {
-                return;
+            if (progress._internal_progress_length < 100) {
+                posicao_video = currenttime;
+            } else {
+                var posicao_video = parseInt(currenttime / duration * progress._internal_progress_length);
             }
+
+            if (progress._internal_last_posicao_video == posicao_video) return;
             progress._internal_last_posicao_video = posicao_video;
 
             if (posicao_video) {
                 progress._internal_assistido[posicao_video] = 1;
             }
 
+            var percent = 0;
             for (var j = 1; j <= progress._internal_progress_length; j++) {
                 if (progress._internal_assistido[j]) {
                     percent++;
@@ -318,13 +314,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 }
             }
 
-            if (progress._internal_progress_length != 100) {
+            if (progress._internal_progress_length < 100) {
                 percent = Math.floor(percent / progress._internal_progress_length * 100);
             }
 
-            if (progress._internal_last_percent == percent) {
-                return;
-            }
+            if (progress._internal_last_percent == percent) return;
             progress._internal_last_percent = percent;
 
             if (currenttime) {
@@ -362,7 +356,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 supervideo_view_mapa = [];
             }
 
-            if (duration < 100) {
+            if (Math.floor(duration) <= 100) {
                 progress._internal_progress_length = Math.floor(duration);
             }
             for (var i = 1; i <= progress._internal_progress_length; i++) {
