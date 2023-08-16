@@ -134,8 +134,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                 mod_form.fitem_id_showcontrols && mod_form.fitem_id_showcontrols.hide();
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.hide();
-            } else if (mod_form.testUrlExternalFile(url)) {
-                // console.log("testUrlExternalFile");
+            } else if (type = mod_form.testUrlExternalFile(url)) {
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_playersize.hide();
 
@@ -154,28 +153,26 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
         },
 
-        testUrlResource : function(url) {
+        testUrlResource     : function(url) {
             var re = /(\[resource-file:).*/i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
-
-        testUrlYouTube : function(url) {
-            var re = /\/\/(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=|embed\/)?([a-z0-9_\-]+)/i;
+        testUrlYouTube      : function(url) {
+            var re = /\/\/(?:www\.)?youtu(?:\.be|be\.com)\/(?:watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]+)/i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
-        testUrlVimeo   : function(url) {
+        testUrlVimeo        : function(url) {
             var re = /\/\/(?:www\.)?vimeo.com\/([0-9a-z\-_]+)/i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
-        testUrlDrive   : function(url) {
+        testUrlDrive        : function(url) {
             var re = /https:\/\/(docs.google.com)\//i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
-
         testUrlExternalFile : function(url) {
             var re = /^https?.*\.(mp3|mp4)/i;
             var matches = re.exec(url);

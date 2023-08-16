@@ -24,6 +24,7 @@ class url {
 
     public $videoid = false;
     public $engine = "";
+    public $extra = "";
 
     public static function parse($videourl) {
         $url = new url();
@@ -31,18 +32,14 @@ class url {
         if (strpos($videourl, "[link]:") === 0) {
             $url->videoid = substr($videourl, 7);
             $url->engine = "link";
+            $url->extra = "mp4";
         } else if (strpos($videourl, "[resource-file") === 0) {
             $item = substr($videourl, 0, -1);
             $url->videoid = strtolower(pathinfo($item, PATHINFO_EXTENSION));
             $url->engine = "resource";
-        } else if (strpos($videourl, "youtube")) {
-            if (preg_match('/[\?|&]v=([a-zA-Z0-9\-_]{11})/', $videourl, $output)) {
-                $url->videoid = $output[1];
-                $url->engine = "youtube";
-            }
-        } else if (strpos($videourl, "youtu.be")) {
-            if (preg_match('/youtu.be\/([a-zA-Z0-9\-_]{11})/', $videourl, $output)) {
-                $url->videoid = $output[1];
+        } else if (strpos($videourl, "youtu")) {
+            if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i', $videourl, $output)) {
+                $url->videoid = $output[3];
                 $url->engine = "youtube";
             }
         } else if (strpos($videourl, "vimeo")) {
@@ -50,12 +47,18 @@ class url {
                 $url->videoid = $output[1];
                 $url->engine = "vimeo";
             }
-        } else if (strpos($videourl, "drive.google.com")) {
+        } else if (strpos($videourl, "docs.google.com")) {
             if (preg_match('/([a-zA-Z0-9\-_]{33})/', $videourl, $output)) {
                 $url->videoid = $output[1];
                 $url->engine = "google-drive";
             }
         } else {
+            if (preg_match('/^https?.*\.(mp3|mp4)/i', $videourl, $output)) {
+                $url->videoid = $videourl;
+                $url->engine = "link";
+                $url->extra = $output[1];
+            }
+
             $url->videoid = false;
             $url->engine = "";
         }

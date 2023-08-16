@@ -115,17 +115,33 @@ if ($parseurl->videoid) {
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
 
-        echo "<video style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                  <source src='{$parseurl->videoid}' type='video/mp4'>
-              </video>";
+        if ($url->extra == "mp3") {
+            echo "<audio style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$parseurl->videoid}' type='video/mp3'>
+                  </audio>";
 
-        $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
-            (int)$supervideoview->id,
-            $supervideoview->currenttime,
-            "{$parseurl->engine}-{$uniqueid}",
-            $supervideo->playersize,
-            $supervideo->autoplay ? 1 : 0
-        ]);
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->autoplay ? true : false,
+                $supervideo->showcontrols ? true : false,
+            ]);
+
+        } else {
+            echo "<video style='width:100%' id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
+                      <source src='{$parseurl->videoid}' type='video/mp4'>
+                  </video>";
+
+            $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                "{$parseurl->engine}-{$uniqueid}",
+                $supervideo->playersize,
+                $supervideo->autoplay ? 1 : 0,
+                $supervideo->showcontrols ? true : false,
+            ]);
+        }
 
     } else if ($parseurl->engine == "resource") {
         $files = get_file_storage()->get_area_files(
