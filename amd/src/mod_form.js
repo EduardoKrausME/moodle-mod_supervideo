@@ -83,7 +83,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                     mod_form.fitem_id_playersize.hide();
                 } else {
                     mod_form.validateUrl(url);
-                    mod_form.fitem_id_playersize.show();
                 }
             });
 
@@ -115,7 +114,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlVimeo(url)) {
-                // console.log("testUrlVimeo");
+                console.log("testUrlVimeo");
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_playersize.hide();
 
@@ -123,7 +122,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
             } else if (mod_form.testUrlDrive(url)) {
-                // console.log("testUrlDrive");
+                console.log("testUrlDrive");
                 mod_form.fitem_id_videofile.hide();
                 mod_form.fitem_id_playersize.show();
                 mod_form.fitem_id_playersize.find("option").hide();
@@ -142,7 +141,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 mod_form.fitem_id_autoplay && mod_form.fitem_id_autoplay.show();
 
             } else {
-                // console.log("else");
+                console.log("else");
                 mod_form.fitem_id_videofile.show();
                 mod_form.fitem_id_playersize.hide();
 
