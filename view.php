@@ -149,33 +149,32 @@ if ($parseurl->videoid) {
         $file = reset($files);
         if ($file) {
             $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
-            $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false);
+            $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
 
-            $controls = $supervideo->showcontrols ? "controls" : "";
-            $autoplay = $supervideo->autoplay ? "autoplay" : "";
+            $embedparameters = implode(" ", [
+                $supervideo->showcontrols ? "controls" : "",
+                $supervideo->autoplay ? "autoplay" : "",
+            ]);
 
             if ($parseurl->videoid == "mp3") {
-                echo "<audio id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                          <source src='{$fullurl}' type='audio/mp3'>
-                      </audio>";
+                echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     "{$parseurl->engine}-{$uniqueid}",
+                    $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
                 ]);
             } else if ($parseurl->videoid == "mp4") {
-                echo "<video id='{$parseurl->engine}-{$uniqueid}' {$controls} {$autoplay} crossorigin playsinline >
-                          <source src='{$fullurl}' type='video/mp4'>
-                      </video>";
+                echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     "{$parseurl->engine}-{$uniqueid}",
-                    $supervideo->playersize,
+                    $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
                 ]);
@@ -221,6 +220,9 @@ if ($parseurl->videoid) {
 
     } else if ($parseurl->engine == "vimeo") {
         $parametersvimeo = implode('&amp;', [
+            'pip=1',
+            'title=0',
+            'byline=0',
             $supervideo->showcontrols ? 'title=1' : 'title=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
@@ -230,7 +232,7 @@ if ($parseurl->videoid) {
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                       sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
-                      src='https://player.vimeo.com/video/{$parseurl->videoid}?{$parametersvimeo}'></iframe>";
+                      src='https://player.vimeo.com/video/{$parseurl->videoid}?pip{$parametersvimeo}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'vimeo', [
             $supervideoview->id,
