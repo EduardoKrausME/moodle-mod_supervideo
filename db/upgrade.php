@@ -161,10 +161,6 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
         upgrade_plugin_savepoint(true, 2023081100, 'mod', 'supervideo');
     }
 
