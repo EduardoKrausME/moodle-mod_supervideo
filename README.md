@@ -1,19 +1,17 @@
 # Moodle mod_supervideo
-Módulo que facilita a adição de vídeos do Youtube, Vimeo e Google Drive no Moodle
+Um módulo projetado para simplificar a incorporação de vídeos do YouTube, Vimeo e Google Drive no ambiente Moodle.
 
 # Configurações Globais
-Nas configurações Globais é possível definir quais campos serão padrão para todos os vídeos. Porém estes dados podem ser alterados nos vídeos e mudanças não farão efeitos nos vídeos já configurado.
+Nas configurações globais, é possível definir campos padrão para todos os vídeos. No entanto, esses dados podem ser personalizados em vídeos específicos, e as alterações não afetarão vídeos já configurados.
 
-Veja abaixo a tela que você localiza em Administração do site >> Plugins >> Módulos de atividades >> Vídeo do Youtube
+Confira a imagem abaixo para acessar essas configurações em Administração do site >> Plugins >> Módulos de atividades >> Vídeo do Youtube.
 
-# Adicionando um vídeo no Moodle
-No seu curso, após Ativar Edição, clique em "Adicionar uma atividade ou recurso" e selecione "Vídeo do Youtube" e clique em Acrescentar.
+# Adicionando um Vídeo no Moodle
+Dentro do seu curso, ao ativar a edição, clique em "Adicionar uma atividade ou recurso", escolha "Vídeo do YouTube" e clique em Acrescentar.
 
-Defina o título e em "URL do Youtube" adicione o link do vídeo.
+Defina o título e, em "URL do YouTube", insira o link do vídeo. Em "Tamanho do vídeo", escolha o formato desejado. Essa opção é crucial para garantir que o player se ajuste corretamente à área de visualização.
 
-Em "Tamanho do vídeo" selecione qual o formato do vídeo. Este valor é importante para que o Player se adapte ao tamanho da área de visualização.
+Basta clicar em Salvar para acessar o vídeo.
 
-É só clicar em Salvar e abrir o vídeo.
-
-# Visualizando
-O player automaticamente se adapta a largura. Isso melhora a visualização que sempre fica de tamanho fixo, pequeno de mais em Desktop e grande de mais em Mobile.
+# Visualização
+O player se ajusta automaticamente à largura, aprimorando a visualização que costuma ser muito pequena em desktops e excessivamente grande em dispositivos móveis. Isso proporciona uma experiência mais equilibrada.
