@@ -31,32 +31,41 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 playerVars.start = return_currenttime;
             }
 
-            var player = new YT.Player(elementId, {
-                suggestedQuality : 'large',
-                videoId          : videoid,
-                width            : '100%',
-                playerVars       : playerVars,
-                events           : {
-                    'onReady'       : function(event) {
+            if (YT && YT.Player) {
+                var player = new YT.Player(elementId, {
+                    suggestedQuality : 'large',
+                    videoId          : videoid,
+                    width            : '100%',
+                    playerVars       : playerVars,
+                    events           : {
+                        'onReady'       : function(event) {
 
-                        if (playersize == 1) {
-                            progress._internal_resize(16, 9);
-                        } else if (playersize == 2) {
-                            progress._internal_resize(4, 3);
-                        } else if (playersize.indexOf("x")) {
-                            var sizes = playersize.split("x");
-                            progress._internal_resize(sizes[0], sizes[1]);
+                            if (playersize == 1) {
+                                progress._internal_resize(16, 9);
+                            } else if (playersize == 2) {
+                                progress._internal_resize(4, 3);
+                            } else if (playersize.indexOf("x")) {
+                                var sizes = playersize.split("x");
+                                progress._internal_resize(sizes[0], sizes[1]);
+                            }
+
+                            progress._internal_max_height();
+                            document.addEventListener("setCurrentTime", function(event) {
+                                player.seekTo(event.detail.goCurrentTime);
+                            });
+                        },
+                        'onStateChange' : function(event) {
                         }
-
-                        progress._internal_max_height();
-                        document.addEventListener("setCurrentTime", function(event) {
-                            player.seekTo(event.detail.goCurrentTime);
-                        });
-                    },
-                    'onStateChange' : function(event) {
                     }
-                }
-            });
+                });
+            } else {
+                var html =
+                        '<div class="alert alert-danger">' +
+                        'Error loading the JavaScript at https://www.youtube.com/iframe_api. ' +
+                        'Please check for any Security Policy restrictions.' +
+                        '</div>';
+                $("#supervideo_area_embed").html(html);
+            }
 
             setInterval(function() {
                 if (player && player.getCurrentTime != undefined) {
