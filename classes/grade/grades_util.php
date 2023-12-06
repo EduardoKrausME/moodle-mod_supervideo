@@ -72,6 +72,11 @@ class grades_util {
      * @return int
      */
     public static function grade_item_update($supervideo, $grades = null) {
+
+        if (!defined('MOODLE_INTERNAL')) {
+            define('GRADE_TYPE_VALUE', 1);
+        }
+
         $params = [
             'itemname' => $supervideo->name,
             'gradetype' => GRADE_TYPE_VALUE,
