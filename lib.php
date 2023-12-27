@@ -285,6 +285,26 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
     }
 }
 
+function formatTime($time) {
+    if ($time < 60) {
+        return "00:00:{$time}";
+    } else {
+        $horas = '';
+        $minutos = floor($time / 60);
+        $segundos = ($time % 60);
+
+        if ($minutos > 59) {
+            $horas = floor($minutos / 60);
+            $minutos = ($minutos % 60);
+        }
+
+        $horas = substr("00{$horas}", -2);
+        $minutos = substr("00{$minutos}", -2);
+        $segundos = substr("00{$segundos}", -2);
+        return "{$horas}:{$minutos}:{$segundos}";
+    }
+}
+
 /**
  * function supervideo_get_coursemodule_info
  *
@@ -521,8 +541,6 @@ function mod_supervideo_get_completion_active_rule_descriptions($cm) {
     if (empty($cm->customdata['customcompletionrules']) || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
         return [];
     }
-
-    throw new Exception("aaaa");
 
     $descriptions = [];
     $completionpercent = $cm->customdata['customcompletionrules']['completionpercent'] ?? 0;
