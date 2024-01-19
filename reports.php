@@ -48,10 +48,11 @@ $sql = "SELECT cm.*, sv.name
 $supervideos = $DB->get_records_sql($sql, ["course" => $courseid]);
 $reportnode = ["children" => []];
 foreach ($supervideos as $supervideo) {
+    $videoname = format_string($supervideo->name);
     $reportnode["children"][] = [
         "display" => true,
         "action" => "{$CFG->wwwroot}/mod/supervideo/report.php?id={$supervideo->id}",
-        "text" => "{$supervideo->name}",
+        "text" => "{$videoname}",
     ];
 }
 
