@@ -37,6 +37,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public function definition() {
         global $DB, $CFG, $PAGE, $COURSE, $USER;
@@ -65,7 +67,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
 
         $filemanageroptions = [
-            'accepted_types' => ['.mp3', '.mp4'],
+            'accepted_types' => ['.mp3', '.mp4', '.webm'],
             'maxbytes' => 0
         ];
         $mform->addElement('filepicker', 'videofile', get_string('videofile', 'mod_supervideo'), null, $filemanageroptions);
@@ -79,12 +81,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         $sizeoptions = array(
-            1 => 'Vídeo HD (16x9)',
-            2 => 'Vídeo ED (4x3)',
+            1 => 'Video HD (16x9)',
+            2 => 'Video ED (4x3)',
 
             5 => 'PDF / DOC / XLS',
-            "4x3" => 'Vídeo 4x3',
-            "16x9" => 'Vídeo 16x9',
+            "4x3" => 'Video 4x3',
+            "16x9" => 'Video 16x9',
         );
         if ($supervideo && $supervideo->playersize != 0) {
             if (!isset($sizeoptions[$supervideo->playersize])) {
@@ -147,7 +149,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * Set up the completion checkbox which is not part of standard data.
      *
      * @param array $defaultvalues
-     *
      */
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
