@@ -45,7 +45,7 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['videourl_error'] = 'URL do Super Vídeo';
-$string['videofile'] = 'Ou selecione um arquivo MP3 ou MP4';
+$string['videofile'] = 'Ou selecione um arquivo MP3, MP4 ou WebM';
 $string['videofile_help'] = 'Você pode fazer upload de um arquivo MP3 ou MP4, hospeda-lo na MoodleData e mostrar no player do Super Vídeo';
 $string['pluginadministration'] = 'Super Vídeo';
 $string['modulename_help'] = 'Este módulo adiciona um Vídeos Youtube, Google Drive ou Vimeo dentro do Moodle.';
