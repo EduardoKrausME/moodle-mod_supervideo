@@ -71,7 +71,7 @@ class url {
             }
         }
 
-        if (preg_match('/^https?.*\.(mp3|mp4|m3u8)/i', $videourl, $output)) {
+        if (preg_match('/^https?.*\.(mp3|mp4|m3u8|webm)/i', $videourl, $output)) {
             $url->videoid = $videourl;
             $url->engine = "link";
             $url->extra = $output[1];

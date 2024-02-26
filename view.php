@@ -171,7 +171,7 @@ if ($parseurl->videoid) {
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
                 ]);
-            } else if ($parseurl->videoid == "mp4") {
+            } else {
                 echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [

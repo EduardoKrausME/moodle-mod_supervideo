@@ -16,6 +16,16 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     return progress = {
 
+        ottflix : function(view_id, return_currenttime, elementId, videoid) {
+            window.addEventListener('message', function receiveMessage(event) {
+                console.trace(event.data);
+
+                if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
+                    progress._internal_saveprogress(event.data.currentTime, event.data.duration);
+                }
+            });
+        },
+
         youtube : function(view_id, return_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
 
             progress._internal_view_id = view_id;
@@ -135,7 +145,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             var embed =
                     "<video " + embedparameters + " crossorigin playsinline>" +
-                    "    <source src='" + fullurl + "' type='audio/mp4'>" +
+                    "    <source src='" + fullurl + "'>" +
                     "</video>";
             console.log(embed);
             $("#" + elementId).html(embed);

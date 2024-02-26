@@ -459,6 +459,10 @@ function supervideo_dndupload_register() {
             [
                 'extension' => 'mp4',
                 'message' => get_string('dnduploadlabel-mp4', 'mod_supervideo'),
+            ],
+            [
+                'extension' => 'webm',
+                'message' => get_string('dnduploadlabel-mp4', 'mod_supervideo'),
             ]
         ],
         'types' => [

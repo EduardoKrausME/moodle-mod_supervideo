@@ -173,7 +173,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             return matches && matches[1];
         },
         testUrlExternalFile : function(url) {
-            var re = /^https?.*\.(mp3|mp4)/i;
+            var re = /^https?.*\.(mp3|mp4|m3u8|webm)/i;
             var matches = re.exec(url);
             return matches && matches[1];
         },
@@ -216,8 +216,5 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             var playerRender = new PlayerRender();
             playerRender.loadposter($, lang);
         }
-
     };
 });
-
-
