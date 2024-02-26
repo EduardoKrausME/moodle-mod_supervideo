@@ -72,8 +72,11 @@ class grades_util {
      * @return int
      */
     public static function grade_item_update($supervideo, $grades = null) {
+        global $CFG;
 
-        if (!defined('MOODLE_INTERNAL')) {
+        require_once ("{$CFG->dirroot}/lib/gradelib.php");
+
+        if (!defined('GRADE_TYPE_VALUE')) {
             define('GRADE_TYPE_VALUE', 1);
         }
 
