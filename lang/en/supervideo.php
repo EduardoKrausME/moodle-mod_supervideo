@@ -30,7 +30,7 @@ $string['dnduploadlabel-mp3'] = 'Add Audio with Super Video';
 $string['dnduploadlabel-mp4'] = 'Add Video with Super Video';
 $string['dnduploadlabeltext'] = 'Add video with Super Video';
 
-$string['videourl'] = 'Youtube, Vimeo, Google Drive, external link with MP4/MP3/M3U8 extension or an MP4/MP3 file';
+$string['videourl'] = 'Youtube, Vimeo, Google Drive, external link with MP4/MP3/M3U8/WebM extension or an MP4/MP3/WebM file';
 $string['videourl_help'] = '<h4>Youtube</h4>
 <div>Add a Youtube URL that you used. want to add to the course:</div>
 <div><strong>Ex:</strong> https://www.youtube.com/watch?v=SNhUMChfolc</div>
