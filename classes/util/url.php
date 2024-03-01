@@ -57,10 +57,17 @@ class url {
             }
         }
         if (strpos($videourl, "vimeo")) {
-            if (preg_match('/vimeo.com\/(\d+)/', $videourl, $output)) {
-                $url->videoid = $output[1];
+            if(preg_match('/vimeo.com\/(\d+)(\/(\w+))?/', $videourl, $output)){
+            //if (preg_match('/vimeo.com\/(\d+)/', $videourl, $output)) {
                 $url->engine = "vimeo";
-                return $url;
+                if(isset($output[3])) {
+                    $url->videoid = "{$output[1]}?h={$output[3]}";
+                    return $url;
+                }else{
+                    $url->videoid = $output[1];
+                    $url->engine = "vimeo";
+                    return $url;
+                }
             }
         }
         if (strpos($videourl, "docs.google.com")) {

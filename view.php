@@ -234,9 +234,15 @@ if ($parseurl->videoid) {
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
         ]);
 
-        echo $OUTPUT->render_from_template('mod_supervideo/embed_youtube', [
+        if (strpos($parseurl->videoid, "?")) {
+            $url = "{$parseurl->videoid}&pip{$parametersvimeo}";
+        } else {
+            $url = "{$parseurl->videoid}?pip{$parametersvimeo}";
+        }
+
+        echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
             'html_id' => "{$parseurl->engine}-{$uniqueid}",
-            'videoid' => $parseurl->videoid,
+            'vimeo_url' => $url,
             'parametersvimeo' => $parametersvimeo
         ]);
 
