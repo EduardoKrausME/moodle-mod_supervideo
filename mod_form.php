@@ -142,8 +142,19 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $urlparse = \mod_supervideo\util\url::parse($supervideo->videourl);
             $engine = $urlparse->engine;
         }
-        $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine, $USER->lang]);
+        $btn = false;
+        if (!($this->_cm && $this->_cm->instance)) {
+            $course = $this->optional_param('course', 0, PARAM_INT);
+            $section = $this->optional_param('section', false, PARAM_INT);
+            if ($course && $section !== false) {
+                $btn = "course={$course}&section={$section}&sesskey=" . sesskey();
+            }
+        }
+        $PAGE->requires->strings_for_js(['record_kapture'], 'supervideo');
+        $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine, $USER->lang, $btn]);
     }
+
+    // &videourl=[resource-file:undefined.webm]&videofile=716642258&sesskey=puL5iw2t3d
 
     /**
      * Set up the completion checkbox which is not part of standard data.

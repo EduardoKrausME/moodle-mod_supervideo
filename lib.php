@@ -271,8 +271,8 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
             echo "  <td>" . $registro->user_id . "</td>";
             echo "  <td>" . fullname($registro) . "</td>";
             echo "  <td>" . $registro->email . "</td>";
-            echo "  <td>" . formatTime($registro->currenttime) . "</td>";
-            echo "  <td>" . formatTime($registro->duration) . "</td>";
+            echo "  <td>" . supervideo_format_time($registro->currenttime) . "</td>";
+            echo "  <td>" . supervideo_format_time($registro->duration) . "</td>";
             echo "  <td>" . $registro->percent . "%</td>";
             echo "  <td>" . userdate($registro->timecreated) . "</td>";
             echo "  <td>" . userdate($registro->timemodified) . "</td>";
@@ -285,7 +285,7 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
     }
 }
 
-function formatTime($time) {
+function supervideo_format_time($time) {
     if ($time < 60) {
         return "00:00:{$time}";
     } else {
@@ -404,7 +404,18 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
 
     // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
     if ($context->contextlevel != CONTEXT_MODULE) {
-        return false;
+        $filepath = $args[0];
+        $itemid = $args[1];
+        $filename = $args[2];
+
+
+        $fs = get_file_storage();
+
+        $file = $fs->get_file($context->id, 'user', $filearea, $itemid, "/{$filepath}", $filename);
+        if ($file) {
+            send_stored_file($file, 86400, 0, $forcedownload, $options);
+            return true;
+        }
     }
 
     // Make sure the user is logged in and has access to the module
@@ -435,12 +446,11 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
     // Retrieve the file from the Files API.
     $fs = get_file_storage();
     $file = $fs->get_file($context->id, 'mod_supervideo', $filearea, $itemid, $filepath, $filename);
-    if (!$file) {
-        return false; // The file does not exist.
+    if ($file) {
+        send_stored_file($file, 86400, 0, $forcedownload, $options);
+        return true;
     }
-
-    // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering.
-    send_stored_file($file, 86400, 0, $forcedownload, $options);
+    return false;
 }
 
 /**

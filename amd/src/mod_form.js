@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
+define(["jquery", "core/ajax", "mod_supervideo/player_render", "core/str"], function($, Ajax, PlayerRender, getString) {
     return mod_form = {
         id_name               : null,
         id_videourl           : null,
@@ -22,7 +22,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         fitem_id_showcontrols : null,
         fitem_id_autoplay     : null,
 
-        init : function(engine, lang) {
+        init : function(engine, lang, courseSection) {
+            console.log([engine, lang, courseSection]);
 
             mod_form.id_name = $("#id_name");
             mod_form.id_videourl = $("#id_videourl");
@@ -39,6 +40,21 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             mod_form.upload_file(engine);
 
             mod_form.loadposter(lang);
+
+            console.log(courseSection);
+            if (courseSection) {
+                mod_form.id_videourl.after(`
+                    <div style="width:100%;">
+                        <a id="kapture-open" class='btn btn-primary' 
+                           href='${M.cfg.wwwroot}/mod/supervideo/vendor/kapture/?${courseSection}'>
+                            ${M.util.get_string('record_kapture', 'supervideo')}   
+                        </a>
+                    </div>`);
+                mod_form.id_name.focus(function() {
+                    var videotitle = mod_form.id_name.val();
+                    $("#kapture-open").attr("href", `${M.cfg.wwwroot}/mod/supervideo/vendor/kapture/?${courseSection}&videotitle=${videotitle}`)
+                })
+            }
         },
 
         upload_file : function(engine) {
