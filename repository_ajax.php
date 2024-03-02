@@ -54,11 +54,11 @@ switch ($action) {
         break;
     case 'list':
 
-        $itemid = optional_param("itemid", 13, PARAM_INT);
+        $itemid = optional_param("itemid", 0, PARAM_INT);
 
         $fs = get_file_storage();
         $draftcontext = context_user::instance($USER->id);
-        $files = $fs->get_area_files($context->id, 'user', 'draft', $itemid, $itemid, false);
+        $files = $fs->get_area_files($context->id, 'user', 'draft', $itemid);
 
         $returnFiles = [];
         /** @var stored_file $file */
@@ -67,7 +67,7 @@ switch ($action) {
                 $path = "/{$context->id}/mod_supervideo/{$file->get_filearea()}{$file->get_filepath()}{$file->get_itemid()}/{$file->get_filename()}";
 
                 $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
-                $icon = "";
+                $icon = false;
                 switch ($extension) {
                     case 'doc':
                     case 'docx':
@@ -83,12 +83,14 @@ switch ($action) {
                         break;
                 }
 
-                $returnFiles[] = [
-                    "filename" => $file->get_filename(),
-                    "titulo" => $file->get_filename(),
-                    "image" => $icon,
-                    "file" => moodle_url::make_file_url('/pluginfile.php', $path, false)->out()
-                ];
+                if ($icon) {
+                    $returnFiles[] = [
+                        "filename" => $file->get_filename(),
+                        "titulo" => $file->get_filename(),
+                        "image" => $icon,
+                        "file" => moodle_url::make_file_url('/pluginfile.php', $path, false)->out()
+                    ];
+                }
             }
         }
 
