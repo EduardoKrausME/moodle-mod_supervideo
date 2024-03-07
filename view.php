@@ -87,7 +87,14 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 $title = format_string($supervideo->name);
 echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, 'main', 'supervideoheading');
 
-echo '<div id="supervideo_area_embed">';
+
+$config = get_config('supervideo');
+$style = "";
+if (@$config->maxwidth >= 500) {
+    $config->maxwidth = intval($config->maxwidth);
+    $style = "style='margin:0 auto;max-width:{$config->maxwidth}px;'";
+}
+echo "<div id='supervideo_area_embed' {$style}>";
 
 $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 
@@ -96,7 +103,7 @@ $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 if ($parseurl->videoid) {
     $uniqueid = uniqid();
 
-    $config = get_config('supervideo');
+    $element_id = "{$parseurl->engine}-{$uniqueid}";
 
     if ($config->showcontrols == 2) {
         $supervideo->showcontrols = 0;
@@ -114,7 +121,6 @@ if ($parseurl->videoid) {
 
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
-        $element_id = "{$parseurl->engine}-{$uniqueid}";
 
         echo "<div id='{$element_id}'></div>";
         if ($parseurl->extra == "mp3") {
@@ -138,7 +144,7 @@ if ($parseurl->videoid) {
         }
     }
     if ($parseurl->engine == "ottflix") {
-        echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
+        echo "<div id='{$element_id}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'ottflix', [
             (int)$supervideoview->id,
@@ -163,7 +169,7 @@ if ($parseurl->videoid) {
             ]);
 
             if ($parseurl->videoid == "mp3") {
-                echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
+                echo "<div id='{$element_id}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                     (int)$supervideoview->id,
@@ -174,7 +180,7 @@ if ($parseurl->videoid) {
                     $supervideo->showcontrols ? true : false,
                 ]);
             } else {
-                echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
+                echo "<div id='{$element_id}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                     (int)$supervideoview->id,
@@ -194,7 +200,7 @@ if ($parseurl->videoid) {
     }
     if ($parseurl->engine == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
-        echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
+        echo "<div id='{$element_id}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'youtube', [
             (int)$supervideoview->id,
@@ -224,7 +230,6 @@ if ($parseurl->videoid) {
         ]);
 
         $config->showmapa = false;
-
     }
     if ($parseurl->engine == "vimeo") {
         $parametersvimeo = implode('&amp;', [
@@ -245,7 +250,7 @@ if ($parseurl->videoid) {
         echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
             'html_id' => "{$parseurl->engine}-{$uniqueid}",
             'vimeo_url' => $url,
-            'parametersvimeo' => $parametersvimeo
+            'parametersvimeo' => $parametersvimeo,
         ]);
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'vimeo', [
@@ -256,17 +261,18 @@ if ($parseurl->videoid) {
         ]);
     }
 
-    $classmapa = $config->showmapa ? "" : "style='display:none'";
-    $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
-    echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
-        'class' => $classmapa,
-        'data-mapa' => base64_encode($supervideoview->mapa),
-        'text' => $text
-    ]);
-
 } else {
     echo $OUTPUT->render_from_template('mod_supervideo/error');
+    $config->showmapa = false;
 }
 
 echo '</div>';
+
+$text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
+echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
+    'class' => $config->showmapa ? "" : "style='display:none'",
+    'data-mapa' => base64_encode($supervideoview->mapa),
+    'text' => $text
+]);
+
 echo $OUTPUT->footer();

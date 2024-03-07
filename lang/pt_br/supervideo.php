@@ -55,6 +55,8 @@ $string['showcontrols'] = 'Controles';
 $string['showcontrols_desc'] = 'Mostrar controles do player';
 $string['autoplay'] = 'Reproduzir automaticamente';
 $string['autoplay_desc'] = 'Reproduzir automaticamente ao carregar o player';
+$string['maxwidth'] = 'Largura Máxima para player de Vídeo';
+$string['maxwidth_desc'] = 'Largura máxima, em pixels, que o player de vídeo pode expandir. Valores inferiores a 500 pixels serão considerados.';
 $string['playersize'] = 'Tamanho do Player';
 $string['record_kapture'] = 'Grave seu vídeo com Kapture';
 
