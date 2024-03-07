@@ -114,13 +114,15 @@ if ($parseurl->videoid) {
 
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
+        $element_id = "{$parseurl->engine}-{$uniqueid}";
 
-        echo "<div id='{$parseurl->engine}-{$uniqueid}'></div>";
-        if ($url->extra == "mp3") {
+        echo "<div id='{$element_id}'></div>";
+        if ($parseurl->extra == "mp3") {
             $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
-                "{$parseurl->engine}-{$uniqueid}",
+                $element_id,
+                $parseurl->videoid,
                 $supervideo->autoplay ? true : false,
                 $supervideo->showcontrols ? true : false,
             ]);
@@ -128,8 +130,8 @@ if ($parseurl->videoid) {
             $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
-                "{$parseurl->engine}-{$uniqueid}",
-                $supervideo->playersize,
+                $element_id,
+                $parseurl->videoid,
                 $supervideo->autoplay ? 1 : 0,
                 $supervideo->showcontrols ? true : false,
             ]);
