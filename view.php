@@ -261,18 +261,18 @@ if ($parseurl->videoid) {
         ]);
     }
 
+    $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
+    echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
+        'class' => $config->showmapa ? "" : "style='display:none'",
+        'data-mapa' => base64_encode($supervideoview->mapa),
+        'text' => $text
+    ]);
+
 } else {
     echo $OUTPUT->render_from_template('mod_supervideo/error');
     $config->showmapa = false;
 }
 
 echo '</div>';
-
-$text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
-echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
-    'class' => $config->showmapa ? "" : "style='display:none'",
-    'data-mapa' => base64_encode($supervideoview->mapa),
-    'text' => $text
-]);
 
 echo $OUTPUT->footer();
