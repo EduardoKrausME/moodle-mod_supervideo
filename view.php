@@ -72,6 +72,7 @@ $PAGE->set_url('/mod/supervideo/view.php', $params);
 $PAGE->requires->css('/mod/supervideo/style.css');
 $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
 $PAGE->set_heading($course->fullname);
+$PAGE->set_context($context);
 
 if ($mobile) {
     $PAGE->set_pagelayout('embedded');
