@@ -70,7 +70,7 @@ class url {
                 }
             }
         }
-        if (strpos($videourl, "docs.google.com")) {
+        if (strpos($videourl, "docs.google.com") || strpos($videourl, "drive.google.com")) {
             if (preg_match('/([a-zA-Z0-9\-_]{33})/', $videourl, $output)) {
                 $url->videoid = $output[1];
                 $url->engine = "google-drive";
