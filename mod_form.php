@@ -165,7 +165,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
         parent::data_preprocessing($defaultvalues);
 
         $draftitemid = file_get_submitted_draft_itemid('videofile');
-        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $defaultvalues['id']);
+
+        $id = intval($defaultvalues['id']);
+        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $id);
         $defaultvalues['videofile'] = $draftitemid;
 
         $defaultvalues['completionpercentenabled'] = !empty($defaultvalues['completionpercent']) ? 1 : 0;
