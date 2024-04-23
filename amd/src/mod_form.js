@@ -79,7 +79,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "core/str"], func
             mod_form.id_videourl.prop("readonly", false);
 
             var promise = (Ajax.call([{
-                methodname : 'mod_supervideo_services_opengraph_getinfo',
+                methodname : 'mod_supervideo_opengraph_getinfo',
                 args       : {
                     url : url.replace("[link]:", "")
                 }

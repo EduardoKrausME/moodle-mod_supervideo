@@ -306,36 +306,6 @@ function supervideo_format_time($time) {
 }
 
 /**
- * function supervideo_get_coursemodule_info
- *
- * @param stdClass $coursemodule
- *
- * @return cached_cm_info
- * @throws dml_exception
- */
-function supervideo_get_coursemodule_info($coursemodule) {
-    global $DB;
-
-    $supervideo = $DB->get_record('supervideo', ['id' => $coursemodule->instance],
-        'id, name, videourl, intro, introformat, completionpercent');
-
-    $info = new cached_cm_info();
-    if ($supervideo) {
-        $info->name = $supervideo->name;
-    }
-
-    if ($coursemodule->showdescription) {
-        $info->content = format_module_intro('supervideo', $supervideo, $coursemodule->id, false);
-    }
-
-    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
-        $info->customdata['customcompletionrules']['completionpercent'] = $supervideo->completionpercent;
-    }
-
-    return $info;
-}
-
-/**
  * @param settings_navigation $settings
  * @param navigation_node $supervideonode
  *
@@ -628,4 +598,257 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
         }
     }
     return $result;
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $url url object
+ * @param  stdClass $course course object
+ * @param  stdClass $cm course module object
+ * @param  stdClass $context context object
+ *
+ * @throws coding_exception
+ */
+function supervideo_view($supervideo, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = [
+        'context' => $context,
+        'objectid' => $supervideo->id,
+    ];
+
+    $event = \mod_supervideo\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('supervideo', $supervideo);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Export file supervideo contents
+ *
+ * @param $cm
+ * @param $baseurl
+ * @return array of file content
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function supervideo_export_contents($cm, $baseurl) {
+    global $DB;
+
+    $contents = [];
+    $context = context_module::instance($cm->id);
+    $supervideo = $DB->get_record('supervideo', array('id' => $cm->instance), '*', MUST_EXIST);
+
+    $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
+
+    $config = get_config('supervideo');
+    if ($config->showcontrols == 2) {
+        $config->showcontrols = 0;
+    } else if ($config->showcontrols == 3) {
+        $config->showcontrols = 1;
+    } else {
+        $config->showcontrols = $supervideo->showcontrols;
+    }
+    if ($config->autoplay == 2) {
+        $config->autoplay = 0;
+    } else if ($config->autoplay == 3) {
+        $config->autoplay = 1;
+    } else {
+        $config->autoplay = $supervideo->autoplay;
+    }
+    $config->playersize = $supervideo->playersize;
+    $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
+    $config->datamapa = base64_encode($supervideoview->mapa);
+    $config->viewid = $supervideoview->id;
+    $config->currenttime = $supervideoview->currenttime;
+
+    if ($parseurl->videoid) {
+        if ($parseurl->engine == "link") {
+            $contents[] = [
+                'type' => "link",
+                'filename' => "link.{$parseurl->extra}",
+                'filepath' => $parseurl->extra,
+                'filesize' => 1,
+                'fileurl' => $parseurl->videoid,
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'sortorder' => 0,
+                'userid' => 0,
+                'author' => '',
+                'license' => json_encode($config, JSON_NUMERIC_CHECK),
+            ];
+            return $contents;
+        }
+        if ($parseurl->engine == "ottflix") {
+            $contents[] = [
+                'type' => 'ottflix',
+                'filename' => 'ottflix.mp4',
+                'filepath' => "",
+                'filesize' => 1,
+                'fileurl' => $parseurl->videoid,
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'sortorder' => 0,
+                'userid' => 0,
+                'author' => '',
+                'license' => json_encode($config),
+            ];
+            return $contents;
+        }
+        if ($parseurl->engine == "resource") {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+            foreach ($files as $file) {
+                $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
+                $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
+                $file = [
+                    'type' => 'file',
+                    'engine' => 'resource',
+                    'filename' => $file->get_filename(),
+                    'filepath' => $file->get_filepath(),
+                    'filesize' => $file->get_filesize(),
+                    'fileurl' => $fullurl,
+                    'timecreated' => $file->get_timecreated(),
+                    'timemodified' => $file->get_timemodified(),
+                    'sortorder' => $file->get_sortorder(),
+                    'userid' => $file->get_userid(),
+                    'author' => $file->get_author(),
+                    'license' => json_encode($config, JSON_NUMERIC_CHECK), // $file->get_license(),
+                ];
+                $contents[] = $file;
+
+                return $contents;
+            }
+        }
+        if ($parseurl->engine == "youtube") {
+            $contents[] = [
+                'type' => 'youtube',
+                'filename' => 'youtube.mp4',
+                'filepath' => "",
+                'filesize' => 1,
+                'fileurl' => "https://www.youtube.com/watch?v={$parseurl->videoid}",
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'sortorder' => 0,
+                'userid' => 0,
+                'author' => '',
+                'license' => json_encode($config, JSON_NUMERIC_CHECK),
+            ];
+            return $contents;
+        }
+        if ($parseurl->engine == "google-drive") {
+            $config->showmapa = false;
+
+            $parametersdrive = implode('&amp;', [
+                $supervideo->showcontrols ? 'controls=1' : 'controls=0',
+                $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
+            ]);
+            $url = "https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parametersdrive}";
+
+            $contents[] = [
+                'type' => 'google-drive',
+                'filename' => 'google-drive.mp4',
+                'filepath' => "",
+                'filesize' => 1,
+                'fileurl' => $url,
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'sortorder' => 0,
+                'userid' => 0,
+                'author' => '',
+                'license' => json_encode($config, JSON_NUMERIC_CHECK),
+            ];
+            return $contents;
+        }
+        if ($parseurl->engine == "vimeo") {
+            $parametersvimeo = implode('&amp;', [
+                'pip=1',
+                'title=0',
+                'byline=0',
+                $supervideo->showcontrols ? 'title=1' : 'title=0',
+                $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
+                $supervideo->showcontrols ? 'controls=1' : 'controls=0',
+            ]);
+
+            if (strpos($parseurl->videoid, "?")) {
+                $url = "https://player.vimeo.com/video/{$parseurl->videoid}&pip{$parametersvimeo}";
+            } else {
+                $url = "https://player.vimeo.com/video/{$parseurl->videoid}?pip{$parametersvimeo}";
+            }
+
+            $contents[] = [
+                'type' => 'vimeo',
+                'filename' => 'vimeo.mp4',
+                'filepath' => "",
+                'filesize' => 1,
+                'fileurl' => $url,
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'sortorder' => 0,
+                'userid' => 0,
+                'author' => '',
+                'license' => json_encode($config, JSON_NUMERIC_CHECK),
+            ];
+            return $contents;
+        }
+    }
+}
+
+/**
+ * Given a course_module object, this function returns any
+ * "extra" information that may be needed when printing
+ * this activity in a course listing.
+ *
+ * See {@link get_array_of_activities()} in course/lib.php
+ *
+ * @param stdClass $coursemodule
+ * @return cached_cm_info info
+ * @throws coding_exception
+ * @throws dml_exception
+ */
+function supervideo_get_coursemodule_info($coursemodule) {
+    global $CFG, $DB;
+
+    require_once("{$CFG->libdir}/filelib.php");
+
+    if (!$supervideo = $DB->get_record('supervideo', ['id' => $coursemodule->instance],
+        'id, name, videourl, intro, introformat, completionpercent')) {
+        return null;
+    }
+
+    $info = new cached_cm_info();
+    $info->name = $supervideo->name;
+    if ($coursemodule->showdescription) {
+        $info->content = format_module_intro('supervideo', $supervideo, $coursemodule->id, false);
+    }
+
+    if ($coursemodule->showdescription) {
+        $info->content = format_module_intro('supervideo', $supervideo, $coursemodule->id, false);
+    }
+
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $info->customdata['customcompletionrules']['completionpercent'] = $supervideo->completionpercent;
+    }
+
+    // Icon.
+    //$context = context_module::instance($coursemodule->id);
+    //$fs = get_file_storage();
+    //$files = $fs->get_area_files($context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+    //if (count($files) >= 1) {
+    //    $mainfile = reset($files);
+    //    $info->icon = file_file_icon($mainfile, 24);
+    //    $supervideo->mainfile = $mainfile->get_filename();
+    //}
+
+    $info->completionpassgrade = false;
+    $info->downloadcontent = false;
+    $info->lang = false;
+
+    return $info;
 }
