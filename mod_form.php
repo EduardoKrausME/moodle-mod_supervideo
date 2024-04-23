@@ -17,9 +17,9 @@
 /**
  * form file
  *
- * @package    mod_supervideo
- * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * class mod_supervideo_mod_for
  *
  * @package   mod_supervideo
- * @copyright 2023 Eduardo kraus (http://eduardokraus.com)
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
  * @license   https://www.eduardokraus.com/
  */
 class mod_supervideo_mod_form extends moodleform_mod {
@@ -68,7 +68,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $filemanageroptions = [
             'accepted_types' => ['.mp3', '.mp4', '.webm'],
-            'maxbytes' => 0
+            'maxbytes' => 0,
         ];
         $mform->addElement('filepicker', 'videofile', get_string('videofile', 'mod_supervideo'), null, $filemanageroptions);
         $mform->addHelpButton('videofile', 'videofile', 'mod_supervideo');
@@ -154,8 +154,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $PAGE->requires->js_call_amd('mod_supervideo/mod_form', 'init', [$engine, $USER->lang, $btn]);
     }
 
-    // &videourl=[resource-file:undefined.webm]&videofile=716642258&sesskey=puL5iw2t3d
-
     /**
      * Set up the completion checkbox which is not part of standard data.
      *
@@ -195,7 +193,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
     }
 
     /**
+     * add_completion_rules_oold function
+     *
      * @return array
+     *
      * @throws coding_exception
      */
     public function add_completion_rules_oold() {
@@ -211,7 +212,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
     /**
      * Display module-specific activity completion rules.
      * Part of the API defined by moodleform_mod
+     *
      * @return array Array of string IDs of added items, empty array if none
+     *
      * @throws coding_exception
      */
     public function add_completion_rules() {
@@ -233,6 +236,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
     }
 
     /**
+     * completion_rule_enabled function
+     *
      * @param array $data
      *
      * @return bool
@@ -243,10 +248,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
 
     /**
+     * validation function
+     *
      * @param $data
      * @param $files
      *
      * @return array
+     *
      * @throws coding_exception
      */
     public function validation($data, $files) {

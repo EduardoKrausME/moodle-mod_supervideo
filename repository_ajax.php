@@ -14,14 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * The Web service script that is called from the filepicker front end
  *
- * @since Moodle 2.0
- * @package    repository
- * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('AJAX_SCRIPT', true);
@@ -30,12 +28,13 @@ require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/../../lib/filelib.php');
 require_once(__DIR__ . '/../../repository/lib.php');
 
-// Parameters
+// Parameters.
 $action = required_param('action', PARAM_ALPHA);
-$saveas_filename = optional_param('title', '', PARAM_FILE);     // save as file name
+$saveasfilename = optional_param('title', '', PARAM_FILE);     // Save as file name.
 
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
+require_login();
 
 if (empty($_POST) && !empty($action)) {
     $err = (object)["error" => get_string('errorpostmaxsize', 'repository')];
@@ -43,13 +42,13 @@ if (empty($_POST) && !empty($action)) {
 }
 
 ajax_capture_output();
-$repo_user = $DB->get_record('repository', ['type' => 'upload']);
+$repouser = $DB->get_record('repository', ['type' => 'upload']);
 /** @var repository_upload $repo */
-$repo = repository::get_repository_by_id($repo_user->id, $context->id, ['ajax' => true, 'mimetypes' => '*']);
+$repo = repository::get_repository_by_id($repouser->id, $context->id, ['ajax' => true, 'mimetypes' => '*']);
 
 switch ($action) {
     case 'upload':
-        $result = $repo->upload($saveas_filename, -1);
+        $result = $repo->upload($saveasfilename, -1);
         echo json_encode($result);
         break;
     case 'list':
@@ -60,11 +59,15 @@ switch ($action) {
         $draftcontext = context_user::instance($USER->id);
         $files = $fs->get_area_files($context->id, 'user', 'draft', $itemid);
 
-        $returnFiles = [];
+        $returnfiles = [];
         /** @var stored_file $file */
         foreach ($files as $file) {
             if (strpos($file->get_filepath(), "kapture")) {
-                $path = "/{$context->id}/mod_supervideo/{$file->get_filearea()}{$file->get_filepath()}{$file->get_itemid()}/{$file->get_filename()}";
+                $filearea = $file->get_filearea();
+                $filepath = $file->get_filepath();
+                $itemid = $file->get_itemid();
+                $filename = $file->get_filename();
+                $path = "/{$context->id}/mod_supervideo/{$filearea}{$filepath}{$itemid}/{$filename}";
 
                 $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
                 $icon = false;
@@ -84,7 +87,7 @@ switch ($action) {
                 }
 
                 if ($icon) {
-                    $returnFiles[] = [
+                    $returnfiles[] = [
                         "filename" => $file->get_filename(),
                         "titulo" => $file->get_filename(),
                         "image" => $icon,
@@ -94,6 +97,6 @@ switch ($action) {
             }
         }
 
-        echo json_encode(['slides' => $returnFiles]);
+        echo json_encode(['slides' => $returnfiles]);
         break;
 }

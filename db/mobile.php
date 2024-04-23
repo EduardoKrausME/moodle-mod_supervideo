@@ -14,7 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Mobile file.
+ *
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die;
 
 $addons = [
     "mod_supervideo" => [
@@ -26,7 +34,7 @@ $addons = [
                     'icon' => $CFG->wwwroot . '/mod/supervideo/pix/icon.svg',
                     'class' => '',
                 ],
-            ]
-        ]
-    ]
+            ],
+        ],
+    ],
 ];

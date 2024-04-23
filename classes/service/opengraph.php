@@ -14,12 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User: Eduardo Kraus
- * Date: 09/08/2023
- * Time: 17:51
- */
-
 namespace mod_supervideo\service;
 
 use external_function_parameters;
@@ -32,8 +26,10 @@ global $CFG;
 require_once($CFG->libdir . '/externallib.php');
 
 /**
+ * Service opengraph for mod_supervideo.
+ *
  * @package   mod_supervideo
- * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
+ * @copyright 2024 Eduardo Kraus {@link http://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class opengraph extends \external_api {
@@ -54,6 +50,7 @@ class opengraph extends \external_api {
      * @param string $url
      *
      * @return array
+     *
      * @throws \invalid_parameter_exception
      */
     public static function getinfo($url) {

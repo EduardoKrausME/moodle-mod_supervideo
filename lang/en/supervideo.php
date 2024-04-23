@@ -17,20 +17,22 @@
 /**
  * lang file
  *
- * @package    mod_supervideo
- * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['modulenameplural'] = 'Super Videos';
 $string['modulename'] = 'Super Video';
 $string['pluginname'] = 'Super Video';
-$string['modulenameplural'] = 'Super Videos';
 
 $string['dnduploadlabel-mp3'] = 'Add Audio with Super Video';
 $string['dnduploadlabel-mp4'] = 'Add Video with Super Video';
 $string['dnduploadlabeltext'] = 'Add video with Super Video';
 
 $string['videourl'] = 'Youtube, Vimeo, Google Drive, external link with MP4/MP3/M3U8/WebM extension or an MP4/MP3/WebM file';
+$string['videourl_error'] = 'Super Video URL';
+$string['videofile'] = 'Or select an MP3, MP4 or WebM file';
 $string['videourl_help'] = '<h4>Youtube</h4>
 <div>Add a Youtube URL that you used. want to add to the course:</div>
 <div><strong>Ex:</strong> https://www.youtube.com/watch?v=SNhUMChfolc</div>
@@ -44,8 +46,6 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div>Add a URL of a video you have hosted on your own server:</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
-$string['videourl_error'] = 'Super Video URL';
-$string['videofile'] = 'Or select an MP3, MP4 or WebM file';
 $string['videofile_help'] = 'You can upload an MP3 or MP4 file, host it on MoodleData and show it in the Super Video player';
 $string['pluginadministration'] = 'Super Videos';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';

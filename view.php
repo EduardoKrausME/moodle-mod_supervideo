@@ -17,9 +17,9 @@
 /**
  * view file
  *
- * @package    mod_supervideo
- * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
@@ -104,7 +104,7 @@ $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 if ($parseurl->videoid) {
     $uniqueid = uniqid();
 
-    $element_id = "{$parseurl->engine}-{$uniqueid}";
+    $elementid = "{$parseurl->engine}-{$uniqueid}";
 
     if ($config->showcontrols == 2) {
         $supervideo->showcontrols = 0;
@@ -123,12 +123,12 @@ if ($parseurl->videoid) {
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
 
-        echo "<div id='{$element_id}'></div>";
+        echo "<div id='{$elementid}'></div>";
         if ($parseurl->extra == "mp3") {
             $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
-                $element_id,
+                $elementid,
                 $parseurl->videoid,
                 $supervideo->autoplay ? true : false,
                 $supervideo->showcontrols ? true : false,
@@ -137,7 +137,7 @@ if ($parseurl->videoid) {
             $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
-                $element_id,
+                $elementid,
                 $parseurl->videoid,
                 $supervideo->autoplay ? 1 : 0,
                 $supervideo->showcontrols ? true : false,
@@ -145,13 +145,13 @@ if ($parseurl->videoid) {
         }
     }
     if ($parseurl->engine == "ottflix") {
-        echo "<div id='{$element_id}'></div>";
+        echo "<div id='{$elementid}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'ottflix', [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
-            $element_id,
-            $parseurl->videoid
+            $elementid,
+            $parseurl->videoid,
         ]);
 
         echo $OUTPUT->render_from_template('mod_supervideo/embed_ottflix', ['identifier' => $parseurl->videoid]);
@@ -170,23 +170,23 @@ if ($parseurl->videoid) {
             ]);
 
             if ($parseurl->videoid == "mp3") {
-                echo "<div id='{$element_id}'></div>";
+                echo "<div id='{$elementid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
-                    $element_id,
+                    $elementid,
                     $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
                 ]);
             } else {
-                echo "<div id='{$element_id}'></div>";
+                echo "<div id='{$elementid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
-                    $element_id,
+                    $elementid,
                     $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
@@ -201,24 +201,24 @@ if ($parseurl->videoid) {
     }
     if ($parseurl->engine == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
-        echo "<div id='{$element_id}'></div>";
+        echo "<div id='{$elementid}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'youtube', [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
-            $element_id,
+            $elementid,
             $parseurl->videoid,
             $supervideo->playersize,
             $supervideo->showcontrols ? 1 : 0,
-            $supervideo->autoplay ? 1 : 0
+            $supervideo->autoplay ? 1 : 0,
         ]);
     }
     if ($parseurl->engine == "google-drive") {
         $parametersdrive = implode('&amp;', [
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
-            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
+            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
         ]);
-        echo "<iframe id='{$element_id}' width='100%' height='680'
+        echo "<iframe id='{$elementid}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                       sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
@@ -226,8 +226,8 @@ if ($parseurl->videoid) {
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
             (int)$supervideoview->id,
-            $element_id,
-            $supervideo->playersize
+            $elementid,
+            $supervideo->playersize,
         ]);
 
         $config->showmapa = false;
@@ -249,7 +249,7 @@ if ($parseurl->videoid) {
         }
 
         echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
-            'html_id' => $element_id,
+            'html_id' => $elementid,
             'vimeo_url' => $url,
             'parametersvimeo' => $parametersvimeo,
         ]);
@@ -258,7 +258,7 @@ if ($parseurl->videoid) {
             $supervideoview->id,
             $supervideoview->currenttime,
             $parseurl->videoid,
-            $element_id
+            $elementid,
         ]);
     }
 
@@ -266,7 +266,7 @@ if ($parseurl->videoid) {
     echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
         'style' => $config->showmapa ? "" : "style='display:none'",
         'data-mapa' => base64_encode($supervideoview->mapa),
-        'text' => $text
+        'text' => $text,
     ]);
 
 } else {

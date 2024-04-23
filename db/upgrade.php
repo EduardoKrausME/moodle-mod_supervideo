@@ -17,9 +17,9 @@
 /**
  * Upgrade file
  *
- * @package    mod_supervideo
- * @copyright  2023 Eduardo kraus (http://eduardokraus.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -28,11 +28,13 @@
  * @param int $oldversion
  *
  * @return bool
+ *
  * @throws ddl_exception
  * @throws ddl_field_missing_exception
  * @throws ddl_table_missing_exception
  * @throws downgrade_exception
  * @throws upgrade_exception
+ * @throws dml_exception
  */
 function xmldb_supervideo_upgrade($oldversion) {
     global $DB;

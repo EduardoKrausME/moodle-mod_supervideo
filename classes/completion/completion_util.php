@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * User: Eduardo Kraus
- * Date: 18/07/2023
- * Time: 18:47
- */
-
 namespace mod_supervideo\completion;
 
-
+/**
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo Kraus {@link http://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class completion_util {
 
     /**
@@ -31,6 +29,7 @@ class completion_util {
      * @param int $userid
      *
      * @return bool
+     *
      * @throws \dml_exception
      */
     public static function get_completion_state($course, $cm, $userid) {

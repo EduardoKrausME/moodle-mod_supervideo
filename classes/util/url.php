@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * External implementation for mod_supervideo.
- */
-
 namespace mod_supervideo\util;
 
+/**
+ * Util url for mod_supervideo.
+ *
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class url {
 
     public $videoid = false;
@@ -57,13 +60,12 @@ class url {
             }
         }
         if (strpos($videourl, "vimeo")) {
-            if(preg_match('/vimeo.com\/(\d+)(\/(\w+))?/', $videourl, $output)){
-            //if (preg_match('/vimeo.com\/(\d+)/', $videourl, $output)) {
+            if (preg_match('/vimeo.com\/(\d+)(\/(\w+))?/', $videourl, $output)) {
                 $url->engine = "vimeo";
-                if(isset($output[3])) {
+                if (isset($output[3])) {
                     $url->videoid = "{$output[1]}?h={$output[3]}";
                     return $url;
-                }else{
+                } else {
                     $url->videoid = $output[1];
                     $url->engine = "vimeo";
                     return $url;

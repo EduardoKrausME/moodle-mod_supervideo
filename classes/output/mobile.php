@@ -18,11 +18,20 @@ namespace mod_supervideo\output;
 
 use mod_supervideo;
 
+/**
+ * Output Mobile for mod_supervideo.
+ *
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mobile {
 
     /**
      * @param $args
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function mobile_course_view($args) {
@@ -49,7 +58,9 @@ class mobile {
 
     /**
      * @param $userid
+     *
      * @return string
+     *
      * @throws \Exception
      */
     private static function create_embed_token($userid) {
@@ -71,7 +82,9 @@ class mobile {
     /**
      * @param $userid
      * @param $secret
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     public static function valid_token($userid, $secret) {

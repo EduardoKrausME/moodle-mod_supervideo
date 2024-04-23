@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render", "core/str"], function($, Ajax, PlayerRender, getString) {
-    return mod_form = {
+define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
+    var mod_form = {
         id_name               : null,
         id_videourl           : null,
         fitem_id_videourl     : null,
@@ -233,4 +233,5 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "core/str"], func
             playerRender.loadposter($, lang);
         }
     };
+    return mod_form;
 });

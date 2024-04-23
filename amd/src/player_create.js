@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
-    return progress = {
+    var progress = {
 
         ottflix : function(view_id, start_currenttime, elementId, videoid) {
             window.addEventListener('message', function receiveMessage(event) {
@@ -435,4 +435,5 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             return accumulator + a;
         }
     };
+    return progress;
 });

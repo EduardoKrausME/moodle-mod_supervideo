@@ -21,15 +21,17 @@ namespace mod_supervideo\completion;
 use core_completion\activity_custom_completion;
 
 /**
- * @package mod_supervideo
- * @copyright 2023 Eduardo Kraus {@link http://eduardokraus.com}
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo Kraus {@link http://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
 
     /**
      * @param string $rule The completion rule.
+     *
      * @return int The completion state.
+     *
      * @throws \Exception
      */
     public function get_state(string $rule): int {
@@ -56,6 +58,7 @@ class custom_completion extends activity_custom_completion {
      * Returns an associative array of the descriptions of custom completion rules.
      *
      * @return array
+     *
      * @throws \coding_exception
      */
     public function get_custom_rule_descriptions(): array {

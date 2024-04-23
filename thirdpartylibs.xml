@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/kapture</location>
+        <name>PDF JS</name>
+        <version>3.1</version>
+        <license>Kraus License</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
