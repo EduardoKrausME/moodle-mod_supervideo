@@ -150,7 +150,7 @@ if ($parseurl->videoid) {
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'ottflix', [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
-            "{$parseurl->engine}-{$uniqueid}",
+            $element_id,
             $parseurl->videoid
         ]);
 
@@ -175,7 +175,7 @@ if ($parseurl->videoid) {
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
-                    "{$parseurl->engine}-{$uniqueid}",
+                    $element_id,
                     $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
@@ -186,7 +186,7 @@ if ($parseurl->videoid) {
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_video', [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
-                    "{$parseurl->engine}-{$uniqueid}",
+                    $element_id,
                     $fullurl,
                     $supervideo->autoplay ? true : false,
                     $supervideo->showcontrols ? true : false,
@@ -206,7 +206,7 @@ if ($parseurl->videoid) {
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'youtube', [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
-            "{$parseurl->engine}-{$uniqueid}",
+            $element_id,
             $parseurl->videoid,
             $supervideo->playersize,
             $supervideo->showcontrols ? 1 : 0,
@@ -218,7 +218,7 @@ if ($parseurl->videoid) {
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
         ]);
-        echo "<iframe id='{$parseurl->engine}-{$uniqueid}' width='100%' height='680'
+        echo "<iframe id='{$element_id}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                       sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
@@ -226,7 +226,7 @@ if ($parseurl->videoid) {
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
             (int)$supervideoview->id,
-            "{$parseurl->engine}-{$uniqueid}",
+            $element_id,
             $supervideo->playersize
         ]);
 
@@ -249,7 +249,7 @@ if ($parseurl->videoid) {
         }
 
         echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
-            'html_id' => "{$parseurl->engine}-{$uniqueid}",
+            'html_id' => $element_id,
             'vimeo_url' => $url,
             'parametersvimeo' => $parametersvimeo,
         ]);
@@ -258,13 +258,13 @@ if ($parseurl->videoid) {
             $supervideoview->id,
             $supervideoview->currenttime,
             $parseurl->videoid,
-            "{$parseurl->engine}-{$uniqueid}"
+            $element_id
         ]);
     }
 
     $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
     echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
-        'class' => $config->showmapa ? "" : "style='display:none'",
+        'style' => $config->showmapa ? "" : "style='display:none'",
         'data-mapa' => base64_encode($supervideoview->mapa),
         'text' => $text
     ]);
