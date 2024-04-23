@@ -51,17 +51,17 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         $mform = $this->_form;
-        $mform->updateAttributes(array('enctype' => 'multipart/form-data'));
+        $mform->updateAttributes(['enctype' => 'multipart/form-data']);
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'), array());
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '48'], []);
         $mform->setType('name', !empty($CFG->formatstringstriptags) ? PARAM_TEXT : PARAM_CLEANHTML);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $mform->addElement('text', 'videourl',
-            get_string('videourl', 'mod_supervideo'), array('size' => '60'), []);
+            get_string('videourl', 'mod_supervideo'), ['size' => '60'], []);
         $mform->setType('videourl', PARAM_TEXT);
         $mform->addRule('videourl', null, 'required', null, 'client');
         $mform->addHelpButton('videourl', 'videourl', 'mod_supervideo');
@@ -80,14 +80,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $this->add_intro_editor();
         }
 
-        $sizeoptions = array(
+        $sizeoptions = [
             1 => 'Video HD (16x9)',
             2 => 'Video ED (4x3)',
 
             5 => 'PDF / DOC / XLS',
             "4x3" => 'Video 4x3',
             "16x9" => 'Video 16x9',
-        );
+        ];
         if ($supervideo && $supervideo->playersize != 0) {
             if (!isset($sizeoptions[$supervideo->playersize])) {
                 $sizeoptions[$supervideo->playersize] = $supervideo->playersize;
@@ -220,7 +220,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->createElement('checkbox', 'completionpercentenabled', '',
                 get_string('completionpercent_label', 'mod_supervideo')),
             $mform->createElement('text', 'completionpercent',
-                get_string('completionpercent_label', 'mod_supervideo'), array('size' => '2')),
+                get_string('completionpercent_label', 'mod_supervideo'), ['size' => '2']),
             $mform->createElement('html', '%'),
         ];
 

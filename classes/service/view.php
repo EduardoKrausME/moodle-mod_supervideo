@@ -44,9 +44,7 @@ class view extends external_api {
      */
     public static function view_supervideo_parameters() {
         return new external_function_parameters(
-            array(
-                'supervideoid' => new external_value(PARAM_INT, 'supervideo instance id')
-            )
+            ['supervideoid' => new external_value(PARAM_INT, 'supervideo instance id')]
         );
     }
 
@@ -68,13 +66,11 @@ class view extends external_api {
         require_once($CFG->dirroot . "/mod/supervideo/lib.php");
 
         $params = self::validate_parameters(self::view_supervideo_parameters(),
-            array(
-                'supervideoid' => $supervideoid
-            ));
-        $warnings = array();
+            ['supervideoid' => $supervideoid]);
+        $warnings = [];
 
         // Request and permission validation.
-        $supervideo = $DB->get_record('supervideo', array('id' => $params['supervideoid']), '*', MUST_EXIST);
+        $supervideo = $DB->get_record('supervideo', ['id' => $params['supervideoid']], '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($supervideo, 'supervideo');
 
         $context = context_module::instance($cm->id);
@@ -98,10 +94,10 @@ class view extends external_api {
      */
     public static function view_supervideo_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings()
-            )
+            ]
         );
     }
 }

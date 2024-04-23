@@ -65,7 +65,7 @@ function xmldb_supervideo_upgrade($oldversion) {
         $tablesupervideoview->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
         $tablesupervideoview->add_field('timemodified', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL);
 
-        $tablesupervideoview->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $tablesupervideoview->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         if (!$dbman->table_exists($tablesupervideoview)) {
             $dbman->create_table($tablesupervideoview);
@@ -134,7 +134,7 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $table = new xmldb_table('supervideo');
 
-        $index = new xmldb_index('showrel', XMLDB_INDEX_NOTUNIQUE, array('showrel'));
+        $index = new xmldb_index('showrel', XMLDB_INDEX_NOTUNIQUE, ['showrel']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
@@ -151,7 +151,7 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $table = new xmldb_table('supervideo');
 
-        $index = new xmldb_index('showinfo', XMLDB_INDEX_NOTUNIQUE, array('showinfo'));
+        $index = new xmldb_index('showinfo', XMLDB_INDEX_NOTUNIQUE, ['showinfo']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
@@ -180,7 +180,7 @@ function xmldb_supervideo_upgrade($oldversion) {
             $DB->execute($sql);
         }
 
-        $index = new xmldb_index('videosize', XMLDB_INDEX_NOTUNIQUE, array('videosize'));
+        $index = new xmldb_index('videosize', XMLDB_INDEX_NOTUNIQUE, ['videosize']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }

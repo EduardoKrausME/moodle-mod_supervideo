@@ -177,10 +177,10 @@ class supervideo_view extends \table_sql {
         }
 
         if ($COURSE->id == SITEID) {
-            $profileurl = new moodle_url('/user/profile.php', array('id' => $linha->user_id));
+            $profileurl = new moodle_url('/user/profile.php', ['id' => $linha->user_id]);
         } else {
             $profileurl = new moodle_url('/user/view.php',
-                array('id' => $linha->user_id, 'course' => $COURSE->id));
+                ['id' => $linha->user_id, 'course' => $COURSE->id]);
         }
         return html_writer::link($profileurl, $name);
     }

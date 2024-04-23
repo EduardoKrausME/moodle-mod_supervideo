@@ -26,11 +26,11 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 $courseid = optional_param('course', 0, PARAM_INT);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 require_course_login($course);
 
-$PAGE->set_url('/mod/supervideo/reports.php', array('course' => $courseid));
+$PAGE->set_url('/mod/supervideo/reports.php', ['course' => $courseid]);
 $PAGE->set_title("{$course->shortname}: " . get_string('reports'));
 $PAGE->set_heading($course->fullname . ": " . get_string('modulename', 'mod_supervideo'));
 echo $OUTPUT->header();

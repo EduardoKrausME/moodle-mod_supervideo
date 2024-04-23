@@ -31,11 +31,11 @@ $mobile = optional_param('mobile', 0, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id('supervideo', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $supervideo = $DB->get_record('supervideo', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 } else if ($n) {
-    $supervideo = $DB->get_record('supervideo', array('id' => $n), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $supervideo->course), '*', MUST_EXIST);
+    $supervideo = $DB->get_record('supervideo', ['id' => $n], '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $supervideo->course], '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('supervideo', $supervideo->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
@@ -51,10 +51,10 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/supervideo:view', $context);
 
-$event = \mod_supervideo\event\course_module_viewed::create(array(
+$event = \mod_supervideo\event\course_module_viewed::create([
     'objectid' => $PAGE->cm->instance,
     'context' => $PAGE->context,
-));
+]);
 $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $supervideo);
 $event->trigger();

@@ -192,7 +192,7 @@ function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_for
 function supervideo_delete_instance($id) {
     global $DB;
 
-    if (!$supervideo = $DB->get_record('supervideo', array('id' => $id))) {
+    if (!$supervideo = $DB->get_record('supervideo', ['id' => $id])) {
         return false;
     }
 
@@ -206,8 +206,8 @@ function supervideo_delete_instance($id) {
             $file->delete();
         }
     }
-    $DB->delete_records('supervideo', array('id' => $supervideo->id));
-    $DB->delete_records('supervideo_view', array('cm_id' => $cm->id));
+    $DB->delete_records('supervideo', ['id' => $supervideo->id]);
+    $DB->delete_records('supervideo_view', ['cm_id' => $cm->id]);
 
     return true;
 }
@@ -329,7 +329,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
 
     if (has_capability('moodle/course:manageactivities', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('report', 'mod_supervideo'),
-            new moodle_url('/mod/supervideo/report.php', array('id' => $PAGE->cm->id)),
+            new moodle_url('/mod/supervideo/report.php', ['id' => $PAGE->cm->id]),
             navigation_node::TYPE_SETTING, null, 'mod_supervideo_report',
             new pix_icon('i/report', ''));
         $supervideonode->add_node($node, $beforekey);
@@ -370,7 +370,7 @@ function supervideo_extend_navigation_course($navigation, $course, $context) {
  * @throws moodle_exception
  * @throws require_login_exception
  */
-function supervideo_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = array()) {
+function supervideo_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = []) {
 
     // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -583,7 +583,7 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
     if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
         $data = $PAGE->activityrecord;
     } else {
-        $data = $DB->get_record('data', array('id' => $cm->instance), '*', MUST_EXIST);
+        $data = $DB->get_record('data', ['id' => $cm->instance], '*', MUST_EXIST);
     }
     // If completion option is enabled, evaluate it and return true/false.
     if ($data->completionpercent) {
@@ -643,7 +643,7 @@ function supervideo_export_contents($cm, $baseurl) {
 
     $contents = [];
     $context = context_module::instance($cm->id);
-    $supervideo = $DB->get_record('supervideo', array('id' => $cm->instance), '*', MUST_EXIST);
+    $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
     $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
 

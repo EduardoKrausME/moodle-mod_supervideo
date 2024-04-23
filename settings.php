@@ -32,12 +32,12 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('supervideo/showmapa',
         $title, $description, 1));
 
-    $options = array(
+    $options = [
         0 => get_string('settings_opcional_desmarcado', 'mod_supervideo'),
         1 => get_string('settings_opcional_marcado', 'mod_supervideo'),
         2 => get_string('settings_obrigatorio_desmarcado', 'mod_supervideo'),
         3 => get_string('settings_obrigatorio_marcado', 'mod_supervideo'),
-    );
+    ];
 
     $title = get_string('showcontrols', 'mod_supervideo');
     $description = get_string('showcontrols_desc', 'mod_supervideo');

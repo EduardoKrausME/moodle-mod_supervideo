@@ -40,7 +40,7 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
      */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $paths[] = new restore_path_element('supervideo', '/activity/supervideo');
 
         // Return the paths wrapped into standard activity structure.

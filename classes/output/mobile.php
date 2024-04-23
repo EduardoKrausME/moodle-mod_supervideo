@@ -81,10 +81,10 @@ class mobile {
         $where = ['threshold' => time() - 60];
         $DB->delete_records_select('supervideo_auth', 'created_at < :threshold', $where);
 
-        $auth = $DB->get_record('supervideo_auth', array(
+        $auth = $DB->get_record('supervideo_auth', [
             'user_id' => $userid,
             'secret' => $secret,
-        ));
+        ]);
 
         if ($auth) {
             $user = get_complete_user_data('id', $userid);

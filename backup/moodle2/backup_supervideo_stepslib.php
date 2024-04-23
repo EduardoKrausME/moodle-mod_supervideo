@@ -44,14 +44,14 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define the root element describing the supervideo instance.
-        $supervideo = new backup_nested_element('supervideo', array('id'), array(
+        $supervideo = new backup_nested_element('supervideo', ['id'], [
             'course', 'name', 'intro', 'introformat', 'videourl', 'playersize',
-            'showcontrols', 'autoplay', 'grade_approval'));
+            'showcontrols', 'autoplay', 'grade_approval']);
 
         // If we had more elements, we would build the tree here.
 
         // Define data sources.
-        $supervideo->set_source_table('supervideo', array('id' => backup::VAR_ACTIVITYID));
+        $supervideo->set_source_table('supervideo', ['id' => backup::VAR_ACTIVITYID]);
 
         // If we were referring to other tables, we would annotate the relation
         // with the element's annotate_ids() method.

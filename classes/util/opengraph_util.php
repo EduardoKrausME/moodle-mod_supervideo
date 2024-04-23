@@ -28,7 +28,7 @@ class opengraph_util {
      * Holds all the Open Graph values we've parsed from a page
      *
      */
-    private $values = array();
+    private $values = [];
 
     /**
      * Fetches a URI and parses it for Open Graph data, returns
