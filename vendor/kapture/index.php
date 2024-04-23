@@ -1,5 +1,5 @@
 <?php
-require_once "config.php";
+require_once "config-kopere.php";
 ?>
 <!doctype html>
 <html lang="pt-br">
