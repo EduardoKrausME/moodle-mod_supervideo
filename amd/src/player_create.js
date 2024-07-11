@@ -144,7 +144,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             if (autoplay) embedparameters += "autoplay ";
 
             var embed =
-                    "<video " + embedparameters + " crossorigin playsinline>" +
+                    "<video " + embedparameters + " playsinline>" +
                     "    <source src='" + fullurl + "'>" +
                     "</video>";
             $("#" + elementId).html(embed);
