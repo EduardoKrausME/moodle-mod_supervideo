@@ -1,5 +1,5 @@
 <?php
-require_once "config-kopere.php";
+require_once "config-kapture.php";
 ?>
 <!doctype html>
 <html lang="pt-br">
@@ -12,7 +12,7 @@ require_once "config-kopere.php";
 
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=162"></script>
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=212"></script>
 
     
     
@@ -29,16 +29,18 @@ require_once "config-kopere.php";
 </head>
 <body>
 
-<input id="Config-rootPath" type="hidden" value="">
-<input id="Config-pasta" type="hidden" value="">
+<input id="Config-rootPath" type="hidden" value="<?php echo $rootPath ?>">
 
 <div id="app" class="record-parado">
-    <input type="hidden" id="videotitle" value="<?php echo @$_GET[ 'videotitle' ] ?>">
-    <input type="hidden" id="course"     value="<?php echo @$_GET[ 'course' ] ?>">
-    <input type="hidden" id="section"    value="<?php echo @$_GET[ 'section' ] ?>">
-    <input type="hidden" id="sesskey"    value="<?php echo @$_GET[ 'sesskey' ] ?>">
+    <input type="hidden" id="pasta"         value="<?php echo @$_GET[ 'pasta' ] ?>">
+    <input type="hidden" id="videotitle"    value="<?php echo @$_GET[ 'videotitle' ] ?>">
+    <input type="hidden" id="descricao"     value="<?php echo @$_GET[ 'descricao' ] ?>">
+    <input type="hidden" id="identificador" value="<?php echo @$_GET[ 'identificador' ] ?>">
+    <input type="hidden" id="course"        value="<?php echo @$_GET[ 'course' ] ?>">
+    <input type="hidden" id="section"       value="<?php echo @$_GET[ 'section' ] ?>">
+    <input type="hidden" id="sesskey"       value="<?php echo @$_GET[ 'sesskey' ] ?>">
 
-    <img class="logo" src="img/logo.svg" alt="<?php echo kapture_get_string( "logo_title" ); ?>"
+    <img class="logo" src="<?php echo $logo ?>" alt="<?php echo kapture_get_string( "logo_title" ); ?>"
          title="<?php echo kapture_get_string( "logo_title" ); ?>">
 
     <div id="device-control" class="layout-dual-1">
