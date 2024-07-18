@@ -66,7 +66,7 @@ $completion->set_module_viewed($cm);
 $params = [
     'n' => $n,
     'id' => $id,
-    'mobile' => $mobile
+    'mobile' => $mobile,
 ];
 $PAGE->set_url('/mod/supervideo/view.php', $params);
 $PAGE->requires->css('/mod/supervideo/style.css');

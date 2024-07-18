@@ -25,10 +25,32 @@ namespace mod_supervideo\util;
  */
 class url {
 
+    /**
+     * Var videoid
+     *
+     * @var bool
+     */
     public $videoid = false;
+    /**
+     * Var engine
+     *
+     * @var string
+     */
     public $engine = "";
+    /**
+     * Var extra
+     *
+     * @var string
+     */
     public $extra = "";
 
+    /**
+     * Function parse
+     *
+     * @param $videourl
+     *
+     * @return url
+     */
     public static function parse($videourl) {
         $url = new url();
 

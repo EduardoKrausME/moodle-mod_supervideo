@@ -28,6 +28,8 @@ use core_completion\activity_custom_completion;
 class custom_completion extends activity_custom_completion {
 
     /**
+     * Function get_state
+     *
      * @param string $rule The completion rule.
      *
      * @return int The completion state.

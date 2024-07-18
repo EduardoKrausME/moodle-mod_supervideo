@@ -26,8 +26,10 @@ namespace mod_supervideo\grade;
 class grades_util {
 
     /**
-     * @param int $cmid
-     * @param int $percent
+     * Function update
+     *
+     * @param $cmid
+     * @param $percent
      *
      * @throws \coding_exception
      * @throws \dml_exception
@@ -52,7 +54,7 @@ class grades_util {
         if ($supervideo->grade_approval == 1) {
             $grade = [
                 "userid" => $USER->id,
-                "rawgrade" => $percent
+                "rawgrade" => $percent,
             ];
 
             require_once("{$CFG->libdir}/gradelib.php");
@@ -69,8 +71,10 @@ class grades_util {
     }
 
     /**
-     * @param \stdClass $supervideo
-     * @param \stdClass $grades
+     * Function grade_item_update
+     *
+     * @param $supervideo
+     * @param null $grades
      *
      * @return int
      */
@@ -87,7 +91,7 @@ class grades_util {
             'itemname' => $supervideo->name,
             'gradetype' => GRADE_TYPE_VALUE,
             'grademax' => 100,
-            'grademin' => 0
+            'grademin' => 0,
         ];
 
         if (isset($supervideo->cmidnumber)) {

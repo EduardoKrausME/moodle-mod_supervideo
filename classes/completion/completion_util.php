@@ -24,12 +24,13 @@ namespace mod_supervideo\completion;
 class completion_util {
 
     /**
-     * @param \stdClass $course
-     * @param \stdClass $cm
-     * @param int $userid
+     * Function get_completion_state
+     *
+     * @param $course
+     * @param $cm
+     * @param $userid
      *
      * @return bool
-     *
      * @throws \dml_exception
      */
     public static function get_completion_state($course, $cm, $userid) {

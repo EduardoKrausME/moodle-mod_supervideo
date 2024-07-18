@@ -6556,10 +6556,6 @@
                             ad.width = container.offsetWidth;
                             ad.height = container.offsetHeight;
                         }
-
-                        // console.info('Ad type: ' + event.getAd().getAdPodInfo().getPodIndex());
-                        // console.info('Ad time: ' + event.getAd().getAdPodInfo().getTimeOffset());
-
                         break;
                     case google.ima.AdEvent.Type.STARTED:
                         // Set volume to match player
@@ -8860,4 +8856,4 @@
 
     return Plyr;
 
-}))
+}));

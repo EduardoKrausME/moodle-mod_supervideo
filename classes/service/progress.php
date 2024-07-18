@@ -44,7 +44,7 @@ class progress extends \external_api {
             'currenttime' => new \external_value(PARAM_INT, 'The current time', VALUE_REQUIRED),
             'duration' => new \external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
             'percent' => new \external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
-            'mapa' => new \external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED)
+            'mapa' => new \external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED),
         ]);
     }
 

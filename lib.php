@@ -119,7 +119,7 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
  * supervideo_add_instance file.
  *
  * @param stdClass $supervideo
- * @param mod_supervideo_mod_form|null $mform
+ * @param mod_supervideo_mod_form $mform
  * @return bool|int
  * @throws dml_exception
  * @throws coding_exception
@@ -166,7 +166,7 @@ function supervideo_set_mainfile($supervideo) {
  * function supervideo_update_instance
  *
  * @param stdClass $supervideo
- * @param mod_supervideo_mod_form|null $mform
+ * @param mod_supervideo_mod_form $mform
  * @return bool
  * @throws dml_exception
  * @throws coding_exception
@@ -450,7 +450,7 @@ function supervideo_dndupload_register() {
             [
                 'extension' => 'webm',
                 'message' => get_string('dnduploadlabel-mp4', 'mod_supervideo'),
-            ]
+            ],
         ],
         'types' => [
             [
@@ -462,8 +462,8 @@ function supervideo_dndupload_register() {
                 'identifier' => 'text',
                 'message' => get_string('dnduploadlabeltext', 'mod_supervideo'),
                 'noname' => true
-            ]
-        ]
+            ],
+        ],
     ];
     return $ret;
 }
@@ -749,7 +749,7 @@ function supervideo_export_contents($cm, $baseurl) {
 
             $parametersdrive = implode('&amp;', [
                 $supervideo->showcontrols ? 'controls=1' : 'controls=0',
-                $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0'
+                $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
             ]);
             $url = "https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parametersdrive}";
 

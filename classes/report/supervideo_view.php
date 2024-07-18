@@ -30,10 +30,14 @@ use moodle_url;
 class supervideo_view extends \table_sql {
 
     /**
+     * Var cmid
+     *
      * @var int
      */
     public $cmid = 0;
     /**
+     * Var userid
+     *
      * @var int
      */
     public $userid = 0;
@@ -186,6 +190,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_currenttime
+     *
      * @param $linha
      *
      * @return string
@@ -202,6 +208,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_duration
+     *
      * @param $linha
      *
      * @return string
@@ -218,6 +226,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_percent
+     *
      * @param $linha
      *
      * @return string
@@ -227,6 +237,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_mapa
+     *
      * @param $linha
      *
      * @return string
@@ -250,6 +262,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_timecreated
+     *
      * @param $linha
      *
      * @return string
@@ -259,6 +273,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_timemodified
+     *
      * @param $linha
      *
      * @return string
@@ -268,10 +284,11 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function col_extra
+     *
      * @param $linha
      *
      * @return string
-     *
      * @throws \coding_exception
      * @throws \moodle_exception
      */
@@ -281,6 +298,8 @@ class supervideo_view extends \table_sql {
     }
 
     /**
+     * Function query_db
+     *
      * @param int $pagesize
      * @param bool $useinitialsbar
      *

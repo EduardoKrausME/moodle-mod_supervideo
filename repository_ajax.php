@@ -91,7 +91,7 @@ switch ($action) {
                         "filename" => $file->get_filename(),
                         "titulo" => $file->get_filename(),
                         "image" => $icon,
-                        "file" => moodle_url::make_file_url('/pluginfile.php', $path, false)->out()
+                        "file" => moodle_url::make_file_url('/pluginfile.php', $path, false)->out(),
                     ];
                 }
             }

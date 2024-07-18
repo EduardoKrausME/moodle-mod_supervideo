@@ -28,10 +28,11 @@ use mod_supervideo;
 class mobile {
 
     /**
+     * Function mobile_course_view
+     *
      * @param $args
      *
      * @return array
-     *
      * @throws \Exception
      */
     public static function mobile_course_view($args) {
@@ -45,7 +46,7 @@ class mobile {
             'wwwroot' => $CFG->wwwroot,
             'user_id' => $USER->id,
             'secret' => $token,
-            't' => time()
+            't' => time(),
         ];
 
         return [
@@ -57,11 +58,12 @@ class mobile {
     }
 
     /**
+     * Function create_embed_token
+     *
      * @param $userid
      *
-     * @return string
-     *
-     * @throws \Exception
+     * @return bool|string
+     * @throws \dml_exception
      */
     private static function create_embed_token($userid) {
         global $DB;
@@ -72,7 +74,7 @@ class mobile {
         $data = (object)[
             'user_id' => $userid,
             'secret' => $token,
-            'created_at' => time()
+            'created_at' => time(),
         ];
         $DB->insert_record('supervideo_auth', $data);
 
@@ -80,12 +82,14 @@ class mobile {
     }
 
     /**
+     * Function valid_token
+     *
      * @param $userid
      * @param $secret
      *
      * @return bool
-     *
-     * @throws \Exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
      */
     public static function valid_token($userid, $secret) {
         global $DB;

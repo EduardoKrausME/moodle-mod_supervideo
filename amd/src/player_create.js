@@ -18,8 +18,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         ottflix : function(view_id, start_currenttime, elementId, videoid) {
             window.addEventListener('message', function receiveMessage(event) {
-                console.trace(event.data);
-
                 if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
                     progress._internal_saveprogress(event.data.currentTime, event.data.duration);
                 }
@@ -89,8 +87,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_view_id = view_id;
 
             var embedparameters = "";
-            if (showcontrols) embedparameters += "controls ";
-            if (autoplay) embedparameters += "autoplay ";
+            if (showcontrols) {
+                embedparameters += "controls ";
+            }
+            if (autoplay) {
+                embedparameters += "autoplay ";
+            }
 
             var embed =
                     "<audio " + embedparameters + " crossorigin playsinline >" +
@@ -140,8 +142,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_view_id = view_id;
 
             var embedparameters = "";
-            if (showcontrols) embedparameters += "controls ";
-            if (autoplay) embedparameters += "autoplay ";
+            if (showcontrols) {
+                embedparameters += "controls ";
+            }
+            if (autoplay) {
+                embedparameters += "autoplay ";
+            }
 
             var embed =
                     "<video " + embedparameters + " playsinline>" +
@@ -274,7 +280,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             var element = $("#supervideo_area_embed");
             var lastWidth = element.width();
             setInterval(function() {
-                if (lastWidth === element.width()) return;
+                if (lastWidth === element.width()) {
+                    return;
+                }
                 lastWidth = element.width();
 
                 _resizePage();

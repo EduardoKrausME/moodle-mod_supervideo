@@ -27,6 +27,8 @@ use mod_supervideo\grade\grades_util;
  */
 class supervideo_view {
     /**
+     * Create function.
+     *
      * @param $cmid
      *
      * @return object
@@ -51,6 +53,13 @@ class supervideo_view {
         return self::internal_create($cmid);
     }
 
+    /**
+     * Function internal_create
+     *
+     * @param $cmid
+     *
+     * @return object
+     */
     private static function internal_create($cmid) {
         global $USER, $DB;
 
@@ -75,14 +84,15 @@ class supervideo_view {
     }
 
     /**
-     * @param int $viewid
-     * @param int $currenttime
-     * @param int $duration
-     * @param int $percent
-     * @param int $mapa
+     * Function update
+     *
+     * @param $viewid
+     * @param $currenttime
+     * @param $duration
+     * @param $percent
+     * @param $mapa
      *
      * @return bool
-     *
      * @throws \coding_exception
      * @throws \dml_exception
      * @throws \moodle_exception

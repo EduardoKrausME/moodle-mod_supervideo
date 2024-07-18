@@ -42,8 +42,9 @@ class view extends external_api {
      * @return external_function_parameters
      */
     public static function view_supervideo_parameters() {
-        return new external_function_parameters(
-            ['supervideoid' => new external_value(PARAM_INT, 'supervideo instance id')]
+        return new external_function_parameters([
+            'supervideoid' => new external_value(PARAM_INT, 'supervideo instance id'),
+            ]
         );
     }
 
@@ -95,7 +96,7 @@ class view extends external_api {
         return new external_single_structure(
             [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings()
+                'warnings' => new external_warnings(),
             ]
         );
     }
