@@ -27,7 +27,6 @@ require_once($CFG->libdir . '/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT);
 $n = optional_param('n', 0, PARAM_INT);
-$mobile = optional_param('mobile', 0, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id('supervideo', $id, 0, false, MUST_EXIST);
@@ -41,23 +40,20 @@ if ($id) {
     error('You must specify a course_module ID or an instance ID');
 }
 
-$secret = optional_param('secret', false, PARAM_TEXT);
-if ($secret) {
-    $userid = optional_param('user_id', "", PARAM_INT);
-    \mod_supervideo\output\mobile::valid_token($userid, $secret);
-}
-
-require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/supervideo:view', $context);
 
-$event = \mod_supervideo\event\course_module_viewed::create([
-    'objectid' => $PAGE->cm->instance,
-    'context' => $PAGE->context,
-]);
-$event->add_record_snapshot('course', $PAGE->course);
-$event->add_record_snapshot($PAGE->cm->modname, $supervideo);
-$event->trigger();
+$mobile = optional_param('mobile', 0, PARAM_INT);
+$tokensupervideo = optional_param('tokensupervideo', false, PARAM_TEXT);
+$userid = optional_param('user_id', false, PARAM_INT);
+if ($mobile && $user = \mod_supervideo\output\mobile::valid_token($userid, $tokensupervideo)) {
+    session_write_close();
+    $USER = $user;
+    $PAGE->set_cm($cm, $course);
+    $PAGE->set_course($course);
+} else {
+    require_course_login($course, true, $cm);
+    require_capability('mod/supervideo:view', $context);
+}
 
 // Update 'viewed' state if required by completion system.
 $completion = new completion_info($course);
@@ -73,6 +69,14 @@ $PAGE->requires->css('/mod/supervideo/style.css');
 $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
+
+$event = \mod_supervideo\event\course_module_viewed::create([
+    'objectid' => $PAGE->cm->instance,
+    'context' => $PAGE->context,
+]);
+$event->add_record_snapshot('course', $PAGE->course);
+$event->add_record_snapshot($PAGE->cm->modname, $supervideo);
+$event->trigger();
 
 if ($mobile) {
     $PAGE->set_pagelayout('embedded');

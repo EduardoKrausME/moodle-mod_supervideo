@@ -68,17 +68,17 @@ class mobile {
     private static function create_embed_token($userid) {
         global $DB;
 
-        $secret = md5(uniqid(0)) . md5(uniqid(1));
-        $token = substr($secret, 0, rand(54, 64));
+        $secret = sha1(uniqid(0)) . sha1(uniqid(1));
+        $tokensupervideo = substr($secret, 0, rand(54, 64));
 
         $data = (object)[
             'user_id' => $userid,
-            'secret' => $token,
+            'secret' => $tokensupervideo,
             'created_at' => time(),
         ];
         $DB->insert_record('supervideo_auth', $data);
 
-        return $token;
+        return $tokensupervideo;
     }
 
     /**
@@ -95,8 +95,8 @@ class mobile {
         global $DB;
 
         // Delete expired.
-        $where = ['threshold' => time() - 60];
-        $DB->delete_records_select('supervideo_auth', 'created_at < :threshold', $where);
+        $where = ['created_at' => time() - 600];
+        $DB->delete_records_select('supervideo_auth', 'created_at < :created_at', $where);
 
         $auth = $DB->get_record('supervideo_auth', [
             'user_id' => $userid,
@@ -104,10 +104,8 @@ class mobile {
         ]);
 
         if ($auth) {
-            $user = get_complete_user_data('id', $userid);
-            complete_user_login($user);
-
-            return true;
+            $user = $DB->get_record_select('user', "id = :id AND deleted <> 1", ['id' => $userid]);
+            return $user;
         }
 
         return false;
