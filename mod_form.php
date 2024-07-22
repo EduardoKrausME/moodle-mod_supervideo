@@ -37,6 +37,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements
+     *
      * @throws coding_exception
      * @throws dml_exception
      */
@@ -164,9 +165,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $draftitemid = file_get_submitted_draft_itemid('videofile');
 
-        $id = intval($defaultvalues['id']);
-        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $id);
-        $defaultvalues['videofile'] = $draftitemid;
+        if (isset($defaultvalues['id'])) {
+            $id = intval($defaultvalues['id']);
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_supervideo', 'content', $id);
+            $defaultvalues['videofile'] = $draftitemid;
+        }
 
         $defaultvalues['completionpercentenabled'] = !empty($defaultvalues['completionpercent']) ? 1 : 0;
         if (empty($defaultvalues['completionpercent'])) {
