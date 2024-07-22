@@ -161,11 +161,10 @@ if ($parseurl->videoid) {
         echo $OUTPUT->render_from_template('mod_supervideo/embed_ottflix', ['identifier' => $parseurl->videoid]);
     }
     if ($parseurl->engine == "resource") {
-        $files = get_file_storage()->get_area_files(
-            $context->id, 'mod_supervideo', 'content', $supervideo->id, 'sortorder DESC, id ASC', false);
+        $files = supervideo_get_area_files($context->id);
         $file = reset($files);
         if ($file) {
-            $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
+            $path = "/{$context->id}/mod_supervideo/content/{$file->get_itemid()}{$file->get_filepath()}{$file->get_filename()}";
             $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
 
             $embedparameters = implode(" ", [

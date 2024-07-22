@@ -57,17 +57,23 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         upload_file : function(engine) {
 
-            $("#id_videofile").change(function() {
-                var filename = $('.filepicker-filename').text();
+            var filemanager = modform.fitem_id_videofile.find(".filemanager");
+            filemanager[0].addEventListener("core_form/uploadCompleted", function(event) {
 
-                if (modform.id_name.val() == "") {
-                    modform.id_name.val(filename.slice(0, -4));
-                }
+                var interval = setInterval(function() {
+                    var filename = filemanager.find(".fp-filename").text();
+                    console.log("'" + filename + "'");
+                    filename = filename.trim();
+                    console.log("'" + filename + "'");
+                    if (filename.length < 3) {
+                        return;
+                    }
 
-                modform.id_videourl.val("[resource-file:" + filename + "]");
-                modform.id_videourl.prop("readonly", true);
+                    modform.id_videourl.val("[resource-file:" + filename + "]");
+                    modform.id_videourl.prop("readonly", true);
 
-                modform.id_videourl_change();
+                    clearInterval(interval);
+                }, 500);
             });
         },
 
