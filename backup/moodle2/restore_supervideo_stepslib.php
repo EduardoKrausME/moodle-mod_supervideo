@@ -18,18 +18,13 @@
  * Backup files
  *
  * @package   mod_supervideo
- * @category   backup
+ * @category  backup
  * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Structure step to restore one supervideo activity
- *
- * @package   mod_supervideo
- * @category   backup
- * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
  */
 class restore_supervideo_activity_structure_step extends restore_activity_structure_step {
 
@@ -51,12 +46,13 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
      * Process the given restore path element data
      *
      * @param array $data parsed element data
+     *
+     * @throws dml_exception
      */
     protected function process_supervideo($data) {
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->course = $this->get_courseid();
 
         if (empty($data->timecreated)) {
@@ -83,5 +79,6 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
     protected function after_execute() {
         // Add supervideo related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_supervideo', 'intro', null);
+        $this->add_related_files('mod_supervideo', 'content', null);
     }
 }

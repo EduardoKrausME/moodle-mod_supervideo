@@ -18,9 +18,9 @@
  * Backup files
  *
  * @package   mod_supervideo
- * @category   backup
+ * @category  backup
  * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -31,11 +31,6 @@ require_once($CFG->dirroot . '/mod/supervideo/backup/moodle2/restore_supervideo_
  * Restore task for the supervideo activity module
  *
  * Provides all the settings and steps to perform complete restore of the activity.
- *
- * @package   mod_supervideo
- * @category   backup
- * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
  */
 class restore_supervideo_activity_task extends restore_activity_task {
 

@@ -18,9 +18,9 @@
  * Backup files
  *
  * @package   mod_supervideo
- * @category   backup
+ * @category  backup
  * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -29,11 +29,6 @@ require_once($CFG->dirroot . '/mod/supervideo/backup/moodle2/backup_supervideo_s
 
 /**
  * Provides the steps to perform one complete backup of the supervideo instance
- *
- * @package   mod_supervideo
- * @category   backup
- * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
  */
 class backup_supervideo_activity_task extends backup_activity_task {
 

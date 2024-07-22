@@ -18,18 +18,13 @@
  * Backup files
  *
  * @package   mod_supervideo
- * @category   backup
+ * @category  backup
  * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
  * Define the complete supervideo structure for backup, with file and id annotations
- *
- * @package   mod_supervideo
- * @category   backup
- * @copyright 2024 Eduardo kraus (http://eduardokraus.com)
- * @license   https://www.eduardokraus.com/
  */
 class backup_supervideo_activity_structure_step extends backup_activity_structure_step {
 
@@ -48,16 +43,12 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
             'course', 'name', 'intro', 'introformat', 'videourl', 'playersize',
             'showcontrols', 'autoplay', 'grade_approval']);
 
-        // If we had more elements, we would build the tree here.
-
         // Define data sources.
         $supervideo->set_source_table('supervideo', ['id' => backup::VAR_ACTIVITYID]);
 
-        // If we were referring to other tables, we would annotate the relation
-        // with the element's annotate_ids() method.
-
-        // Define file annotations (we do not use itemid in this example).
+        // Define file annotations.
         $supervideo->annotate_files('mod_supervideo', 'intro', null);
+        $supervideo->annotate_files('mod_supervideo', 'content', null);
 
         // Return the root element (supervideo), wrapped into standard activity structure.
         return $this->prepare_activity_structure($supervideo);
