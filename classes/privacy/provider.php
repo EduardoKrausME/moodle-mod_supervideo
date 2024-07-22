@@ -279,11 +279,11 @@ class provider implements
      * Loop and export from a recordset.
      *
      * @param moodle_recordset $recordset The recordset.
-     * @param string           $splitkey  The record key to determine when to export.
-     * @param mixed            $initial   The initial data to reduce from.
-     * @param callable         $reducer   The function to return the dataset, receives current dataset, and the current
+     * @param string $splitkey            The record key to determine when to export.
+     * @param mixed $initial              The initial data to reduce from.
+     * @param callable $reducer           The function to return the dataset, receives current dataset, and the current
      *                                    record.
-     * @param callable         $export    The function to export the dataset, receives the last value from $splitkey
+     * @param callable $export            The function to export the dataset, receives the last value from $splitkey
      *                                    and the dataset.
      *
      * @return void

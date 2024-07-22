@@ -43,7 +43,7 @@ class view extends external_api {
      */
     public static function view_supervideo_parameters() {
         return new external_function_parameters([
-            'supervideoid' => new external_value(PARAM_INT, 'supervideo instance id'),
+                'supervideoid' => new external_value(PARAM_INT, 'supervideo instance id'),
             ]
         );
     }

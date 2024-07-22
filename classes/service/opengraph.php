@@ -58,7 +58,7 @@ class opengraph extends \external_api {
             'url' => $url,
         ]);
 
-        require_once(__DIR__."/../util/opengraph_util.php");
+        require_once(__DIR__ . "/../util/opengraph_util.php");
         $opengraph = opengraph_util::fetch($params['url']);
 
         return [

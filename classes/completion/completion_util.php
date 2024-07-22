@@ -17,6 +17,8 @@
 namespace mod_supervideo\completion;
 
 /**
+ * Completion Util class
+ *
  * @package   mod_supervideo
  * @copyright 2024 Eduardo Kraus {@link http://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

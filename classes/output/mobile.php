@@ -50,10 +50,12 @@ class mobile {
         ];
 
         return [
-            'templates' => [[
-                'id' => 'main',
-                'html' => $OUTPUT->render_from_template('mod_supervideo/mobile_view_page', $data),
-            ]]
+            'templates' => [
+                [
+                    'id' => 'main',
+                    'html' => $OUTPUT->render_from_template('mod_supervideo/mobile_view_page', $data),
+                ],
+            ],
         ];
     }
 
