@@ -51,6 +51,9 @@ $strings = [
     "error_accessing_camera"      => 'Error accessing camera or capturing screen',
 ];
 
+$logo = "img/logo.svg";
+$rootPath = "";
+
 if( file_exists( __DIR__ . "/../../repository_ajax.php" ) && file_exists( __DIR__ . "/../../../../config.php" ) ) {
     require_once( __DIR__ . "/../../../../config.php" );
 

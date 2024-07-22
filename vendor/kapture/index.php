@@ -12,7 +12,7 @@ require_once "config-kapture.php";
 
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=212"></script>
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=214"></script>
 
     
     
