@@ -307,6 +307,24 @@ class supervideo_view extends \table_sql {
      * @throws \dml_exception
      */
     public function query_db($pagesize, $useinitialsbar = true) {
+        global $CFG;
+
+        if ($CFG->dbtype == 'pgsql') {
+            $this->query_db_postgresql($pagesize, $useinitialsbar);
+        } else {
+            $this->query_db_default($pagesize, $useinitialsbar);
+        }
+    }
+
+    /**
+     * Function query_db_default
+     *
+     * @param $pagesize
+     * @param bool $useinitialsbar
+     *
+     * @throws \dml_exception
+     */
+    private function query_db_default($pagesize, $useinitialsbar = true) {
         global $DB;
 
         $params = ["cm_id" => $this->cmid];
@@ -374,6 +392,118 @@ class supervideo_view extends \table_sql {
                                     SELECT COUNT(sv.id) AS cont
                                       FROM {supervideo_view} sv
                                       JOIN {user} u ON u.id = sv.user_id
+                                     WHERE sv.cm_id = :cm_id {$where}
+                                  GROUP BY sv.user_id
+                               ) AS c";
+                $total = $DB->get_field_sql($countsql, $params);
+                $this->pagesize($pagesize, $total);
+            } else {
+                $this->pageable(false);
+            }
+        }
+
+        if ($useinitialsbar && !$this->is_downloading()) {
+            $this->initialbars(true);
+        }
+
+        $this->rawdata = $DB->get_recordset_sql($this->sql, $params, $this->get_page_start(), $this->get_page_size());
+    }
+
+    /**
+     * Function query_db_postgresql
+     *
+     * @param $pagesize
+     * @param bool $useinitialsbar
+     *
+     * @throws \dml_exception
+     */
+    private function query_db_postgresql($pagesize, $useinitialsbar = true) {
+        global $DB;
+
+        $params = ["cm_id" => $this->cmid];
+
+        $sqlwhere = $this->get_sql_where();
+        $where = $sqlwhere[0] ? "AND {$sqlwhere[0]}" : "";
+        $params = array_merge($params, $sqlwhere[1]);
+
+        $order = $this->get_sort_for_table($this->uniqueid);
+        if (!$order) {
+            $order = "sv.user_id";
+        }
+
+        if ($this->userid) {
+            $params['user_id'] = $this->userid;
+
+            $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
+                                 u.firstname, u.lastname, u.email,
+                                 u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
+                            FROM {supervideo_view} sv
+                            JOIN {user} u ON u.id = sv.user_id
+                           WHERE sv.cm_id   = :cm_id
+                             AND sv.user_id = :user_id
+                             AND percent    > 0
+                                 {$where}
+                        ORDER BY {$order}";
+
+            if ($pagesize != -1) {
+                $countsql = "SELECT COUNT(*)
+                               FROM (
+                                    SELECT COUNT(sv.id) AS cont
+                                     FROM {supervideo_view} sv
+                                     JOIN {user} u ON u.id = sv.user_id
+                                    WHERE sv.cm_id   = :cm_id
+                                      AND sv.user_id = :user_id
+                                      AND percent    > 0
+                                          {$where}
+                               ) AS c";
+                $total = $DB->get_field_sql($countsql, $params);
+                $this->pagesize($pagesize, $total);
+            } else {
+                $this->pageable(false);
+            }
+        } else {
+            $this->sql = "
+                    SELECT
+                        sv.user_id,
+                        sv.cm_id,
+                        MAX(sv.currenttime) AS currenttime,
+                        MAX(sv.duration) AS duration,
+                        MAX(sv.percent) AS percent,
+                        MAX(sv.timecreated) AS timecreated,
+                        u.firstname,
+                        u.lastname,
+                        u.email,
+                        (
+                            SELECT COUNT(*)
+                            FROM mdl_supervideo_view sv1
+                            WHERE sv1.cm_id = sv.cm_id
+                            AND sv1.user_id = sv.user_id
+                            AND sv1.percent > 0
+                        ) AS quantidade,
+                        u.firstnamephonetic,
+                        u.lastnamephonetic,
+                        u.middlename,
+                        u.alternatename
+                    FROM
+                        mdl_supervideo_view sv
+                    JOIN
+                        mdl_user u ON u.id = sv.user_id
+                    WHERE
+                        sv.cm_id = :cm_id {$where}
+                    GROUP BY
+                        sv.user_id, sv.cm_id,
+                        u.firstname, u.lastname, u.email,
+                        u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
+                    ORDER BY
+                         {$order}
+                    LIMIT 40";
+
+            if ($pagesize != -1) {
+                $countsql = "SELECT COUNT(*)
+                               FROM (
+                                    SELECT COUNT(sv.id) AS cont
+                                      FROM {supervideo_view} sv
+                                      JOIN {user}             u ON u.id = sv.user_id
                                      WHERE sv.cm_id = :cm_id {$where}
                                   GROUP BY sv.user_id
                                ) AS c";
