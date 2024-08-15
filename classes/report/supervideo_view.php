@@ -495,8 +495,7 @@ class supervideo_view extends \table_sql {
                         u.firstname, u.lastname, u.email,
                         u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                     ORDER BY
-                         {$order}
-                    LIMIT 40";
+                         {$order}";
 
             if ($pagesize != -1) {
                 $countsql = "SELECT COUNT(*)
