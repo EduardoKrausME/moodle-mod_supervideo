@@ -253,7 +253,7 @@ if ($parseurl->videoid) {
 
         echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
             'html_id' => $elementid,
-            'vimeo_url' => $url,
+            'vimeo_id' => $url,
             'parametersvimeo' => $parametersvimeo,
         ]);
 

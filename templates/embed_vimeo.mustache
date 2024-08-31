@@ -17,6 +17,12 @@
 
 {{!
     @template mod_supervideo/embed_vimeo
+
+    Example context (json):
+    {
+        "html_id": "id_123"
+        "vimeo_id": "12345abcde"
+    }
 }}
 
 <script src="https://player.vimeo.com/api/player.js"></script>
@@ -25,4 +31,4 @@
         frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         sandbox="allow-scripts allow-forms allow-same-origin allow-modals"
-        src="https://player.vimeo.com/video/{{{vimeo_url}}}"></iframe>
+        src="https://player.vimeo.com/video/{{{vimeo_id}}}"></iframe>
