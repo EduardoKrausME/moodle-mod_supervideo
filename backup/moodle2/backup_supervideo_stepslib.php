@@ -36,19 +36,30 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
     protected function define_structure() {
 
         // Get know if we are including userinfo.
-        $userinfo = $this->get_setting_value('userinfo');
+        $userinfo = $this->get_setting_value("userinfo");
 
         // Define the root element describing the supervideo instance.
-        $supervideo = new backup_nested_element('supervideo', ['id'], [
-            'course', 'name', 'intro', 'introformat', 'videourl', 'playersize',
-            'showcontrols', 'autoplay', 'grade_approval']);
+        $supervideo = new backup_nested_element("supervideo",
+            ["id"],
+            [
+                "course",
+                "name",
+                "intro",
+                "introformat",
+                "videourl",
+                "playersize",
+                "showcontrols",
+                "autoplay",
+                "grade_approval",
+                "completionpercent",
+            ]);
 
         // Define data sources.
-        $supervideo->set_source_table('supervideo', ['id' => backup::VAR_ACTIVITYID]);
+        $supervideo->set_source_table("supervideo", ["id" => backup::VAR_ACTIVITYID]);
 
         // Define file annotations.
-        $supervideo->annotate_files('mod_supervideo', 'intro', null);
-        $supervideo->annotate_files('mod_supervideo', 'content', null);
+        $supervideo->annotate_files("mod_supervideo", "intro", null);
+        $supervideo->annotate_files("mod_supervideo", "content", null);
 
         // Return the root element (supervideo), wrapped into standard activity structure.
         return $this->prepare_activity_structure($supervideo);
