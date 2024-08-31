@@ -128,7 +128,7 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
  * @throws coding_exception
  * @throws moodle_exception
  */
-function supervideo_add_instance(stdClass $supervideo, mod_supervideo_mod_form $mform = null) {
+function supervideo_add_instance(stdClass $supervideo, $mform = null) {
     global $DB;
 
     $supervideo->timemodified = time();
@@ -178,7 +178,7 @@ function supervideo_set_mainfile($supervideo) {
  * @throws dml_exception
  * @throws coding_exception
  */
-function supervideo_update_instance(stdClass $supervideo, mod_supervideo_mod_form $mform = null) {
+function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     global $DB;
 
     $supervideo->timemodified = time();
