@@ -160,3 +160,5 @@ $string['ottflix'] = 'Super Video Module';
 $string['falha_upload_ottflix'] = 'Failed to upload to Super Video Module';
 $string['abortado_upload_ottflix'] = 'Upload to Super Video Module aborted!';
 $string['error_accessing_camera'] = 'Error accessing camera or capturing screen';
+
+ksort($string);
