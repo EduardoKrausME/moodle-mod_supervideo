@@ -144,6 +144,32 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
 }
 
 /**
+ * function supervideo_update_instance
+ *
+ * @param stdClass $supervideo
+ * @param mod_supervideo_mod_form $mform
+ *
+ * @return bool
+ * @throws dml_exception
+ * @throws coding_exception
+ * @throws moodle_exception
+ */
+function supervideo_update_instance(stdClass $supervideo, $mform = null) {
+    global $DB;
+
+    $supervideo->timemodified = time();
+    $supervideo->id = $supervideo->instance;
+    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
+
+    $result = $DB->update_record('supervideo', $supervideo);
+
+    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
+    supervideo_set_mainfile($supervideo);
+
+    return $result;
+}
+
+/**
  * supervideo_set_mainfile file.
  *
  * @param stdClass $supervideo
@@ -166,30 +192,6 @@ function supervideo_set_mainfile($supervideo) {
         $file = reset($files);
         file_set_sortorder($context->id, 'mod_supervideo', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
     }
-}
-
-/**
- * function supervideo_update_instance
- *
- * @param stdClass $supervideo
- * @param mod_supervideo_mod_form $mform
- *
- * @return bool
- * @throws dml_exception
- * @throws coding_exception
- */
-function supervideo_update_instance(stdClass $supervideo, $mform = null) {
-    global $DB;
-
-    $supervideo->timemodified = time();
-    $supervideo->id = $supervideo->instance;
-    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
-
-    $result = $DB->update_record('supervideo', $supervideo);
-
-    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
-
-    return $result;
 }
 
 /**
