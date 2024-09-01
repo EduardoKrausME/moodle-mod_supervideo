@@ -164,7 +164,7 @@ if ($parseurl->videoid) {
         $files = supervideo_get_area_files($context->id);
         $file = reset($files);
         if ($file) {
-            $path = "/{$context->id}/mod_supervideo/content/{$file->get_itemid()}{$file->get_filepath()}{$file->get_filename()}";
+            $path = "/{$context->id}/mod_supervideo/content/{$file->get_id()}/{$file->get_itemid()}{$file->get_filepath()}{$file->get_filename()}";
             $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
 
             $embedparameters = implode(" ", [
