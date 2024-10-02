@@ -191,5 +191,68 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023081602, 'mod', 'supervideo');
     }
 
+    if ($oldversion < 2024083102) {
+
+        $table = new xmldb_table('supervideo');
+
+        $origem = new xmldb_field("origem", XMLDB_TYPE_CHAR, 10, null, false, false, "", "introformat");
+        if (!$dbman->field_exists($table, $origem)) {
+            $dbman->add_field($table, $origem);
+        }
+
+        $supervideos = $DB->get_records("supervideo");
+        foreach ($supervideos as $supervideo) {
+            $origem = xmldb_supervideo_upgrade_parse($supervideo->videourl);
+            if ($origem) {
+                $supervideo->origem = $origem;
+            }
+
+            if ($supervideo->origem == "link") {
+                $supervideo->videourl = str_replace("[link]:", "", $supervideo->videourl);
+            }
+
+            $DB->update_record("supervideo", $supervideo);
+        }
+
+        upgrade_plugin_savepoint(true, 2024083102, 'mod', 'supervideo');
+    }
+
     return true;
+}
+
+/**
+ * Function xmldb_supervideo_upgrade_parse
+ *
+ * @param $videourl
+ *
+ * @return bool|string
+ */
+function xmldb_supervideo_upgrade_parse($videourl) {
+
+    if (strpos($videourl, "ottflix.com") > 1) {
+        return "ottflix";
+    }
+    if (strpos($videourl, "[link]:") === 0) {
+        return "link";
+    }
+    if (strpos($videourl, "[resource-file") === 0) {
+        return "upload";
+    }
+    if (strpos($videourl, "youtu")) {
+        if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i', $videourl, $output)) {
+            return "youtube";
+        }
+    }
+    if (strpos($videourl, "vimeo")) {
+        return "vimeo";
+    }
+    if (strpos($videourl, "docs.google.com") || strpos($videourl, "drive.google.com")) {
+        return "drive";
+    }
+
+    if (preg_match('/^https?.*\.(mp3|mp4|m3u8|webm)/i', $videourl, $output)) {
+        return "link";
+    }
+
+    return false;
 }

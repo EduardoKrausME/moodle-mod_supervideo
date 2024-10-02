@@ -92,7 +92,6 @@ if (has_capability('moodle/course:manageactivities', $context)) {
 $title = format_string($supervideo->name);
 echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, 'main', 'supervideoheading');
 
-
 $config = get_config('supervideo');
 $style = "";
 if (@$config->maxwidth >= 500) {
@@ -101,14 +100,12 @@ if (@$config->maxwidth >= 500) {
 }
 echo "<div id='supervideo_area_embed' {$style}>";
 
-$parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
-
 $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 
-if ($parseurl->videoid) {
+if ($supervideo->videourl) {
     $uniqueid = uniqid();
 
-    $elementid = "{$parseurl->engine}-{$uniqueid}";
+    $elementid = "{$supervideo->origem}-{$uniqueid}";
 
     if ($config->showcontrols == 2) {
         $supervideo->showcontrols = 0;
@@ -122,18 +119,18 @@ if ($parseurl->videoid) {
         $supervideo->autoplay = 1;
     }
 
-    if ($parseurl->engine == "link") {
+    if ($supervideo->origem == "link") {
 
         $controls = $supervideo->showcontrols ? "controls" : "";
         $autoplay = $supervideo->autoplay ? "autoplay" : "";
 
         echo "<div id='{$elementid}'></div>";
-        if ($parseurl->extra == "mp3") {
+        if (preg_match('/^https?.*\.(mp3|aac|m4a)/i', $supervideo->videourl, $output)) {
             $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
-                $parseurl->videoid,
+                $supervideo->videourl,
                 $supervideo->autoplay ? true : false,
                 $supervideo->showcontrols ? true : false,
             ]);
@@ -142,25 +139,31 @@ if ($parseurl->videoid) {
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
-                $parseurl->videoid,
+                $supervideo->videourl,
                 $supervideo->autoplay ? 1 : 0,
                 $supervideo->showcontrols ? true : false,
             ]);
         }
     }
-    if ($parseurl->engine == "ottflix") {
+    if ($supervideo->origem == "ottflix") {
         echo "<div id='{$elementid}'></div>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'ottflix', [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
             $elementid,
-            $parseurl->videoid,
+            $supervideo->videourl,
         ]);
 
-        echo $OUTPUT->render_from_template('mod_supervideo/embed_ottflix', ['identifier' => $parseurl->videoid]);
+        if (preg_match('/\/\w+\/\w+\/([A-Z0-9\-\_]{3,255})/', $supervideo->videourl, $path)) {
+            $url->videoid = $path[1];
+            echo $OUTPUT->render_from_template('mod_supervideo/embed_ottflix', ['identifier' => $path[1]]);
+        } else {
+            echo $OUTPUT->render_from_template('mod_supervideo/error');
+            $config->showmapa = false;
+        }
     }
-    if ($parseurl->engine == "resource") {
+    if ($supervideo->origem == "upload") {
         $files = supervideo_get_area_files($context->id);
         $file = reset($files);
         if ($file) {
@@ -178,7 +181,8 @@ if ($parseurl->videoid) {
                 $supervideo->autoplay ? "autoplay" : "",
             ]);
 
-            if ($parseurl->videoid == "mp3") {
+            $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+            if ($extension == "mp3" || $extension == "aac" || $extension == "m4a") {
                 echo "<div id='{$elementid}'></div>";
 
                 $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'resource_audio', [
@@ -208,7 +212,7 @@ if ($parseurl->videoid) {
             echo \html_writer::span($PAGE->get_renderer('core')->render($notification));
         }
     }
-    if ($parseurl->engine == "youtube") {
+    if ($supervideo->origem == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
         echo "<div id='{$elementid}'></div>";
 
@@ -216,13 +220,13 @@ if ($parseurl->videoid) {
             (int)$supervideoview->id,
             $supervideoview->currenttime,
             $elementid,
-            $parseurl->videoid,
+            $supervideo->videourl,
             $supervideo->playersize,
             $supervideo->showcontrols ? 1 : 0,
             $supervideo->autoplay ? 1 : 0,
         ]);
     }
-    if ($parseurl->engine == "google-drive") {
+    if ($supervideo->origem == "drive") {
         $parametersdrive = implode('&amp;', [
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
             $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
@@ -231,7 +235,7 @@ if ($parseurl->videoid) {
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                       sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
-                      src='https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parametersdrive}'></iframe>";
+                      src='https://drive.google.com/file/d/{$supervideo->videourl}/preview?{$parametersdrive}'></iframe>";
 
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'drive', [
             (int)$supervideoview->id,
@@ -241,7 +245,7 @@ if ($parseurl->videoid) {
 
         $config->showmapa = false;
     }
-    if ($parseurl->engine == "vimeo") {
+    if ($supervideo->origem == "vimeo") {
         $parametersvimeo = implode('&amp;', [
             'pip=1',
             'title=0',
@@ -251,10 +255,12 @@ if ($parseurl->videoid) {
             $supervideo->showcontrols ? 'controls=1' : 'controls=0',
         ]);
 
-        if (strpos($parseurl->videoid, "?")) {
-            $url = "{$parseurl->videoid}&pip{$parametersvimeo}";
-        } else {
-            $url = "{$parseurl->videoid}?pip{$parametersvimeo}";
+        if (preg_match('/vimeo.com\/(\d+)(\/(\w+))?/', $supervideo->videourl, $output)) {
+            if (isset($output[3])) {
+                $url = "{$output[1]}?h={$output[3]}&pip{$parametersvimeo}";
+            } else {
+                $url = "{$output[1]}?pip{$parametersvimeo}";
+            }
         }
 
         echo $OUTPUT->render_from_template('mod_supervideo/embed_vimeo', [
@@ -266,7 +272,7 @@ if ($parseurl->videoid) {
         $PAGE->requires->js_call_amd('mod_supervideo/player_create', 'vimeo', [
             $supervideoview->id,
             $supervideoview->currenttime,
-            $parseurl->videoid,
+            $supervideo->videourl,
             $elementid,
         ]);
     }

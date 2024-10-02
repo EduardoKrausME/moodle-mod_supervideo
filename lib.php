@@ -61,7 +61,6 @@ function supervideo_supports($feature) {
     }
 }
 
-
 /**
  * supervideo_update_grades File.
  *
@@ -135,6 +134,13 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timecreated = time();
     $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
 
+    $supervideo->origem = optional_param("origem", false, PARAM_TEXT);
+    if ($supervideo->origem == "upload") {
+        $supervideo->videourl = "file";
+    } else if ($videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT)) {
+        $supervideo->videourl = $videourl;
+    }
+
     $supervideo->id = $DB->insert_record('supervideo', $supervideo);
 
     \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
@@ -160,6 +166,9 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timemodified = time();
     $supervideo->id = $supervideo->instance;
     $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
+    if ($supervideo->origem != "upload") {
+        $supervideo->videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT);
+    }
 
     $result = $DB->update_record('supervideo', $supervideo);
 
@@ -462,7 +471,6 @@ function supervideo_dndupload_register() {
     return $ret;
 }
 
-
 /**
  * Handle a file that has been uploaded
  *
@@ -484,6 +492,9 @@ function supervideo_dndupload_handle($uploadinfo) {
     $data->introformat = FORMAT_HTML;
     $data->coursemodule = $uploadinfo->coursemodule;
 
+    $data->origem = "upload";
+    $data->videourl = "file";
+
     $data->playersize = 1;
     $data->showcontrols = 1;
     $data->autoplay = 0;
@@ -498,7 +509,7 @@ function supervideo_dndupload_handle($uploadinfo) {
         $files = $fs->get_area_files($draftcontext->id, 'user', 'draft', $uploadinfo->draftitemid, '', false);
         if ($file = reset($files)) {
 
-            $data->videourl = "[resource-file:{$file->get_filename()}]";
+            $data->videourl = "{$file->get_filename()}";
             $options = ['subdirs' => true, 'embed' => true];
             file_save_draft_area_files(
                 $uploadinfo->draftitemid, $context->id, 'mod_supervideo', 'content', $data->instance, $options);
@@ -645,8 +656,6 @@ function supervideo_export_contents($cm, $baseurl) {
     $context = context_module::instance($cm->id);
     $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
-    $parseurl = \mod_supervideo\util\url::parse($supervideo->videourl);
-
     $config = get_config('supervideo');
     if ($config->showcontrols == 2) {
         $config->showcontrols = 0;
@@ -668,30 +677,30 @@ function supervideo_export_contents($cm, $baseurl) {
     $config->viewid = $supervideoview->id;
     $config->currenttime = $supervideoview->currenttime;
 
-    if ($parseurl->videoid) {
-        if ($parseurl->engine == "link") {
-            $contents[] = [
-                'type' => "link",
-                'filename' => "link.{$parseurl->extra}",
-                'filepath' => $parseurl->extra,
-                'filesize' => 1,
-                'fileurl' => $parseurl->videoid,
-                'timecreated' => time(),
-                'timemodified' => time(),
-                'sortorder' => 0,
-                'userid' => 0,
-                'author' => '',
-                'license' => json_encode($config, JSON_NUMERIC_CHECK),
-            ];
-            return $contents;
-        }
-        if ($parseurl->engine == "ottflix") {
+    if ($supervideo->origem == "link") {
+        $contents[] = [
+            'type' => "link",
+            'filename' => "link.{$supervideo->videourl}",
+            'filepath' => $supervideo->videourl,
+            'filesize' => 1,
+            'fileurl' => $supervideo->videourl,
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'sortorder' => 0,
+            'userid' => 0,
+            'author' => '',
+            'license' => json_encode($config, JSON_NUMERIC_CHECK),
+        ];
+        return $contents;
+    }
+    if ($supervideo->origem == "ottflix") {
+        if (preg_match('/\/\w+\/\w+\/([A-Z0-9\-\_]{3,255})/', $supervideo->videourl, $path)) {
             $contents[] = [
                 'type' => 'ottflix',
                 'filename' => 'ottflix.mp4',
                 'filepath' => "",
                 'filesize' => 1,
-                'fileurl' => $parseurl->videoid,
+                'fileurl' => $path[1],
                 'timecreated' => time(),
                 'timemodified' => time(),
                 'sortorder' => 0,
@@ -701,37 +710,40 @@ function supervideo_export_contents($cm, $baseurl) {
             ];
             return $contents;
         }
-        if ($parseurl->engine == "resource") {
-            $files = supervideo_get_area_files($context->id);
-            foreach ($files as $file) {
-                $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
-                $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
-                $file = [
-                    'type' => 'file',
-                    'engine' => 'resource',
-                    'filename' => $file->get_filename(),
-                    'filepath' => $file->get_filepath(),
-                    'filesize' => $file->get_filesize(),
-                    'fileurl' => $fullurl,
-                    'timecreated' => $file->get_timecreated(),
-                    'timemodified' => $file->get_timemodified(),
-                    'sortorder' => $file->get_sortorder(),
-                    'userid' => $file->get_userid(),
-                    'author' => $file->get_author(),
-                    'license' => json_encode($config, JSON_NUMERIC_CHECK),
-                ];
-                $contents[] = $file;
+    }
+    if ($supervideo->origem == "upload") {
+        $files = supervideo_get_area_files($context->id);
+        foreach ($files as $file) {
+            $path = "/{$context->id}/mod_supervideo/content/{$supervideo->id}{$file->get_filepath()}{$file->get_filename()}";
+            $fullurl = moodle_url::make_file_url('/pluginfile.php', $path, false)->out();
+            $file = [
+                'type' => 'file',
+                'engine' => 'resource',
+                'filename' => $file->get_filename(),
+                'filepath' => $file->get_filepath(),
+                'filesize' => $file->get_filesize(),
+                'fileurl' => $fullurl,
+                'timecreated' => $file->get_timecreated(),
+                'timemodified' => $file->get_timemodified(),
+                'sortorder' => $file->get_sortorder(),
+                'userid' => $file->get_userid(),
+                'author' => $file->get_author(),
+                'license' => json_encode($config, JSON_NUMERIC_CHECK),
+            ];
+            $contents[] = $file;
 
-                return $contents;
-            }
+            return $contents;
         }
-        if ($parseurl->engine == "youtube") {
+    }
+    if ($supervideo->origem == "youtube") {
+        if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
+            $supervideo->videourl, $output)) {
             $contents[] = [
                 'type' => 'youtube',
                 'filename' => 'youtube.mp4',
                 'filepath' => "",
                 'filesize' => 1,
-                'fileurl' => "https://www.youtube.com/watch?v={$parseurl->videoid}",
+                'fileurl' => "https://www.youtube.com/watch?v={$output[3]}",
                 'timecreated' => time(),
                 'timemodified' => time(),
                 'sortorder' => 0,
@@ -741,14 +753,15 @@ function supervideo_export_contents($cm, $baseurl) {
             ];
             return $contents;
         }
-        if ($parseurl->engine == "google-drive") {
-            $config->showmapa = false;
-
+    }
+    if ($supervideo->origem == "drive") {
+        $config->showmapa = false;
+        if (preg_match('/([a-zA-Z0-9\-_]{33})/', $supervideo->videourl, $output)) {
             $parametersdrive = implode('&amp;', [
                 $supervideo->showcontrols ? 'controls=1' : 'controls=0',
                 $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
             ]);
-            $url = "https://drive.google.com/file/d/{$parseurl->videoid}/preview?{$parametersdrive}";
+            $url = "https://drive.google.com/file/d/{$output[1]}/preview?{$parametersdrive}";
 
             $contents[] = [
                 'type' => 'google-drive',
@@ -765,37 +778,39 @@ function supervideo_export_contents($cm, $baseurl) {
             ];
             return $contents;
         }
-        if ($parseurl->engine == "vimeo") {
-            $parametersvimeo = implode('&amp;', [
-                'pip=1',
-                'title=0',
-                'byline=0',
-                $supervideo->showcontrols ? 'title=1' : 'title=0',
-                $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
-                $supervideo->showcontrols ? 'controls=1' : 'controls=0',
-            ]);
+    }
+    if ($supervideo->origem == "vimeo") {
+        $parametersvimeo = implode('&amp;', [
+            'pip=1',
+            'title=0',
+            'byline=0',
+            $supervideo->showcontrols ? 'title=1' : 'title=0',
+            $supervideo->autoplay ? 'autoplay=1' : 'autoplay=0',
+            $supervideo->showcontrols ? 'controls=1' : 'controls=0',
+        ]);
 
-            if (strpos($parseurl->videoid, "?")) {
-                $url = "https://player.vimeo.com/video/{$parseurl->videoid}&pip{$parametersvimeo}";
+        if (preg_match('/vimeo.com\/(\d+)(\/(\w+))?/', $supervideo->videourl, $output)) {
+            if (isset($output[3])) {
+                $url = "https://player.vimeo.com/video/{$output[1]}?h={$output[3]}&pip{$parametersvimeo}";
             } else {
-                $url = "https://player.vimeo.com/video/{$parseurl->videoid}?pip{$parametersvimeo}";
+                $url = "https://player.vimeo.com/video/{$output[1]}?pip{$parametersvimeo}";
             }
-
-            $contents[] = [
-                'type' => 'vimeo',
-                'filename' => 'vimeo.mp4',
-                'filepath' => "",
-                'filesize' => 1,
-                'fileurl' => $url,
-                'timecreated' => time(),
-                'timemodified' => time(),
-                'sortorder' => 0,
-                'userid' => 0,
-                'author' => '',
-                'license' => json_encode($config, JSON_NUMERIC_CHECK),
-            ];
-            return $contents;
         }
+
+        $contents[] = [
+            'type' => 'vimeo',
+            'filename' => 'vimeo.mp4',
+            'filepath' => "",
+            'filesize' => 1,
+            'fileurl' => $url,
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'sortorder' => 0,
+            'userid' => 0,
+            'author' => '',
+            'license' => json_encode($config, JSON_NUMERIC_CHECK),
+        ];
+        return $contents;
     }
 }
 

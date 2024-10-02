@@ -100,7 +100,7 @@ class supervideo_view extends \table_sql {
                 get_string('report_terminou', 'mod_supervideo'),
             ];
 
-            if (url::parse($supervideo->videourl)->engine == "drive") {
+            if ($supervideo->origem == "drive") {
                 unset($columns[8]);
                 unset($columns[6]);
                 unset($columns[5]);
@@ -137,7 +137,7 @@ class supervideo_view extends \table_sql {
                 get_string('report_visualizacoes', 'mod_supervideo'),
                 get_string('report_assistiu', 'mod_supervideo'),
             ];
-            if (url::parse($supervideo->videourl)->engine == "drive") {
+            if ($supervideo->origem == "drive") {
                 unset($columns[5]);
                 unset($columns[4]);
                 unset($columns[3]);

@@ -8851,7 +8851,6 @@
         }
     }
 
-
     Plyr.defaults = cloneDeep(defaults);
 
     return Plyr;

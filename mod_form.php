@@ -60,19 +60,46 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", null, "required", null, "client");
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
-        $mform->addElement("text", "videourl",
-            get_string("videourl", "mod_supervideo"), ["size" => "60"], []);
-        $mform->setType("videourl", PARAM_TEXT);
-        $mform->addRule("videourl", null, "required", null, "client");
-        $mform->addHelpButton("videourl", "videourl", "mod_supervideo");
+        $origems = ["upload", "ottflix", "youtube", "vimeo", "drive", "link"];
 
-        $filemanageroptions = [
-            "accepted_types" => [".mp3", ".mp4", ".webm"],
-            "maxbytes" => 0,
-            "maxfiles" => 1,
-        ];
-        $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
-        $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
+        if (!$supervideo) {
+            $origemselect = [];
+            foreach ($origems as $origem) {
+                $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
+            }
+
+            $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
+        } else {
+            $mform->addElement("hidden", "origem", $supervideo->origem);
+        }
+
+        foreach ($origems as $origem) {
+            if ($origem == "upload") {
+                continue;
+            }
+
+            if ($supervideo && $origem != $supervideo->origem) {
+                continue;
+            }
+
+            $mform->addElement("text", "videourl_{$origem}",
+                get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
+            $mform->setType("videourl_{$origem}", PARAM_TEXT);
+            $mform->addRule("videourl_{$origem}", null, "required", null, "client");
+            $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+            $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
+        }
+
+        if (!$supervideo || $origem == "upload") {
+            $filemanageroptions = [
+                "accepted_types" => [".mp3", ".mp4", ".webm", ".m4v", ".mov", ".aac", ".m4a"],
+                "maxbytes" => 0,
+                "maxfiles" => 1,
+            ];
+            $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
+            $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
+            $mform->hideIf("videofile", "origem", "neq", "upload");
+        }
 
         // Adding the standard "intro" and "introformat" fields.
         if ($CFG->branch >= 29) {
@@ -138,11 +165,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
-        $engine = "";
-        if ($supervideo) {
-            $urlparse = \mod_supervideo\util\url::parse($supervideo->videourl);
-            $engine = $urlparse->engine;
-        }
         $btn = false;
         if (!($this->_cm && $this->_cm->instance)) {
             $course = $this->optional_param("course", 0, PARAM_INT);
@@ -152,7 +174,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
-        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$engine, $USER->lang, $btn]);
+        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$supervideo->origem, $USER->lang, $btn]);
     }
 
     /**
@@ -249,7 +271,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         return ($data["completionpercent"] > 0);
     }
 
-
     /**
      * validation function
      *
@@ -287,12 +308,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-        $urlparse = \mod_supervideo\util\url::parse($data["videourl"]);
-        if ($urlparse->engine == "") {
-            $errors["videourl"] = get_string("idnotfound", "mod_supervideo");
-        }
-
-        if ($urlparse->engine == "resource") {
+        if ($data["origem"] == "resource") {
 
             if (empty($data["videofile"])) {
                 // Field missing.

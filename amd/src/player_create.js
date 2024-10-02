@@ -276,7 +276,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             $(window).resize(_resizePage);
             _resizePage();
 
-
             var element = $("#supervideo_area_embed");
             var lastWidth = element.width();
             setInterval(function() {
