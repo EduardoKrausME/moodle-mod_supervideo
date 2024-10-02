@@ -35,7 +35,7 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/supervideo:view_report', $context);
 
-if (!has_capability('moodle/course:manageactivities', $context, $USER)) {
+if (!has_capability('mod/supervideo:addinstance', $context, $USER)) {
     $userid = $USER->id;
 }
 

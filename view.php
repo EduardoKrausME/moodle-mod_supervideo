@@ -85,7 +85,7 @@ if ($mobile) {
 echo $OUTPUT->header();
 
 $linkreport = "";
-if (has_capability('moodle/course:manageactivities', $context)) {
+if (has_capability('mod/supervideo:addinstance', $context)) {
     $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
         get_string('report_title', 'mod_supervideo') . "</a>";
 }
