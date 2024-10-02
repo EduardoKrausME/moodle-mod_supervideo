@@ -228,7 +228,6 @@ class provider implements
         $DB->delete_records_select('supervideo_view', $sql, $params);
     }
 
-
     /**
      * Delete multiple users within a single context.
      *

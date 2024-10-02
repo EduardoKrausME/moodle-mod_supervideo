@@ -38,7 +38,6 @@ echo $OUTPUT->header();
 $title = get_string('reports') . ": " . get_string('modulename', 'mod_supervideo');
 echo $OUTPUT->heading($title, 2, 'main', 'supervideoheading');
 
-
 $sql = "SELECT cm.*, sv.name
           FROM {course_modules} cm
           JOIN {modules}        md ON md.id = cm.module
@@ -56,8 +55,6 @@ foreach ($supervideos as $supervideo) {
     ];
 }
 
-
 echo $OUTPUT->render_from_template('core/report_link_page', ['node' => $reportnode]);
-
 
 echo $OUTPUT->footer();

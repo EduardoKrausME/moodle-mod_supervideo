@@ -10,7 +10,6 @@ require_once "config-kapture.php";
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php echo kapture_get_string( "app_title" ); ?></title>
 
-
     <?php kapture_get_string_js() ?>
     <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=214"></script>
 
@@ -83,7 +82,6 @@ require_once "config-kapture.php";
                  alt="<?php echo kapture_get_string( "layout_3" ); ?>"
                  title="<?php echo kapture_get_string( "layout_3" ); ?>"
                  class="layout">
-
 
             <div id="record-time">00:00</div>
 
@@ -202,7 +200,6 @@ require_once "config-kapture.php";
         </div>
     </div>
 </div>
-
 
 <div id="sleep-allow-video" class="app-status">
     <div class="info">
