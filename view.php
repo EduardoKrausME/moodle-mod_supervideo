@@ -82,23 +82,31 @@ if ($mobile) {
     $PAGE->set_pagelayout('embedded');
 }
 
+$config = get_config('supervideo');
+
+$hasteacher = has_capability('mod/supervideo:addinstance', $context);
+$hasteacher = false;
+if (!$hasteacher && $config->distractionfreemode) {
+    $PAGE->add_body_class("distraction-free-mode");
+}
+
 echo $OUTPUT->header();
 
 $linkreport = "";
-if (has_capability('mod/supervideo:addinstance', $context)) {
+if ($hasteacher) {
     $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
         get_string('report_title', 'mod_supervideo') . "</a>";
 }
 $title = format_string($supervideo->name);
 echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, 'main', 'supervideoheading');
 
-$config = get_config('supervideo');
-$style = "";
-if (@$config->maxwidth >= 500) {
+$extraembedtag = "";
+if ($config->maxwidth >= 500 && !$config->distractionfreemode) {
     $config->maxwidth = intval($config->maxwidth);
-    $style = "style='margin:0 auto;max-width:{$config->maxwidth}px;'";
+    $extraembedtag .= " style='margin:0 auto;max-width:{$config->maxwidth}px;' ";
 }
-echo "<div id='supervideo_area_embed' {$style}>";
+
+echo "<div id='supervideo_area_embed' {$extraembedtag}>";
 
 $supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
 
@@ -277,6 +285,21 @@ if ($supervideo->videourl) {
         ]);
     }
 
+    $errors = [
+        'error_media_err_aborted',
+        'error_media_err_network',
+        'error_media_err_decode',
+        'error_media_err_src_not_supported',
+        'error_default',
+    ];
+    foreach ($errors as $error) {
+        echo $OUTPUT->render_from_template('mod_supervideo/error', [
+            "elementId" => $error,
+            "type" => "danger",
+            "message" => get_string($error, "mod_supervideo"),
+        ]);
+    }
+
     $text = $OUTPUT->heading(get_string('seu_mapa_view', 'mod_supervideo') . ' <span></span>', 3, 'main-view', 'seu-mapa-view');
     echo $OUTPUT->render_from_template('mod_supervideo/mapa', [
         'style' => $config->showmapa ? "" : "style='display:none'",
@@ -285,7 +308,11 @@ if ($supervideo->videourl) {
     ]);
 
 } else {
-    echo $OUTPUT->render_from_template('mod_supervideo/error');
+    echo $OUTPUT->render_from_template('mod_supervideo/error', [
+        "elementId" => "message_notfound",
+        "type" => "warning",
+        "message" => get_string("idnotfound", "mod_supervideo"),
+    ]);
     $config->showmapa = false;
 }
 

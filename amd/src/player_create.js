@@ -84,6 +84,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         resource_audio : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
 
+            $("body").removeClass("distraction-free-mode");
+
             progress._internal_view_id = view_id;
 
             var embedparameters = "";
@@ -94,11 +96,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 embedparameters += "autoplay ";
             }
 
-            var embed =
-                    "<audio " + embedparameters + " crossorigin playsinline >" +
-                    "    <source src='" + fullurl + "' type='audio/mp3'>" +
-                    "</audio>";
-            $("#" + elementId).html(embed);
+            var embed = `<audio ${embedparameters} crossorigin playsinline id="${elementId}_audio"></audio>`;
+            $(`#${elementId}`).html(embed);
+            progress._error_load(`${elementId}_audio`);
+            //$(`#${elementId}_audio`).html(`<source src="${fullurl}">`);
+            $(`#${elementId}_audio`).attr("src", fullurl);
 
             var config = {
                 controls :
@@ -149,11 +151,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 embedparameters += "autoplay ";
             }
 
-            var embed =
-                    "<video " + embedparameters + " playsinline>" +
-                    "    <source src='" + fullurl + "'>" +
-                    "</video>";
-            $("#" + elementId).html(embed);
+            var embed = `<video ${embedparameters} crossorigin playsinline id="${elementId}_video"></video>`;
+            $(`#${elementId}`).html(embed);
+            progress._error_load(`${elementId}_video`);
+            // $(`#${elementId}_video`).html(`<source src="${fullurl}">`);
+            $(`#${elementId}_video`).attr("src", fullurl);
 
             var config = {
                 controls :
@@ -245,7 +247,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_saveprogress(1, 1);
 
             if (playersize == 5) {
-                progress._internal_resize(480, 640);
+                $("body").removeClass("distraction-free-mode");
+
+                progress._internal_resize(10, 640);
             } else if (playersize == 6) {
                 progress._internal_resize(4, 3);
                 progress._internal_max_height();
@@ -261,7 +265,40 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             $("#mapa-visualizacao").hide();
         },
 
+        _error_load : function(elementId) {
+            function errorF(e) {
+                $(`#${elementId}, #mapa-visualizacao`).hide();
+                //$("body").removeClass("distraction-free-mode");
+
+                switch (e.target.error.code) {
+                    case e.target.error.MEDIA_ERR_ABORTED:
+                        $(`#error_media_err_aborted`).show();
+                        break;
+                    case e.target.error.MEDIA_ERR_NETWORK:
+                        $(`#error_media_err_network`).show();
+                        break;
+                    case e.target.error.MEDIA_ERR_DECODE:
+                        $(`#error_media_err_decode`).show();
+                        break;
+                    case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        $(`#error_media_err_src_not_supported`).show();
+                        break;
+                    default:
+                        $(`#error_default`).show();
+                        break;
+                }
+            }
+
+            var videoElem = document.getElementById(elementId);
+            videoElem.addEventListener("error", errorF);
+        },
+
         _internal_resize : function(width, height) {
+
+            if ($("body").hasClass("distraction-free-mode")) {
+                progress._internal_max_height();
+                return;
+            }
 
             function _resizePage() {
                 var videoBoxWidth = $("#supervideo_area_embed").width();
@@ -292,29 +329,41 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         _internal_max_height : function() {
-            $(window).resize(_resizePage);
-            _resizePage();
+            $(window).resize(progress._internal_max_height__resizePage);
+            progress._internal_max_height__resizePage();
+        },
 
-            function _resizePage() {
+        _internal_max_height__resizePage : function() {
 
-                var $supervideo_area_embed = $("#supervideo_area_embed");
+            var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
 
-                $supervideo_area_embed.css({
-                    "max-height" : "inherit",
-                    "height"     : "inherit",
-                });
+            $supervideoArea.css({
+                "max-height" : "inherit",
+                "height"     : "inherit",
+            });
 
-                var header_height = ($("#header") && $("#header").height()) || 60;
-                var window_height = $(window).height();
+            var windowHeight = $(window).height();
+            if ($("body").hasClass("distraction-free-mode")) {
 
-                var player_max_height = window_height - header_height;
+                var activityHeight = 0;
 
-                if ($supervideo_area_embed.height() > player_max_height) {
-                    $supervideo_area_embed.css({
-                        "max-height" : player_max_height,
-                        "height"     : player_max_height
-                    });
+                var $activity = $(".activity-navigation");
+                if (!$activity.is(":hidden")) {
+                    activityHeight = $activity.height();
                 }
+
+                var playerMaxHeight = windowHeight - (activityHeight + 65 + 3); // 3 is padding button
+                $supervideoArea.css({
+                    "max-height" : playerMaxHeight,
+                    "height"     : playerMaxHeight
+                });
+            } else {
+                var headerHeight = ($("#header") && $("#header").height()) || 60;
+                var playerMaxHeightOther = windowHeight - headerHeight;
+                $supervideoArea.css({
+                    "max-height" : playerMaxHeightOther,
+                    "height"     : playerMaxHeightOther
+                });
             }
         },
 
@@ -361,8 +410,24 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 percent = Math.floor(percent / progress._internal_progress_length * 100);
             }
 
-            if (progress._internal_last_percent == percent) return;
+            if (progress._internal_last_percent == percent) {
+                return;
+            }
             progress._internal_last_percent = percent;
+
+            if ($("body").hasClass("distraction-free-mode")) {
+                if (currenttime > (duration * .95)) {
+                    $(".activity-navigation").hide();
+                    progress._internal_max_height__resizePage();
+
+                    $("#mapa-visualizacao").addClass("fixed-booton");
+                } else {
+                    $(".activity-navigation").show();
+                    progress._internal_max_height__resizePage();
+
+                    $("#mapa-visualizacao").removeClass("fixed-booton");
+                }
+            }
 
             if (currenttime) {
                 Ajax.call([{
