@@ -326,7 +326,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-
         return $errors;
     }
 }
