@@ -60,10 +60,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", null, "required", null, "client");
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
-        $origems = ["upload", "ottflix", "youtube", "vimeo", "drive", "link"];
+        $origems = ["ottflix", "youtube", "vimeo", "drive", "link"];
 
         if (!$supervideo) {
-            $origemselect = [];
+            $origemselect = [
+                "upload" => get_string("origem_upload", "mod_supervideo"),
+            ];
             foreach ($origems as $origem) {
                 $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
             }
@@ -74,10 +76,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         foreach ($origems as $origem) {
-            if ($origem == "upload") {
-                continue;
-            }
-
             if ($supervideo && $origem != $supervideo->origem) {
                 continue;
             }
@@ -87,10 +85,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->setType("videourl_{$origem}", PARAM_TEXT);
             $mform->addRule("videourl_{$origem}", null, "required", null, "client");
             $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
-            $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
+            if (!$supervideo) {
+                $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
+            }
         }
 
-        if (!$supervideo || $origem == "upload") {
+        if (!$supervideo || $supervideo->origem == "upload") {
             $filemanageroptions = [
                 "accepted_types" => [".mp3", ".mp4", ".webm", ".m4v", ".mov", ".aac", ".m4a"],
                 "maxbytes" => 0,
@@ -124,6 +124,9 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addElement("select", "playersize", get_string("playersize", "mod_supervideo"), $sizeoptions);
         $mform->setDefault("playersize", 1);
         $mform->setType("playersize", PARAM_TEXT);
+        $mform->hideIf("playersize", "origem", "eq", "vimeo");
+        $mform->hideIf("playersize", "origem", "eq", "youtube");
+        $mform->hideIf("playersize", "origem", "eq", "ottflix");
 
         $config = get_config("supervideo");
 
@@ -284,9 +287,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
-        if (!isset($data["videourl"]) || empty($data["videourl"])) {
-            $errors["videourl"] = get_string("required");
-        }
 
         if (isset($data["completionpercent"]) && $data["completionpercent"] != "") {
             $data["completionpercent"] = intval($data["completionpercent"]);
@@ -307,8 +307,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $errors["gradepass"] = get_string("completionpercent_error", "mod_supervideo");
             }
         }
-
-        if ($data["origem"] == "resource") {
+        $origem = $data["origem"];
+        if ($origem == "upload") {
 
             if (empty($data["videofile"])) {
                 // Field missing.
@@ -320,7 +320,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
                     $errors["videofile"] = get_string("required");
                 }
             }
+        } else {
+            if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
+                $errors["videourl_{$origem}"] = get_string("required");
+            }
         }
+
 
         return $errors;
     }
