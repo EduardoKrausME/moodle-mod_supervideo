@@ -90,10 +90,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->addElement("hidden", "origem", $supervideo->origem);
             $mform->setType("origem", PARAM_TEXT);
 
-            if ( $supervideo->origem == "upload") {
+            if ($supervideo->origem == "upload") {
                 $mform->addElement("hidden", "videourl", $supervideo->videourl);
                 $mform->setType("videourl", PARAM_TEXT);
-            }else{
+            } else {
                 $mform->addElement("text", "videourl",
                     get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
                 $mform->setType("videourl", PARAM_TEXT);
