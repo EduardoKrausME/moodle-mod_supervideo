@@ -43,9 +43,7 @@ if ($id) {
 $context = context_module::instance($cm->id);
 
 $mobile = optional_param('mobile', 0, PARAM_INT);
-$tokensupervideo = optional_param('tokensupervideo', false, PARAM_TEXT);
-$userid = optional_param('user_id', false, PARAM_INT);
-if ($mobile && $user = \mod_supervideo\output\mobile::valid_token($userid, $tokensupervideo)) {
+if ($mobile) {
     session_write_close();
     $USER = $user;
     $PAGE->set_cm($cm, $course);

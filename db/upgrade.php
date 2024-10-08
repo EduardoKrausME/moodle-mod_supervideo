@@ -88,28 +88,6 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023032506, 'mod', 'supervideo');
     }
 
-    if ($oldversion < 2023052000) {
-
-        // Add auth table.
-        $table = new xmldb_table('supervideo_auth');
-
-        // Add fields.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
-        $table->add_field('user_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL);
-        $table->add_field('created_at', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL);
-        $table->add_field('secret', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL);
-
-        // Add keys and index.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-
-        // Create table if it does not exist.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        upgrade_plugin_savepoint(true, 2023052000, 'mod', 'supervideo');
-    }
-
     if ($oldversion < 2023071800) {
 
         $table = new xmldb_table('supervideo');
@@ -215,6 +193,16 @@ function xmldb_supervideo_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2024083102, 'mod', 'supervideo');
+    }
+
+    if ($oldversion < 2024100800) {
+
+        $table = new xmldb_table('supervideo_auth');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2024100800, 'mod', 'supervideo');
     }
 
     return true;
