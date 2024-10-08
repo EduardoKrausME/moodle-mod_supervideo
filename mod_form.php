@@ -71,23 +71,29 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
 
             $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
+
+            foreach ($origems as $origem) {
+                if ($supervideo && $origem != $supervideo->origem) {
+                    continue;
+                }
+
+                $mform->addElement("text", "videourl_{$origem}",
+                    get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
+                $mform->setType("videourl_{$origem}", PARAM_TEXT);
+                $mform->addRule("videourl_{$origem}", null, "required", null, "client");
+                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                if (!$supervideo) {
+                    $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
+                }
+            }
         } else {
             $mform->addElement("hidden", "origem", $supervideo->origem);
-        }
 
-        foreach ($origems as $origem) {
-            if ($supervideo && $origem != $supervideo->origem) {
-                continue;
-            }
-
-            $mform->addElement("text", "videourl_{$origem}",
-                get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
-            $mform->setType("videourl_{$origem}", PARAM_TEXT);
-            $mform->addRule("videourl_{$origem}", null, "required", null, "client");
-            $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
-            if (!$supervideo) {
-                $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
-            }
+            $mform->addElement("text", "videour",
+                get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
+            $mform->setType("videourl", PARAM_TEXT);
+            $mform->addRule("videourl", null, "required", null, "client");
+            $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
         }
 
         if (!$supervideo || $supervideo->origem == "upload") {
@@ -98,7 +104,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
             ];
             $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
             $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
-            $mform->hideIf("videofile", "origem", "neq", "upload");
+
+            if (!$supervideo) {
+                $mform->hideIf("videofile", "origem", "neq", "upload");
+            }
         }
 
         // Adding the standard "intro" and "introformat" fields.
