@@ -88,12 +88,18 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         } else {
             $mform->addElement("hidden", "origem", $supervideo->origem);
+            $mform->setType("origem", PARAM_TEXT);
 
-            $mform->addElement("text", "videour",
-                get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
-            $mform->setType("videourl", PARAM_TEXT);
-            $mform->addRule("videourl", null, "required", null, "client");
-            $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
+            if ( $supervideo->origem == "upload") {
+                $mform->addElement("hidden", "videourl", $supervideo->videourl);
+                $mform->setType("videourl", PARAM_TEXT);
+            }else{
+                $mform->addElement("text", "videourl",
+                    get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
+                $mform->setType("videourl", PARAM_TEXT);
+                $mform->addRule("videourl", null, "required", null, "client");
+                $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
+            }
         }
 
         if (!$supervideo || $supervideo->origem == "upload") {
