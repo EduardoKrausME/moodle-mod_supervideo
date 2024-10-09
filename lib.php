@@ -166,9 +166,6 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timemodified = time();
     $supervideo->id = $supervideo->instance;
     $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
-    if ($supervideo->origem != "upload") {
-        $supervideo->videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT);
-    }
 
     $result = $DB->update_record('supervideo', $supervideo);
 

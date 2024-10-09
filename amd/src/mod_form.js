@@ -13,14 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
+define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
     var modform = {
         id_name     : null,
         id_videourl : null,
 
         init : function(engine, lang, courseSection) {
 
-            modform.loadposter(lang);
+            modform.id_name = $("#id_name");
+            modform.id_videourl = $("#id_videourl");
 
             if (courseSection) {
                 modform.id_videourl.after(`
@@ -35,6 +36,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                     $("#kapture-open").attr("href", `${M.cfg.wwwroot}/mod/supervideo/vendor/kapture/?${courseSection}&videotitle=${videotitle}`)
                 })
             }
+
+            var player = new PlayerRender();
+            player.loadposter($, lang);
         }
     };
     return modform;

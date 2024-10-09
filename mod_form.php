@@ -336,8 +336,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 }
             }
         } else {
-            if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
-                $errors["videourl_{$origem}"] = get_string("required");
+            if ($data["instance"]) {
+                if (!isset($data["videourl"]) || empty($data["videourl"])) {
+                    $errors["videourl"] = get_string("required");
+                }
+            } else {
+                if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
+                    $errors["videourl_{$origem}"] = get_string("required");
+                }
             }
         }
 

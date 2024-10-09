@@ -505,7 +505,15 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         _internal_add : function(accumulator, a) {
             return accumulator + a;
-        }
+        },
+
+        error_idnotfound : function() {
+            $("body").removeClass("distraction-free-mode");
+        },
+
+        secondary_navigation : function() {
+            $(".secondary-navigation").appendTo("#page-header .w-100");
+        },
     };
     return progress;
 });
