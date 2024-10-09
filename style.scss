@@ -186,6 +186,9 @@
             border-color: none;
         }
     }
+    .secondary-navigation{
+        display: none;
+    }
     #page-header {
         .w-100 {
             display: flex;
@@ -236,9 +239,23 @@
                 color: #eceff8;
             }
         }
+        .secondary-navigation {
+            display: flex;
+            padding-bottom: 0 !important;
+            margin-left: 20px;
+            .nav-link {
+                color: #eceff8;
+                padding: 7px;
+                &.active {
+                    display: none;
+                }
+            }
+            .nav-item.dropdown {
+                display: none;
+            }
+        }
     }
     #supervideoheading,
-    .secondary-navigation,
     .text-muted,
     footer {
         display: none !important;

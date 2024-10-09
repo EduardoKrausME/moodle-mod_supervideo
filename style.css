@@ -1532,6 +1532,9 @@ a.plyr__control {
 .distraction-free-mode #id-activity-header .badge {
   border-color: none;
 }
+.distraction-free-mode .secondary-navigation {
+  display: none;
+}
 .distraction-free-mode #page-header .w-100 {
   display: flex;
   align-items: center;
@@ -1574,8 +1577,22 @@ a.plyr__control {
 .distraction-free-mode #page-header .page-header-headings h1, .distraction-free-mode #page-header .page-header-headings h2, .distraction-free-mode #page-header .page-header-headings h3 {
   color: #eceff8;
 }
+.distraction-free-mode #page-header .secondary-navigation {
+  display: flex;
+  padding-bottom: 0 !important;
+  margin-left: 20px;
+}
+.distraction-free-mode #page-header .secondary-navigation .nav-link {
+  color: #eceff8;
+  padding: 7px;
+}
+.distraction-free-mode #page-header .secondary-navigation .nav-link.active {
+  display: none;
+}
+.distraction-free-mode #page-header .secondary-navigation .nav-item.dropdown {
+  display: none;
+}
 .distraction-free-mode #supervideoheading,
-.distraction-free-mode .secondary-navigation,
 .distraction-free-mode .text-muted,
 .distraction-free-mode footer {
   display: none !important;
