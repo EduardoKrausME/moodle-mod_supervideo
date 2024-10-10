@@ -1518,6 +1518,10 @@ a.plyr__control {
     display: none !important;
   }
 }
+.distraction-free-mode a:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
 .distraction-free-mode video,
 .distraction-free-mode iframe {
   transition: all 0.3s ease;

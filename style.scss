@@ -173,6 +173,10 @@
     }
 }
 .distraction-free-mode {
+    a:focus {
+        box-shadow: none !important;
+        outline: none !important;
+    }
     video,
     iframe {
         transition: all .3s ease;
