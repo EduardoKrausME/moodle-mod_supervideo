@@ -80,7 +80,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $mform->addElement("text", "videourl_{$origem}",
                     get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
                 $mform->setType("videourl_{$origem}", PARAM_TEXT);
-                $mform->addRule("videourl_{$origem}", null, "required", null, "client");
                 $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
                 if (!$supervideo) {
                     $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
@@ -97,7 +96,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $mform->addElement("text", "videourl",
                     get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
                 $mform->setType("videourl", PARAM_TEXT);
-                $mform->addRule("videourl", null, "required", null, "client");
                 $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
             }
         }
@@ -183,16 +181,16 @@ class mod_supervideo_mod_form extends moodleform_mod {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
-        $btn = false;
+        $courseinfo = false;
         if (!($this->_cm && $this->_cm->instance)) {
             $course = $this->optional_param("course", 0, PARAM_INT);
             $section = $this->optional_param("section", false, PARAM_INT);
             if ($course && $section !== false) {
-                $btn = "course={$course}&section={$section}&sesskey=" . sesskey();
+                $courseinfo = "course={$course}&section={$section}&sesskey=" . sesskey();
             }
         }
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
-        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$supervideo->origem, $USER->lang, $btn]);
+        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$supervideo->origem, $USER->lang, $courseinfo]);
     }
 
     /**
