@@ -226,15 +226,26 @@ if ($supervideo->videourl) {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
         echo "<div id='{$elementid}'></div>";
 
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "youtube", [
-            (int)$supervideoview->id,
-            $supervideoview->currenttime,
-            $elementid,
-            $supervideo->videourl,
-            $supervideo->playersize,
-            $supervideo->showcontrols ? 1 : 0,
-            $supervideo->autoplay ? 1 : 0,
-        ]);
+        if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
+            $supervideo->videourl, $output)) {
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "youtube", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+                $output[3],
+                $supervideo->playersize,
+                $supervideo->showcontrols ? 1 : 0,
+                $supervideo->autoplay ? 1 : 0,
+            ]);
+        } else {
+            echo $OUTPUT->render_from_template("mod_supervideo/error", [
+                "elementId" => "message_notfound",
+                "type" => "warning",
+                "message" => get_string("idnotfound", "mod_supervideo"),
+            ]);
+
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
+        }
     }
     if ($supervideo->origem == "drive") {
         $parametersdrive = implode("&amp;", [
