@@ -1,4 +1,31 @@
 @charset "UTF-8";
+.form-filetypes-descriptions {
+  margin-top: -20px;
+}
+.form-filetypes-descriptions .list-unstyled {
+  display: flex;
+  gap: 10px;
+}
+.form-filetypes-descriptions .list-unstyled li {
+  font-size: 0;
+}
+.form-filetypes-descriptions .list-unstyled li small {
+  font-size: 15px;
+}
+
+.filemanager.fm-noitems .filemanager-container {
+  min-height: 100px;
+}
+.filemanager.fm-noitems .filemanager-container .fm-empty-container {
+  padding-top: 51px;
+}
+.filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow {
+  height: 54px;
+}
+.filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow i {
+  font-size: 44px;
+}
+
 #supervideoheading {
   display: flex;
   align-items: center;
