@@ -46,6 +46,7 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
                 "name",
                 "intro",
                 "introformat",
+                "origem",
                 "videourl",
                 "playersize",
                 "showcontrols",
