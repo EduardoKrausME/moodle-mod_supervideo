@@ -216,7 +216,7 @@ if ($supervideo->videourl) {
                 ]);
             }
         } else {
-            $message = "Arquivo não localizado!";
+            $message = get_string("filenotfound", "mod_supervideo");
             $notification = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
             $notification->set_show_closebutton(false);
             echo \html_writer::span($PAGE->get_renderer("core")->render($notification));

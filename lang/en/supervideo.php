@@ -56,6 +56,7 @@ $string['error_media_err_network'] = 'A network error caused the video download 
 $string['error_media_err_src_not_supported'] = 'The video could not be loaded, either because the server or network failed or because the format is not supported.';
 $string['esta_aba'] = 'This Tab';
 $string['falha_upload_ottflix'] = 'Failed to upload to Super Video Module';
+$string['filenotfound'] = 'File not found!';
 $string['finalizar'] = 'Finish';
 $string['finalizar_gravacao'] = 'Finish Recording';
 $string['grade_approval'] = 'Set grade for';
