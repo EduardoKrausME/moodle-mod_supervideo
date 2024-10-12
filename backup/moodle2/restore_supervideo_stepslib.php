@@ -84,11 +84,15 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
         $this->add_related_files('mod_supervideo', 'intro', null);
         $this->add_related_files('mod_supervideo', 'content', null);
 
+        $fs = get_file_storage();
         $contextid = $this->task->get_contextid();
         $activityid = $this->task->get_activityid();
         $files = $DB->get_records("files", ["contextid" => $contextid]);
         foreach ($files as $file) {
             $file->itemid = $activityid;
+            $file->pathnamehash = $fs->get_pathname_hash(
+                $contextid, $file->component, $file->filearea, $file->itemid, $file->filepath, $file->filename);
+
             $DB->update_record("files", $file);
         }
     }
