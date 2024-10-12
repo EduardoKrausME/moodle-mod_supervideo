@@ -43,6 +43,9 @@ class restore_supervideo_activity_task extends restore_activity_task {
 
     /**
      * Define (add) particular steps this activity can have
+     *
+     * @throws base_task_exception
+     * @throws restore_step_exception
      */
     protected function define_my_steps() {
         // We have just one structure step here.

@@ -40,6 +40,9 @@ class backup_supervideo_activity_task extends backup_activity_task {
 
     /**
      * Defines a backup step to store the instance data in the supervideo.xml file
+     *
+     * @throws backup_step_exception
+     * @throws base_task_exception
      */
     protected function define_my_steps() {
         $this->add_step(new backup_supervideo_activity_structure_step('supervideo_structure', 'supervideo.xml'));

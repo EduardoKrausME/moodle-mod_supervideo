@@ -48,6 +48,7 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
      * @param array $data parsed element data
      *
      * @throws dml_exception
+     * @throws base_step_exception
      */
     protected function process_supervideo($data) {
         global $DB;
@@ -77,8 +78,18 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
      * Post-execution actions
      */
     protected function after_execute() {
+        global $DB;
+
         // Add supervideo related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_supervideo', 'intro', null);
         $this->add_related_files('mod_supervideo', 'content', null);
+
+        $contextid = $this->task->get_contextid();
+        $activityid = $this->task->get_activityid();
+        $files = $DB->get_records("files", ["contextid" => $contextid]);
+        foreach ($files as $file) {
+            $file->itemid = $activityid;
+            $DB->update_record("files", $file);
+        }
     }
 }
