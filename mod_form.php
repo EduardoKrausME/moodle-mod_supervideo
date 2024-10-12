@@ -200,18 +200,17 @@ class mod_supervideo_mod_form extends moodleform_mod {
      */
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
-        if ($this->current->instance ) {
+        if ($this->current->instance) {
 
             $draftitemid = file_get_submitted_draft_itemid('files');
-            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_resource', 'content', 0, array('subdirs'=>true));
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_resource', 'content', 0, ['subdirs' => true]);
             $default_values['files'] = $draftitemid;
-
 
             $draftitemid = file_get_submitted_draft_itemid("videofile");
 
             if (isset($defaultvalues["id"])) {
                 $id = intval($defaultvalues["id"]);
-                file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, array('subdirs'=>true));
+                file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ['subdirs' => true]);
                 $defaultvalues["videofile"] = $draftitemid;
             }
         }
@@ -305,6 +304,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function validation($data, $files) {
+        global $USER;
 
         $errors = parent::validation($data, $files);
 
@@ -329,16 +329,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
         $origem = $data["origem"];
         if ($origem == "upload") {
-
-            if (empty($data["videofile"])) {
-                // Field missing.
-                $errors["videofile"] = get_string("required");
-            } else {
-                $files = $this->get_draft_files("videofile");
-                if ($files && count($files) < 1) {
-                    // No file uploaded.
-                    $errors["videofile"] = get_string("required");
-                }
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            if (!$videofile = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['videofile'], 'sortorder, id', false)) {
+                $errors['videofile'] = get_string('required');
+                return $errors;
             }
         } else {
             if ($data["instance"]) {
