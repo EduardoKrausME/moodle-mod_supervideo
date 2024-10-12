@@ -60,32 +60,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", null, "required", null, "client");
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
-        $origems = ["ottflix", "youtube", "vimeo", "drive", "link"];
-
-        if (!$supervideo) {
-            $origemselect = [
-                "upload" => get_string("origem_upload", "mod_supervideo"),
-            ];
-            foreach ($origems as $origem) {
-                $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
-            }
-
-            $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
-
-            foreach ($origems as $origem) {
-                if ($supervideo && $origem != $supervideo->origem) {
-                    continue;
-                }
-
-                $mform->addElement("text", "videourl_{$origem}",
-                    get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
-                $mform->setType("videourl_{$origem}", PARAM_TEXT);
-                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
-                if (!$supervideo) {
-                    $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
-                }
-            }
-        } else {
+        $origems = ["upload", "ottflix", "youtube", "vimeo", "drive", "link"];
+        if ($supervideo && in_array($supervideo->origem, $origems)) {
             $mform->addElement("hidden", "origem", $supervideo->origem);
             $mform->setType("origem", PARAM_TEXT);
 
@@ -98,9 +74,33 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $mform->setType("videourl", PARAM_TEXT);
                 $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
             }
+        } else {
+            $origemselect = [];
+            foreach ($origems as $origem) {
+                $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
+            }
+
+            $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
+
+            foreach ($origems as $origem) {
+                if ($origem == "upload") {
+                    continue;
+                }
+                if ($origem != $supervideo->origem) {
+                    continue;
+                }
+
+                $mform->addElement("text", "videourl_{$origem}",
+                    get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
+                $mform->setType("videourl_{$origem}", PARAM_TEXT);
+                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                if (!$supervideo) {
+                    $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
+                }
+            }
         }
 
-        if (!$supervideo || $supervideo->origem == "upload") {
+        if (!$supervideo || $supervideo->origem == "upload" || !in_array($supervideo->origem, $origems)) {
             $filemanageroptions = [
                 "accepted_types" => [".mp3", ".mp4", ".webm", ".m4v", ".mov", ".aac", ".m4a"],
                 "maxbytes" => 0,
@@ -109,7 +109,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
             $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
 
-            if (!$supervideo) {
+            if (!$supervideo || !in_array($supervideo->origem, $origems)) {
                 $mform->hideIf("videofile", "origem", "neq", "upload");
             }
         }
@@ -200,13 +200,20 @@ class mod_supervideo_mod_form extends moodleform_mod {
      */
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
+        if ($this->current->instance ) {
 
-        $draftitemid = file_get_submitted_draft_itemid("videofile");
+            $draftitemid = file_get_submitted_draft_itemid('files');
+            file_prepare_draft_area($draftitemid, $this->context->id, 'mod_resource', 'content', 0, array('subdirs'=>true));
+            $default_values['files'] = $draftitemid;
 
-        if (isset($defaultvalues["id"])) {
-            $id = intval($defaultvalues["id"]);
-            file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id);
-            $defaultvalues["videofile"] = $draftitemid;
+
+            $draftitemid = file_get_submitted_draft_itemid("videofile");
+
+            if (isset($defaultvalues["id"])) {
+                $id = intval($defaultvalues["id"]);
+                file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, array('subdirs'=>true));
+                $defaultvalues["videofile"] = $draftitemid;
+            }
         }
 
         $defaultvalues["completionpercentenabled"] = !empty($defaultvalues["completionpercent"]) ? 1 : 0;
