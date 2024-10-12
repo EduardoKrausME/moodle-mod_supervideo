@@ -21,10 +21,9 @@
     Example context (json):
     {
       "wwwroot": "https://seusite.com",
-      "cmid": 123,
-      "user_id": 456,
-      "t": "1693508437"
+      "cmid": 123
     }
 }}
 
-<core-iframe src="<% config.wwwroot %>/mod/supervideo/view.php?mobile=1&id=<% cmid %>" [allowFullscreen]="true"></core-iframe>
+{{=<% %>=}}
+<core-iframe [src]="<% config.wwwroot %>/mod/supervideo/view.php?mobile=1&id=<% cmid %>" [allowFullscreen]="true"></core-iframe>
