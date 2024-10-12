@@ -134,7 +134,6 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timecreated = time();
     $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
 
-    $supervideo->origem = optional_param("origem", false, PARAM_TEXT);
     if ($supervideo->origem == "upload") {
         $supervideo->videourl = "file";
     } else if ($videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT)) {
@@ -190,7 +189,10 @@ function supervideo_set_mainfile($supervideo) {
 
     $context = context_module::instance($cmid);
     if ($draftitemid) {
-        $options = ['subdirs' => true, 'embed' => true];
+        $options = [
+            'subdirs' => true,
+            'embed' => true,
+        ];
         file_save_draft_area_files($draftitemid, $context->id, 'mod_supervideo', 'content', $supervideo->id, $options);
     }
     $files = supervideo_get_area_files($context->id);
