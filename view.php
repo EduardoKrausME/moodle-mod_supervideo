@@ -248,22 +248,29 @@ if ($supervideo->videourl) {
         }
     }
     if ($supervideo->origem == "drive") {
-        $parametersdrive = implode("&amp;", [
-            $supervideo->showcontrols ? "controls=1" : "controls=0",
-            $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
-        ]);
-        echo "<iframe id='{$elementid}' width='100%' height='680'
+        if (preg_match('/\/d\/\K[^\/]+(?=\/)/', $supervideo->videourl, $output)) {
+            $parametersdrive = implode("&amp;", [
+                $supervideo->showcontrols ? "controls=1" : "controls=0",
+                $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
+            ]);
+            echo "<iframe id='{$elementid}' width='100%' height='680'
                       frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
                       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                       sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
-                      src='https://drive.google.com/file/d/{$supervideo->videourl}/preview?{$parametersdrive}'></iframe>";
+                      src='https://drive.google.com/file/d/{$output[0]}/preview?{$parametersdrive}'></iframe>";
 
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "drive", [
-            (int)$supervideoview->id,
-            $elementid,
-            $supervideo->playersize,
-        ]);
-
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "drive", [
+                (int)$supervideoview->id,
+                $elementid,
+                $supervideo->playersize,
+            ]);
+        } else {
+            echo $OUTPUT->render_from_template("mod_supervideo/error", [
+                "elementId" => "message_notfound",
+                "type" => "warning",
+                "message" => get_string("idnotfound", "mod_supervideo"),
+            ]);
+        }
         $config->showmapa = false;
     }
     if ($supervideo->origem == "vimeo") {
