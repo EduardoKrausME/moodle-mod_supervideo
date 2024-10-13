@@ -173,6 +173,7 @@ if ($supervideo->videourl) {
                     'frameborder="0" allowfullscreen',
                     'sandbox="allow-scripts allow-same-origin allow-popups"',
                     'allow=":encrypted-media; :picture-in-picture"',
+                    'width="100%" style="height: calc(100vw * 0.563);"',
                 ],
             ];
             echo $OUTPUT->render_from_template("mod_supervideo/embed_ottflix", $data);
@@ -307,6 +308,7 @@ if ($supervideo->videourl) {
                 'frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen',
                 'sandbox="allow-scripts allow-forms allow-same-origin allow-modals"',
                 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
+                'width="100%" height="480"'
             ],
         ]);
 
