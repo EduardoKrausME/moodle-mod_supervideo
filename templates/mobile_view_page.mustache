@@ -21,9 +21,11 @@
     Example context (json):
     {
       "wwwroot": "https://seusite.com",
-      "cmid": 123
+      "cmid": 123,
+      "tags": ["class='iframe'"]
     }
 }}
 
 {{=<% %>=}}
-<core-iframe [src]="<% config.wwwroot %>/mod/supervideo/view.php?mobile=1&id=<% cmid %>" [allowFullscreen]="true"></core-iframe>
+<core-iframe [src]="<% config.wwwroot %>/mod/supervideo/view.php?mobile=1&id=<% cmid %>"
+    {{#tags}} {{{.}}} {{/tags}}></core-iframe>

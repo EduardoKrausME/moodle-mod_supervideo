@@ -36,13 +36,12 @@ class mobile {
      * @throws \Exception
      */
     public static function mobile_course_view($args) {
-        global $CFG, $OUTPUT, $USER;
+        global $CFG, $OUTPUT;
 
         $data = [
             'cmid' => $args['cmid'],
             'wwwroot' => $CFG->wwwroot,
-            'user_id' => $USER->id,
-            't' => time(),
+            'tags' => ['[allowFullscreen]="true"'],
         ];
 
         return [

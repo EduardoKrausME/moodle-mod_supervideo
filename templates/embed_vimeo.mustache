@@ -21,14 +21,15 @@
     Example context (json):
     {
         "html_id": "id_123",
-        "vimeo_id": "12345abcde"
+        "vimeo_id": "12345abcde",
+        "tags": ["class='iframe'"]
     }
 }}
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 
 <iframe id="{{{html_id}}}" width="100%" height="480"
-        frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        sandbox="allow-scripts allow-forms allow-same-origin allow-modals"
-        src="https://player.vimeo.com/video/{{{vimeo_id}}}"></iframe>
+        src="https://player.vimeo.com/video/{{{vimeo_id}}}"
+    {{#tags}}
+        {{{.}}}
+    {{/tags}}></iframe>
