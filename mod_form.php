@@ -86,7 +86,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 if ($origem == "upload") {
                     continue;
                 }
-                if ($origem != $supervideo->origem) {
+                if ($supervideo && $origem != $supervideo->origem) {
                     continue;
                 }
 
@@ -114,13 +114,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-        // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
-
         $sizeoptions = [
             1 => "Video HD (16x9)",
             2 => "Video ED (4x3)",
@@ -140,17 +133,27 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("playersize", "origem", "eq", "vimeo");
         $mform->hideIf("playersize", "origem", "eq", "youtube");
         $mform->hideIf("playersize", "origem", "eq", "ottflix");
+        $mform->hideIf("playersize", "origem", "eq", "link");
 
         $config = get_config("supervideo");
 
         if ($config->showcontrols <= 1) {
             $mform->addElement("advcheckbox", "showcontrols", get_string("showcontrols_desc", "mod_supervideo"));
             $mform->setDefault("showcontrols", $config->showcontrols);
+            $mform->hideIf("showcontrols", "origem", "eq", "ottflix");
         }
 
         if ($config->autoplay <= 1) {
             $mform->addElement("advcheckbox", "autoplay", get_string("autoplay_desc", "mod_supervideo"));
             $mform->setDefault("autoplay", $config->autoplay);
+            $mform->hideIf("autoplay", "origem", "eq", "ottflix");
+        }
+
+        // Adding the standard "intro" and "introformat" fields.
+        if ($CFG->branch >= 29) {
+            $this->standard_intro_elements();
+        } else {
+            $this->add_intro_editor();
         }
 
         // Grade Element.
