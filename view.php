@@ -167,9 +167,9 @@ if ($supervideo->videourl) {
 
         if (preg_match("/\/\w+\/\w+\/([A-Z0-9\-\_]{3,255})/", $supervideo->videourl, $path)) {
             $url->videoid = $path[1];
-            $data=[
+            $data = [
                 "identifier" => $path[1],
-                "tags"=>[
+                "tags" => [
                     'frameborder="0" allowfullscreen',
                     'sandbox="allow-scripts allow-same-origin allow-popups"',
                     'allow=":encrypted-media; :picture-in-picture"',
@@ -303,7 +303,7 @@ if ($supervideo->videourl) {
             "html_id" => $elementid,
             "vimeo_id" => $url,
             "parametersvimeo" => $parametersvimeo,
-            "tags"=>[
+            "tags" => [
                 'frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen',
                 'sandbox="allow-scripts allow-forms allow-same-origin allow-modals"',
                 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
