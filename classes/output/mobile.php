@@ -36,19 +36,16 @@ class mobile {
      * @throws \Exception
      */
     public static function mobile_course_view($args) {
-        global $CFG, $OUTPUT;
+        global $CFG;
 
-        $data = [
-            'cmid' => $args['cmid'],
-            'wwwroot' => $CFG->wwwroot,
-            'tags' => ['[allowFullscreen]="true"'],
-        ];
+        $html = "<core-iframe [src]=\"{$CFG->wwwroot}/mod/supervideo/view.php?mobile=1&id={$args['cmid']}\" 
+            [allowFullscreen]=\"true\"></core-iframe>";
 
         return [
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template('mod_supervideo/mobile_view_page', $data),
+                    'html' => $html,
                 ],
             ],
         ];
