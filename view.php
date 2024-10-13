@@ -308,7 +308,7 @@ if ($supervideo->videourl) {
                 'frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen',
                 'sandbox="allow-scripts allow-forms allow-same-origin allow-modals"',
                 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
-                'width="100%" height="480"'
+                'width="100%" height="480"',
             ],
         ]);
 

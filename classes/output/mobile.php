@@ -38,7 +38,7 @@ class mobile {
     public static function mobile_course_view($args) {
         global $CFG;
 
-        $html = "<core-iframe [src]=\"{$CFG->wwwroot}/mod/supervideo/view.php?mobile=1&id={$args['cmid']}\" 
+        $html = "<core-iframe [src]=\"{$CFG->wwwroot}/mod/supervideo/view.php?mobile=1&id={$args['cmid']}\"
             [allowFullscreen]=\"true\"></core-iframe>";
 
         return [
