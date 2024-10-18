@@ -475,7 +475,7 @@ class supervideo_view extends \table_sql {
                         u.email,
                         (
                             SELECT COUNT(*)
-                            FROM mdl_supervideo_view sv1
+                            FROM {supervideo_view} sv1
                             WHERE sv1.cm_id = sv.cm_id
                             AND sv1.user_id = sv.user_id
                             AND sv1.percent > 0
@@ -485,9 +485,9 @@ class supervideo_view extends \table_sql {
                         u.middlename,
                         u.alternatename
                     FROM
-                        mdl_supervideo_view sv
+                        {supervideo_view} sv
                     JOIN
-                        mdl_user u ON u.id = sv.user_id
+                        {user} u ON u.id = sv.user_id
                     WHERE
                         sv.cm_id = :cm_id {$where}
                     GROUP BY

@@ -209,9 +209,9 @@ function xmldb_supervideo_upgrade($oldversion) {
 
         $sql = "
             SELECT cm.id AS cm_id, c.id AS c_id, cm.instance AS cm_instance
-              FROM mdl_course_modules cm
-              JOIN mdl_modules        m ON m.id = cm.module
-              JOIN mdl_context        c ON c.instanceid = cm.id
+              FROM {course_modules} cm
+              JOIN {modules}        m ON m.id = cm.module
+              JOIN {context}        c ON c.instanceid = cm.id
              WHERE m.name      LIKE 'supervideo'
                AND c.contextlevel = :contextlevel";
         $modules = $DB->get_records_sql($sql, ["contextlevel" => CONTEXT_MODULE]);
