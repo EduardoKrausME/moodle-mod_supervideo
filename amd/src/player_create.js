@@ -20,6 +20,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             window.addEventListener('message', function receiveMessage(event) {
                 if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
                     progress._internal_saveprogress(event.data.currentTime, event.data.duration);
+                    progress._internal_resize(16, 9);
                 }
             });
         },
@@ -33,11 +34,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 controls    : showcontrols,
                 autoplay    : autoplay,
                 playsinline : 1,
+                start       : start_currenttime ? start_currenttime : 0,
             };
-
-            if (start_currenttime) {
-                playerVars.start = start_currenttime;
-            }
 
             if (YT && YT.Player) {
                 var player = new YT.Player(elementId, {
@@ -48,24 +46,25 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                     events           : {
                         'onReady'       : function(event) {
 
-                            if (playersize == 1) {
-                                progress._internal_resize(16, 9);
-                            } else if (playersize == 2) {
-                                progress._internal_resize(4, 3);
-                            } else if (playersize.indexOf("x")) {
-                                var sizes = playersize.split("x");
+                            var sizes = playersize.split("x");
+                            if (sizes && sizes[1]) {
                                 progress._internal_resize(sizes[0], sizes[1]);
+                            } else {
+                                progress._internal_resize(16, 9);
                             }
 
-                            progress._internal_max_height();
                             document.addEventListener("setCurrentTime", function(event) {
                                 player.seekTo(event.detail.goCurrentTime);
                             });
                         },
                         'onStateChange' : function(event) {
+                            console.log(event)
                         }
                     }
                 });
+
+                window.ytplayer = player
+                // console.log(player.getVideoEmbedCode());
             } else {
                 var html =
                         '<div class="alert alert-danger">' +
@@ -185,12 +184,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                         player.pause();
                     }
                 }
-                progress._internal_max_height();
+                progress._internal_resize(16, 9);
             });
 
             var video = document.getElementById(elementId);
             video.addEventListener("loadedmetadata", function(event) {
-                progress._internal_max_height();
+                progress._internal_resize(video.videoWidth, video.videoHeight);
             });
 
             document.addEventListener("setCurrentTime", function(event) {
@@ -200,6 +199,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             setInterval(function() {
                 progress._internal_saveprogress(player.currentTime, player.duration);
             }, 200);
+
+            window.videoplayer = player;
         },
 
         vimeo : function(view_id, start_currenttime, vimeoid, elementId) {
@@ -222,7 +223,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 var height = dimensions[1];
 
                 progress._internal_resize(width, height);
-                progress._internal_max_height();
             });
 
             var duration = 0;
@@ -246,20 +246,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             progress._internal_saveprogress(1, 1);
 
-            if (playersize == 5) {
+            if (playersize == "4x3" || playersize == 2) {
+                progress._internal_resize(4, 3);
+            } else if (playersize == "16x9" || playersize == 1) {
+                progress._internal_resize(16, 9);
+            } else if (playersize == 5) {
                 $("body").removeClass("distraction-free-mode");
 
-                progress._internal_resize(10, 640);
-            } else if (playersize == 6) {
-                progress._internal_resize(4, 3);
-                progress._internal_max_height();
-            } else if (playersize == 7) {
-                progress._internal_resize(16, 9);
-                progress._internal_max_height();
-            } else if (playersize.indexOf("x")) {
-                var sizes = playersize.split("x");
-                progress._internal_resize(sizes[0], sizes[1]);
-                progress._internal_max_height();
+                progress._internal_resize(100, 640);
             }
 
             $("#mapa-visualizacao").hide();
@@ -293,77 +287,72 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             videoElem.addEventListener("error", errorF);
         },
 
-        _internal_resize : function(width, height) {
+        _internal_resize__width  : 0,
+        _internal_resize__height : 0,
+        _internal_resize         : function(width, height) {
+            progress._internal_resize__width = width;
+            progress._internal_resize__height = height;
 
-            if ($("body").hasClass("distraction-free-mode")) {
-                progress._internal_max_height();
-                return;
-            }
-
-            function _resizePage() {
-                var videoBoxWidth = $("#supervideo_area_embed").width();
-                var videoBoxHeight = videoBoxWidth * height / width;
-
-                $("#supervideo_area_embed iframe").css({
-                    //width  : videoBoxWidth,
-                    height : videoBoxHeight,
-                });
-            }
-
-            $(window).resize(_resizePage);
-            _resizePage();
-
-            var element = $("#supervideo_area_embed");
-            var lastWidth = element.width();
-            setInterval(function() {
-                if (lastWidth === element.width()) {
-                    return;
-                }
-                lastWidth = element.width();
-
-                _resizePage();
-            }, 500);
-
-            return element;
-
-        },
-
-        _internal_max_height : function() {
             $(window).resize(progress._internal_max_height__resizePage);
             progress._internal_max_height__resizePage();
         },
 
         _internal_max_height__resizePage : function() {
 
-            var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
-
-            $supervideoArea.css({
-                "max-height" : "inherit",
-                "height"     : "inherit",
-            });
-
             var windowHeight = $(window).height();
             if ($("body").hasClass("distraction-free-mode")) {
 
-                var activityHeight = 0;
+                var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
+
+                $supervideoArea.css({
+                    "max-height" : "inherit",
+                    "height"     : "inherit",
+                });
+
+                var removeHeight = 44; // $("#distraction-free-mode-header").height();
+                console.log(removeHeight);
 
                 var $activity = $(".activity-navigation");
+                console.log($activity.is(":hidden"));
                 if (!$activity.is(":hidden")) {
-                    activityHeight = $activity.height();
+                    removeHeight += $activity.height() + 21;
                 }
+                console.log(removeHeight);
 
-                var playerMaxHeight = windowHeight - (activityHeight + 65 + 3); // 3 is padding button
+                if (document.getElementById("mapa-visualizacao")) {
+                    removeHeight += 12;
+                }
+                console.log(removeHeight);
+
+                var playerMaxHeight = windowHeight - removeHeight;
                 $supervideoArea.css({
                     "max-height" : playerMaxHeight,
                     "height"     : playerMaxHeight
                 });
-            } else {
-                var headerHeight = ($("#header") && $("#header").height()) || 60;
-                var playerMaxHeightOther = windowHeight - headerHeight;
-                $supervideoArea.css({
-                    "max-height" : playerMaxHeightOther,
-                    "height"     : playerMaxHeightOther
-                });
+            }
+            else {
+                if (document.querySelector("#supervideo_area_embed iframe")) {
+                    var supervideo_area_embed = $("#supervideo_area_embed");
+
+                    var maxHeight = $(window).height() - $("#header").height();
+                    var width = supervideo_area_embed.width();
+                    var height = (width * progress._internal_resize__height) / progress._internal_resize__width;
+
+                    // Se a altura calculada for maior que o maxHeight, limitar a altura
+                    if (height > maxHeight) {
+                        height = maxHeight;
+                        // Ajustar a largura para manter a proporção 16/9
+                        width = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
+                    }
+
+                    console.log(progress._internal_resize__width + " / " + progress._internal_resize__height);
+
+                    var ratio = progress._internal_resize__height / progress._internal_resize__width;
+                    supervideo_area_embed.css({
+                        height        : height,
+                        paddingBottom : ratio + "%",
+                    });
+                }
             }
         },
 
@@ -372,6 +361,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         _internal_assistido          : [],
         _internal_view_id            : 0,
         _internal_progress_length    : 100,
+        _internal_sizenum            : -1,
         _internal_saveprogress       : function(currenttime, duration) {
 
             currenttime = Math.floor(currenttime);
@@ -416,16 +406,29 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
-                if (currenttime > (duration * .95)) {
-                    $(".activity-navigation").hide();
-                    progress._internal_max_height__resizePage();
-
-                    $("#mapa-visualizacao").addClass("fixed-booton");
+                if (document.getElementById("mapa-visualizacao")) {
+                    if (currenttime > (duration * .95)) {
+                        if (progress._internal_sizenum != 1) {
+                            $(".activity-navigation").hide();
+                            $("#mapa-visualizacao").addClass("fixed-booton");
+                            progress._internal_max_height__resizePage();
+                            progress._internal_sizenum = 1;
+                        }
+                    } else {
+                        if (progress._internal_sizenum != 2) {
+                            $(".activity-navigation").show();
+                            $("#mapa-visualizacao").removeClass("fixed-booton");
+                            progress._internal_max_height__resizePage();
+                            progress._internal_sizenum = 2;
+                        }
+                    }
                 } else {
-                    $(".activity-navigation").show();
-                    progress._internal_max_height__resizePage();
-
-                    $("#mapa-visualizacao").removeClass("fixed-booton");
+                    if (progress._internal_sizenum != 3) {
+                        $(".activity-navigation").show();
+                        $("#mapa-visualizacao").removeClass("fixed-booton");
+                        progress._internal_max_height__resizePage();
+                        progress._internal_sizenum = 3;
+                    }
                 }
             }
 
@@ -512,7 +515,28 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         secondary_navigation : function() {
-            $(".secondary-navigation").appendTo("#page-header .w-100");
+            var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
+            $(`#page-header`).after(newHeader);
+
+            var $back = $("#page-header #page-navbar .crumbs li:first-child a");
+            $back.addClass("back-icon");
+            newHeader.append($back.clone());
+
+            var $icon = $(".activityiconcontainer.content");
+            $icon.addClass("activityiconcontainer-icon");
+            newHeader.append($icon.clone());
+
+            var $title = $(".page-header-headings h1");
+            $title.addClass("page-header-free");
+            newHeader.append($title.clone());
+
+            var $navAdmin = $(".secondary-navigation .navigation .nav-tabs");
+            $navAdmin.addClass("free-secondary-navigation");
+            newHeader.append($navAdmin.clone());
+
+            var $completionInfo = $("#id-activity-header .completion-info");
+            $completionInfo.addClass("completion-free");
+            newHeader.append($completionInfo.clone());
         },
     };
     return progress;

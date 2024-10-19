@@ -28,8 +28,9 @@
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 
-<iframe id="{{{html_id}}}"
-        src="https://player.vimeo.com/video/{{{vimeo_id}}}"
-    {{#tags}}
-        {{{.}}}
-    {{/tags}}></iframe>
+<iframe id="{{{elementid}}}"
+        style="background: #000"
+        frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
+        sandbox="allow-scripts allow-forms allow-same-origin allow-modals"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        src="https://player.vimeo.com/video/{{{vimeo_id}}}"></iframe>

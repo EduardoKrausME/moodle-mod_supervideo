@@ -193,7 +193,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
-        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$supervideo->origem, $USER->lang, $courseinfo]);
+        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init", [$USER->lang, $courseinfo]);
     }
 
     /**

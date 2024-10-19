@@ -22,6 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\notification;
+use mod_supervideo\analytics\supervideo_view;
+use mod_supervideo\event\course_module_viewed;
+use mod_supervideo\util\config_util;
+
 require_once("../../config.php");
 require_once($CFG->libdir . "/completionlib.php");
 
@@ -68,7 +73,7 @@ $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 
-$event = \mod_supervideo\event\course_module_viewed::create([
+$event = course_module_viewed::create([
     "objectid" => $PAGE->cm->instance,
     "context" => $PAGE->context,
 ]);
@@ -80,7 +85,7 @@ if ($mobile) {
     $PAGE->set_pagelayout("embedded");
 }
 
-$config = get_config("supervideo");
+$config = config_util::get_config($supervideo);
 
 $hasteacher = has_capability("mod/supervideo:addinstance", $context);
 $hasteacher = false;
@@ -101,35 +106,19 @@ if ($CFG->branch <= 311) {
             get_string("report_title", "mod_supervideo") . "</a>";
     }
     $title = format_string($supervideo->name);
-    echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, "main", "supervideoheading");
+    echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}",
+        2, "main", "supervideoheading");
 }
 
-$extraembedtag = "";
-if ($config->maxwidth >= 500 && !$config->distractionfreemode) {
-    $config->maxwidth = intval($config->maxwidth);
-    $extraembedtag .= " style='margin:0 auto;max-width:{$config->maxwidth}px;' ";
-}
-
+$extraembedtag = $config->maxwidth ? "style='margin:0 auto;max-width:{$config->maxwidth}px;'" : "";
 echo "<div id='supervideo_area_embed' {$extraembedtag}>";
 
-$supervideoview = \mod_supervideo\analytics\supervideo_view::create($cm->id);
+$supervideoview = supervideo_view::create($cm->id);
 
 if ($supervideo->videourl) {
     $uniqueid = uniqid();
 
     $elementid = "{$supervideo->origem}-{$uniqueid}";
-
-    if ($config->showcontrols == 2) {
-        $supervideo->showcontrols = 0;
-    } else if ($config->showcontrols == 3) {
-        $supervideo->showcontrols = 1;
-    }
-
-    if ($config->autoplay == 2) {
-        $supervideo->autoplay = 0;
-    } else if ($config->autoplay == 3) {
-        $supervideo->autoplay = 1;
-    }
 
     if ($supervideo->origem == "link") {
 
@@ -171,14 +160,8 @@ if ($supervideo->videourl) {
             $url->videoid = $path[1];
             $data = [
                 "identifier" => $path[1],
-                "tags" => [
-                    'frameborder="0" allowfullscreen',
-                    'sandbox="allow-scripts allow-same-origin allow-popups"',
-                    'allow=":encrypted-media; :picture-in-picture"',
-                    'width="100%" style="height: calc(100vw * 0.563);"',
-                ],
             ];
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_ottflix", $data);
+            echo $OUTPUT->render_from_template("mod_supervideo/embed/ottflix", $data);
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error");
             $config->showmapa = false;
@@ -228,7 +211,7 @@ if ($supervideo->videourl) {
             }
         } else {
             $message = get_string("filenotfound", "mod_supervideo");
-            $notification = new \core\output\notification($message, \core\output\notification::NOTIFY_ERROR);
+            $notification = new notification($message, notification::NOTIFY_ERROR);
             $notification->set_show_closebutton(false);
             echo \html_writer::span($PAGE->get_renderer("core")->render($notification));
         }
@@ -236,6 +219,10 @@ if ($supervideo->videourl) {
     if ($supervideo->origem == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
         echo "<div id='{$elementid}'></div>";
+
+        if (!isset($supervideo->playersize[3])) {
+            $supervideo->playersize = supervideo_youtube_size($supervideo, true);
+        }
 
         if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
             $supervideo->videourl, $output)) {
@@ -264,12 +251,12 @@ if ($supervideo->videourl) {
                 $supervideo->showcontrols ? "controls=1" : "controls=0",
                 $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
             ]);
-            echo "<iframe id='{$elementid}' width='100%' height='680'
-                      frameborder='0' webkitallowfullscreen mozallowfullscreen allowfullscreen
-                      allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-                      sandbox='allow-scripts allow-forms allow-same-origin allow-modals'
-                      src='https://drive.google.com/file/d/{$output[0]}/preview?{$parametersdrive}'></iframe>";
 
+            echo $OUTPUT->render_from_template("mod_supervideo/embed/drive", [
+                "elementid" => "message_notfound",
+                "driveid" => $output[0],
+                "parametersdrive" => $parametersdrive,
+            ]);
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "drive", [
                 (int)$supervideoview->id,
                 $elementid,
@@ -302,16 +289,10 @@ if ($supervideo->videourl) {
             }
         }
 
-        echo $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", [
-            "html_id" => $elementid,
+        echo $OUTPUT->render_from_template("mod_supervideo/embed/vimeo", [
+            "elementid" => $elementid,
             "vimeo_id" => $url,
             "parametersvimeo" => $parametersvimeo,
-            "tags" => [
-                'frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen',
-                'sandbox="allow-scripts allow-forms allow-same-origin allow-modals"',
-                'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
-                'width="100%" height="480"',
-            ],
         ]);
 
         $PAGE->requires->js_call_amd("mod_supervideo/player_create", "vimeo", [

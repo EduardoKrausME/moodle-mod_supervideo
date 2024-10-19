@@ -16,7 +16,7 @@
 define(["jquery", "mod_supervideo/player_render"], function($, PlayerRender) {
     var modform = {
 
-        init : function(engine, lang, courseinfo) {
+        init : function(lang, courseinfo) {
 
             var id_origem = $("#id_origem");
 

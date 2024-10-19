@@ -132,7 +132,7 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
 
     $supervideo->timemodified = time();
     $supervideo->timecreated = time();
-    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
+    $supervideo->playersize = supervideo_youtube_size($supervideo);
 
     if ($supervideo->origem == "upload") {
         $supervideo->videourl = "file";
@@ -164,7 +164,7 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
 
     $supervideo->timemodified = time();
     $supervideo->id = $supervideo->instance;
-    $supervideo->playersize = optional_param("playersize", null, PARAM_RAW);
+    $supervideo->playersize = supervideo_youtube_size($supervideo);
 
     $result = $DB->update_record('supervideo', $supervideo);
 
@@ -172,6 +172,28 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     supervideo_set_mainfile($supervideo);
 
     return $result;
+}
+
+function supervideo_youtube_size($supervideo, $save = false) {
+    if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
+        $supervideo->videourl, $output)) {
+
+        $urloembed = "https://youtube.com/oembed?url=http://www.youtube.com/watch?v={$output[3]}&format=json";
+
+        $curl = new \curl();
+        $result = $curl->get($urloembed);
+        $info = json_decode($result);
+        if ($info) {
+            $supervideo->playersize = "{$info->width}x{$info->height}";
+
+            if ($save) {
+                global $DB;
+                $DB->update_record('supervideo', $supervideo);
+            }
+        }
+    }
+
+    return $supervideo->playersize;
 }
 
 /**
@@ -185,20 +207,22 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
  */
 function supervideo_set_mainfile($supervideo) {
     $cmid = $supervideo->coursemodule;
-    $draftitemid = $supervideo->videofile;
+    if (isset($supervideo->videofile)) {
+        $draftitemid = $supervideo->videofile;
 
-    $context = context_module::instance($cmid);
-    if ($draftitemid) {
-        $options = [
-            'subdirs' => true,
-            'embed' => true,
-        ];
-        file_save_draft_area_files($draftitemid, $context->id, 'mod_supervideo', 'content', $supervideo->id, $options);
-    }
-    $files = supervideo_get_area_files($context->id);
-    if ($files && count($files) == 1) {
-        $file = reset($files);
-        file_set_sortorder($context->id, 'mod_supervideo', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
+        $context = context_module::instance($cmid);
+        if ($draftitemid) {
+            $options = [
+                'subdirs' => true,
+                'embed' => true,
+            ];
+            file_save_draft_area_files($draftitemid, $context->id, 'mod_supervideo', 'content', $supervideo->id, $options);
+        }
+        $files = supervideo_get_area_files($context->id);
+        if ($files && count($files) == 1) {
+            $file = reset($files);
+            file_set_sortorder($context->id, 'mod_supervideo', 'content', 0, $file->get_filepath(), $file->get_filename(), 1);
+        }
     }
 }
 

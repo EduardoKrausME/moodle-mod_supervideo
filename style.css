@@ -43,6 +43,7 @@
 #supervideo_area_embed {
   position: relative;
   z-index: 1;
+  width: 100%;
 }
 #supervideo_area_embed .logo {
   position: absolute;
@@ -54,6 +55,7 @@
 }
 #supervideo_area_embed iframe {
   width: 100%;
+  height: 100%;
 }
 
 #page-mod-supervideo-report table.flexible .header .commands {
@@ -66,6 +68,7 @@
   padding: 1px;
   width: 100%;
   position: relative;
+  transition: all ease 0.3s;
 }
 #mapa-visualizacao .mapa,
 #mapa-visualizacao .clique {
@@ -112,6 +115,9 @@
     font-size: 15px;
     margin: 3px 0 !important;
   }
+}
+#mapa-visualizacao:hover {
+  margin-top: -10px;
 }
 #mapa-visualizacao:hover #seu-mapa-view {
   font-size: 15px;
@@ -1518,6 +1524,10 @@ a.plyr__control {
     display: none !important;
   }
 }
+#distraction-free-mode-header {
+  display: none;
+}
+
 .distraction-free-mode a:focus {
   box-shadow: none !important;
   outline: none !important;
@@ -1542,52 +1552,26 @@ a.plyr__control {
   margin: 0;
 }
 .distraction-free-mode #id-activity-header {
-  position: absolute !important;
-  top: 10px !important;
-  right: 10px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  z-index: 999;
-}
-.distraction-free-mode #id-activity-header .completion-info {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-.distraction-free-mode #id-activity-header .completion-info .btn {
-  padding: 3px 16px !important;
-}
-.distraction-free-mode #id-activity-header .alert-success {
-  color: #e9f0e9;
-  background-color: #1c3f1a;
-}
-.distraction-free-mode #id-activity-header .badge {
-  border-color: none;
+  display: none;
 }
 .distraction-free-mode .secondary-navigation {
   display: none;
 }
-.distraction-free-mode #page-header .w-100 {
-  display: flex;
+.distraction-free-mode #distraction-free-mode-header {
+  display: flex !important;
   align-items: center;
+  padding: 5px 16px;
 }
-.distraction-free-mode #page-header .w-100 .page-context-header {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-.distraction-free-mode #page-header #page-navbar .crumbs li {
-  display: none;
-}
-.distraction-free-mode #page-header #page-navbar .crumbs li:first-child {
-  display: inline;
-}
-.distraction-free-mode #page-header #page-navbar .crumbs li:first-child a, .distraction-free-mode #page-header #page-navbar .crumbs li:first-child span {
-  color: #eceff8;
-  background: transparent;
-  font-size: 0;
+.distraction-free-mode #distraction-free-mode-header * {
   margin: 0;
   padding: 0;
 }
-.distraction-free-mode #page-header #page-navbar .crumbs li:first-child a:after, .distraction-free-mode #page-header #page-navbar .crumbs li:first-child span:after {
+.distraction-free-mode #distraction-free-mode-header .back-icon {
+  color: #eceff8;
+  background: transparent;
+  font-size: 0;
+}
+.distraction-free-mode #distraction-free-mode-header .back-icon:after {
   content: "\f053";
   font-size: 26px;
   font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
@@ -1602,26 +1586,68 @@ a.plyr__control {
   background: none;
   position: initial;
 }
-.distraction-free-mode #page-header #page-navbar .crumbs li:first-child a:before, .distraction-free-mode #page-header #page-navbar .crumbs li:first-child span:before {
-  display: none;
+.distraction-free-mode #distraction-free-mode-header .activityiconcontainer-icon {
+  min-width: 44px;
+  height: 44px;
 }
-.distraction-free-mode #page-header .page-header-headings h1, .distraction-free-mode #page-header .page-header-headings h2, .distraction-free-mode #page-header .page-header-headings h3 {
+.distraction-free-mode #distraction-free-mode-header h1 {
   color: #eceff8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
-.distraction-free-mode #page-header .secondary-navigation {
+.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation {
   display: flex;
+  flex-wrap: nowrap;
   padding-bottom: 0 !important;
   margin-left: 20px;
 }
-.distraction-free-mode #page-header .secondary-navigation .nav-link {
+.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation, .distraction-free-mode #distraction-free-mode-header .free-secondary-navigation * {
+  border: none !important;
+}
+.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-link {
+  white-space: nowrap;
   color: #eceff8;
   padding: 7px;
 }
-.distraction-free-mode #page-header .secondary-navigation .nav-link.active {
+.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-link.active {
   display: none;
 }
-.distraction-free-mode #page-header .secondary-navigation .nav-item.dropdown {
+.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-item.dropdown {
   display: none;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free {
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 9;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free .badge,
+.distraction-free-mode #distraction-free-mode-header .completion-free .btn {
+  padding: 3px 16px !important;
+  background: #f5f5f5;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free .btn-success,
+.distraction-free-mode #distraction-free-mode-header .completion-free .alert-success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e9f0e9;
+  background-color: #4caf50;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free .badge {
+  border-color: none;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free .automatic-completion-conditions {
+  display: flex;
+  gap: 4px;
+}
+.distraction-free-mode #distraction-free-mode-header .completion-free .automatic-completion-conditions .badge {
+  padding: 8px 13px !important;
+  border-radius: 8px;
+}
+.distraction-free-mode #page-header {
+  display: none !important;
 }
 .distraction-free-mode #supervideoheading,
 .distraction-free-mode .text-muted,
@@ -1629,7 +1655,7 @@ a.plyr__control {
   display: none !important;
 }
 .distraction-free-mode .drawer {
-  z-index: 99;
+  z-index: 99999;
   top: 0 !important;
 }
 .distraction-free-mode #page-content #region-main-box #region-main {
@@ -1640,6 +1666,9 @@ a.plyr__control {
 }
 .distraction-free-mode .activity-navigation.mt-5, .distraction-free-mode .activity-navigation.mb-1 {
   margin-top: 0 !important;
+}
+.distraction-free-mode .activity-navigation #jump-to-activity.custom-select {
+  z-index: 9;
 }
 .distraction-free-mode #mapa-visualizacao.fixed-booton {
   position: fixed;
