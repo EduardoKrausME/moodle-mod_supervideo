@@ -174,6 +174,15 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     return $result;
 }
 
+/**
+ * Function supervideo_youtube_size
+ *
+ * @param $supervideo
+ * @param bool $save
+ *
+ * @return string
+ * @throws dml_exception
+ */
 function supervideo_youtube_size($supervideo, $save = false) {
     if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
         $supervideo->videourl, $output)) {
