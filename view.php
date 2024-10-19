@@ -94,13 +94,15 @@ if (!$hasteacher && $config->distractionfreemode) {
 
 echo $OUTPUT->header();
 
-$linkreport = "";
-if ($hasteacher) {
-    $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
-        get_string("report_title", "mod_supervideo") . "</a>";
+if ($CFG->branch <= 311) {
+    $linkreport = "";
+    if ($hasteacher) {
+        $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
+            get_string("report_title", "mod_supervideo") . "</a>";
+    }
+    $title = format_string($supervideo->name);
+    echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, "main", "supervideoheading");
 }
-$title = format_string($supervideo->name);
-echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}", 2, "main", "supervideoheading");
 
 $extraembedtag = "";
 if ($config->maxwidth >= 500 && !$config->distractionfreemode) {
