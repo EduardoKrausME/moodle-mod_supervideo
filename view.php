@@ -69,7 +69,7 @@ $params = [
 ];
 $PAGE->set_url("/mod/supervideo/view.php", $params);
 $PAGE->requires->css("/mod/supervideo/style.css");
-$PAGE->set_title("{$course->shortname}: {$supervideo->name}");
+$PAGE->set_title($supervideo->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
 
@@ -110,8 +110,8 @@ if ($CFG->branch <= 311) {
         2, "main", "supervideoheading");
 }
 
-$extraembedtag = $config->maxwidth ? "style='margin:0 auto;max-width:{$config->maxwidth}px;'" : "";
-echo "<div id='supervideo_area_embed' {$extraembedtag}>";
+$extraembedtag = $config->maxwidth ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
+echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 
 $supervideoview = supervideo_view::create($cm->id);
 
@@ -318,14 +318,6 @@ if ($supervideo->videourl) {
         ]);
     }
 
-    $text = $OUTPUT->heading(get_string("seu_mapa_view", "mod_supervideo") . " <span></span>",
-        3, "main-view", "seu-mapa-view");
-    echo $OUTPUT->render_from_template("mod_supervideo/mapa", [
-        "style" => $config->showmapa ? "" : "style='display:none'",
-        "data-mapa" => base64_encode($supervideoview->mapa),
-        "text" => $text,
-    ]);
-
     if (!(isset($USER->editing) && $USER->editing)) {
         $PAGE->requires->js_call_amd("mod_supervideo/player_create", "secondary_navigation");
     }
@@ -341,5 +333,13 @@ if ($supervideo->videourl) {
 }
 
 echo "</div>";
+
+$text = $OUTPUT->heading(get_string("seu_mapa_view", "mod_supervideo") . " <span></span>",
+    3, "main-view", "seu-mapa-view");
+echo $OUTPUT->render_from_template("mod_supervideo/mapa", [
+    "style" => $config->showmapa ? "" : "style='display:none'",
+    "data-mapa" => base64_encode($supervideoview->mapa),
+    "text" => $text,
+]);
 
 echo $OUTPUT->footer();

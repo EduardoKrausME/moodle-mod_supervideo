@@ -301,7 +301,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             var windowHeight = $(window).height();
             if ($("body").hasClass("distraction-free-mode")) {
-
                 var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
 
                 $supervideoArea.css({
@@ -332,26 +331,28 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
             else {
                 if (document.querySelector("#supervideo_area_embed iframe")) {
-                    var supervideo_area_embed = $("#supervideo_area_embed");
+                    var $supervideo_area_embed = $("#supervideo_area_embed");
 
                     var maxHeight = $(window).height() - $("#header").height();
-                    var width = supervideo_area_embed.width();
+                    var width = $supervideo_area_embed.width();
                     var height = (width * progress._internal_resize__height) / progress._internal_resize__width;
 
-                    // Se a altura calculada for maior que o maxHeight, limitar a altura
-                    if (height > maxHeight) {
-                        height = maxHeight;
-                        // Ajustar a largura para manter a proporção 16/9
-                        width = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
+                    if (height < maxHeight) {
+                        var ratio = (progress._internal_resize__height / progress._internal_resize__width) * 100;
+                        $supervideo_area_embed.css({
+                            paddingBottom : `${ratio}%`,
+                            width         : "100%",
+                        });
+                    } else {
+                        // var newWidth = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
+                        $supervideo_area_embed.css({
+                            // width         : newWidth,
+                            // margin        : `0 auto`,
+                            height        : maxHeight,
+                            maxHeight     : maxHeight,
+                            paddingBottom : `0`,
+                        });
                     }
-
-                    console.log(progress._internal_resize__width + " / " + progress._internal_resize__height);
-
-                    var ratio = progress._internal_resize__height / progress._internal_resize__width;
-                    supervideo_area_embed.css({
-                        height        : height,
-                        paddingBottom : ratio + "%",
-                    });
                 }
             }
         },
