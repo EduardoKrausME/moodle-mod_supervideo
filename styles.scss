@@ -145,13 +145,6 @@
         }
     }
 }
-#error_media_err_aborted,
-#error_media_err_network,
-#error_media_err_decode,
-#error_media_err_src_not_supported,
-#error_default {
-    display: none;
-}
 @import "style_player";
 
 .plyr--video {

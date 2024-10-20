@@ -150,14 +150,6 @@
   width: 96% !important;
 }
 
-#error_media_err_aborted,
-#error_media_err_network,
-#error_media_err_decode,
-#error_media_err_src_not_supported,
-#error_default {
-  display: none;
-}
-
 @keyframes plyr-progress {
   to {
     background-position: 25px 0;
@@ -1689,4 +1681,4 @@ a.plyr__control {
   border-radius: 0 0 12px 12px;
 }
 
-/*# sourceMappingURL=style.css.map */
+/*# sourceMappingURL=styles.css.map */
