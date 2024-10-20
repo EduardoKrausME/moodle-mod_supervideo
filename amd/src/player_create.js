@@ -16,18 +16,8 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     var progress = {
 
-        _hide_error : function() {
-            $("#error_media_err_aborted").show();
-            $("#error_media_err_network").show();
-            $("#error_media_err_decode").show();
-            $("#error_media_err_src_not_supported").show();
-            $("#error_default").show();
-        },
-
         ottflix : function(view_id, start_currenttime, elementId, videoid) {
-            progress._hide_error();
-
-            window.addEventListener('message', function receiveMessage(event) {
+            window.addEventListener('', function receiveMessage(event) {
                 if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
                     progress._internal_saveprogress(event.data.currentTime, event.data.duration);
                     progress._internal_resize(16, 9);
@@ -36,8 +26,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         youtube : function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
-            progress._hide_error();
-
             progress._internal_view_id = view_id;
 
             var playerVars = {
@@ -90,8 +78,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         resource_audio : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
-            progress._hide_error();
-
             $("body").removeClass("distraction-free-mode");
 
             progress._internal_view_id = view_id;
@@ -148,8 +134,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         resource_video : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
-            progress._hide_error();
-
             progress._internal_view_id = view_id;
 
             var embedparameters = "";
@@ -212,8 +196,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         vimeo : function(view_id, start_currenttime, vimeoid, elementId) {
-            progress._hide_error();
-
             progress._internal_view_id = view_id;
 
             var iframe = document.getElementById(elementId);
@@ -250,8 +232,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         drive : function(view_id, elementId, playersize) {
-            progress._hide_error();
-
             progress._internal_view_id = view_id;
 
             progress._internal_saveprogress(1, 1);

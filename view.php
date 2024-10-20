@@ -116,8 +116,8 @@ echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 $supervideoview = supervideo_view::create($cm->id);
 
 if ($supervideo->videourl) {
+    $showerrors = false;
     $uniqueid = uniqid();
-
     $elementid = "{$supervideo->origem}-{$uniqueid}";
 
     if ($supervideo->origem == "link") {
@@ -145,6 +145,7 @@ if ($supervideo->videourl) {
                 $supervideo->showcontrols ? true : false,
             ]);
         }
+        $showerrors = true;
     }
     if ($supervideo->origem == "ottflix") {
         echo "<div id='{$elementid}'></div>";
@@ -209,6 +210,7 @@ if ($supervideo->videourl) {
                     $supervideo->showcontrols ? true : false,
                 ]);
             }
+            $showerrors = true;
         } else {
             $message = get_string("filenotfound", "mod_supervideo");
             $notification = new notification($message, notification::NOTIFY_ERROR);
@@ -303,19 +305,21 @@ if ($supervideo->videourl) {
         ]);
     }
 
-    $errors = [
-        "error_media_err_aborted",
-        "error_media_err_network",
-        "error_media_err_decode",
-        "error_media_err_src_not_supported",
-        "error_default",
-    ];
-    foreach ($errors as $error) {
-        echo $OUTPUT->render_from_template("mod_supervideo/error", [
-            "elementId" => $error,
-            "type" => "danger",
-            "message" => get_string($error, "mod_supervideo"),
-        ]);
+    if ($showerrors) {
+        $errors = [
+            "error_media_err_aborted",
+            "error_media_err_network",
+            "error_media_err_decode",
+            "error_media_err_src_not_supported",
+            "error_default",
+        ];
+        foreach ($errors as $error) {
+            echo $OUTPUT->render_from_template("mod_supervideo/error", [
+                "elementId" => $error,
+                "type" => "danger",
+                "message" => get_string($error, "mod_supervideo"),
+            ]);
+        }
     }
 
     if (!(isset($USER->editing) && $USER->editing)) {
