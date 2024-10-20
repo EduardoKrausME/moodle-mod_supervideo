@@ -1657,7 +1657,7 @@ a.plyr__control {
 }
 .distraction-free-mode .drawer {
   z-index: 99999;
-  top: 0 !important;
+  top: 61px !important;
 }
 .distraction-free-mode #page-content #region-main-box #region-main {
   background: transparent !important;
@@ -1667,6 +1667,10 @@ a.plyr__control {
 }
 .distraction-free-mode .activity-navigation.mt-5, .distraction-free-mode .activity-navigation.mb-1 {
   margin-top: 0 !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 .distraction-free-mode .activity-navigation #jump-to-activity.custom-select {
   z-index: 9;

@@ -16,7 +16,17 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     var progress = {
 
+        _hide_error : function() {
+            $("#error_media_err_aborted").show();
+            $("#error_media_err_network").show();
+            $("#error_media_err_decode").show();
+            $("#error_media_err_src_not_supported").show();
+            $("#error_default").show();
+        },
+
         ottflix : function(view_id, start_currenttime, elementId, videoid) {
+            progress._hide_error();
+
             window.addEventListener('message', function receiveMessage(event) {
                 if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
                     progress._internal_saveprogress(event.data.currentTime, event.data.duration);
@@ -26,6 +36,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         youtube : function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
+            progress._hide_error();
 
             progress._internal_view_id = view_id;
 
@@ -58,13 +69,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                             });
                         },
                         'onStateChange' : function(event) {
-                            console.log(event)
+                            console.log(event);
                         }
                     }
                 });
-
-                window.ytplayer = player
-                // console.log(player.getVideoEmbedCode());
             } else {
                 var html =
                         '<div class="alert alert-danger">' +
@@ -82,6 +90,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         resource_audio : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
+            progress._hide_error();
 
             $("body").removeClass("distraction-free-mode");
 
@@ -139,6 +148,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         resource_video : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
+            progress._hide_error();
 
             progress._internal_view_id = view_id;
 
@@ -199,11 +209,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             setInterval(function() {
                 progress._internal_saveprogress(player.currentTime, player.duration);
             }, 200);
-
-            window.videoplayer = player;
         },
 
         vimeo : function(view_id, start_currenttime, vimeoid, elementId) {
+            progress._hide_error();
 
             progress._internal_view_id = view_id;
 
@@ -241,6 +250,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         drive : function(view_id, elementId, playersize) {
+            progress._hide_error();
 
             progress._internal_view_id = view_id;
 
@@ -266,19 +276,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                 switch (e.target.error.code) {
                     case e.target.error.MEDIA_ERR_ABORTED:
-                        $(`#error_media_err_aborted`).show();
+                        $("#error_media_err_aborted").show();
                         break;
                     case e.target.error.MEDIA_ERR_NETWORK:
-                        $(`#error_media_err_network`).show();
+                        $("#error_media_err_network").show();
                         break;
                     case e.target.error.MEDIA_ERR_DECODE:
-                        $(`#error_media_err_decode`).show();
+                        $("#error_media_err_decode").show();
                         break;
                     case e.target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                        $(`#error_media_err_src_not_supported`).show();
+                        $("#error_media_err_src_not_supported").show();
                         break;
                     default:
-                        $(`#error_default`).show();
+                        $("#error_default").show();
                         break;
                 }
             }
@@ -309,19 +319,16 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 });
 
                 var removeHeight = 44; // $("#distraction-free-mode-header").height();
-                console.log(removeHeight);
 
                 var $activity = $(".activity-navigation");
-                console.log($activity.is(":hidden"));
                 if (!$activity.is(":hidden")) {
                     removeHeight += $activity.height() + 21;
                 }
-                console.log(removeHeight);
 
-                if (document.getElementById("mapa-visualizacao")) {
+                var $mapa = $("#mapa-visualizacao");
+                if ($mapa.length && !$mapa.is(":hidden")) {
                     removeHeight += 12;
                 }
-                console.log(removeHeight);
 
                 var playerMaxHeight = windowHeight - removeHeight;
                 $supervideoArea.css({
@@ -347,10 +354,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                         // var newWidth = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
                         $supervideo_area_embed.css({
                             // width         : newWidth,
-                            // margin        : `0 auto`,
+                            // margin        : "0 auto",
                             height        : maxHeight,
                             maxHeight     : maxHeight,
-                            paddingBottom : `0`,
+                            paddingBottom : "0",
                         });
                     }
                 }
@@ -517,7 +524,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
         secondary_navigation : function() {
             var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
-            $(`#page-header`).after(newHeader);
+            $("#page-header").after(newHeader);
 
             var $back = $("#page-header #page-navbar .crumbs li:first-child a");
             $back.addClass("back-icon");

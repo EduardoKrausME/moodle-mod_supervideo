@@ -309,7 +309,7 @@
     }
     .drawer {
         z-index: 99999;
-        top: 0 !important;
+        top: 61px !important;
     }
     #page-content {
         #region-main-box {
@@ -324,6 +324,10 @@
     .activity-navigation {
         &.mt-5, &.mb-1 {
             margin-top: 0 !important;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
         }
         #jump-to-activity.custom-select {
             z-index: 9;
