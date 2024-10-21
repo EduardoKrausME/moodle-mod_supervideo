@@ -1537,6 +1537,7 @@ a.plyr__control {
   background: #393f46;
   position: fixed;
   z-index: 9999;
+  border-radius: 0 !important;
   top: 0;
   left: 0;
   right: 0;
@@ -1544,6 +1545,7 @@ a.plyr__control {
   padding: 0;
   margin: 0;
 }
+.distraction-free-mode .activity-header,
 .distraction-free-mode #id-activity-header {
   display: none;
 }
@@ -1565,19 +1567,13 @@ a.plyr__control {
   font-size: 0;
 }
 .distraction-free-mode #distraction-free-mode-header .back-icon:after {
-  content: "\f053";
-  font-size: 26px;
-  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
-  font-weight: 900;
-  -webkit-font-smoothing: antialiased;
-  display: var(--fa-display, inline-block);
-  font-style: normal;
-  font-variant: normal;
-  line-height: 1;
-  text-rendering: auto;
-  border: none;
-  background: none;
-  position: initial;
+  content: " ";
+  width: 20px;
+  height: 20px;
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSIyOTgiIGhlaWdodD0iNTEyIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiB2aWV3Qm94PSIwIDAgMjk4IDUxMS45MyI+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMjg1Ljc3IDQ0MWMxNi4yNCAxNi4xNyAxNi4zMiA0Mi40Ni4xNSA1OC43LTE2LjE2IDE2LjI0LTQyLjQ1IDE2LjMyLTU4LjY5LjE2bC0yMTUtMjE0LjQ3Yy0xNi4yNC0xNi4xNi0xNi4zMi00Mi40NS0uMTUtNTguNjlMMjI3LjIzIDEyLjA4YzE2LjI0LTE2LjE3IDQyLjUzLTE2LjA5IDU4LjY5LjE1IDE2LjE3IDE2LjI0IDE2LjA5IDQyLjU0LS4xNSA1OC43bC0xODUuNSAxODUuMDRMMjg1Ljc3IDQ0MXoiIGZpbGw9IiNlY2VmZjgiLz48L3N2Zz4=);
+  display: block;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 .distraction-free-mode #distraction-free-mode-header .activityiconcontainer-icon {
   min-width: 44px;
@@ -1589,6 +1585,7 @@ a.plyr__control {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  margin-left: 10px;
 }
 .distraction-free-mode #distraction-free-mode-header .free-secondary-navigation {
   display: flex;

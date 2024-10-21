@@ -242,8 +242,8 @@ if ($supervideo->videourl) {
                 "type" => "warning",
                 "message" => get_string("idnotfound", "mod_supervideo"),
             ]);
-
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
+            $config->showmapa = false;
         }
     }
     if ($supervideo->origem == "drive") {
@@ -331,8 +331,8 @@ if ($supervideo->videourl) {
         "type" => "warning",
         "message" => get_string("idnotfound", "mod_supervideo"),
     ]);
-
     $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
+    $config->showmapa = false;
 }
 
 echo "</div>";

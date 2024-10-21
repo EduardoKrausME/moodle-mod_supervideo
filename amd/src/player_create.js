@@ -232,8 +232,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
         },
 
         drive : function(view_id, elementId, playersize) {
-            progress._internal_view_id = view_id;
+            $("#mapa-visualizacao").hide();
 
+            progress._internal_view_id = view_id;
             progress._internal_saveprogress(1, 1);
 
             if (playersize == "4x3" || playersize == 2) {
@@ -245,8 +246,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                 progress._internal_resize(100, 640);
             }
-
-            $("#mapa-visualizacao").hide();
         },
 
         _error_load : function(elementId) {
@@ -298,11 +297,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                     "height"     : "inherit",
                 });
 
-                var removeHeight = 44; // $("#distraction-free-mode-header").height();
-
+                var removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
                 var $activity = $(".activity-navigation");
-                if (!$activity.is(":hidden")) {
-                    removeHeight += $activity.height() + 21;
+                if ($activity.length && !$activity.is(":hidden")) {
+                    removeHeight += $activity.height();
                 }
 
                 var $mapa = $("#mapa-visualizacao");
@@ -311,12 +309,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 }
 
                 var playerMaxHeight = windowHeight - removeHeight;
+                $("#supervideo_area_embed").css({
+                    "max-height" : playerMaxHeight,
+                });
                 $supervideoArea.css({
                     "max-height" : playerMaxHeight,
-                    "height"     : playerMaxHeight
+                    "height"     : playerMaxHeight,
                 });
-            }
-            else {
+            } else {
                 if (document.querySelector("#supervideo_area_embed iframe")) {
                     var $supervideo_area_embed = $("#supervideo_area_embed");
 
@@ -394,18 +394,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
-                if (document.getElementById("mapa-visualizacao")) {
-                    if (currenttime > (duration * .95)) {
+                var $mapa = $("#mapa-visualizacao");
+                if ($mapa.length && !$mapa.is(":hidden")) {
+                    if (currenttime > (duration * .90)) {
                         if (progress._internal_sizenum != 1) {
                             $(".activity-navigation").hide();
-                            $("#mapa-visualizacao").addClass("fixed-booton");
+                            $mapa.addClass("fixed-booton");
                             progress._internal_max_height__resizePage();
                             progress._internal_sizenum = 1;
                         }
                     } else {
                         if (progress._internal_sizenum != 2) {
                             $(".activity-navigation").show();
-                            $("#mapa-visualizacao").removeClass("fixed-booton");
+                            $mapa.removeClass("fixed-booton");
                             progress._internal_max_height__resizePage();
                             progress._internal_sizenum = 2;
                         }
@@ -413,7 +414,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 } else {
                     if (progress._internal_sizenum != 3) {
                         $(".activity-navigation").show();
-                        $("#mapa-visualizacao").removeClass("fixed-booton");
+                        $mapa.removeClass("fixed-booton");
                         progress._internal_max_height__resizePage();
                         progress._internal_sizenum = 3;
                     }
@@ -506,7 +507,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
             $("#page-header").after(newHeader);
 
-            var $back = $("#page-header #page-navbar .crumbs li:first-child a");
+            var $back = $("#page-header #page-navbar .crumbs li:first-child a, #page-header #page-navbar .breadcrumb li:first-child a");
             $back.addClass("back-icon");
             newHeader.append($back.clone());
 
@@ -522,7 +523,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             $navAdmin.addClass("free-secondary-navigation");
             newHeader.append($navAdmin.clone());
 
-            var $completionInfo = $("#id-activity-header .completion-info");
+            var $completionInfo = $("#id-activity-header .completion-info, .activity-header .completion-info");
             $completionInfo.addClass("completion-free");
             newHeader.append($completionInfo.clone());
         },
