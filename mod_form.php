@@ -43,8 +43,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function definition() {
         global $DB, $CFG, $PAGE, $COURSE, $USER;
 
-        $PAGE->requires->css("/mod/supervideo/style.css");
-
         $supervideo = null;
         if ($this->_cm && $this->_cm->instance) {
             $supervideo = $DB->get_record("supervideo", ["id" => $this->_cm->instance]);

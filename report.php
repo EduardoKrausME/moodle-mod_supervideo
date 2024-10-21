@@ -43,7 +43,6 @@ $table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id
 
 if (!$table->is_downloading()) {
     $PAGE->set_url('/mod/supervideo/report.php', ['id' => $cm->id]);
-    $PAGE->requires->css('/mod/supervideo/style.css');
     $PAGE->set_title("{$course->shortname}: {$supervideo->name}");
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
