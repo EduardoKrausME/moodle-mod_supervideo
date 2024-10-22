@@ -147,6 +147,7 @@ $string['showmapa'] = 'Show Map';
 $string['showmapa_desc'] = 'If checked, show the map after the video player!';
 $string['supervideo:addinstance'] = 'Create new activities with Super Video';
 $string['supervideo:view'] = 'View and interact with Super Video';
+$string['supervideo:view_report'] = 'View SuperVideo reports';
 $string['tamanho_camera'] = 'Camera Size';
 $string['tela_inteira'] = 'Fullscreen';
 $string['title_captura'] = 'Capture ';
