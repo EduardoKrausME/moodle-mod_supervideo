@@ -75,7 +75,6 @@ class view extends external_api {
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);
-
         require_capability('mod/supervideo:view', $context);
 
         supervideo_view($supervideo, $course, $cm, $context);

@@ -775,7 +775,7 @@ function supervideo_export_contents($cm, $baseurl) {
                 'filename' => 'youtube.mp4',
                 'filepath' => "",
                 'filesize' => 1,
-                'fileurl' => "https://www.youtube.com/watch?v={$output[3]}",
+                'fileurl' => "https://www.youtube-nocookie.com//watch?v={$output[3]}",
                 'timecreated' => time(),
                 'timemodified' => time(),
                 'sortorder' => 0,
