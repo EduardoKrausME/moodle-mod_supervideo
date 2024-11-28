@@ -1,26 +1,27 @@
-
-.form-filetypes-descriptions {
-    margin-top: -20px;
-    .list-unstyled {
-        display: flex;
-        gap: 10px;
-        li {
-            font-size: 0;
-            small {
-                font-size: 15px;
+#page-mod-supervideo-mod {
+    .form-filetypes-descriptions {
+        margin-top: -20px;
+        .list-unstyled {
+            display: flex;
+            gap: 10px;
+            li {
+                font-size: 0;
+                small {
+                    font-size: 15px;
+                }
             }
         }
     }
-}
-.filemanager.fm-noitems {
-    .filemanager-container {
-        min-height: 100px;
-        .fm-empty-container {
-            padding-top: 51px;
-            .dndupload-arrow {
-                height: 54px;
-                i {
-                    font-size: 44px;
+    .filemanager.fm-noitems {
+        .filemanager-container {
+            min-height: 100px;
+            .fm-empty-container {
+                padding-top: 51px;
+                .dndupload-arrow {
+                    height: 54px;
+                    i {
+                        font-size: 44px;
+                    }
                 }
             }
         }
