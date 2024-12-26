@@ -1,28 +1,27 @@
 @charset "UTF-8";
-.form-filetypes-descriptions {
+#page-mod-supervideo-mod .form-filetypes-descriptions {
   margin-top: -20px;
 }
-.form-filetypes-descriptions .list-unstyled {
+#page-mod-supervideo-mod .form-filetypes-descriptions .list-unstyled {
   display: flex;
   gap: 10px;
 }
-.form-filetypes-descriptions .list-unstyled li {
+#page-mod-supervideo-mod .form-filetypes-descriptions .list-unstyled li {
   font-size: 0;
 }
-.form-filetypes-descriptions .list-unstyled li small {
+#page-mod-supervideo-mod .form-filetypes-descriptions .list-unstyled li small {
   font-size: 15px;
 }
-
-.filemanager.fm-noitems .filemanager-container {
+#page-mod-supervideo-mod .filemanager.fm-noitems .filemanager-container {
   min-height: 100px;
 }
-.filemanager.fm-noitems .filemanager-container .fm-empty-container {
+#page-mod-supervideo-mod .filemanager.fm-noitems .filemanager-container .fm-empty-container {
   padding-top: 51px;
 }
-.filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow {
+#page-mod-supervideo-mod .filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow {
   height: 54px;
 }
-.filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow i {
+#page-mod-supervideo-mod .filemanager.fm-noitems .filemanager-container .fm-empty-container .dndupload-arrow i {
   font-size: 44px;
 }
 
@@ -40,12 +39,12 @@
   display: inline-block;
 }
 
-#supervideo_area_embed {
+body:not(.distraction-free-mode) #supervideo_area_embed {
   position: relative;
   z-index: 1;
   width: 100%;
 }
-#supervideo_area_embed .logo {
+body:not(.distraction-free-mode) #supervideo_area_embed .logo {
   position: absolute;
   height: 40px;
   background: #fff;
@@ -53,7 +52,7 @@
   top: 2px;
   z-index: 2;
 }
-#supervideo_area_embed iframe {
+body:not(.distraction-free-mode) #supervideo_area_embed iframe {
   width: 100%;
   height: 100%;
   position: absolute;
