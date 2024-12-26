@@ -29,6 +29,7 @@ $strings = [
     "erro_camera_microfone."      => 'Ocorreu um erro ao solicitar a Câmera e Microfone.',
     "entre_contato_suporte_erro"  => 'Entre em contato com suporte e informe o erro ',
     "camera"                      => 'Câmera',
+    "none_camera"                 => 'Não usar a câmera',
     "microfone"                   => 'Microfone',
     "erro"                        => 'Erro:',
     "nao_suportado_celular"       => 'Não suportado em Celular',

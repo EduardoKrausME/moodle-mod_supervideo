@@ -76,6 +76,7 @@ $string['layout_6'] = 'Layout 6';
 $string['layout_cam'] = 'Cam Layout';
 $string['layout_presentation'] = 'Presentation Layout';
 $string['logo_title'] = 'Logo';
+$string['none_camera'] = 'Não usar a câmera';
 $string['maxwidth'] = 'Maximum Width for Video Player';
 $string['maxwidth_desc'] = 'Maximum width, in pixels, that the video player can expand to. Values below 500 pixels will be considered.';
 $string['microfone'] = 'Microphone';
