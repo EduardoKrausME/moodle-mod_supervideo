@@ -10,9 +10,8 @@ require_once "config-kapture.php";
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
-
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=16"></script>
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=40"></script>
 
     
     
