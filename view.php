@@ -254,7 +254,7 @@ if ($supervideo->videourl) {
             ]);
 
             echo $OUTPUT->render_from_template("mod_supervideo/embed/drive", [
-                "elementid" => "message_notfound",
+                "elementid" => $elementid,
                 "driveid" => $output[0],
                 "parametersdrive" => $parametersdrive,
             ]);
