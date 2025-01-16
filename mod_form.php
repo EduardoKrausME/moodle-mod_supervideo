@@ -204,7 +204,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         if ($this->current->instance) {
 
             $draftitemid = file_get_submitted_draft_itemid("videofile");
-
             if (isset($defaultvalues["id"])) {
                 $id = intval($defaultvalues["id"]);
                 file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ['subdirs' => true]);
