@@ -184,8 +184,13 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
  * @throws dml_exception
  */
 function supervideo_youtube_size($supervideo, $save = false) {
+
+    if($supervideo->origem != "youtube") {
+        return $supervideo->playersize;
+    }
+
     if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
-        $supervideo->videourl, $output)) {
+        $supervideo->videourl_youtube, $output)) {
 
         $urloembed = "https://youtube.com/oembed?url=http://www.youtube.com/watch?v={$output[3]}&format=json";
 
@@ -534,7 +539,7 @@ function supervideo_dndupload_handle($uploadinfo) {
 
     $data->instance = supervideo_add_instance($data, null);
 
-    if (!empty($uploadinfo->draftitemid)) {
+    if (!empty($uploadinfo->draftitemid) && $uploadinfo->draftitemid) {
         $fs = get_file_storage();
         $draftcontext = context_user::instance($USER->id);
         $context = context_module::instance($uploadinfo->coursemodule);
