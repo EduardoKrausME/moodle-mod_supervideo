@@ -32,19 +32,19 @@
     'use strict';
 
     Object.defineProperty(Array.prototype, 'values', {
-        value      : Array.prototype[Symbol.iterator],
-        enumerable : false,
-        writable   : false
+        value: Array.prototype[Symbol.iterator],
+        enumerable: false,
+        writable: false
     });
 
     function _defineProperty$1(obj, key, value) {
         key = _toPropertyKey(key);
         if (key in obj) {
             Object.defineProperty(obj, key, {
-                value        : value,
-                enumerable   : true,
-                configurable : true,
-                writable     : true
+                value: value,
+                enumerable: true,
+                configurable: true,
+                writable: true
             });
         } else {
             obj[key] = value;
@@ -85,10 +85,10 @@
 
     function _defineProperty(e, t, n) {
         return t in e ? Object.defineProperty(e, t, {
-            value        : n,
-            enumerable   : !0,
-            configurable : !0,
-            writable     : !0
+            value: n,
+            enumerable: !0,
+            configurable: !0,
+            writable: !0
         }) : e[t] = n, e;
     }
 
@@ -116,9 +116,9 @@
     }
 
     var defaults$1 = {
-        addCSS     : !0,
-        thumbWidth : 15,
-        watch      : !0
+        addCSS: !0,
+        thumbWidth: 15,
+        watch: !0
     };
 
     function matches$1(e, t) {
@@ -130,7 +130,7 @@
     function trigger(e, t) {
         if (e && t) {
             var n = new Event(t, {
-                bubbles : !0
+                bubbles: !0
             });
             e.dispatchEvent(n);
         }
@@ -176,17 +176,17 @@
             return isNullOrUndefined$1(e) || (isString$1(e) || isArray$1(e) || isNodeList$1(e)) && !e.length || isObject$1(e) && !Object.keys(e).length;
         },
         is$1                = {
-            nullOrUndefined : isNullOrUndefined$1,
-            object          : isObject$1,
-            number          : isNumber$1,
-            string          : isString$1,
-            boolean         : isBoolean$1,
-            function        : isFunction$1,
-            array           : isArray$1,
-            nodeList        : isNodeList$1,
-            element         : isElement$1,
-            event           : isEvent$1,
-            empty           : isEmpty$1
+            nullOrUndefined: isNullOrUndefined$1,
+            object: isObject$1,
+            number: isNumber$1,
+            string: isString$1,
+            boolean: isBoolean$1,
+            function: isFunction$1,
+            array: isArray$1,
+            nodeList: isNodeList$1,
+            element: isElement$1,
+            event: isEvent$1,
+            empty: isEmpty$1
         };
 
     function getDecimalPlaces(e) {
@@ -208,18 +208,18 @@
         }
 
         return _createClass(e, [{
-            key   : "init",
-            value : function() {
+            key: "init",
+            value: function() {
                 e.enabled && (this.config.addCSS && (this.element.style.userSelect = "none", this.element.style.webKitUserSelect = "none", this.element.style.touchAction = "manipulation"), this.listeners(!0), this.element.rangeTouch = this);
             }
         }, {
-            key   : "destroy",
-            value : function() {
+            key: "destroy",
+            value: function() {
                 e.enabled && (this.config.addCSS && (this.element.style.userSelect = "", this.element.style.webKitUserSelect = "", this.element.style.touchAction = ""), this.listeners(!1), this.element.rangeTouch = null);
             }
         }, {
-            key   : "listeners",
-            value : function(e) {
+            key: "listeners",
+            value: function(e) {
                 var t = this,
                     n = e ? "addEventListener" : "removeEventListener";
                 ["touchstart", "touchmove", "touchend"].forEach(function(e) {
@@ -229,8 +229,8 @@
                 });
             }
         }, {
-            key   : "get",
-            value : function(t) {
+            key: "get",
+            value: function(t) {
                 if (!e.enabled || !is$1.event(t)) return null;
                 var n,
                     r = t.target,
@@ -243,13 +243,13 @@
                 return 0 > (n = 100 / c.width * (i.clientX - c.left)) ? n = 0 : 100 < n && (n = 100), 50 > n ? n -= (100 - 2 * n) * a : 50 < n && (n += 2 * (n - 50) * a), o + round(n / 100 * (s - o), u);
             }
         }, {
-            key   : "set",
-            value : function(t) {
+            key: "set",
+            value: function(t) {
                 e.enabled && is$1.event(t) && !t.target.disabled && (t.preventDefault(), t.target.value = this.get(t), trigger(t.target, "touchend" === t.type ? "change" : "input"));
             }
         }], [{
-            key   : "setup",
-            value : function(t) {
+            key: "setup",
+            value: function(t) {
                 var n = 1 < arguments.length && void 0 !== arguments[1] ? arguments[1] : {},
                     r = null;
                 if (is$1.empty(t) || is$1.string(t) ? r = Array.from(document.querySelectorAll(is$1.string(t) ? t : 'input[type="range"]')) : is$1.element(t) ? r = [t] : is$1.nodeList(t) ? r = Array.from(t) : is$1.array(t) && (r = t.filter(is$1.element)), is$1.empty(r)) return null;
@@ -263,8 +263,8 @@
                         });
                     });
                     o.observe(document.body, {
-                        childList : !0,
-                        subtree   : !0
+                        childList: !0,
+                        subtree: !0
                     });
                 }
                 return r.map(function(t) {
@@ -272,8 +272,8 @@
                 });
             }
         }, {
-            key : "enabled",
-            get : function() {
+            key: "enabled",
+            get: function() {
                 return "ontouchstart" in document.documentElement;
             }
         }]), e;
@@ -325,34 +325,34 @@
         }
     };
     var is = {
-        nullOrUndefined : isNullOrUndefined,
-        object          : isObject,
-        number          : isNumber,
-        string          : isString,
-        boolean         : isBoolean,
-        function        : isFunction,
-        array           : isArray,
-        weakMap         : isWeakMap,
-        nodeList        : isNodeList,
-        element         : isElement,
-        textNode        : isTextNode,
-        event           : isEvent,
-        keyboardEvent   : isKeyboardEvent,
-        cue             : isCue,
-        track           : isTrack,
-        promise         : isPromise,
-        url             : isUrl,
-        empty           : isEmpty
+        nullOrUndefined: isNullOrUndefined,
+        object: isObject,
+        number: isNumber,
+        string: isString,
+        boolean: isBoolean,
+        function: isFunction,
+        array: isArray,
+        weakMap: isWeakMap,
+        nodeList: isNodeList,
+        element: isElement,
+        textNode: isTextNode,
+        event: isEvent,
+        keyboardEvent: isKeyboardEvent,
+        cue: isCue,
+        track: isTrack,
+        promise: isPromise,
+        url: isUrl,
+        empty: isEmpty
     };
 
     // ==========================================================================
     const transitionEndEvent = (() => {
         const element = document.createElement('span');
         const events = {
-            WebkitTransition : 'webkitTransitionEnd',
-            MozTransition    : 'transitionend',
-            OTransition      : 'oTransitionEnd otransitionend',
-            transition       : 'transitionend'
+            WebkitTransition: 'webkitTransitionEnd',
+            MozTransition: 'transitionend',
+            OTransition: 'oTransitionEnd otransitionend',
+            transition: 'transitionend'
         };
         const type = Object.keys(events).find(event => element.style[event] !== undefined);
         return is.string(type) ? events[type] : false;
@@ -422,13 +422,13 @@
             if (is.object(source[key])) {
                 if (!Object.keys(target).includes(key)) {
                     Object.assign(target, {
-                        [key] : {}
+                        [key]: {}
                     });
                 }
                 extend(target[key], source[key]);
             } else {
                 Object.assign(target, {
-                    [key] : source[key]
+                    [key]: source[key]
                 });
             }
         });
@@ -662,7 +662,7 @@
 
         // Set regular focus
         element.focus({
-            preventScroll : true,
+            preventScroll: true,
             focusVisible
         });
     }
@@ -671,18 +671,18 @@
 
     // Default codecs for checking mimetype support
     const defaultCodecs = {
-        'audio/ogg'  : 'vorbis',
-        'audio/wav'  : '1',
-        'video/webm' : 'vp8, vorbis',
-        'video/mp4'  : 'avc1.42E01E, mp4a.40.2',
-        'video/ogg'  : 'theora'
+        'audio/ogg': 'vorbis',
+        'audio/wav': '1',
+        'video/webm': 'vp8, vorbis',
+        'video/mp4': 'avc1.42E01E, mp4a.40.2',
+        'video/ogg': 'theora'
     };
 
     // Check for feature support
     const support = {
         // Basic support
-        audio         : 'canPlayType' in document.createElement('audio'),
-        video         : 'canPlayType' in document.createElement('video'),
+        audio: 'canPlayType' in document.createElement('audio'),
+        video: 'canPlayType' in document.createElement('video'),
         // Check for support
         // Basic functionality vs full UI
         check(type, provider) {
@@ -695,7 +695,7 @@
         },
         // Picture-in-picture support
         // Safari & Chrome only currently
-        pip           : (() => {
+        pip: (() => {
             // While iPhone's support picture-in-picture for some apps, seemingly Safari isn't one of them
             // It will throw the following error when trying to enter picture-in-picture
             // `NotSupportedError: The Picture-in-Picture mode is not supported.`
@@ -718,10 +718,10 @@
         })(),
         // Airplay support
         // Safari only currently
-        airplay       : is.function(window.WebKitPlaybackTargetAvailabilityEvent),
+        airplay: is.function(window.WebKitPlaybackTargetAvailabilityEvent),
         // Inline playback support
         // https://webkit.org/blog/6784/new-video-policies-for-ios/
-        playsinline   : 'playsInline' in document.createElement('video'),
+        playsinline: 'playsInline' in document.createElement('video'),
         // Check for mime type support against a player instance
         // Credits: http://diveintohtml5.info/everything.html
         // Related: http://www.leanbackplayer.com/test/h5mt.html
@@ -748,21 +748,21 @@
             }
         },
         // Check for textTracks support
-        textTracks    : 'textTracks' in document.createElement('video'),
+        textTracks: 'textTracks' in document.createElement('video'),
         // <input type="range"> Sliders
-        rangeInput    : (() => {
+        rangeInput: (() => {
             const range = document.createElement('input');
             range.type = 'range';
             return range.type === 'range';
         })(),
         // Touch
         // NOTE: Remember a device can be mouse + touch enabled so we check on first touch event
-        touch         : 'ontouchstart' in document.documentElement,
+        touch: 'ontouchstart' in document.documentElement,
         // Detect transitions support
-        transitions   : transitionEndEvent !== false,
+        transitions: transitionEndEvent !== false,
         // Reduced motion iOS & MacOS setting
         // https://webkit.org/blog/7551/responsive-design-for-motion/
-        reducedMotion : 'matchMedia' in window && window.matchMedia('(prefers-reduced-motion)').matches
+        reducedMotion: 'matchMedia' in window && window.matchMedia('(prefers-reduced-motion)').matches
     };
 
     // ==========================================================================
@@ -855,9 +855,9 @@
         // Create and dispatch the event
         const event = new CustomEvent(type, {
             bubbles,
-            detail : {
+            detail: {
                 ...detail,
-                plyr : this
+                plyr: this
             }
         });
 
@@ -931,7 +931,7 @@
     // Standard/common aspect ratios
     const standardRatios = [[1, 1], [4, 3], [3, 4], [5, 4], [4, 5], [3, 2], [2, 3], [16, 10], [10, 16], [16, 9], [9, 16], [21, 9], [9, 21], [32, 9], [9, 32]].reduce((out, [x, y]) => ({
         ...out,
-        [x / y] : [x, y]
+        [x / y]: [x, y]
     }), {});
 
     // Validate an aspect ratio
@@ -1001,7 +1001,9 @@
         if (useNative) {
             wrapper.style.aspectRatio = `${x}/${y}`;
         } else {
-            wrapper.style.paddingBottom = `${padding}%`;
+            if (padding > 10) {
+                wrapper.style.paddingBottom = `${padding}%`;
+            }
         }
 
         // For Vimeo we have an extra <div> to hide the standard controls and UI
@@ -1146,7 +1148,7 @@
 
                     // Trigger change event
                     triggerEvent.call(player, player.media, 'qualitychange', false, {
-                        quality : input
+                        quality: input
                     });
                 }
             });
@@ -1251,11 +1253,11 @@
 
     // Skip i18n for abbreviations and brand names
     const resources = {
-        pip     : 'PIP',
-        airplay : 'AirPlay',
-        html5   : 'HTML5',
-        vimeo   : 'Vimeo',
-        youtube : 'YouTube'
+        pip: 'PIP',
+        airplay: 'AirPlay',
+        html5: 'HTML5',
+        vimeo: 'Vimeo',
+        youtube: 'YouTube'
     };
     const i18n = {
         get(key = '', config = {}) {
@@ -1270,8 +1272,8 @@
                 return '';
             }
             const replace = {
-                '{seektime}' : config.seekTime,
-                '{title}'    : config.title
+                '{seektime}': config.seekTime,
+                '{title}': config.title
             };
             Object.entries(replace).forEach(([k, v]) => {
                 string = replaceAll(string, k, v);
@@ -1436,7 +1438,7 @@
                 if (useStorage) {
                     try {
                         window.localStorage.setItem(`${prefix}-${id}`, JSON.stringify({
-                            content : result
+                            content: result
                         }));
                     } catch (_) {
                         // Do nothing
@@ -1490,7 +1492,7 @@
             const host = window.location.host ? window.location.host : window.top.location.host;
             const cors = url.host !== host || browser.isIE && !window.svg4everybody;
             return {
-                url : this.config.iconUrl,
+                url: this.config.iconUrl,
                 cors
             };
         },
@@ -1501,17 +1503,17 @@
 
                 // Buttons
                 this.elements.buttons = {
-                    play        : getElements.call(this, this.config.selectors.buttons.play),
-                    pause       : getElement.call(this, this.config.selectors.buttons.pause),
-                    restart     : getElement.call(this, this.config.selectors.buttons.restart),
-                    rewind      : getElement.call(this, this.config.selectors.buttons.rewind),
-                    fastForward : getElement.call(this, this.config.selectors.buttons.fastForward),
-                    mute        : getElement.call(this, this.config.selectors.buttons.mute),
-                    pip         : getElement.call(this, this.config.selectors.buttons.pip),
-                    airplay     : getElement.call(this, this.config.selectors.buttons.airplay),
-                    settings    : getElement.call(this, this.config.selectors.buttons.settings),
-                    captions    : getElement.call(this, this.config.selectors.buttons.captions),
-                    fullscreen  : getElement.call(this, this.config.selectors.buttons.fullscreen)
+                    play: getElements.call(this, this.config.selectors.buttons.play),
+                    pause: getElement.call(this, this.config.selectors.buttons.pause),
+                    restart: getElement.call(this, this.config.selectors.buttons.restart),
+                    rewind: getElement.call(this, this.config.selectors.buttons.rewind),
+                    fastForward: getElement.call(this, this.config.selectors.buttons.fastForward),
+                    mute: getElement.call(this, this.config.selectors.buttons.mute),
+                    pip: getElement.call(this, this.config.selectors.buttons.pip),
+                    airplay: getElement.call(this, this.config.selectors.buttons.airplay),
+                    settings: getElement.call(this, this.config.selectors.buttons.settings),
+                    captions: getElement.call(this, this.config.selectors.buttons.captions),
+                    fullscreen: getElement.call(this, this.config.selectors.buttons.fullscreen)
                 };
 
                 // Progress
@@ -1519,15 +1521,15 @@
 
                 // Inputs
                 this.elements.inputs = {
-                    seek   : getElement.call(this, this.config.selectors.inputs.seek),
-                    volume : getElement.call(this, this.config.selectors.inputs.volume)
+                    seek: getElement.call(this, this.config.selectors.inputs.seek),
+                    volume: getElement.call(this, this.config.selectors.inputs.volume)
                 };
 
                 // Display
                 this.elements.display = {
-                    buffer      : getElement.call(this, this.config.selectors.display.buffer),
-                    currentTime : getElement.call(this, this.config.selectors.display.currentTime),
-                    duration    : getElement.call(this, this.config.selectors.display.duration)
+                    buffer: getElement.call(this, this.config.selectors.display.buffer),
+                    currentTime: getElement.call(this, this.config.selectors.display.currentTime),
+                    duration: getElement.call(this, this.config.selectors.display.duration)
                 };
 
                 // Seek tooltip
@@ -1552,8 +1554,8 @@
             // Create <svg>
             const icon = document.createElementNS(namespace, 'svg');
             setAttributes(icon, extend(attributes, {
-                'aria-hidden' : 'true',
-                focusable     : 'false'
+                'aria-hidden': 'true',
+                focusable: 'false'
             }));
 
             // Create the <use> to reference sprite
@@ -1579,7 +1581,7 @@
             const text = i18n.get(key, this.config);
             const attributes = {
                 ...attr,
-                class : [attr.class, this.config.classNames.hidden].filter(Boolean).join(' ')
+                class: [attr.class, this.config.classNames.hidden].filter(Boolean).join(' ')
             };
             return createElement('span', attributes, text);
         },
@@ -1589,10 +1591,10 @@
                 return null;
             }
             const badge = createElement('span', {
-                class : this.config.classNames.menu.value
+                class: this.config.classNames.menu.value
             });
             badge.appendChild(createElement('span', {
-                class : this.config.classNames.menu.badge
+                class: this.config.classNames.menu.badge
             }, text));
             return badge;
         },
@@ -1601,12 +1603,12 @@
             const attributes = extend({}, attr);
             let type = toCamelCase(buttonType);
             const props = {
-                element      : 'button',
-                toggle       : false,
-                label        : null,
-                icon         : null,
-                labelPressed : null,
-                iconPressed  : null
+                element: 'button',
+                toggle: false,
+                label: null,
+                icon: null,
+                labelPressed: null,
+                iconPressed: null
             };
             ['element', 'icon', 'label'].forEach(key => {
                 if (Object.keys(attributes).includes(key)) {
@@ -1624,7 +1626,7 @@
             if (Object.keys(attributes).includes('class')) {
                 if (!attributes.class.split(' ').some(c => c === this.config.classNames.control)) {
                     extend(attributes, {
-                        class : `${attributes.class} ${this.config.classNames.control}`
+                        class: `${attributes.class} ${this.config.classNames.control}`
                     });
                 }
             } else {
@@ -1681,18 +1683,18 @@
             if (props.toggle) {
                 // Icon
                 button.appendChild(controls.createIcon.call(this, props.iconPressed, {
-                    class : 'icon--pressed'
+                    class: 'icon--pressed'
                 }));
                 button.appendChild(controls.createIcon.call(this, props.icon, {
-                    class : 'icon--not-pressed'
+                    class: 'icon--not-pressed'
                 }));
 
                 // Label/Tooltip
                 button.appendChild(controls.createLabel.call(this, props.labelPressed, {
-                    class : 'label--pressed'
+                    class: 'label--pressed'
                 }));
                 button.appendChild(controls.createLabel.call(this, props.label, {
-                    class : 'label--not-pressed'
+                    class: 'label--not-pressed'
                 }));
             } else {
                 button.appendChild(controls.createIcon.call(this, props.icon));
@@ -1718,18 +1720,18 @@
         createRange(type, attributes) {
             // Seek input
             const input = createElement('input', extend(getAttributesFromSelector(this.config.selectors.inputs[type]), {
-                type            : 'range',
-                min             : 0,
-                max             : 100,
-                step            : 0.01,
-                value           : 0,
-                autocomplete    : 'off',
+                type: 'range',
+                min: 0,
+                max: 100,
+                step: 0.01,
+                value: 0,
+                autocomplete: 'off',
                 // A11y fixes for https://github.com/sampotts/plyr/issues/905
-                role            : 'slider',
-                'aria-label'    : i18n.get(type, this.config),
-                'aria-valuemin' : 0,
-                'aria-valuemax' : 100,
-                'aria-valuenow' : 0
+                role: 'slider',
+                'aria-label': i18n.get(type, this.config),
+                'aria-valuemin': 0,
+                'aria-valuemax': 100,
+                'aria-valuenow': 0
             }, attributes));
             this.elements.inputs[type] = input;
 
@@ -1743,19 +1745,19 @@
         // Create a <progress>
         createProgress(type, attributes) {
             const progress = createElement('progress', extend(getAttributesFromSelector(this.config.selectors.display[type]), {
-                min           : 0,
-                max           : 100,
-                value         : 0,
-                role          : 'progressbar',
-                'aria-hidden' : true
+                min: 0,
+                max: 100,
+                value: 0,
+                role: 'progressbar',
+                'aria-hidden': true
             }, attributes));
 
             // Create the label inside
             if (type !== 'volume') {
                 progress.appendChild(createElement('span', null, '0'));
                 const suffixKey = {
-                    played : 'played',
-                    buffer : 'buffered'
+                    played: 'played',
+                    buffer: 'buffered'
                 }[type];
                 const suffix = suffixKey ? i18n.get(suffixKey, this.config) : '';
                 progress.innerText = `% ${suffix.toLowerCase()}`;
@@ -1767,9 +1769,9 @@
         createTime(type, attrs) {
             const attributes = getAttributesFromSelector(this.config.selectors.display[type], attrs);
             const container = createElement('div', extend(attributes, {
-                class        : `${attributes.class ? attributes.class : ''} ${this.config.classNames.display.time} `.trim(),
-                'aria-label' : i18n.get(type, this.config),
-                role         : 'timer'
+                class: `${attributes.class ? attributes.class : ''} ${this.config.classNames.display.time} `.trim(),
+                'aria-label': i18n.get(type, this.config),
+                role: 'timer'
             }), '00:00');
 
             // Reference for updates
@@ -1837,10 +1839,10 @@
                        }) {
             const attributes = getAttributesFromSelector(this.config.selectors.inputs[type]);
             const menuItem = createElement('button', extend(attributes, {
-                type           : 'button',
-                role           : 'menuitemradio',
-                class          : `${this.config.classNames.control} ${attributes.class ? attributes.class : ''}`.trim(),
-                'aria-checked' : checked,
+                type: 'button',
+                role: 'menuitemradio',
+                class: `${this.config.classNames.control} ${attributes.class ? attributes.class : ''}`.trim(),
+                'aria-checked': checked,
                 value
             }));
             const flex = createElement('span');
@@ -1854,7 +1856,7 @@
 
             // Replicate radio button behavior
             Object.defineProperty(menuItem, 'checked', {
-                enumerable : true,
+                enumerable: true,
                 get() {
                     return menuItem.getAttribute('aria-checked') === 'true';
                 },
@@ -2055,7 +2057,7 @@
 
             // Get marker point for time
             const point = (_this$config$markers = this.config.markers) === null || _this$config$markers === void 0 ? void 0 : (_this$config$markers$ = _this$config$markers.points) === null || _this$config$markers$ === void 0 ? void 0 : _this$config$markers$.find(({
-                                                                                                                                                                                                                                                                            time : t
+                                                                                                                                                                                                                                                                            time: t
                                                                                                                                                                                                                                                                         }) => t === Math.round(time));
 
             // Append the point label to the tooltip
@@ -2245,11 +2247,11 @@
                 return sorting.indexOf(a) > sorting.indexOf(b) ? 1 : -1;
             }).forEach(quality => {
                 controls.createMenuItem.call(this, {
-                    value : quality,
+                    value: quality,
                     list,
                     type,
-                    title : controls.getLabel.call(this, 'quality', quality),
-                    badge : getBadge(quality)
+                    title: controls.getLabel.call(this, 'quality', quality),
+                    badge: getBadge(quality)
                 });
             });
             controls.updateSetting.call(this, type, list);
@@ -2323,20 +2325,20 @@
             // Generate options data
             const options = tracks.map((track, value) => ({
                 value,
-                checked : this.captions.toggled && this.currentTrack === value,
-                title   : captions.getLabel.call(this, track),
-                badge   : track.language && controls.createBadge.call(this, track.language.toUpperCase()),
+                checked: this.captions.toggled && this.currentTrack === value,
+                title: captions.getLabel.call(this, track),
+                badge: track.language && controls.createBadge.call(this, track.language.toUpperCase()),
                 list,
-                type    : 'language'
+                type: 'language'
             }));
 
             // Add the "Disabled" option to turn off captions
             options.unshift({
-                value   : -1,
-                checked : !this.captions.toggled,
-                title   : i18n.get('disabled', this.config),
+                value: -1,
+                checked: !this.captions.toggled,
+                title: i18n.get('disabled', this.config),
                 list,
-                type    : 'language'
+                type: 'language'
             });
 
             // Generate options
@@ -2373,10 +2375,10 @@
             // Create items
             this.options.speed.forEach(speed => {
                 controls.createMenuItem.call(this, {
-                    value : speed,
+                    value: speed,
                     list,
                     type,
-                    title : controls.getLabel.call(this, 'speed', speed)
+                    title: controls.getLabel.call(this, 'speed', speed)
                 });
             });
             controls.updateSetting.call(this, type, list);
@@ -2565,7 +2567,7 @@
 
             // Default item attributes
             const defaultAttributes = {
-                class : 'plyr__controls__item'
+                class: 'plyr__controls__item'
             };
 
             // Loop through controls in order
@@ -2593,13 +2595,13 @@
                 // Progress
                 if (control === 'progress') {
                     const progressContainer = createElement('div', {
-                        class : `${defaultAttributes.class} plyr__progress__container`
+                        class: `${defaultAttributes.class} plyr__progress__container`
                     });
                     const progress = createElement('div', getAttributesFromSelector(this.config.selectors.progress));
 
                     // Seek range slider
                     progress.appendChild(createRange.call(this, 'seek', {
-                        id : `plyr-seek-${data.id}`
+                        id: `plyr-seek-${data.id}`
                     }));
 
                     // Buffer progress
@@ -2610,7 +2612,7 @@
                     // Seek tooltip
                     if (this.config.tooltips.seek) {
                         const tooltip = createElement('span', {
-                            class : this.config.classNames.tooltip
+                            class: this.config.classNames.tooltip
                         }, '00:00');
                         progress.appendChild(tooltip);
                         this.elements.display.seekTooltip = tooltip;
@@ -2639,7 +2641,7 @@
                     // Create the volume container if needed
                     if (!is.element(volume) || !container.contains(volume)) {
                         volume = createElement('div', extend({}, defaultAttributes, {
-                            class : `${defaultAttributes.class} plyr__volume`.trim()
+                            class: `${defaultAttributes.class} plyr__volume`.trim()
                         }));
                         this.elements.volume = volume;
                         container.appendChild(volume);
@@ -2656,14 +2658,14 @@
                     if (control === 'volume' && !browser.isIos && !browser.isIPadOS) {
                         // Set the attributes
                         const attributes = {
-                            max   : 1,
-                            step  : 0.05,
-                            value : this.config.volume
+                            max: 1,
+                            step: 0.05,
+                            value: this.config.volume
                         };
 
                         // Create the volume range slider
                         volume.appendChild(createRange.call(this, 'volume', extend(attributes, {
-                            id : `plyr-volume-${data.id}`
+                            id: `plyr-volume-${data.id}`
                         })));
                     }
                 }
@@ -2676,27 +2678,27 @@
                 // Settings button / menu
                 if (control === 'settings' && !is.empty(this.config.settings)) {
                     const wrapper = createElement('div', extend({}, defaultAttributes, {
-                        class  : `${defaultAttributes.class} plyr__menu`.trim(),
-                        hidden : ''
+                        class: `${defaultAttributes.class} plyr__menu`.trim(),
+                        hidden: ''
                     }));
                     wrapper.appendChild(createButton.call(this, 'settings', {
-                        'aria-haspopup' : true,
-                        'aria-controls' : `plyr-settings-${data.id}`,
-                        'aria-expanded' : false
+                        'aria-haspopup': true,
+                        'aria-controls': `plyr-settings-${data.id}`,
+                        'aria-expanded': false
                     }));
                     const popup = createElement('div', {
-                        class  : 'plyr__menu__container',
-                        id     : `plyr-settings-${data.id}`,
-                        hidden : ''
+                        class: 'plyr__menu__container',
+                        id: `plyr-settings-${data.id}`,
+                        hidden: ''
                     });
                     const inner = createElement('div');
                     const home = createElement('div', {
-                        id : `plyr-settings-${data.id}-home`
+                        id: `plyr-settings-${data.id}-home`
                     });
 
                     // Create the menu
                     const menu = createElement('div', {
-                        role : 'menu'
+                        role: 'menu'
                     });
                     home.appendChild(menu);
                     inner.appendChild(home);
@@ -2706,11 +2708,11 @@
                     this.config.settings.forEach(type => {
                         // TODO: bundle this with the createMenuItem helper and bindings
                         const menuItem = createElement('button', extend(getAttributesFromSelector(this.config.selectors.buttons.settings), {
-                            type            : 'button',
-                            class           : `${this.config.classNames.control} ${this.config.classNames.control}--forward`,
-                            role            : 'menuitem',
-                            'aria-haspopup' : true,
-                            hidden          : ''
+                            type: 'button',
+                            class: `${this.config.classNames.control} ${this.config.classNames.control}--forward`,
+                            role: 'menuitem',
+                            'aria-haspopup': true,
+                            hidden: ''
                         }));
 
                         // Bind menu shortcuts for keyboard users
@@ -2722,7 +2724,7 @@
                         });
                         const flex = createElement('span', null, i18n.get(type, this.config));
                         const value = createElement('span', {
-                            class : this.config.classNames.menu.value
+                            class: this.config.classNames.menu.value
                         });
 
                         // Speed contains HTML entities
@@ -2733,24 +2735,24 @@
 
                         // Build the panes
                         const pane = createElement('div', {
-                            id     : `plyr-settings-${data.id}-${type}`,
-                            hidden : ''
+                            id: `plyr-settings-${data.id}-${type}`,
+                            hidden: ''
                         });
 
                         // Back button
                         const backButton = createElement('button', {
-                            type  : 'button',
-                            class : `${this.config.classNames.control} ${this.config.classNames.control}--back`
+                            type: 'button',
+                            class: `${this.config.classNames.control} ${this.config.classNames.control}--back`
                         });
 
                         // Visible label
                         backButton.appendChild(createElement('span', {
-                            'aria-hidden' : true
+                            'aria-hidden': true
                         }, i18n.get(type, this.config)));
 
                         // Screen reader label
                         backButton.appendChild(createElement('span', {
-                            class : this.config.classNames.hidden
+                            class: this.config.classNames.hidden
                         }, i18n.get('menuBack', this.config)));
 
                         // Go back via keyboard
@@ -2775,7 +2777,7 @@
 
                         // Menu
                         pane.appendChild(createElement('div', {
-                            role : 'menu'
+                            role: 'menu'
                         }));
                         inner.appendChild(pane);
                         this.elements.settings.buttons[type] = menuItem;
@@ -2801,9 +2803,9 @@
                 // Download button
                 if (control === 'download') {
                     const attributes = extend({}, defaultAttributes, {
-                        element : 'a',
-                        href    : this.download,
-                        target  : '_blank'
+                        element: 'a',
+                        href: this.download,
+                        target: '_blank'
                     });
 
                     // Set download attribute for HTML5 only
@@ -2815,8 +2817,8 @@
                           } = this.config.urls;
                     if (!is.url(download) && this.isEmbed) {
                         extend(attributes, {
-                            icon  : `logo-${this.provider}`,
-                            label : this.provider
+                            icon: `logo-${this.provider}`,
+                            label: this.provider
                         });
                     }
                     container.appendChild(createButton.call(this, 'download', attributes));
@@ -2856,9 +2858,9 @@
 
             // Set template properties
             const props = {
-                id       : this.id,
-                seektime : this.config.seekTime,
-                title    : this.config.title
+                id: this.id,
+                seektime: this.config.seekTime,
+                title: this.config.title
             };
             let update = true;
 
@@ -2877,11 +2879,11 @@
             } else {
                 // Create controls
                 container = controls.create.call(this, {
-                    id       : this.id,
-                    seektime : this.config.seekTime,
-                    speed    : this.speed,
-                    quality  : this.quality,
-                    captions : captions.getLabel.call(this)
+                    id: this.id,
+                    seektime: this.config.seekTime,
+                    speed: this.speed,
+                    quality: this.quality,
+                    captions: captions.getLabel.call(this)
                     // TODO: Looping
                     // loop: 'None',
                 });
@@ -2933,8 +2935,8 @@
                     const className = this.config.classNames.controlPressed;
                     button.setAttribute('aria-pressed', 'false');
                     Object.defineProperty(button, 'pressed', {
-                        configurable : true,
-                        enumerable   : true,
+                        configurable: true,
+                        enumerable: true,
                         get() {
                             return hasClass(button, className);
                         },
@@ -2979,10 +2981,10 @@
             try {
                 if ('mediaSession' in navigator) {
                     navigator.mediaSession.metadata = new window.MediaMetadata({
-                        title   : this.config.mediaMetadata.title,
-                        artist  : this.config.mediaMetadata.artist,
-                        album   : this.config.mediaMetadata.album,
-                        artwork : this.config.mediaMetadata.artwork
+                        title: this.config.mediaMetadata.title,
+                        artist: this.config.mediaMetadata.artist,
+                        album: this.config.mediaMetadata.album,
+                        artwork: this.config.mediaMetadata.artwork
                     });
                 }
             } catch (_) {
@@ -3008,7 +3010,7 @@
             // Inject markers to progress container
             points.forEach(point => {
                 const markerElement = createElement('span', {
-                    class : this.config.classNames.marker
+                    class: this.config.classNames.marker
                 }, '');
                 const left = `${point.time / this.duration * 100}%`;
                 if (tipElement) {
@@ -3036,13 +3038,13 @@
             // Inject a tooltip if needed
             if (!this.config.tooltips.seek) {
                 tipElement = createElement('span', {
-                    class : this.config.classNames.tooltip
+                    class: this.config.classNames.tooltip
                 }, '');
                 containerFragment.appendChild(tipElement);
             }
             this.elements.markers = {
-                points : pointsFragment,
-                tip    : tipElement
+                points: pointsFragment,
+                tip: tipElement
             };
             this.elements.progress.appendChild(containerFragment);
         }
@@ -3144,7 +3146,7 @@
                 } = this.config.captions);
             }
             Object.assign(this.captions, {
-                toggled : false,
+                toggled: false,
                 active,
                 language,
                 languages
@@ -3178,7 +3180,7 @@
 
                     // Attempt to store if the original dom element was "default"
                     meta.set(track, {
-                        default : track.mode === 'showing'
+                        default: track.mode === 'showing'
                     });
 
                     // Turn off native caption rendering to avoid double captions
@@ -3232,7 +3234,7 @@
                 if (!passive) {
                     this.captions.active = active;
                     this.storage.set({
-                        captions : active
+                        captions: active
                     });
                 }
 
@@ -3436,106 +3438,106 @@
 
     const defaults = {
         // Disable
-        enabled            : true,
+        enabled: true,
         // Custom media title
-        title              : '',
+        title: '',
         // Logging to console
-        debug              : false,
+        debug: false,
         // Auto play (if supported)
-        autoplay           : false,
+        autoplay: false,
         // Only allow one media playing at once (vimeo only)
-        autopause          : true,
+        autopause: true,
         // Allow inline playback on iOS
-        playsinline        : true,
+        playsinline: true,
         // Default time to skip when rewind/fast forward
-        seekTime           : 10,
+        seekTime: 10,
         // Default volume
-        volume             : 1,
-        muted              : false,
+        volume: 1,
+        muted: false,
         // Pass a custom duration
-        duration           : null,
+        duration: null,
         // Display the media duration on load in the current time position
         // If you have opted to display both duration and currentTime, this is ignored
-        displayDuration    : true,
+        displayDuration: true,
         // Invert the current time to be a countdown
-        invertTime         : true,
+        invertTime: true,
         // Clicking the currentTime inverts it's value to show time left rather than elapsed
-        toggleInvert       : true,
+        toggleInvert: true,
         // Force an aspect ratio
         // The format must be `'w:h'` (e.g. `'16:9'`)
-        ratio              : null,
+        ratio: null,
         // Click video container to play/pause
-        clickToPlay        : true,
+        clickToPlay: true,
         // Auto hide the controls
-        hideControls       : true,
+        hideControls: true,
         // Reset to start when playback ended
-        resetOnEnd         : false,
+        resetOnEnd: false,
         // Disable the standard context menu
-        disableContextMenu : true,
+        disableContextMenu: true,
         // Sprite (for icons)
-        loadSprite         : true,
-        iconPrefix         : 'plyr',
-        iconUrl            : M.cfg.wwwroot + '/mod/supervideo/pix/player-icon.svg',
+        loadSprite: true,
+        iconPrefix: 'plyr',
+        iconUrl: M.cfg.wwwroot + '/mod/supervideo/pix/player-icon.svg',
         // Blank video (used to prevent errors on source change)
-        blankVideo         : M.cfg.wwwroot + '/mod/supervideo/pix/player-blank.mp4',
+        blankVideo: M.cfg.wwwroot + '/mod/supervideo/pix/player-blank.mp4',
         // Quality default
-        quality            : {
-            default  : 576,
+        quality: {
+            default: 576,
             // The options to display in the UI, if available for the source media
-            options  : [4320, 2880, 2160, 1440, 1080, 720, 576, 480, 360, 240],
-            forced   : false,
-            onChange : null
+            options: [4320, 2880, 2160, 1440, 1080, 720, 576, 480, 360, 240],
+            forced: false,
+            onChange: null
         },
         // Set loops
-        loop               : {
-            active : false
+        loop: {
+            active: false
             // start: null,
             // end: null,
         },
 
         // Speed default and options to display
-        speed      : {
-            selected : 1,
+        speed: {
+            selected: 1,
             // The options to display in the UI, if available for the source media (e.g. Vimeo and YouTube only support 0.5x-4x)
-            options  : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]
+            options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]
         },
         // Keyboard shortcut settings
-        keyboard   : {
-            focused : true,
-            global  : false
+        keyboard: {
+            focused: true,
+            global: false
         },
         // Display tooltips
-        tooltips   : {
-            controls : false,
-            seek     : true
+        tooltips: {
+            controls: false,
+            seek: true
         },
         // Captions settings
-        captions   : {
-            active   : false,
-            language : 'auto',
+        captions: {
+            active: false,
+            language: 'auto',
             // Listen to new tracks added after Plyr is initialized.
             // This is needed for streaming captions, but may result in unselectable options
-            update   : false
+            update: false
         },
         // Fullscreen settings
-        fullscreen : {
-            enabled   : true,
+        fullscreen: {
+            enabled: true,
             // Allow fullscreen?
-            fallback  : true,
+            fallback: true,
             // Fallback using full viewport/window
-            iosNative : false // Use the native fullscreen in iOS (disables custom controls)
+            iosNative: false // Use the native fullscreen in iOS (disables custom controls)
             // Selector for the fullscreen container so contextual / non-player content can remain visible in fullscreen mode
             // Non-ancestors of the player element will be ignored
             // container: null, // defaults to the player element
         },
 
         // Local storage
-        storage           : {
-            enabled : true,
-            key     : 'plyr'
+        storage: {
+            enabled: true,
+            key: 'plyr'
         },
         // Default controls
-        controls          : ['play-large',
+        controls: ['play-large',
             // 'restart',
             // 'rewind',
             'play',
@@ -3545,91 +3547,91 @@
             'mute', 'volume', 'captions', 'settings', 'pip', 'airplay',
             // 'download',
             'fullscreen'],
-        settings          : ['captions', 'quality', 'speed'],
+        settings: ['captions', 'quality', 'speed'],
         // Localisation
-        i18n              : {
-            restart         : 'Restart',
-            rewind          : 'Rewind {seektime}s',
-            play            : 'Play',
-            pause           : 'Pause',
-            fastForward     : 'Forward {seektime}s',
-            seek            : 'Seek',
-            seekLabel       : '{currentTime} of {duration}',
-            played          : 'Played',
-            buffered        : 'Buffered',
-            currentTime     : 'Current time',
-            duration        : 'Duration',
-            volume          : 'Volume',
-            mute            : 'Mute',
-            unmute          : 'Unmute',
-            enableCaptions  : 'Enable captions',
-            disableCaptions : 'Disable captions',
-            download        : 'Download',
-            enterFullscreen : 'Enter fullscreen',
-            exitFullscreen  : 'Exit fullscreen',
-            frameTitle      : 'Player for {title}',
-            captions        : 'Captions',
-            settings        : 'Settings',
-            pip             : 'PIP',
-            menuBack        : 'Go back to previous menu',
-            speed           : 'Speed',
-            normal          : 'Normal',
-            quality         : 'Quality',
-            loop            : 'Loop',
-            start           : 'Start',
-            end             : 'End',
-            all             : 'All',
-            reset           : 'Reset',
-            disabled        : 'Disabled',
-            enabled         : 'Enabled',
-            advertisement   : 'Ad',
-            qualityBadge    : {
-                2160 : '4K',
-                1440 : 'HD',
-                1080 : 'HD',
-                720  : 'HD',
-                576  : 'SD',
-                480  : 'SD'
+        i18n: {
+            restart: 'Restart',
+            rewind: 'Rewind {seektime}s',
+            play: 'Play',
+            pause: 'Pause',
+            fastForward: 'Forward {seektime}s',
+            seek: 'Seek',
+            seekLabel: '{currentTime} of {duration}',
+            played: 'Played',
+            buffered: 'Buffered',
+            currentTime: 'Current time',
+            duration: 'Duration',
+            volume: 'Volume',
+            mute: 'Mute',
+            unmute: 'Unmute',
+            enableCaptions: 'Enable captions',
+            disableCaptions: 'Disable captions',
+            download: 'Download',
+            enterFullscreen: 'Enter fullscreen',
+            exitFullscreen: 'Exit fullscreen',
+            frameTitle: 'Player for {title}',
+            captions: 'Captions',
+            settings: 'Settings',
+            pip: 'PIP',
+            menuBack: 'Go back to previous menu',
+            speed: 'Speed',
+            normal: 'Normal',
+            quality: 'Quality',
+            loop: 'Loop',
+            start: 'Start',
+            end: 'End',
+            all: 'All',
+            reset: 'Reset',
+            disabled: 'Disabled',
+            enabled: 'Enabled',
+            advertisement: 'Ad',
+            qualityBadge: {
+                2160: '4K',
+                1440: 'HD',
+                1080: 'HD',
+                720: 'HD',
+                576: 'SD',
+                480: 'SD'
             }
         },
         // URLs
-        urls              : {
-            download  : null,
-            vimeo     : {
-                sdk    : 'https://player.vimeo.com/api/player.js',
-                iframe : 'https://player.vimeo.com/video/{0}?{1}',
-                api    : 'https://vimeo.com/api/oembed.json?url={0}'
+        urls: {
+            download: null,
+            vimeo: {
+                sdk: 'https://player.vimeo.com/api/player.js',
+                iframe: 'https://player.vimeo.com/video/{0}?{1}',
+                api: 'https://vimeo.com/api/oembed.json?url={0}'
             },
-            youtube   : {
-                sdk : 'https://www.youtube.com/iframe_api',
-                api : 'https://noembed.com/embed?url=https://www.youtube.com/watch?v={0}'
+            youtube: {
+                sdk: 'https://www.youtube.com/iframe_api',
+                api: 'https://noembed.com/embed?url=https://www.youtube.com/watch?v={0}'
             },
-            googleIMA : {
-                sdk : 'https://imasdk.googleapis.com/js/sdkloader/ima3.js'
+            googleIMA: {
+                sdk: 'https://imasdk.googleapis.com/js/sdkloader/ima3.js'
             }
         },
         // Custom control listeners
-        listeners         : {
-            seek        : null,
-            play        : null,
-            pause       : null,
-            restart     : null,
-            rewind      : null,
-            fastForward : null,
-            mute        : null,
-            volume      : null,
-            captions    : null,
-            download    : null,
-            fullscreen  : null,
-            pip         : null,
-            airplay     : null,
-            speed       : null,
-            quality     : null,
-            loop        : null,
-            language    : null
+        listeners: {
+            seek: null,
+            play: null,
+            pause: null,
+            restart: null,
+            rewind: null,
+            fastForward: null,
+            mute: null,
+            volume: null,
+            captions: null,
+            download: null,
+            fullscreen: null,
+            pip: null,
+            airplay: null,
+            speed: null,
+            quality: null,
+            loop: null,
+            language: null
         },
         // Events to watch and bubble
-        events            : [
+        events: [
             // Events to watch on HTML5 media elements and bubble
             // https://developer.mozilla.org/en/docs/Web/Guide/Events/Media_events
             'ended', 'progress', 'stalled', 'playing', 'waiting', 'canplay', 'canplaythrough', 'loadstart', 'loadeddata', 'loadedmetadata', 'timeupdate', 'volumechange', 'play', 'pause', 'error', 'seeking', 'seeked', 'emptied', 'ratechange', 'cuechange',
@@ -3643,170 +3645,170 @@
             'adsloaded', 'adscontentpause', 'adscontentresume', 'adstarted', 'adsmidpoint', 'adscomplete', 'adsallcomplete', 'adsimpression', 'adsclick'],
         // Selectors
         // Change these to match your template if using custom HTML
-        selectors         : {
-            editable  : 'input, textarea, select, [contenteditable]',
-            container : '.plyr',
-            controls  : {
-                container : null,
-                wrapper   : '.plyr__controls'
+        selectors: {
+            editable: 'input, textarea, select, [contenteditable]',
+            container: '.plyr',
+            controls: {
+                container: null,
+                wrapper: '.plyr__controls'
             },
-            labels    : '[data-plyr]',
-            buttons   : {
-                play        : '[data-plyr="play"]',
-                pause       : '[data-plyr="pause"]',
-                restart     : '[data-plyr="restart"]',
-                rewind      : '[data-plyr="rewind"]',
-                fastForward : '[data-plyr="fast-forward"]',
-                mute        : '[data-plyr="mute"]',
-                captions    : '[data-plyr="captions"]',
-                download    : '[data-plyr="download"]',
-                fullscreen  : '[data-plyr="fullscreen"]',
-                pip         : '[data-plyr="pip"]',
-                airplay     : '[data-plyr="airplay"]',
-                settings    : '[data-plyr="settings"]',
-                loop        : '[data-plyr="loop"]'
+            labels: '[data-plyr]',
+            buttons: {
+                play: '[data-plyr="play"]',
+                pause: '[data-plyr="pause"]',
+                restart: '[data-plyr="restart"]',
+                rewind: '[data-plyr="rewind"]',
+                fastForward: '[data-plyr="fast-forward"]',
+                mute: '[data-plyr="mute"]',
+                captions: '[data-plyr="captions"]',
+                download: '[data-plyr="download"]',
+                fullscreen: '[data-plyr="fullscreen"]',
+                pip: '[data-plyr="pip"]',
+                airplay: '[data-plyr="airplay"]',
+                settings: '[data-plyr="settings"]',
+                loop: '[data-plyr="loop"]'
             },
-            inputs    : {
-                seek     : '[data-plyr="seek"]',
-                volume   : '[data-plyr="volume"]',
-                speed    : '[data-plyr="speed"]',
-                language : '[data-plyr="language"]',
-                quality  : '[data-plyr="quality"]'
+            inputs: {
+                seek: '[data-plyr="seek"]',
+                volume: '[data-plyr="volume"]',
+                speed: '[data-plyr="speed"]',
+                language: '[data-plyr="language"]',
+                quality: '[data-plyr="quality"]'
             },
-            display   : {
-                currentTime : '.plyr__time--current',
-                duration    : '.plyr__time--duration',
-                buffer      : '.plyr__progress__buffer',
-                loop        : '.plyr__progress__loop',
+            display: {
+                currentTime: '.plyr__time--current',
+                duration: '.plyr__time--duration',
+                buffer: '.plyr__progress__buffer',
+                loop: '.plyr__progress__loop',
                 // Used later
-                volume      : '.plyr__volume--display'
+                volume: '.plyr__volume--display'
             },
-            progress  : '.plyr__progress',
-            captions  : '.plyr__captions',
-            caption   : '.plyr__caption'
+            progress: '.plyr__progress',
+            captions: '.plyr__captions',
+            caption: '.plyr__caption'
         },
         // Class hooks added to the player in different states
-        classNames        : {
-            type              : 'plyr--{0}',
-            provider          : 'plyr--{0}',
-            video             : 'plyr__video-wrapper',
-            embed             : 'plyr__video-embed',
-            videoFixedRatio   : 'plyr__video-wrapper--fixed-ratio',
-            embedContainer    : 'plyr__video-embed__container',
-            poster            : 'plyr__poster',
-            posterEnabled     : 'plyr__poster-enabled',
-            ads               : 'plyr__ads',
-            control           : 'plyr__control',
-            controlPressed    : 'plyr__control--pressed',
-            playing           : 'plyr--playing',
-            paused            : 'plyr--paused',
-            stopped           : 'plyr--stopped',
-            loading           : 'plyr--loading',
-            hover             : 'plyr--hover',
-            tooltip           : 'plyr__tooltip',
-            cues              : 'plyr__cues',
-            marker            : 'plyr__progress__marker',
-            hidden            : 'plyr__sr-only',
-            hideControls      : 'plyr--hide-controls',
-            isTouch           : 'plyr--is-touch',
-            uiSupported       : 'plyr--full-ui',
-            noTransition      : 'plyr--no-transition',
-            display           : {
-                time : 'plyr__time'
+        classNames: {
+            type: 'plyr--{0}',
+            provider: 'plyr--{0}',
+            video: 'plyr__video-wrapper',
+            embed: 'plyr__video-embed',
+            videoFixedRatio: 'plyr__video-wrapper--fixed-ratio',
+            embedContainer: 'plyr__video-embed__container',
+            poster: 'plyr__poster',
+            posterEnabled: 'plyr__poster-enabled',
+            ads: 'plyr__ads',
+            control: 'plyr__control',
+            controlPressed: 'plyr__control--pressed',
+            playing: 'plyr--playing',
+            paused: 'plyr--paused',
+            stopped: 'plyr--stopped',
+            loading: 'plyr--loading',
+            hover: 'plyr--hover',
+            tooltip: 'plyr__tooltip',
+            cues: 'plyr__cues',
+            marker: 'plyr__progress__marker',
+            hidden: 'plyr__sr-only',
+            hideControls: 'plyr--hide-controls',
+            isTouch: 'plyr--is-touch',
+            uiSupported: 'plyr--full-ui',
+            noTransition: 'plyr--no-transition',
+            display: {
+                time: 'plyr__time'
             },
-            menu              : {
-                value : 'plyr__menu__value',
-                badge : 'plyr__badge',
-                open  : 'plyr--menu-open'
+            menu: {
+                value: 'plyr__menu__value',
+                badge: 'plyr__badge',
+                open: 'plyr--menu-open'
             },
-            captions          : {
-                enabled : 'plyr--captions-enabled',
-                active  : 'plyr--captions-active'
+            captions: {
+                enabled: 'plyr--captions-enabled',
+                active: 'plyr--captions-active'
             },
-            fullscreen        : {
-                enabled  : 'plyr--fullscreen-enabled',
-                fallback : 'plyr--fullscreen-fallback'
+            fullscreen: {
+                enabled: 'plyr--fullscreen-enabled',
+                fallback: 'plyr--fullscreen-fallback'
             },
-            pip               : {
-                supported : 'plyr--pip-supported',
-                active    : 'plyr--pip-active'
+            pip: {
+                supported: 'plyr--pip-supported',
+                active: 'plyr--pip-active'
             },
-            airplay           : {
-                supported : 'plyr--airplay-supported',
-                active    : 'plyr--airplay-active'
+            airplay: {
+                supported: 'plyr--airplay-supported',
+                active: 'plyr--airplay-active'
             },
-            previewThumbnails : {
+            previewThumbnails: {
                 // Tooltip thumbs
-                thumbContainer          : 'plyr__preview-thumb',
-                thumbContainerShown     : 'plyr__preview-thumb--is-shown',
-                imageContainer          : 'plyr__preview-thumb__image-container',
-                timeContainer           : 'plyr__preview-thumb__time-container',
+                thumbContainer: 'plyr__preview-thumb',
+                thumbContainerShown: 'plyr__preview-thumb--is-shown',
+                imageContainer: 'plyr__preview-thumb__image-container',
+                timeContainer: 'plyr__preview-thumb__time-container',
                 // Scrubbing
-                scrubbingContainer      : 'plyr__preview-scrubbing',
-                scrubbingContainerShown : 'plyr__preview-scrubbing--is-shown'
+                scrubbingContainer: 'plyr__preview-scrubbing',
+                scrubbingContainerShown: 'plyr__preview-scrubbing--is-shown'
             }
         },
         // Embed attributes
-        attributes        : {
-            embed : {
-                provider : 'data-plyr-provider',
-                id       : 'data-plyr-embed-id',
-                hash     : 'data-plyr-embed-hash'
+        attributes: {
+            embed: {
+                provider: 'data-plyr-provider',
+                id: 'data-plyr-embed-id',
+                hash: 'data-plyr-embed-hash'
             }
         },
         // Advertisements plugin
         // Register for an account here: http://vi.ai/publisher-video-monetization/?aid=plyrio
-        ads               : {
-            enabled     : false,
-            publisherId : '',
-            tagUrl      : ''
+        ads: {
+            enabled: false,
+            publisherId: '',
+            tagUrl: ''
         },
         // Preview Thumbnails plugin
-        previewThumbnails : {
-            enabled : false,
-            src     : ''
+        previewThumbnails: {
+            enabled: false,
+            src: ''
         },
         // Vimeo plugin
-        vimeo             : {
-            byline         : false,
-            portrait       : false,
-            title          : false,
-            speed          : true,
-            transparent    : false,
+        vimeo: {
+            byline: false,
+            portrait: false,
+            title: false,
+            speed: true,
+            transparent: false,
             // Custom settings from Plyr
-            customControls : true,
-            referrerPolicy : null,
+            customControls: true,
+            referrerPolicy: null,
             // https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/referrerPolicy
             // Whether the owner of the video has a Pro or Business account
             // (which allows us to properly hide controls without CSS hacks, etc)
-            premium        : false
+            premium: false
         },
         // YouTube plugin
-        youtube           : {
-            rel            : 0,
+        youtube: {
+            rel: 0,
             // No related vids
-            showinfo       : 0,
+            showinfo: 0,
             // Hide info
-            iv_load_policy : 3,
+            iv_load_policy: 3,
             // Hide annotations
-            modestbranding : 1,
+            modestbranding: 1,
             // Hide logos as much as possible (they still show one in the corner when paused)
             // Custom settings from Plyr
-            customControls : true,
-            noCookie       : false // Whether to use an alternative version of YouTube without cookies
+            customControls: true,
+            noCookie: false // Whether to use an alternative version of YouTube without cookies
         },
 
         // Media Metadata
-        mediaMetadata : {
-            title   : '',
-            artist  : '',
-            album   : '',
-            artwork : []
+        mediaMetadata: {
+            title: '',
+            artist: '',
+            album: '',
+            artwork: []
         },
         // Markers
-        markers       : {
-            enabled : false,
-            points  : []
+        markers: {
+            enabled: false,
+            points: []
         }
     };
 
@@ -3815,8 +3817,8 @@
     // ==========================================================================
 
     const pip = {
-        active   : 'picture-in-picture',
-        inactive : 'inline'
+        active: 'picture-in-picture',
+        inactive: 'inline'
     };
 
     // ==========================================================================
@@ -3824,13 +3826,13 @@
     // ==========================================================================
 
     const providers = {
-        html5   : 'html5',
-        youtube : 'youtube',
-        vimeo   : 'vimeo'
+        html5: 'html5',
+        youtube: 'youtube',
+        vimeo: 'vimeo'
     };
     const types = {
-        audio : 'audio',
-        video : 'video'
+        audio: 'audio',
+        video: 'video'
     };
 
     /**
@@ -3901,8 +3903,8 @@
                 // Store or restore scroll position
                 if (toggle) {
                     this.scrollPosition = {
-                        x : window.scrollX ?? 0,
-                        y : window.scrollY ?? 0
+                        x: window.scrollX ?? 0,
+                        y: window.scrollY ?? 0
                     };
                 } else {
                     window.scrollTo(this.scrollPosition.x, this.scrollPosition.y);
@@ -3986,7 +3988,7 @@
                     this.toggleFallback(true);
                 } else if (!this.prefix) {
                     this.target.requestFullscreen({
-                        navigationUI : 'hide'
+                        navigationUI: 'hide'
                     });
                 } else if (!is.empty(this.prefix)) {
                     this.target[`${this.prefix}Request${this.property}`]();
@@ -4026,8 +4028,8 @@
 
             // Scroll position
             this.scrollPosition = {
-                x : 0,
-                y : 0
+                x: 0,
+                y: 0
             };
 
             // Force the use of 'full window/browser' rather than fullscreen
@@ -4139,8 +4141,8 @@
                 (image.naturalWidth >= minWidth ? resolve : reject)(image);
             };
             Object.assign(image, {
-                onload  : handler,
-                onerror : handler,
+                onload: handler,
+                onerror: handler,
                 src
             });
         });
@@ -4322,9 +4324,9 @@
                     }
                 }).then(() => {
                     Object.assign(this.elements.poster.style, {
-                        backgroundImage : `url('${poster}')`,
+                        backgroundImage: `url('${poster}')`,
                         // Reset backgroundSize as well (since it can be set to "cover" for padded thumbnails for youtube)
-                        backgroundSize  : ''
+                        backgroundSize: ''
                     });
                     ui.togglePoster.call(this, true);
                     return poster;
@@ -4340,7 +4342,7 @@
             // Set state
             Array.from(this.elements.buttons.play || []).forEach(target => {
                 Object.assign(target, {
-                    pressed : this.playing
+                    pressed: this.playing
                 });
                 target.setAttribute('aria-label', i18n.get(this.playing ? 'pause' : 'play', this.config));
             });
@@ -4372,7 +4374,7 @@
         // Toggle controls based on state and `force` argument
         toggleControls(force) {
             const {
-                      controls : controlsElement
+                      controls: controlsElement
                   } = this.elements;
             if (controlsElement && this.config.hideControls) {
                 // Don't hide controls if a touch-device user recently seeked. (Must be limited to touch devices, or it occasionally prevents desktop controls from hiding.)
@@ -4455,7 +4457,7 @@
                 // Toggle controls on mouse events and entering fullscreen
                 on.call(player, elements.container, 'mousemove mouseleave touchstart touchmove enterfullscreen exitfullscreen', event => {
                     const {
-                              controls : controlsElement
+                              controls: controlsElement
                           } = elements;
 
                     // Remove button states for fullscreen
@@ -4630,8 +4632,8 @@
                 on.call(player, player.media, 'volumechange', () => {
                     // Save to storage
                     player.storage.set({
-                        volume : player.volume,
-                        muted  : player.muted
+                        volume: player.volume,
+                        muted: player.muted
                     });
                 });
 
@@ -4642,7 +4644,7 @@
 
                     // Save to storage
                     player.storage.set({
-                        speed : player.speed
+                        speed: player.speed
                     });
                 });
 
@@ -5142,7 +5144,7 @@
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
     function createCommonjsModule(fn, module) {
-        return module = {exports : {}}, fn(module, module.exports), module.exports;
+        return module = {exports: {}}, fn(module, module.exports), module.exports;
     }
 
     var loadjs_umd = createCommonjsModule(function(module, exports) {
@@ -5233,7 +5235,7 @@
             function executeCallbacks(args, depsNotFound) {
                 // accept function as argument
                 if (args.call) args = {
-                    success : args
+                    success: args
                 };
 
                 // success and error callbacks
@@ -5384,8 +5386,8 @@
                         // resolve Promise
                         if (resolve) {
                             executeCallbacks({
-                                success : resolve,
-                                error   : reject
+                                success: resolve,
+                                error: reject
                             }, pathsNotFound);
                         }
 
@@ -5445,8 +5447,8 @@
     function loadScript(url) {
         return new Promise((resolve, reject) => {
             loadjs_umd(url, {
-                success : resolve,
-                error   : reject
+                success: resolve,
+                error: reject
             });
         });
     }
@@ -5535,24 +5537,24 @@
                 hash = parseHash(source);
             }
             const hashParam = hash ? {
-                h : hash
+                h: hash
             } : {};
 
             // If the owner has a pro or premium account then we can hide controls etc
             if (premium) {
                 Object.assign(frameParams, {
-                    controls : false,
-                    sidedock : false
+                    controls: false,
+                    sidedock: false
                 });
             }
 
             // Get Vimeo params for the iframe
             const params = buildUrlParams({
-                loop        : player.config.loop.active,
-                autoplay    : player.autoplay,
-                muted       : player.muted,
-                gesture     : 'media',
-                playsinline : player.config.playsinline,
+                loop: player.config.loop.active,
+                autoplay: player.autoplay,
+                muted: player.muted,
+                gesture: 'media',
+                playsinline: player.config.playsinline,
                 // hash has to be added to iframe-URL
                 ...hashParam,
                 ...frameParams
@@ -5576,8 +5578,8 @@
                 player.media = replaceElement(iframe, player.media);
             } else {
                 const wrapper = createElement('div', {
-                    class         : player.config.classNames.embedContainer,
-                    'data-poster' : player.poster
+                    class: player.config.classNames.embedContainer,
+                    'data-poster': player.poster
                 });
                 wrapper.appendChild(iframe);
                 player.media = replaceElement(wrapper, player.media);
@@ -5599,8 +5601,8 @@
             // Setup instance
             // https://github.com/vimeo/player.js
             player.embed = new window.Vimeo.Player(iframe, {
-                autopause : player.config.autopause,
-                muted     : player.muted
+                autopause: player.config.autopause,
+                muted: player.muted
             });
             player.media.paused = true;
             player.media.currentTime = 0;
@@ -5970,7 +5972,7 @@
             // Replace media element
             const container = createElement('div', {
                 id,
-                'data-poster' : config.customControls ? player.poster : undefined
+                'data-poster': config.customControls ? player.poster : undefined
             });
             player.media = replaceElement(container, player.media);
 
@@ -5995,36 +5997,36 @@
             // https://developers.google.com/youtube/iframe_api_reference
             player.embed = new window.YT.Player(player.media, {
                 videoId,
-                host       : getHost(config),
-                playerVars : extend({}, {
+                host: getHost(config),
+                playerVars: extend({}, {
                     // Autoplay
-                    autoplay        : player.config.autoplay ? 1 : 0,
+                    autoplay: player.config.autoplay ? 1 : 0,
                     // iframe interface language
-                    hl              : player.config.hl,
+                    hl: player.config.hl,
                     // Only show controls if not fully supported or opted out
-                    controls        : player.supported.ui && config.customControls ? 0 : 1,
+                    controls: player.supported.ui && config.customControls ? 0 : 1,
                     // Disable keyboard as we handle it
-                    disablekb       : 1,
+                    disablekb: 1,
                     // Allow iOS inline playback
-                    playsinline     : player.config.playsinline && !player.config.fullscreen.iosNative ? 1 : 0,
+                    playsinline: player.config.playsinline && !player.config.fullscreen.iosNative ? 1 : 0,
                     // Captions are flaky on YouTube
-                    cc_load_policy  : player.captions.active ? 1 : 0,
-                    cc_lang_pref    : player.config.captions.language,
+                    cc_load_policy: player.captions.active ? 1 : 0,
+                    cc_lang_pref: player.config.captions.language,
                     // Tracking for stats
-                    widget_referrer : window ? window.location.href : null
+                    widget_referrer: window ? window.location.href : null
                 }, config),
-                events     : {
+                events: {
                     onError(event) {
                         // YouTube may fire onError twice, so only handle it once
                         if (!player.media.error) {
                             const code = event.data;
                             // Messages copied from https://developers.google.com/youtube/iframe_api_reference#onError
                             const message = {
-                                2   : 'The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.',
-                                5   : 'The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.',
-                                100 : 'The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.',
-                                101 : 'The owner of the requested video does not allow it to be played in embedded players.',
-                                150 : 'The owner of the requested video does not allow it to be played in embedded players.'
+                                2: 'The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks.',
+                                5: 'The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred.',
+                                100: 'The video requested was not found. This error occurs when a video has been removed (for any reason) or has been marked as private.',
+                                101: 'The owner of the requested video does not allow it to be played in embedded players.',
+                                150: 'The owner of the requested video does not allow it to be played in embedded players.'
                             }[code] || 'An unknown error occurred';
                             player.media.error = {
                                 code,
@@ -6262,7 +6264,7 @@
                                 break;
                         }
                         triggerEvent.call(player, player.elements.container, 'statechange', false, {
-                            code : event.data
+                            code: event.data
                         });
                     }
                 }
@@ -6296,7 +6298,7 @@
             if (this.isVideo) {
                 // Create the wrapper div
                 this.elements.wrapper = createElement('div', {
-                    class : this.config.classNames.video
+                    class: this.config.classNames.video
                 });
 
                 // Wrap the video in a container
@@ -6304,7 +6306,7 @@
 
                 // Poster image container
                 this.elements.poster = createElement('div', {
-                    class : this.config.classNames.poster
+                    class: this.config.classNames.poster
                 });
                 this.elements.wrapper.appendChild(this.elements.poster);
             }
@@ -6393,7 +6395,7 @@
             _defineProperty$1(this, "setupIMA", () => {
                 // Create the container for our advertisements
                 this.elements.container = createElement('div', {
-                    class : this.player.config.classNames.ads
+                    class: this.player.config.classNames.ads
                 });
                 this.player.elements.container.appendChild(this.elements.container);
 
@@ -6510,7 +6512,7 @@
                             if (is.element(seekElement)) {
                                 const cuePercentage = 100 / this.player.duration * cuePoint;
                                 const cue = createElement('span', {
-                                    class : this.player.config.classNames.cues
+                                    class: this.player.config.classNames.cues
                                 });
                                 cue.style.left = `${cuePercentage.toString()}%`;
                                 seekElement.appendChild(cue);
@@ -6827,8 +6829,8 @@
             this.playing = false;
             this.initialized = false;
             this.elements = {
-                container        : null,
-                displayContainer : null
+                container: null,
+                displayContainer: null
             };
             this.manager = null;
             this.loader = null;
@@ -6864,13 +6866,13 @@
                 return config.tagUrl;
             }
             const params = {
-                AV_PUBLISHERID : '58c25bb0073ef448b1087ad6',
-                AV_CHANNELID   : '5a0458dc28a06145e4519d21',
-                AV_URL         : window.location.hostname,
-                cb             : Date.now(),
-                AV_WIDTH       : 640,
-                AV_HEIGHT      : 480,
-                AV_CDIM2       : config.publisherId
+                AV_PUBLISHERID: '58c25bb0073ef448b1087ad6',
+                AV_CHANNELID: '5a0458dc28a06145e4519d21',
+                AV_URL: window.location.hostname,
+                cb: Date.now(),
+                AV_WIDTH: 640,
+                AV_HEIGHT: 480,
+                AV_CDIM2: config.publisherId
             };
             const base = 'https://go.aniview.com/api/adserver6/vast/';
             return `${base}?${buildUrlParams(params)}`;
@@ -7021,9 +7023,9 @@
                 return new Promise(resolve => {
                     fetch(url).then(response => {
                         const thumbnail = {
-                            frames    : parseVtt(response),
-                            height    : null,
-                            urlPrefix : ''
+                            frames: parseVtt(response),
+                            height: null,
+                            urlPrefix: ''
                         };
 
                         // If the URLs don't start with '/', then we need to set their relative path to be the location of the VTT file
@@ -7075,7 +7077,7 @@
 
                     // Get marker point for time
                     const point = (_this$player$config$m = this.player.config.markers) === null || _this$player$config$m === void 0 ? void 0 : (_this$player$config$m2 = _this$player$config$m.points) === null || _this$player$config$m2 === void 0 ? void 0 : _this$player$config$m2.find(({
-                                                                                                                                                                                                                                                                                                 time : t
+                                                                                                                                                                                                                                                                                                 time: t
                                                                                                                                                                                                                                                                                              }) => t === Math.round(this.seekTime));
 
                     // Append the point label to the tooltip
@@ -7144,18 +7146,18 @@
             _defineProperty$1(this, "render", () => {
                 // Create HTML element: plyr__preview-thumbnail-container
                 this.elements.thumb.container = createElement('div', {
-                    class : this.player.config.classNames.previewThumbnails.thumbContainer
+                    class: this.player.config.classNames.previewThumbnails.thumbContainer
                 });
 
                 // Wrapper for the image for styling
                 this.elements.thumb.imageContainer = createElement('div', {
-                    class : this.player.config.classNames.previewThumbnails.imageContainer
+                    class: this.player.config.classNames.previewThumbnails.imageContainer
                 });
                 this.elements.thumb.container.appendChild(this.elements.thumb.imageContainer);
 
                 // Create HTML element, parent+span: time text (e.g., 01:32:00)
                 const timeContainer = createElement('div', {
-                    class : this.player.config.classNames.previewThumbnails.timeContainer
+                    class: this.player.config.classNames.previewThumbnails.timeContainer
                 });
                 this.elements.thumb.time = createElement('span', {}, '00:00');
                 timeContainer.appendChild(this.elements.thumb.time);
@@ -7168,7 +7170,7 @@
 
                 // Create HTML element: plyr__preview-scrubbing-container
                 this.elements.scrubbing.container = createElement('div', {
-                    class : this.player.config.classNames.previewThumbnails.scrubbingContainer
+                    class: this.player.config.classNames.previewThumbnails.scrubbingContainer
                 });
                 this.player.elements.wrapper.appendChild(this.elements.scrubbing.container);
             });
@@ -7427,8 +7429,8 @@
                           width,
                           height
                       } = fitRatio(this.thumbAspectRatio, {
-                    width  : this.player.media.clientWidth,
-                    height : this.player.media.clientHeight
+                    width: this.player.media.clientWidth,
+                    height: this.player.media.clientHeight
                 });
                 this.elements.scrubbing.container.style.width = `${width}px`;
                 this.elements.scrubbing.container.style.height = `${height}px`;
@@ -7456,8 +7458,8 @@
             this.mouseDown = false;
             this.loadedImages = [];
             this.elements = {
-                thumb     : {},
-                scrubbing : {}
+                thumb: {},
+                scrubbing: {}
             };
             this.load();
         }
@@ -7486,8 +7488,8 @@
                 const {
                           height
                       } = fitRatio(this.thumbAspectRatio, {
-                    width  : this.player.media.clientWidth,
-                    height : this.player.media.clientHeight
+                    width: this.player.media.clientWidth,
+                    height: this.player.media.clientHeight
                 });
                 return height;
             }
@@ -7518,7 +7520,7 @@
         insertElements(type, attributes) {
             if (is.string(attributes)) {
                 insertElement(type, this.media, {
-                    src : attributes
+                    src: attributes
                 });
             } else if (is.array(attributes)) {
                 attributes.forEach(attribute => {
@@ -7568,9 +7570,9 @@
                     provider,
                     type,
                     // Check for support
-                    supported : support.check(type, provider, this.config.playsinline),
+                    supported: support.check(type, provider, this.config.playsinline),
                     // Create new element
-                    media     : createElement(tagName, attributes)
+                    media: createElement(tagName, attributes)
                 });
 
                 // Inject the new element
@@ -7955,37 +7957,37 @@
 
             // Elements cache
             this.elements = {
-                container  : null,
-                fullscreen : null,
-                captions   : null,
-                buttons    : {},
-                display    : {},
-                progress   : {},
-                inputs     : {},
-                settings   : {
-                    popup   : null,
-                    menu    : null,
-                    panels  : {},
-                    buttons : {}
+                container: null,
+                fullscreen: null,
+                captions: null,
+                buttons: {},
+                display: {},
+                progress: {},
+                inputs: {},
+                settings: {
+                    popup: null,
+                    menu: null,
+                    panels: {},
+                    buttons: {}
                 }
             };
 
             // Captions
             this.captions = {
-                active       : null,
-                currentTrack : -1,
-                meta         : new WeakMap()
+                active: null,
+                currentTrack: -1,
+                meta: new WeakMap()
             };
 
             // Fullscreen
             this.fullscreen = {
-                active : false
+                active: false
             };
 
             // Options
             this.options = {
-                speed   : [],
-                quality : []
+                speed: [],
+                quality: []
             };
 
             // Debugging
@@ -8436,8 +8438,8 @@
 
             // Clamp to min/max
             const {
-                      minimumSpeed : min,
-                      maximumSpeed : max
+                      minimumSpeed: min,
+                      maximumSpeed: max
                   } = this;
             speed = clamp(speed, min, max);
 

@@ -326,10 +326,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                     if (height < maxHeight) {
                         var ratio = (progress._internal_resize__height / progress._internal_resize__width) * 100;
-                        $supervideo_area_embed.css({
-                            paddingBottom : `${ratio}%`,
-                            width         : "100%",
-                        });
+                        if (ratio > 10) {
+                            $supervideo_area_embed.css({
+                                paddingBottom: `${ratio}%`,
+                                width: "100%",
+                            });
+                        }
                     } else {
                         // var newWidth = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
                         $supervideo_area_embed.css({
@@ -337,7 +339,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                             // margin        : "0 auto",
                             height        : maxHeight,
                             maxHeight     : maxHeight,
-                            paddingBottom : "0",
+                            paddingBottom : "56.25%",
                         });
                     }
                 }
