@@ -36,7 +36,7 @@ class repository {
      * @param int $page
      * @param int $perpage
      * @param string $pathid
-     * @param string $searchTitle
+     * @param string $searchtitle
      * @param array $extensions
      *
      * @return \stdClass
@@ -44,13 +44,13 @@ class repository {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function listing($page, $perpage, $pathid, $searchTitle, $extensions) {
+    public static function listing($page, $perpage, $pathid, $searchtitle, $extensions) {
         global $SESSION, $USER;
 
         $params = [
             "page" => $page,
             "perpage" => $perpage,
-            "search-title" => $searchTitle,
+            "search-title" => $searchtitle,
             "path_id" => $pathid,
             "extensions" => implode(",", $extensions),
             "return-folders" => 1,
