@@ -185,7 +185,7 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
  */
 function supervideo_youtube_size($supervideo, $save = false) {
 
-    if($supervideo->origem != "youtube") {
+    if ($supervideo->origem != "youtube") {
         return $supervideo->playersize;
     }
 

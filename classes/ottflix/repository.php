@@ -35,7 +35,7 @@ class repository {
      *
      * @param int $page
      * @param int $perpage
-     * @param string $path_id
+     * @param string $pathid
      * @param string $searchTitle
      * @param array $extensions
      *
@@ -44,14 +44,14 @@ class repository {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function listing($page, $perpage, $path_id, $searchTitle, $extensions) {
+    public static function listing($page, $perpage, $pathid, $searchTitle, $extensions) {
         global $SESSION, $USER;
 
         $params = [
             "page" => $page,
             "perpage" => $perpage,
             "search-title" => $searchTitle,
-            "path_id" => $path_id,
+            "path_id" => $pathid,
             "extensions" => implode(",", $extensions),
             "return-folders" => 1,
             "lang" => isset($SESSION->lang) ? $SESSION->lang : $USER->lang,
@@ -83,11 +83,14 @@ class repository {
             "enrollment" => $cmid,
             "student_name" => fullname($USER),
             "student_email" => $USER->email,
-            "safetyplayer" => $safetyplayer
+            "safetyplayer" => $safetyplayer,
         ];
 
         $baseurl = "api/v1/assets/{$identifier}/player/";
-        return self::load_ottfilx($baseurl, $payload);
+        $html = self::load_ottfilx($baseurl, $payload);
+
+
+        return htmlentities($html);
     }
 
     /**
@@ -112,6 +115,7 @@ class repository {
      * @param array $params
      *
      * @return bool|mixed
+     *
      * @throws \dml_exception
      * @throws \coding_exception
      */
@@ -134,8 +138,12 @@ class repository {
         return false;
     }
 
+    /**
+     * Function is_enable
+     *
+     * @return bool
+     */
     public static function is_enable() {
         return isset($config->ottflix_url[10]) && isset($config->ottflix_token[10]);
     }
 }
-

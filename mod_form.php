@@ -102,7 +102,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $filemanageroptions = [
                 "accepted_types" => [".mp3", ".mp4", ".webm", ".m4v", ".mov", ".aac", ".m4a"],
                 "maxbytes" => -1,
-                //"maxfiles" => 1,
+                // Retornar "maxfiles" => 1,.
             ];
             $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
             $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
