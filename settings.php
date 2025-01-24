@@ -58,4 +58,20 @@ if ($ADMIN->fulltree) {
     $description = get_string('maxwidth_desc', 'mod_supervideo');
     $settings->add(new admin_setting_configtext('supervideo/maxwidth',
         $title, $description, 0, PARAM_INT));
+
+
+    $title = get_string('ottflix_title', 'mod_supervideo');
+    $description = "";
+    $settings->add(new admin_setting_heading('supervideo/ottflix', $title, $description));
+
+    // OttFlix.
+    $title = get_string('ottflix_url', 'mod_supervideo');
+        $description = get_string('ottflix_url_desc', 'mod_supervideo');
+    $settings->add(new admin_setting_configtext('supervideo/ottflix_url',
+        $title, $description, "https://app.ottflix.com.br/", PARAM_URL));
+
+    $title = get_string('ottflix_token', 'mod_supervideo');
+    $description = get_string('ottflix_token_desc', 'mod_supervideo');
+    $settings->add(new admin_setting_configtext('supervideo/ottflix_token',
+        $title, $description, "HMAC-SHA2048-xxxxxxxx", PARAM_TEXT));
 }
