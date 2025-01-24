@@ -87,10 +87,7 @@ class repository {
         ];
 
         $baseurl = "api/v1/assets/{$identifier}/player/";
-        $html = self::load_ottfilx($baseurl, $payload);
-
-
-        return htmlentities($html);
+        return self::load_ottfilx($baseurl, $payload);
     }
 
     /**
