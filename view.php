@@ -322,7 +322,7 @@ if ($supervideo->videourl) {
     }
 
     if (!(isset($USER->editing) && $USER->editing)) {
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "secondary_navigation");
+        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "secondary_navigation", [$course->id]);
     }
 
 } else {

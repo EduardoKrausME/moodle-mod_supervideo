@@ -505,13 +505,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             $("body").removeClass("distraction-free-mode");
         },
 
-        secondary_navigation : function() {
+        secondary_navigation : function(course_id) {
             var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
             $("#page-header").after(newHeader);
 
-            var $back = $("#page-header #page-navbar .crumbs li:first-child a, #page-header #page-navbar .breadcrumb li:first-child a");
-            $back.addClass("back-icon");
-            newHeader.append($back.clone());
+            var back = `<a href="${M.cfg.wwwroot}/course/view.php?id=${course_id}" class="back-icon"></a>`;
+            newHeader.append(back);
 
             var $icon = $(".activityiconcontainer.content");
             $icon.addClass("activityiconcontainer-icon");
