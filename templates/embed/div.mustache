@@ -16,7 +16,7 @@
 }}
 
 {{!
-    @template mod_supervideo/embed/ottflix
+    @template mod_supervideo/embed/div
 
     Example context (json):
     {
@@ -25,8 +25,9 @@
     }
 }}
 
-<iframe id="ottflix-iframe-{{{identifier}}}"
-        frameborder="0" allowfullscreen
-        sandbox="allow-scripts allow-same-origin allow-popups"
-        allow=":encrypted-media; :picture-in-picture"
-        src="https://app.ottflix.com.br/Share/player/{{{identifier}}}?source=mod_supervideo"></iframe>
+<div id="{{elementid}}"
+     data-videourl="{{{videourl}}}"
+     data-autoplay="{{{autoplay}}}"
+     data-showcontrols="{{{showcontrols}}}"
+     data-controls="{{{controls}}}"
+     data-speed="{{{speed}}}"></div>

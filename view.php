@@ -119,36 +119,7 @@ if ($supervideo->videourl) {
     $uniqueid = uniqid();
     $elementid = "{$supervideo->origem}-{$uniqueid}";
 
-    if ($supervideo->origem == "link") {
-
-        $controls = $supervideo->showcontrols ? "controls" : "";
-        $autoplay = $supervideo->autoplay ? "autoplay" : "";
-
-        echo "<div id='{$elementid}'></div>";
-        if (preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output)) {
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                $supervideo->videourl,
-                $supervideo->autoplay ? true : false,
-                $supervideo->showcontrols ? true : false,
-            ]);
-        } else {
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                $supervideo->videourl,
-                $supervideo->autoplay ? 1 : 0,
-                $supervideo->showcontrols ? true : false,
-            ]);
-        }
-        $showerrors = true;
-    }
     if ($supervideo->origem == "ottflix") {
-        echo "<div id='{$elementid}'></div>";
-
         $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
             (int)$supervideoview->id,
             $supervideoview->currenttime,
@@ -167,6 +138,31 @@ if ($supervideo->videourl) {
             $config->showmapa = false;
         }
     }
+    if ($supervideo->origem == "link") {
+        $mustachedata = [
+            "elementid" => $elementid,
+            "videourl" => $supervideo->videourl,
+            "autoplay" => $supervideo->autoplay ? 1 : 0,
+            "showcontrols" => $supervideo->showcontrols ? 1 : 0,
+            "controls" => $config->controls,
+            "speed" => $config->speed,
+        ];
+        echo $OUTPUT->render_from_template("mod_supervideo/embed/div", $mustachedata);
+        if (preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output)) {
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+            ]);
+        } else {
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+            ]);
+        }
+        $showerrors = true;
+    }
     if ($supervideo->origem == "upload") {
         $files = supervideo_get_area_files($context->id);
         $file = reset($files);
@@ -180,33 +176,28 @@ if ($supervideo->videourl) {
             ]);
             $fullurl = moodle_url::make_file_url("/pluginfile.php", $path, false)->out();
 
-            $embedparameters = implode(" ", [
-                $supervideo->showcontrols ? "controls" : "",
-                $supervideo->autoplay ? "autoplay" : "",
-            ]);
+            $mustachedata = [
+                "elementid" => $elementid,
+                "videourl" => $fullurl,
+                "autoplay" => $supervideo->autoplay ? 1 : 0,
+                "showcontrols" => $supervideo->showcontrols ? 1 : 0,
+                "controls" => $config->controls,
+                "speed" => $config->speed,
+            ];
+            echo $OUTPUT->render_from_template("mod_supervideo/embed/div", $mustachedata);
 
             $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
             if ($extension == "mp3" || $extension == "aac" || $extension == "m4a") {
-                echo "<div id='{$elementid}'></div>";
-
                 $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     $elementid,
-                    $fullurl,
-                    $supervideo->autoplay ? true : false,
-                    $supervideo->showcontrols ? true : false,
                 ]);
             } else {
-                echo "<div id='{$elementid}'></div>";
-
                 $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
                     (int)$supervideoview->id,
                     $supervideoview->currenttime,
                     $elementid,
-                    $fullurl,
-                    $supervideo->autoplay ? true : false,
-                    $supervideo->showcontrols ? true : false,
                 ]);
             }
             $showerrors = true;
@@ -219,7 +210,7 @@ if ($supervideo->videourl) {
     }
     if ($supervideo->origem == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
-        echo "<div id='{$elementid}'></div>";
+        echo $OUTPUT->render_from_template("mod_supervideo/embed/div", ["elementid" => $elementid]);
 
         if (!isset($supervideo->playersize[3])) {
             $supervideo->playersize = supervideo_youtube_size($supervideo, true);

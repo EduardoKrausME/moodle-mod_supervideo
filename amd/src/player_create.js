@@ -16,7 +16,7 @@
 define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
     var progress = {
 
-        ottflix : function(view_id, start_currenttime, elementId, videoid) {
+        ottflix: function(view_id, start_currenttime, elementId, videoid) {
             window.addEventListener('', function receiveMessage(event) {
                 if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
                     progress._internal_saveprogress(event.data.currentTime, event.data.duration);
@@ -25,25 +25,25 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             });
         },
 
-        youtube : function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
+        youtube: function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
             progress._internal_view_id = view_id;
 
             var playerVars = {
-                rel         : 0,
-                controls    : showcontrols,
-                autoplay    : autoplay,
-                playsinline : 1,
-                start       : start_currenttime ? start_currenttime : 0,
+                rel: 0,
+                controls: showcontrols,
+                autoplay: autoplay,
+                playsinline: 1,
+                start: start_currenttime ? start_currenttime : 0,
             };
 
             if (YT && YT.Player) {
                 var player = new YT.Player(elementId, {
-                    suggestedQuality : 'large',
-                    videoId          : videoid,
-                    width            : '100%',
-                    playerVars       : playerVars,
-                    events           : {
-                        'onReady'       : function(event) {
+                    suggestedQuality: 'large',
+                    videoId: videoid,
+                    width: '100%',
+                    playerVars: playerVars,
+                    events: {
+                        'onReady': function(event) {
 
                             var sizes = playersize.split("x");
                             if (sizes && sizes[1]) {
@@ -56,7 +56,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                                 player.seekTo(event.detail.goCurrentTime);
                             });
                         },
-                        'onStateChange' : function(event) {
+                        'onStateChange': function(event) {
                             console.log(event);
                         }
                     }
@@ -77,10 +77,17 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 150);
         },
 
-        resource_audio : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
+        resource_audio: function(view_id, start_currenttime, elementId) {
             $("body").removeClass("distraction-free-mode");
 
             progress._internal_view_id = view_id;
+
+            var $element = $(`#${elementId}`);
+            var fullurl = $element.attr("data-videourl");
+            var autoplay = $element.attr("data-autoplay");
+            var showcontrols = $element.attr("data-showcontrols");
+            var controls = $element.attr("data-controls");
+            var speed = $element.attr("data-speed");
 
             var embedparameters = "";
             if (showcontrols) {
@@ -91,26 +98,20 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
 
             var embed = `<audio ${embedparameters} crossorigin playsinline id="${elementId}_audio"></audio>`;
-            $(`#${elementId}`).html(embed);
+            $element.html(embed);
             progress._error_load(`${elementId}_audio`);
-            //$(`#${elementId}_audio`).html(`<source src="${fullurl}">`);
             $(`#${elementId}_audio`).attr("src", fullurl);
 
             var config = {
-                controls :
-                    showcontrols ? [
-                        'play', 'progress', 'current-time', 'mute', 'volume', 'pip', 'airplay', 'duration'
-                    ] : [
-                        'play'
-                    ],
-                tooltips : {controls : showcontrols, seek : showcontrols},
-                settings : ['speed', 'loop'],
-                autoplay : autoplay ? true : false,
-                storage  : {enabled : true, key : "id-" + view_id},
-                speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
-                seekTime : parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                controls: controls.split(","),
+                tooltips: {controls: showcontrols, seek: showcontrols},
+                settings: ['speed', 'loop'],
+                autoplay: !!autoplay,
+                storage: {enabled: true, key: "id-" + view_id},
+                speed: {selected: speed.length > 3, options: speed.split(",")},
+                seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
             };
-            var player = new PlayerRender("#" + elementId + " audio", config);
+            var player = new PlayerRender(`#${elementId} audio`, config);
             player.on("ready", function() {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
@@ -133,8 +134,15 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 200);
         },
 
-        resource_video : function(view_id, start_currenttime, elementId, fullurl, autoplay, showcontrols) {
+        resource_video: function(view_id, start_currenttime, elementId) {
             progress._internal_view_id = view_id;
+
+            var $element = $(`#${elementId}`);
+            var fullurl = $element.attr("data-videourl");
+            var autoplay = $element.attr("data-autoplay");
+            var showcontrols = $element.attr("data-showcontrols");
+            var controls = $element.attr("data-controls");
+            var speed = $element.attr("data-speed");
 
             var embedparameters = "";
             if (showcontrols) {
@@ -144,28 +152,20 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 embedparameters += "autoplay ";
             }
 
-            var embed = `<video ${embedparameters} crossorigin playsinline id="${elementId}_video"></video>`;
-            $(`#${elementId}`).html(embed);
+            $element.html(`<video ${embedparameters} crossorigin playsinline id="${elementId}_video"></video>`);
             progress._error_load(`${elementId}_video`);
-            // $(`#${elementId}_video`).html(`<source src="${fullurl}">`);
             $(`#${elementId}_video`).attr("src", fullurl);
 
             var config = {
-                controls :
-                    showcontrols ? [
-                        'play-large', 'play', 'current-time', 'progress', 'duration', 'mute', 'volume',
-                        'settings', 'pip', 'airplay', 'fullscreen'
-                    ] : [
-                        'play-large', 'play'
-                    ],
-                tooltips : {controls : showcontrols, seek : showcontrols},
-                settings : ['speed', 'loop'],
-                storage  : {enabled : true, key : "id-" + view_id},
-                speed    : {selected : 1, options : [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 4]},
-                // autoplay : autoplay ? 1 : 0,
-                seekTime : parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                controls: controls.split(","),
+                autoplay: !!autoplay,
+                tooltips: {controls: showcontrols, seek: showcontrols},
+                settings: ['speed', 'loop'],
+                storage: {enabled: true, key: "id-" + view_id},
+                speed: {selected: speed.length > 3, options: speed.split(",")},
+                seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
             };
-            var player = new PlayerRender("#" + elementId + " video", config);
+            var player = new PlayerRender(`#${elementId} video`, config);
 
             player.on("ready", function() {
                 if (start_currenttime) {
@@ -195,7 +195,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 200);
         },
 
-        vimeo : function(view_id, start_currenttime, vimeoid, elementId) {
+        vimeo: function(view_id, start_currenttime, vimeoid, elementId) {
             progress._internal_view_id = view_id;
 
             var iframe = document.getElementById(elementId);
@@ -231,7 +231,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }, 300);
         },
 
-        drive : function(view_id, elementId, playersize) {
+        drive: function(view_id, elementId, playersize) {
             $("#mapa-visualizacao").hide();
 
             progress._internal_view_id = view_id;
@@ -248,7 +248,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
         },
 
-        _error_load : function(elementId) {
+        _error_load: function(elementId) {
             function errorF(e) {
                 $(`#${elementId}, #mapa-visualizacao`).hide();
                 //$("body").removeClass("distraction-free-mode");
@@ -276,9 +276,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             videoElem.addEventListener("error", errorF);
         },
 
-        _internal_resize__width  : 0,
-        _internal_resize__height : 0,
-        _internal_resize         : function(width, height) {
+        _internal_resize__width: 0,
+        _internal_resize__height: 0,
+        _internal_resize: function(width, height) {
             progress._internal_resize__width = width;
             progress._internal_resize__height = height;
 
@@ -286,15 +286,15 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             progress._internal_max_height__resizePage();
         },
 
-        _internal_max_height__resizePage : function() {
+        _internal_max_height__resizePage: function() {
 
             var windowHeight = $(window).height();
             if ($("body").hasClass("distraction-free-mode")) {
                 var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
 
                 $supervideoArea.css({
-                    "max-height" : "inherit",
-                    "height"     : "inherit",
+                    "max-height": "inherit",
+                    "height": "inherit",
                 });
 
                 var removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
@@ -310,11 +310,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
                 var playerMaxHeight = windowHeight - removeHeight;
                 $("#supervideo_area_embed").css({
-                    "max-height" : playerMaxHeight,
+                    "max-height": playerMaxHeight,
                 });
                 $supervideoArea.css({
-                    "max-height" : playerMaxHeight,
-                    "height"     : playerMaxHeight,
+                    "max-height": playerMaxHeight,
+                    "height": playerMaxHeight,
                 });
             } else {
                 if (document.querySelector("#supervideo_area_embed iframe")) {
@@ -337,22 +337,22 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                         $supervideo_area_embed.css({
                             // width         : newWidth,
                             // margin        : "0 auto",
-                            height        : maxHeight,
-                            maxHeight     : maxHeight,
-                            paddingBottom : "56.25%",
+                            height: maxHeight,
+                            maxHeight: maxHeight,
+                            paddingBottom: "56.25%",
                         });
                     }
                 }
             }
         },
 
-        _internal_last_posicao_video : -1,
-        _internal_last_percent       : -1,
-        _internal_assistido          : [],
-        _internal_view_id            : 0,
-        _internal_progress_length    : 100,
-        _internal_sizenum            : -1,
-        _internal_saveprogress       : function(currenttime, duration) {
+        _internal_last_posicao_video: -1,
+        _internal_last_percent: -1,
+        _internal_assistido: [],
+        _internal_view_id: 0,
+        _internal_progress_length: 100,
+        _internal_sizenum: -1,
+        _internal_saveprogress: function(currenttime, duration) {
 
             currenttime = Math.floor(currenttime);
             duration = Math.floor(duration);
@@ -382,7 +382,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             for (var j = 1; j <= progress._internal_progress_length; j++) {
                 if (progress._internal_assistido[j]) {
                     percent++;
-                    $("#mapa-visualizacao-" + j).css({opacity : 1});
+                    $("#mapa-visualizacao-" + j).css({opacity: 1});
                 }
             }
 
@@ -425,13 +425,13 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             if (currenttime) {
                 Ajax.call([{
-                    methodname : 'mod_supervideo_progress_save',
-                    args       : {
-                        view_id     : progress._internal_view_id,
-                        currenttime : parseInt(currenttime),
-                        duration    : parseInt(duration),
-                        percent     : parseInt(percent),
-                        mapa        : JSON.stringify(progress._internal_assistido)
+                    methodname: 'mod_supervideo_progress_save',
+                    args: {
+                        view_id: progress._internal_view_id,
+                        currenttime: parseInt(currenttime),
+                        duration: parseInt(duration),
+                        percent: parseInt(percent),
+                        mapa: JSON.stringify(progress._internal_assistido)
                     }
                 }]);
             }
@@ -441,7 +441,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             }
         },
 
-        _internal_progress_create : function(duration) {
+        _internal_progress_create: function(duration) {
 
             var $mapa = $("#mapa-visualizacao .mapa");
             if (!$mapa.length) {
@@ -490,22 +490,22 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                                 _setCurrentTime = parseInt(_setCurrentTime);
 
                                 var event = document.createEvent('CustomEvent');
-                                event.initCustomEvent('setCurrentTime', true, true, {goCurrentTime : _setCurrentTime});
+                                event.initCustomEvent('setCurrentTime', true, true, {goCurrentTime: _setCurrentTime});
                                 document.dispatchEvent(event);
                             });
                 $("#mapa-visualizacao .clique").append($mapa_clique);
             }
         },
 
-        _internal_add : function(accumulator, a) {
+        _internal_add: function(accumulator, a) {
             return accumulator + a;
         },
 
-        error_idnotfound : function() {
+        error_idnotfound: function() {
             $("body").removeClass("distraction-free-mode");
         },
 
-        secondary_navigation : function(course_id) {
+        secondary_navigation: function(course_id) {
             var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
             $("#page-header").after(newHeader);
 
