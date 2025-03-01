@@ -24,40 +24,40 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(__DIR__ . '/../../config.php');
-require_once(__DIR__ . '/../../lib/filelib.php');
-require_once(__DIR__ . '/../../repository/lib.php');
+require_once(__DIR__ . "/../../config.php");
+require_once(__DIR__ . "/../../lib/filelib.php");
+require_once(__DIR__ . "/../../repository/lib.php");
 
 // Parameters.
-$action = required_param('action', PARAM_ALPHA);
-$saveasfilename = optional_param('title', '', PARAM_FILE);     // Save as file name.
+$action = required_param("action", PARAM_ALPHA);
+$saveasfilename = optional_param("title", "", PARAM_FILE);     // Save as file name.
 
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 require_login();
 
 if (empty($_POST) && !empty($action)) {
-    $err = (object)["error" => get_string('errorpostmaxsize', 'repository')];
+    $err = (object)["error" => get_string("errorpostmaxsize", "repository")];
     die(json_encode($err));
 }
 
 ajax_capture_output();
-$repouser = $DB->get_record('repository', ['type' => 'upload']);
+$repouser = $DB->get_record("repository", ["type" => "upload"]);
 /** @var repository_upload $repo */
-$repo = repository::get_repository_by_id($repouser->id, $context->id, ['ajax' => true, 'mimetypes' => '*']);
+$repo = repository::get_repository_by_id($repouser->id, $context->id, ["ajax" => true, "mimetypes" => "*"]);
 
 switch ($action) {
-    case 'upload':
+    case "upload":
         $result = $repo->upload($saveasfilename, -1);
         echo json_encode($result);
         break;
-    case 'list':
+    case "list":
 
         $itemid = optional_param("itemid", 0, PARAM_INT);
 
         $fs = get_file_storage();
         $draftcontext = context_user::instance($USER->id);
-        $files = $fs->get_area_files($context->id, 'user', 'draft', $itemid);
+        $files = $fs->get_area_files($context->id, "user", "draft", $itemid);
 
         $returnfiles = [];
         /** @var stored_file $file */
@@ -72,16 +72,16 @@ switch ($action) {
                 $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
                 $icon = false;
                 switch ($extension) {
-                    case 'doc':
-                    case 'docx':
+                    case "doc":
+                    case "docx":
                         $icon = "{$CFG->wwwroot}/mod/supervideo/vendor/kapture/img/icons/types/docx_icon.svg";
                         break;
-                    case 'xls':
-                    case 'xlsx':
+                    case "xls":
+                    case "xlsx":
                         $icon = "{$CFG->wwwroot}/mod/supervideo/vendor/kapture/img/icons/types/xlsx_icon.svg";
                         break;
-                    case 'ppt':
-                    case 'pptx':
+                    case "ppt":
+                    case "pptx":
                         $icon = "{$CFG->wwwroot}/mod/supervideo/vendor/kapture/img/icons/types/pptx_icon.svg";
                         break;
                 }
@@ -91,12 +91,12 @@ switch ($action) {
                         "filename" => $file->get_filename(),
                         "titulo" => $file->get_filename(),
                         "image" => $icon,
-                        "file" => moodle_url::make_file_url('/pluginfile.php', $path, false)->out(),
+                        "file" => moodle_url::make_file_url("/pluginfile.php", $path, false)->out(),
                     ];
                 }
             }
         }
 
-        echo json_encode(['slides' => $returnfiles]);
+        echo json_encode(["slides" => $returnfiles]);
         break;
 }
