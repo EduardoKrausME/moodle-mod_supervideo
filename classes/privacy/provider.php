@@ -113,7 +113,7 @@ class provider implements
 
         $sql = "SELECT svv.user_id
                   FROM {course_modules} cm
-                  JOIN {modules} m ON m.id = cm.module AND
+                  JOIN {modules} m ON m.id = cm.module
                   JOIN {supervideo_view} svv ON svv.cm_id = cm.id
                  WHERE cm.id = :instanceid
                    AND m.name = 'supervideo'";
