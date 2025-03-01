@@ -187,7 +187,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $course = $this->optional_param("course", 0, PARAM_INT);
             $section = $this->optional_param("section", false, PARAM_INT);
             if ($course && $section !== false) {
-                $courseinfo = "course={$course}&section={$section}&sesskey=" . sesskey();
+                $courseinfo = "course={$course}&section={$section}&token=" . sesskey();
             }
         }
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");

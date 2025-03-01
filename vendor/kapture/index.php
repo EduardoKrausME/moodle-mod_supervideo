@@ -11,20 +11,8 @@ require_once "config-kapture.php";
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=40"></script>
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="all.min.js?build=42"></script>
 </head>
 <body>
 
@@ -37,7 +25,8 @@ require_once "config-kapture.php";
     <input type="hidden" id="identificador" value="<?php echo @$_GET['identificador'] ?>">
     <input type="hidden" id="course" value="<?php echo @$_GET['course'] ?>">
     <input type="hidden" id="section" value="<?php echo @$_GET['section'] ?>">
-    <input type="hidden" id="sesskey" value="<?php echo @$_GET['sesskey'] ?>">
+    <input type="hidden" id="token" value="<?php echo @$_GET['token'] ?>">
+    <input type="hidden" id="webhooks" value="<?php echo @$_GET['webhooks'] ?>">
 
     <img class="logo" src="<?php echo $logo ?>" alt="<?php echo kapture_get_string("logo_title"); ?>"
          title="<?php echo kapture_get_string("logo_title"); ?>">

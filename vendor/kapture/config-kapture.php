@@ -2,7 +2,7 @@
 
 $strings = [
     "destino"                     => "ottflix", // "ottflix"   "supervideo"
-    "app_title"                   => 'OttFlix Kapture',
+    "app_title"                   => 'OTTFlix Kapture',
     "logo_title"                  => 'Logo',
     "selecionar_slide"            => 'Selecionar Slide',
     "layout_cam"                  => 'Layout Cam',
