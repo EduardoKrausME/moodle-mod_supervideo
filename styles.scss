@@ -45,7 +45,7 @@ body:not(.distraction-free-mode) {
         position: relative;
         z-index: 1;
         width: 100% !important;
-        padding-bottom: 56.25%;
+        //padding-bottom: 56.25%;
         overflow: hidden !important;
         .logo {
             position: absolute;
@@ -258,7 +258,7 @@ body:not(.distraction-free-mode) {
             }
             .nav-link {
                 white-space: nowrap;
-                color: #eceff8;
+                color: #eceff8 !important;
                 padding: 7px;
                 &.active {
                     display: none;
@@ -310,23 +310,43 @@ body:not(.distraction-free-mode) {
         z-index: 99999;
         top: 61px !important;
     }
+    .container {
+        max-width: 100%;
+        width: 100%;
+        height: calc(100% - 55px + 16px); // 55=header, 16=pb-3
+        #page-content,
+        #region-main-box,
+        .row {
+            height: 100%;
+        }
+    }
     #page-content {
         #region-main-box {
+            .section-courseindex {
+                display: none;
+            }
             #region-main {
                 background: transparent !important;
+                flex: 0 0 100%;
+                max-width: 100%;
+                width: 100%;
                 #id-activity-header {
                     background-color: rgba(57, 63, 70, 0.17);
+                }
+                .image-top-course {
+                    display: none;
                 }
             }
         }
     }
     .activity-navigation {
         &.mt-5, &.mb-1 {
-            margin-top: 0 !important;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            margin-top: 6px !important;
+            margin-bottom: 0 !important;
+            //position: absolute;
+            //bottom: 0;
+            //left: 0;
+            //right: 0;
         }
         #jump-to-activity.custom-select {
             z-index: 9;
@@ -344,5 +364,9 @@ body:not(.distraction-free-mode) {
     }
     .plyr__controls {
         border-radius: 0 0 12px 12px;
+    }
+    #geniai-chat,
+    #mic-init-access-tool {
+        display: none !important;
     }
 }
