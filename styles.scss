@@ -241,7 +241,7 @@ body:not(.distraction-free-mode) {
             height: 44px;
         }
         h1 {
-            color: #eceff8;
+            color: #eceff8 !important;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -330,6 +330,7 @@ body:not(.distraction-free-mode) {
                 flex: 0 0 100%;
                 max-width: 100%;
                 width: 100%;
+                padding: 0 !important;
                 #id-activity-header {
                     background-color: rgba(57, 63, 70, 0.17);
                 }
@@ -368,5 +369,20 @@ body:not(.distraction-free-mode) {
     #geniai-chat,
     #mic-init-access-tool {
         display: none !important;
+    }
+    &.support-trema {
+        &.format-topics:not(#page-course-view-topics) #page-content:before,
+        &.pagelayout-incourse #page-content:before {
+            display: none;
+        }
+        &.format-topics:not(#page-course-view-topics) #page-content:after,
+        &.pagelayout-incourse #page-content:after {
+            display: none;
+        }
+        #page #page-content {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+        }
     }
 }

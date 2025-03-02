@@ -1408,7 +1408,7 @@ a.plyr__control {
     height: 44px;
 }
 .distraction-free-mode #distraction-free-mode-header h1 {
-    color: #eceff8;
+    color: #eceff8 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1494,6 +1494,7 @@ a.plyr__control {
     flex: 0 0 100%;
     max-width: 100%;
     width: 100%;
+    padding: 0 !important;
 }
 .distraction-free-mode #page-content #region-main-box #region-main #id-activity-header {
     background-color: rgba(57, 63, 70, 0.17);
@@ -1524,4 +1525,15 @@ a.plyr__control {
 .distraction-free-mode #geniai-chat,
 .distraction-free-mode #mic-init-access-tool {
     display: none !important;
+}
+.distraction-free-mode.support-trema.format-topics:not(#page-course-view-topics) #page-content:before, .distraction-free-mode.support-trema.pagelayout-incourse #page-content:before {
+    display: none;
+}
+.distraction-free-mode.support-trema.format-topics:not(#page-course-view-topics) #page-content:after, .distraction-free-mode.support-trema.pagelayout-incourse #page-content:after {
+    display: none;
+}
+.distraction-free-mode.support-trema #page #page-content {
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
 }
