@@ -16,22 +16,21 @@
 }}
 
 {{!
-    @template mod_supervideo/embed/div
+    @template mod_supervideo/embed_vimeo
 
     Example context (json):
     {
-      "elementid": "videoPlayer1",
-      "videourl": "https://example.com/video.mp4",
-      "autoplay": true,
-      "showcontrols": false,
-      "controls": "plat,pause",
-      "speed": "1,1.5"
+        "html_id": "id_123",
+        "vimeo_id": "12345abcde",
+        "tags": ["class=iframe"]
     }
 }}
 
-<div id="{{elementid}}"
-     data-videourl="{{{videourl}}}"
-     data-autoplay="{{{autoplay}}}"
-     data-showcontrols="{{{showcontrols}}}"
-     data-controls="{{{controls}}}"
-     data-speed="{{{speed}}}"></div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+<iframe id="{{{elementid}}}"
+        style="background: #000;max-height: 687.75px;height: 687.75px;width: 100%;"
+        frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
+        sandbox="allow-scripts allow-forms allow-same-origin allow-modals allow-presentation"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        src="https://player.vimeo.com/video/{{{vimeo_id}}}"></iframe>

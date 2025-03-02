@@ -132,7 +132,7 @@ if ($supervideo->videourl) {
             $data = [
                 "identifier" => $path[1],
             ];
-            echo $OUTPUT->render_from_template("mod_supervideo/embed/ottflix", $data);
+            echo $OUTPUT->render_from_template("mod_supervideo/embed_ottflix", $data);
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error");
             $config->showmapa = false;
@@ -147,7 +147,7 @@ if ($supervideo->videourl) {
             "controls" => $config->controls,
             "speed" => $config->speed,
         ];
-        echo $OUTPUT->render_from_template("mod_supervideo/embed/div", $mustachedata);
+        echo $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
         if (preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output)) {
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
                 (int)$supervideoview->id,
@@ -184,7 +184,7 @@ if ($supervideo->videourl) {
                 "controls" => $config->controls,
                 "speed" => $config->speed,
             ];
-            echo $OUTPUT->render_from_template("mod_supervideo/embed/div", $mustachedata);
+            echo $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
 
             $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
             if ($extension == "mp3" || $extension == "aac" || $extension == "m4a") {
@@ -210,7 +210,7 @@ if ($supervideo->videourl) {
     }
     if ($supervideo->origem == "youtube") {
         echo "<script src='https://www.youtube.com/iframe_api'></script>";
-        echo $OUTPUT->render_from_template("mod_supervideo/embed/div", ["elementid" => $elementid]);
+        echo $OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $elementid]);
 
         if (!isset($supervideo->playersize[3])) {
             $supervideo->playersize = supervideo_youtube_size($supervideo, true);
@@ -244,7 +244,7 @@ if ($supervideo->videourl) {
                 $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
             ]);
 
-            echo $OUTPUT->render_from_template("mod_supervideo/embed/drive", [
+            echo $OUTPUT->render_from_template("mod_supervideo/embed_drive", [
                 "elementid" => $elementid,
                 "driveid" => $output[0],
                 "parametersdrive" => $parametersdrive,
@@ -281,7 +281,7 @@ if ($supervideo->videourl) {
             }
         }
 
-        echo $OUTPUT->render_from_template("mod_supervideo/embed/vimeo", [
+        echo $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", [
             "elementid" => $elementid,
             "vimeo_id" => $url,
             "parametersvimeo" => $parametersvimeo,
