@@ -12,7 +12,7 @@ require_once "config-kapture.php";
 
     <?php kapture_get_string_js() ?>
     <link rel="stylesheet" href="css/style.css">
-    <script type="text/javascript" src="all.min.js?build=42"></script>
+    <script type="text/javascript" src="all.min.js?build=2"></script>
 </head>
 <body>
 
@@ -228,26 +228,8 @@ require_once "config-kapture.php";
             <img src="img/icons/controle/cam.svg" alt="<?php echo kapture_get_string("camera"); ?>"
                  title="<?php echo kapture_get_string("camera"); ?>"></span>
         <h3 class="info-title"><?php echo kapture_get_string("erro_camera_microfone."); ?></h3>
-        <span class="info-text"><?php echo kapture_get_string("entre_contato_suporte_erro"); ?><br>
-            <b><i id="error-allow-video-error"></i></b> </span>
-
-        <div class="controles-device">
-            <div>
-                <label for="select-video">
-                    <img src="img/icons/controle/cam.svg"
-                         alt="<?php echo kapture_get_string("camera"); ?>"
-                         title="<?php echo kapture_get_string("camera"); ?>"></label>
-                <select name="camera" id="select-video"></select>
-            </div>
-            <div>
-                <label for="select-audio">
-                    <img src="img/icons/controle/mic.svg"
-                         alt="<?php echo kapture_get_string("microfone"); ?>"
-                         title="<?php echo kapture_get_string("microfone"); ?>"></label>
-                <select name="microfone" id="select-audio"></select>
-            </div>
-        </div>
-
+        <h4 class="info-text"><?php echo kapture_get_string("entre_contato_suporte_erro"); ?></h4>
+        <div class="error-message"></div>
     </div>
 </div>
 <div id="error-video" class="app-status">
