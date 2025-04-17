@@ -108,7 +108,7 @@ if ($CFG->branch <= 311) {
         2, "main", "supervideoheading");
 }
 
-$extraembedtag = $config->maxwidth > 500 ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
+$extraembedtag = $config->maxwidth ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
 echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 
 $supervideoview = supervideo_view::create($cm->id);
