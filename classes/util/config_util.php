@@ -16,6 +16,8 @@
 
 namespace mod_supervideo\util;
 
+use core\output\notification;
+
 /**
  * Util config_util for mod_supervideo.
  *
@@ -30,9 +32,12 @@ class config_util {
      * @param $supervideo
      *
      * @return mixed
-     * @throws \dml_exception
+     *
+     * @throws \Exception
      */
     public static function get_config($supervideo) {
+        global $CFG;
+
         $config = get_config("supervideo");
 
         if ($config->showcontrols == 2) {
@@ -45,6 +50,21 @@ class config_util {
             $supervideo->autoplay = 0;
         } else if ($config->autoplay == 3) {
             $supervideo->autoplay = 1;
+        }
+
+        $theme = isset($_SESSION["SESSION"]->theme) ? $_SESSION["SESSION"]->theme : $CFG->theme;
+        if ($theme == "moove") {
+            $message = "The theme is not compatible with <em>Distraction-Free Mode</em>. " .
+                "To resolve this incompatibility, you can either choose a compatible theme or disable this setting.";
+            \core\notification::add($message, notification::NOTIFY_ERROR);
+            $config->distractionfreemode = false;
+        } else if ($theme == "adaptable") {
+            $config->distractionfreemode = false;
+        } else if ($theme == "snap") {
+            $config->distractionfreemode = false;
+        } else if ($theme == "trema") {
+            global $PAGE;
+            $PAGE->add_body_class("support-trema");
         }
 
         if ($config->maxwidth >= 500 && !$config->distractionfreemode) {

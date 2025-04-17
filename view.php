@@ -87,28 +87,11 @@ if ($mobile) {
 $config = config_util::get_config($supervideo);
 
 $hasteacher = has_capability("mod/supervideo:addinstance", $context);
-
-$theme = isset($_SESSION["SESSION"]->theme) ? $_SESSION["SESSION"]->theme : $CFG->theme;
-if ($config->distractionfreemode) {
-    if ($theme == "moove") {
-        $message = "The theme is not compatible with <em>Distraction-Free Mode</em>. " .
-            "To resolve this incompatibility, you can either choose a compatible theme or disable this setting.";
-        \core\notification::add($message, notification::NOTIFY_ERROR);
-        $config->distractionfreemode = false;
-    } else if ($theme == "adaptable") {
-        $config->distractionfreemode = false;
-    } else if ($theme == "snap") {
-        $config->distractionfreemode = false;
-    } else if ($theme == "trema") {
-        $PAGE->add_body_class("support-trema");
-    }
-
-    if (!$hasteacher && $config->distractionfreemode) {
-        if (isset($USER->editing) && $USER->editing) {
-            $PAGE->add_body_class("distraction-free-mode--editing");
-        } else {
-            $PAGE->add_body_class("distraction-free-mode");
-        }
+if ($config->distractionfreemode && !$hasteacher) {
+    if (isset($USER->editing) && $USER->editing) {
+        $PAGE->add_body_class("distraction-free-mode--editing");
+    } else {
+        $PAGE->add_body_class("distraction-free-mode");
     }
 }
 
@@ -125,7 +108,7 @@ if ($CFG->branch <= 311) {
         2, "main", "supervideoheading");
 }
 
-$extraembedtag = $config->maxwidth ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
+$extraembedtag = $config->maxwidth > 500 ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
 echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 
 $supervideoview = supervideo_view::create($cm->id);
@@ -387,6 +370,7 @@ if ($supervideo->videourl) {
                 "elementId" => $error,
                 "type" => "danger",
                 "message" => get_string($error, "mod_supervideo"),
+                "extratags" => "style='display:none;'",
             ]);
         }
     }
