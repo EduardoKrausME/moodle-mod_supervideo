@@ -153,7 +153,7 @@ if ($supervideo->videourl) {
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
-                $identifier
+                $identifier,
             ]);
 
             $ai = \mod_supervideo\ottflix\repository::ai($identifier, $supervideo->ottflix_ia);
@@ -197,7 +197,6 @@ if ($supervideo->videourl) {
                             $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
                             $contents .= "
                                 <div id='tab-{$item->id}'>
-                                    <a class='ui-button ui-widget ui-corner-all' href='{$item->link}' target='_blank'>Baixar Legenda</a>
                                     <pre>{$item->html}</pre>
                                 </div>";
                         }
@@ -209,8 +208,6 @@ if ($supervideo->videourl) {
                 <link href='{$ai->data->css}' rel='stylesheet'>
                 {$adminitens}
                 <div id='ottflix-tabs' style='display:none'><ul>{$tabs}</ul>{$contents}</div>";
-
-            // $lastmaps
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
                 "elementId" => "message_notfound",

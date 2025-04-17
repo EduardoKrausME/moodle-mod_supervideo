@@ -148,6 +148,16 @@ class repository {
         return isset($config->ottflix_url[10]) && isset($config->ottflix_token[10]);
     }
 
+    /**
+     * Function ai
+     *
+     * @param $identifier
+     * @param $itens
+     *
+     * @return object
+     *
+     * @throws \Exception
+     */
     public static function ai($identifier, $itens) {
         $baseurl = "api/v1/assets/{$identifier}/ai/{$itens}";
 
