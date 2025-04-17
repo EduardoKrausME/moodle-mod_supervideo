@@ -118,7 +118,11 @@ class repository {
      */
     public static function load_ottfilx($metodth, $params = []) {
         $config = get_config('supervideo');
-        $params = http_build_query($params, '', '&');
+        if (is_array($params)) {
+            $params = http_build_query($params, '', '&');
+        } else if (is_null($params)) {
+            $params = "";
+        }
 
         if (isset($config->ottflix_url[10]) && isset($config->ottflix_token[10])) {
             $curl = new \curl();
@@ -142,5 +146,13 @@ class repository {
      */
     public static function is_enable() {
         return isset($config->ottflix_url[10]) && isset($config->ottflix_token[10]);
+    }
+
+    public static function ai($identifier, $itens) {
+        $baseurl = "api/v1/assets/{$identifier}/ai/{$itens}";
+
+        return json_decode(self::load_ottfilx($baseurl, [
+            "itens" => $itens,
+        ]));
     }
 }

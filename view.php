@@ -87,7 +87,6 @@ if ($mobile) {
 $config = config_util::get_config($supervideo);
 
 $hasteacher = has_capability("mod/supervideo:addinstance", $context);
-$hasteacher = false;
 
 $theme = isset($_SESSION["SESSION"]->theme) ? $_SESSION["SESSION"]->theme : $CFG->theme;
 if ($config->distractionfreemode) {
@@ -131,6 +130,8 @@ echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 
 $supervideoview = supervideo_view::create($cm->id);
 
+$lastmaps = "";
+
 if ($supervideo->videourl) {
     $showerrors = false;
     $uniqueid = uniqid();
@@ -144,14 +145,78 @@ if ($supervideo->videourl) {
             $supervideo->videourl,
         ]);
 
-        if (preg_match("/\/\w+\/\w+\/([A-Z0-9\-\_]{3,255})/", $supervideo->videourl, $path)) {
-            $url->videoid = $path[1];
-            $data = [
-                "identifier" => $path[1],
-            ];
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_ottflix", $data);
+        if (preg_match("/([A-Z0-9\-\_]{3,255})/", $supervideo->videourl, $path)) {
+            $identifier = $path[1];
+
+            echo \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+                $identifier
+            ]);
+
+            $ai = \mod_supervideo\ottflix\repository::ai($identifier, $supervideo->ottflix_ia);
+            $tabs = "";
+            $contents = "";
+            $adminitens = "";
+
+            // Criação das abas.
+            foreach ($ai->data->itens as $item) {
+                switch ($item->id) {
+                    case 'admin':
+                        if ($hasteacher) {
+                            $adminitens .= "
+                                <div>
+                                    <a href='{$item->link_admin}' target='_blank'>{$item->title}</a>
+                                </div>";
+                        }
+                        break;
+                    case 'book':
+                        $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                        $contents .= "
+                            <div id='tab-{$item->id}'>
+                                <iframe src='{$item->html_iframe}' width='100%' height='600px' style='border:none;'></iframe>
+                            </div>";
+                        break;
+                    case 'glossary':
+                    case 'quiz':
+                        $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                        $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
+                        break;
+                    case 'suggestion':
+                        if ($hasteacher) {
+                            // Adiciona a aba.
+                            $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                            $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
+                        }
+                        break;
+                    case 'caption':
+                        if ($hasteacher) {
+                            // Adiciona a aba.
+                            $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                            $contents .= "
+                                <div id='tab-{$item->id}'>
+                                    <a class='ui-button ui-widget ui-corner-all' href='{$item->link}' target='_blank'>Baixar Legenda</a>
+                                    <pre>{$item->html}</pre>
+                                </div>";
+                        }
+                        break;
+                }
+            }
+
+            $lastmaps = "
+                <link href='{$ai->data->css}' rel='stylesheet'>
+                {$adminitens}
+                <div id='ottflix-tabs' style='display:none'><ul>{$tabs}</ul>{$contents}</div>";
+
+            // $lastmaps
         } else {
-            echo $OUTPUT->render_from_template("mod_supervideo/error");
+            echo $OUTPUT->render_from_template("mod_supervideo/error", [
+                "elementId" => "message_notfound",
+                "type" => "danger",
+                "message" => get_string("idnotfound", "mod_supervideo"),
+            ]);
             $config->showmapa = false;
         }
     }
@@ -247,7 +312,7 @@ if ($supervideo->videourl) {
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
                 "elementId" => "message_notfound",
-                "type" => "warning",
+                "type" => "danger",
                 "message" => get_string("idnotfound", "mod_supervideo"),
             ]);
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
@@ -274,7 +339,7 @@ if ($supervideo->videourl) {
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
                 "elementId" => "message_notfound",
-                "type" => "warning",
+                "type" => "danger",
                 "message" => get_string("idnotfound", "mod_supervideo"),
             ]);
         }
@@ -336,7 +401,7 @@ if ($supervideo->videourl) {
 } else {
     echo $OUTPUT->render_from_template("mod_supervideo/error", [
         "elementId" => "message_notfound",
-        "type" => "warning",
+        "type" => "danger",
         "message" => get_string("idnotfound", "mod_supervideo"),
     ]);
     $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
@@ -352,5 +417,7 @@ echo $OUTPUT->render_from_template("mod_supervideo/mapa", [
     "data-mapa" => base64_encode($supervideoview->mapa),
     "text" => $text,
 ]);
+
+echo $lastmaps;
 
 echo $OUTPUT->footer();

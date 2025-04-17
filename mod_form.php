@@ -58,6 +58,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", null, "required", null, "client");
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
+        // Origem.
         $origems = ["upload", "ottflix", "youtube", "vimeo", "drive", "link"];
         if ($supervideo && in_array($supervideo->origem, $origems)) {
             $mform->addElement("hidden", "origem", $supervideo->origem);
@@ -98,6 +99,23 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
+        // Ottflix IA.
+        $options = [
+            "book" => "Livro",
+            "glossary" => "Glossário",
+            "mindmap" => "Mapa Mental",
+            "quiz" => "Lições",
+        ];
+        $attributes = ["multiple" => "multiple", "size" => 4];
+        $mform->addElement("select", "ottflix_ia", get_string("ottflix_ia", "mod_supervideo"), $options, $attributes);
+        $mform->setType("ottflix_ia", PARAM_TEXT);
+        $mform->hideIf("ottflix_ia", "origem", "eq", "upload");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "youtube");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "vimeo");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "drive");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "link");
+
+        // Upload.
         if (!$supervideo || $supervideo->origem == "upload" || !in_array($supervideo->origem, $origems)) {
             $filemanageroptions = [
                 "accepted_types" => [".mp3", ".mp4", ".webm", ".m4v", ".mov", ".aac", ".m4a"],
@@ -112,6 +130,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
+        // Player size.
         $sizeoptions = [
             1 => "Video HD (16x9)",
             2 => "Video ED (4x3)",
@@ -206,7 +225,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $draftitemid = file_get_submitted_draft_itemid("videofile");
             if (isset($defaultvalues["id"])) {
                 $id = intval($defaultvalues["id"]);
-                file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ['subdirs' => true]);
+                file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ["subdirs" => true]);
                 $defaultvalues["videofile"] = $draftitemid;
             }
         }
@@ -327,8 +346,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
         if ($origem == "upload") {
             $usercontext = context_user::instance($USER->id);
             $fs = get_file_storage();
-            if (!$videofile = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['videofile'], 'sortorder, id', false)) {
-                $errors['videofile'] = get_string('required');
+            if (!$videofile = $fs->get_area_files($usercontext->id, "user", "draft", $data["videofile"], "sortorder, id", false)) {
+                $errors["videofile"] = get_string("required");
                 return $errors;
             }
         } else {

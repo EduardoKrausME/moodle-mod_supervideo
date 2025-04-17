@@ -13,16 +13,28 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax, PlayerRender) {
+define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function($, Ajax, PlayerRender) {
     var progress = {
 
-        ottflix: function(view_id, start_currenttime, elementId, videoid) {
-            window.addEventListener('', function receiveMessage(event) {
-                if (event.data.origem == 'OTTFLIX-player' && event.data.name == "progress") {
-                    progress._internal_saveprogress(event.data.currentTime, event.data.duration);
-                    progress._internal_resize(16, 9);
+        ottflix: function(view_id, start_currenttime, elementId, identifier) {
+            // progress._internal_resize(16, 9);
+            window.addEventListener("message", function receiveMessage(event) {
+                if (event.data.origem == "OTTFLIX-player") {
+
+                    // console.log(event.data);
+
+                    if (event.data.identifier == identifier) {
+                        if (event.data.name == "progress") {
+                            progress._internal_saveprogress(event.data.currentTime, event.data.duration);
+                        } else if (event.data.name == "loadeddata") {
+                            // Tamanho vem do OTTFlix
+                            // progress._internal_resize(event.data.width, event.data.height);
+                        }
+                    }
                 }
             });
+
+            $("#ottflix-tabs").show().tabs();
         },
 
         youtube: function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
@@ -38,12 +50,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             if (YT && YT.Player) {
                 var player = new YT.Player(elementId, {
-                    suggestedQuality: 'large',
+                    suggestedQuality: "large",
                     videoId: videoid,
-                    width: '100%',
+                    width: "100%",
                     playerVars: playerVars,
                     events: {
-                        'onReady': function(event) {
+                        "onReady": function(event) {
 
                             var sizes = playersize.split("x");
                             if (sizes && sizes[1]) {
@@ -56,17 +68,17 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                                 player.seekTo(event.detail.goCurrentTime);
                             });
                         },
-                        'onStateChange': function(event) {
+                        "onStateChange": function(event) {
                             console.log(event);
                         }
                     }
                 });
             } else {
                 var html =
-                        '<div class="alert alert-danger">' +
-                        'Error loading the JavaScript at https://www.youtube.com/iframe_api. ' +
-                        'Please check for any Security Policy restrictions.' +
-                        '</div>';
+                        `<div class="alert alert-danger">
+                             Error loading the JavaScript at https://www.youtube.com/iframe_api
+                             Please check for any Security Policy restrictions.
+                         </div>`;
                 $("#supervideo_area_embed").html(html);
             }
 
@@ -105,7 +117,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
             var config = {
                 controls: controls.split(","),
                 tooltips: {controls: showcontrols, seek: showcontrols},
-                settings: ['speed', 'loop'],
+                settings: ["speed", "loop"],
                 autoplay: !!autoplay,
                 storage: {enabled: true, key: "id-" + view_id},
                 speed: {selected: speed.length > 3, options: speed.split(",")},
@@ -160,7 +172,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 controls: controls.split(","),
                 autoplay: !!autoplay,
                 tooltips: {controls: showcontrols, seek: showcontrols},
-                settings: ['speed', 'loop'],
+                settings: ["speed", "loop"],
                 storage: {enabled: true, key: "id-" + view_id},
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
@@ -425,7 +437,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             if (currenttime) {
                 Ajax.call([{
-                    methodname: 'mod_supervideo_progress_save',
+                    methodname: "mod_supervideo_progress_save",
                     args: {
                         view_id: progress._internal_view_id,
                         currenttime: parseInt(currenttime),
@@ -450,7 +462,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
 
             var supervideo_view_mapa = [];
             try {
-                var mapa_json_base64 = $mapa.attr('data-mapa');
+                var mapa_json_base64 = $mapa.attr("data-mapa");
                 if (mapa_json_base64) {
                     supervideo_view_mapa = JSON.parse(atob(mapa_json_base64));
                 }
@@ -483,14 +495,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render"], function($, Ajax
                 }
                 var $mapa_clique =
                         $("<div id='mapa-visualizacao-" + i + "'>")
-                            .attr("title", 'Ir para ' + tempo)
+                            .attr("title", "Ir para " + tempo)
                             .attr("data-currenttime", mapaTitle)
                             .click(function() {
                                 var _setCurrentTime = $(this).attr("data-currenttime");
                                 _setCurrentTime = parseInt(_setCurrentTime);
 
-                                var event = document.createEvent('CustomEvent');
-                                event.initCustomEvent('setCurrentTime', true, true, {goCurrentTime: _setCurrentTime});
+                                var event = document.createEvent("CustomEvent");
+                                event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
                                 document.dispatchEvent(event);
                             });
                 $("#mapa-visualizacao .clique").append($mapa_clique);

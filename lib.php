@@ -133,6 +133,9 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timemodified = time();
     $supervideo->timecreated = time();
     $supervideo->playersize = supervideo_youtube_size($supervideo);
+    if (is_array($supervideo->ottflix_ia)) {
+        $supervideo->ottflix_ia = implode(",", $supervideo->ottflix_ia);
+    }
 
     if ($supervideo->origem == "upload") {
         $supervideo->videourl = "file";
@@ -165,6 +168,9 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     $supervideo->timemodified = time();
     $supervideo->id = $supervideo->instance;
     $supervideo->playersize = supervideo_youtube_size($supervideo);
+    if (is_array($supervideo->ottflix_ia)) {
+        $supervideo->ottflix_ia = implode(",", $supervideo->ottflix_ia);
+    }
 
     $result = $DB->update_record("supervideo", $supervideo);
 
@@ -296,8 +302,7 @@ function supervideo_user_outline($course, $user, $mod, $supervideo) {
  * @param stdClass $mod
  * @param stdClass $supervideo
  *
- * @throws coding_exception
- * @throws dml_exception
+ * @throws Exception
  */
 function supervideo_user_complete($course, $user, $mod, $supervideo) {
     global $DB;
@@ -378,8 +383,8 @@ function supervideo_format_time($time) {
  * @param navigation_node $supervideonode
  *
  * @return void
- * @throws \coding_exception
- * @throws moodle_exception
+ *
+ * @throws Exception
  */
 function supervideo_extend_settings_navigation($settings, $supervideonode) {
     global $PAGE;
@@ -411,8 +416,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
  * @param stdClass $course
  * @param \context $context
  *
- * @throws coding_exception
- * @throws moodle_exception
+ * @throws Exception
  */
 function supervideo_extend_navigation_course($navigation, $course, $context) {
     $node = $navigation->get("coursereports");
@@ -435,9 +439,8 @@ function supervideo_extend_navigation_course($navigation, $course, $context) {
  * @param array $options      additional options affecting the file serving
  *
  * @return bool false if the file not found, just send the file otherwise and do not return anything
- * @throws coding_exception
- * @throws moodle_exception
- * @throws require_login_exception
+ *
+ * @throws Exception
  */
 function supervideo_pluginfile($course, $cm, context $context, $filearea, $args, $forcedownload, array $options = []) {
 
@@ -474,7 +477,8 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
  * Register the ability to handle drag and drop file uploads
  *
  * @return array containing details of the files / types the mod can handle
- * @throws coding_exception
+ *
+ * @throws Exception
  */
 function supervideo_dndupload_register() {
     $ret = [
@@ -514,9 +518,8 @@ function supervideo_dndupload_register() {
  * @param stdClass $uploadinfo details of the file / content that has been uploaded
  *
  * @return int instance id of the newly created mod
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ *
+ * @throws Exception
  */
 function supervideo_dndupload_handle($uploadinfo) {
     global $USER;
@@ -589,7 +592,7 @@ function mod_supervideo_get_completion_active_rule_descriptions($cm) {
  * @param object $course Course
  * @param object $cm     course-module
  *
- * @throws moodle_exception
+ * @throws Exception
  */
 function supervideo_update_completion_state($data, $course, $cm) {
 
@@ -617,7 +620,8 @@ function supervideo_update_completion_state($data, $course, $cm) {
  * @param bool $type           Type of comparison (or/and; can be used as return value if no conditions)
  *
  * @return bool True if completed, false if not, $type if conditions not set.
- * @throws dml_exception
+ *
+ * @throws Exception
  */
 function supervideo_get_completion_state($course, $cm, $userid, $type) {
     global $DB, $PAGE;
@@ -654,7 +658,7 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
  * @param  stdClass $cm         course module object
  * @param  stdClass $context    context object
  *
- * @throws coding_exception
+ * @throws Exception
  */
 function supervideo_view($supervideo, $course, $cm, $context) {
 
@@ -684,7 +688,8 @@ function supervideo_view($supervideo, $course, $cm, $context) {
  * @param stdClass $coursemodule
  *
  * @return cached_cm_info info
- * @throws dml_exception
+ *
+ * @throws Exception
  */
 function supervideo_get_coursemodule_info($coursemodule) {
     global $DB;
@@ -721,9 +726,8 @@ function supervideo_get_coursemodule_info($coursemodule) {
  * @param int $contextid
  *
  * @return array
- * @throws coding_exception
- * @throws dml_exception
- * @throws moodle_exception
+ *
+ * @throws Exception
  */
 function supervideo_get_area_files($contextid) {
     $fs = get_file_storage();
