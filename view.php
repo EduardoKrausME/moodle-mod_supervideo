@@ -50,7 +50,9 @@ $context = context_module::instance($cm->id);
 $mobile = optional_param("mobile", 0, PARAM_INT);
 if ($mobile) {
     session_write_close();
-    $USER = $user;
+    if ($user) {
+        $USER = $user;
+    }
     $PAGE->set_cm($cm, $course);
     $PAGE->set_course($course);
 } else {
