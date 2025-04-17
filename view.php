@@ -80,14 +80,16 @@ $event->add_record_snapshot("course", $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $supervideo);
 $event->trigger();
 
-if ($mobile) {
-    $PAGE->set_pagelayout("embedded");
-}
-
+$hasteacher = has_capability("mod/supervideo:addinstance", $context);
 $config = config_util::get_config($supervideo);
 
-$hasteacher = has_capability("mod/supervideo:addinstance", $context);
-if ($config->distractionfreemode && !$hasteacher) {
+if ($mobile) {
+    $PAGE->set_pagelayout("embedded");
+    $config->distractionfreemode = false;
+    $config->maxwidth = false;
+}
+
+if ($config->distractionfreemode) {
     if (isset($USER->editing) && $USER->editing) {
         $PAGE->add_body_class("distraction-free-mode--editing");
     } else {
