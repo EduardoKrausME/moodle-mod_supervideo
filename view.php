@@ -152,12 +152,21 @@ if ($supervideo->videourl) {
                     case 'book':
                     case 'mindmap':
                         $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
+                        $allow = implode("; ", [
+                            "accelerometer",
+                            "autoplay",
+                            "clipboard-write",
+                            "encrypted-media",
+                            "gyroscope",
+                            "picture-in-picture",
+                            "web-share",
+                        ]);
                         $contents .= "
                             <div id='tab-{$item->id}'>
                                 <iframe data-src='{$item->html_iframe}' width='100%' height='600px'
                                         style='border:none;'
                                         sandbox='allow-scripts allow-popups allow-forms allow-same-origin allow-modals'
-                                        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                                        allow='{$allow}'
                                 ></iframe>
                             </div>";
                         break;
