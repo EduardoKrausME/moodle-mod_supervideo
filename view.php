@@ -117,8 +117,6 @@ echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
 
 $supervideoview = supervideo_view::create($cm->id);
 
-$lastmaps = "";
-
 if ($supervideo->videourl) {
     $showerrors = false;
     $uniqueid = uniqid();
@@ -135,53 +133,50 @@ if ($supervideo->videourl) {
         if (preg_match("/([A-Z0-9\-\_]{3,255})/", $supervideo->videourl, $path)) {
             $identifier = $path[1];
 
-            echo \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                $identifier,
-            ]);
-
             $ai = \mod_supervideo\ottflix\repository::ai($identifier, $supervideo->ottflix_ia);
-            $tabs = "";
+            $tabs = [];
             $contents = "";
-            $adminitens = "";
 
             // Criação das abas.
             foreach ($ai->data->itens as $item) {
                 switch ($item->id) {
                     case 'admin':
                         if ($hasteacher) {
-                            $adminitens .= "
-                                <div>
-                                    <a href='{$item->link_admin}' target='_blank'>{$item->title}</a>
-                                </div>";
+                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
+                            $contents .= "
+                            <div id='tab-{$item->id}'>
+                                <a href='{$item->link_admin}' target='_blank'>{$item->title}</a>
+                            </div>";
                         }
                         break;
                     case 'book':
-                        $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                    case 'mindmap':
+                        $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
                         $contents .= "
                             <div id='tab-{$item->id}'>
-                                <iframe src='{$item->html_iframe}' width='100%' height='600px' style='border:none;'></iframe>
+                                <iframe data-src='{$item->html_iframe}' width='100%' height='600px'
+                                        style='border:none;'
+                                        sandbox='allow-scripts allow-popups allow-forms allow-same-origin allow-modals'
+                                        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+                                ></iframe>
                             </div>";
                         break;
                     case 'glossary':
                     case 'quiz':
-                        $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                        $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
                         $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
                         break;
                     case 'suggestion':
                         if ($hasteacher) {
                             // Adiciona a aba.
-                            $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
                             $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
                         }
                         break;
                     case 'caption':
                         if ($hasteacher) {
                             // Adiciona a aba.
-                            $tabs .= "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>\n";
+                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
                             $contents .= "
                                 <div id='tab-{$item->id}'>
                                     <pre>{$item->html}</pre>
@@ -191,10 +186,28 @@ if ($supervideo->videourl) {
                 }
             }
 
-            $lastmaps = "
-                <link href='{$ai->data->css}' rel='stylesheet'>
-                {$adminitens}
-                <div id='ottflix-tabs' style='display:none'><ul>{$tabs}</ul>{$contents}</div>";
+            if (count($tabs)) {
+
+                $playerhtml = \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
+
+                $contents = "<div id='tab-player'>{$playerhtml}</div>{$contents}";
+
+                array_unshift($tabs, "<li><a href='#tab-player'>Vídeo</a></li>");
+
+                $tabshtml = implode("\n", $tabs);
+                echo "
+                    <link href='{$ai->data->css}' rel='stylesheet'>
+                    <div id='ottflix-tabs' style='display:none'><ul id='ottflix-tabs-ul'>{$tabshtml}</ul>{$contents}</div>";
+            } else {
+                echo \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
+            }
+
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+                $identifier,
+            ]);
         } else {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
                 "elementId" => "message_notfound",
@@ -402,7 +415,5 @@ echo $OUTPUT->render_from_template("mod_supervideo/mapa", [
     "data-mapa" => base64_encode($supervideoview->mapa),
     "text" => $text,
 ]);
-
-echo $lastmaps;
 
 echo $OUTPUT->footer();

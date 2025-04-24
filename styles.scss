@@ -169,6 +169,9 @@ body:not(.distraction-free-mode) {
             border-radius: 4px;
             font-family: monospace;
         }
+        table {
+            margin-top: 0;
+        }
         .ui-widget-header {
             border: none;
             background: transparent;
@@ -189,12 +192,24 @@ body:not(.distraction-free-mode) {
             border: none;
             background: #e4e4e4;
             font-weight: 700;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         .ui-widget-content {
             background: #e4e4e4;
             color: #3d3d3d;
             border-radius: 5px;
-            padding: 10px;
+            padding: 0;
+        }
+        &,
+        & > div,
+        & > div * {
+            max-height: inherit;
+        }
+        #tab-glossary,
+        #tab-quiz,
+        #tab-suggestion {
+            overflow: auto;
         }
     }
 }
@@ -236,7 +251,7 @@ body:not(.distraction-free-mode) {
         transition: all .3s ease;
     }
     iframe {
-        border-radius: 12px;
+        border-radius: 4px;
         background: #393f46;
     }
     #page #topofscroll {
@@ -262,6 +277,7 @@ body:not(.distraction-free-mode) {
         display: flex !important;
         align-items: center;
         padding: 5px 16px;
+        background: #202327;
         * {
             margin: 0;
             padding: 0;
@@ -403,7 +419,6 @@ body:not(.distraction-free-mode) {
         left: 10px;
         width: calc(100% - 20px);
     }
-    iframe,
     .plyr__video-wrapper {
         border-radius: 12px;
     }
@@ -428,5 +443,56 @@ body:not(.distraction-free-mode) {
             width: 100%;
             margin: 0;
         }
+    }
+    #ottflix-tabs {
+        #ottflix-tabs-ul {
+            position: fixed;
+            top: 23px;
+            right: 240px;
+            z-index: 9999;
+        }
+        .ui-state-default,
+        .ui-widget-content .ui-state-default,
+        .ui-widget-header .ui-state-default {
+            background: #f2f2f200 !important;
+            &, * {
+                transition: all 0.5s ease;
+            }
+            a {
+                color: #e7e2e2 !important;
+                padding: 6px 11px 3px !important;
+                font-size: 14px !important;
+            }
+            &:before {
+                content: "";
+                position: absolute;
+                z-index: -1;
+                top: 50%;
+                bottom: 0;
+                left: 5px;
+                right: 5px;
+                border-radius: 100px / 10px;
+                box-shadow: 0 2px 3px rgba(255, 255, 255, 0.3);
+                opacity: 0;
+            }
+        }
+        .ui-state-active,
+        .ui-widget-content .ui-state-active,
+        .ui-widget-header .ui-state-active {
+            background: #139aaf !important;
+            zoom: 1.2;
+            margin-top: -3.8px;
+            a {
+                color: #dcdcdc !important;
+            }
+            &:before {
+                opacity: 1;
+            }
+        }
+    }
+    
+    // VLibras
+    [vw] {
+        display: none !important;
     }
 }

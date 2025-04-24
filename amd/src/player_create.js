@@ -34,7 +34,20 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             });
 
-            $("#ottflix-tabs").show().tabs();
+            var morewidth = $("#distraction-free-mode-header .more-nav").width();
+            $("#ottflix-tabs")
+                .show()
+                .css({"right": morewidth + 11})
+                .tabs({
+                    activate: function(event, ui) {
+                        let panel = ui.newPanel;
+                        let iframe = panel.find("iframe");
+
+                        if (iframe.length && !iframe.attr("src")) {
+                            iframe.attr("src", iframe.data("src"));
+                        }
+                    }
+                });
         },
 
         youtube: function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {

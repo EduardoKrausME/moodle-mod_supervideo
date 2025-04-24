@@ -164,6 +164,9 @@ body:not(.distraction-free-mode) #supervideo_area_embed iframe {
     border-radius: 4px;
     font-family: monospace;
 }
+#page-mod-supervideo-view #ottflix-tabs table {
+    margin-top: 0;
+}
 #page-mod-supervideo-view #ottflix-tabs .ui-widget-header {
     border: none;
     background: transparent;
@@ -186,12 +189,22 @@ body:not(.distraction-free-mode) #supervideo_area_embed iframe {
     border: none;
     background: #e4e4e4;
     font-weight: 700;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 #page-mod-supervideo-view #ottflix-tabs .ui-widget-content {
     background: #e4e4e4;
     color: #3d3d3d;
     border-radius: 5px;
-    padding: 10px;
+    padding: 0;
+}
+#page-mod-supervideo-view #ottflix-tabs, #page-mod-supervideo-view #ottflix-tabs > div, #page-mod-supervideo-view #ottflix-tabs > div * {
+    max-height: inherit;
+}
+#page-mod-supervideo-view #ottflix-tabs #tab-glossary,
+#page-mod-supervideo-view #ottflix-tabs #tab-quiz,
+#page-mod-supervideo-view #ottflix-tabs #tab-suggestion {
+    overflow: auto;
 }
 @keyframes plyr-progress {
     to {
@@ -1404,7 +1417,7 @@ a.plyr__control {
     transition: all 0.3s ease;
 }
 .distraction-free-mode iframe {
-    border-radius: 12px;
+    border-radius: 4px;
     background: #393f46;
 }
 .distraction-free-mode #page #topofscroll {
@@ -1430,6 +1443,7 @@ a.plyr__control {
     display: flex !important;
     align-items: center;
     padding: 5px 16px;
+    background: #202327;
 }
 .distraction-free-mode #distraction-free-mode-header * {
     margin: 0;
@@ -1561,7 +1575,6 @@ a.plyr__control {
     left: 10px;
     width: calc(100% - 20px);
 }
-.distraction-free-mode iframe,
 .distraction-free-mode .plyr__video-wrapper {
     border-radius: 12px;
 }
@@ -1582,4 +1595,63 @@ a.plyr__control {
     max-width: 100%;
     width: 100%;
     margin: 0;
+}
+.distraction-free-mode #ottflix-tabs #ottflix-tabs-ul {
+    position: fixed;
+    top: 23px;
+    right: 240px;
+    z-index: 9999;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-default,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default {
+    background: rgba(242, 242, 242, 0) !important;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-default, .distraction-free-mode #ottflix-tabs .ui-state-default *,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default *,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default * {
+    transition: all 0.5s ease;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-default a,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default a,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default a {
+    color: #e7e2e2 !important;
+    padding: 6px 11px 3px !important;
+    font-size: 14px !important;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-default:before,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default:before,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    bottom: 0;
+    left: 5px;
+    right: 5px;
+    border-radius: 100px/10px;
+    box-shadow: 0 2px 3px rgba(255, 255, 255, 0.3);
+    opacity: 0;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-active,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active {
+    background: #139aaf !important;
+    zoom: 1.2;
+    margin-top: -3.8px;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-active a,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active a,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active a {
+    color: #dcdcdc !important;
+}
+.distraction-free-mode #ottflix-tabs .ui-state-active:before,
+.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active:before,
+.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active:before {
+    opacity: 1;
+}
+.distraction-free-mode [vw] {
+    display: none !important;
 }
