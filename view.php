@@ -99,6 +99,10 @@ if ($config->distractionfreemode) {
     }
 }
 
+$PAGE->requires->jquery();
+$PAGE->requires->jquery_plugin("ui");
+$PAGE->requires->jquery_plugin("ui-css");
+
 echo $OUTPUT->header();
 
 if ($CFG->branch <= 311) {
