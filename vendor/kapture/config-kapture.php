@@ -77,7 +77,7 @@ function kapture_get_string( $str )
 
     if( !isset( $strings[ $str ] ) ) {
         $strings[ $str ];
-        $text .= "\"${str}\" => \"${str}\",\n";
+        $text .= "\"{$var}\" => \"{$var}\",\n";
     }
 
     return $strings[ $str ];
