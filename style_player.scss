@@ -722,8 +722,8 @@ a.plyr__control {
 }
 .plyr--loading .plyr__progress__buffer {
     animation: plyr-progress 1s linear infinite;
-    background-image: linear-gradient(-45deg, #23282f99 25%, #0000 0, #0000 50%, #23282f99 0, #23282f99 75%, #0000 0, #0000);
-    background-image: linear-gradient(-45deg, var(--plyr-progress-loading-background, #23282f99) 25%, #0000 25%, #0000 50%, var(--plyr-progress-loading-background, #23282f99) 50%, var(--plyr-progress-loading-background, #23282f99) 75%, #0000 75%, #0000);
+    background-image: linear-gradient(-45deg, #23282f99 25%, #0000 0, #0000 50%, #23282f99 0, #23282f99 75%, #0000 0, #00000000);
+    background-image: linear-gradient(-45deg, var(--plyr-progress-loading-background, #23282f99) 25%, #0000 25%, #0000 50%, var(--plyr-progress-loading-background, #23282f99) 50%, var(--plyr-progress-loading-background, #23282f99) 75%, #0000 75%, #00000000);
     background-repeat: repeat-x;
     background-size: 25px 25px;
     background-size: var(--plyr-progress-loading-size, 25px) var(--plyr-progress-loading-size, 25px);

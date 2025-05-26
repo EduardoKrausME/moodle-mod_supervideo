@@ -242,6 +242,7 @@ body:not(.distraction-free-mode) {
     display: none;
 }
 .distraction-free-mode {
+    background: #393f46;
     a:focus {
         box-shadow: none !important;
         outline: none !important;
@@ -254,8 +255,12 @@ body:not(.distraction-free-mode) {
         border-radius: 4px;
         background: #393f46;
     }
+    div[role="main"]{
+        background: transparent !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
     #page #topofscroll {
-        background: #393f46;
         position: fixed;
         z-index: 9999;
         border-radius: 0 !important;
@@ -278,6 +283,7 @@ body:not(.distraction-free-mode) {
         align-items: center;
         padding: 5px 16px;
         background: #202327;
+        height: 54px;
         * {
             margin: 0;
             padding: 0;
