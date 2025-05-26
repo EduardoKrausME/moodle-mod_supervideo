@@ -552,6 +552,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             var $completionInfo = $("#id-activity-header .completion-info, .activity-header .completion-info");
             $completionInfo.addClass("completion-free");
             newHeader.append($completionInfo.clone());
+
+            $("#ottflix-tabs-ul").css({
+                "right": $("#distraction-free-mode-header ul").width()
+            });
         },
     };
     return progress;
