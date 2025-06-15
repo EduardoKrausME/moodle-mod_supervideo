@@ -74,9 +74,9 @@ class core_hook_output {
                     }
                 }
             }
-        }
 
-        $cache->set($cachekey, $css);
-        echo "<style>{$css}</style>";
+            $cache->set($cachekey, $css);
+            echo "<style>{$css}</style>";
+        }
     }
 }
