@@ -45,19 +45,13 @@ class core_hook_output {
         }
 
         $css = "";
-        if (true || $COURSE->id != $SITE->id) {
+        if ($COURSE->id != $SITE->id) {
 
             $cache = \cache::make("theme_boost_training", "css_cache");
             $cachekey = "supervideo_icon_{$COURSE->id}";
-            if (false && $cache->has($cachekey)) {
+            if ($cache->has($cachekey)) {
                 return $cache->get($cachekey);
             }
-
-            $css .= "
-                .section-item .content .section {
-                        display: flex !important;
-                        flex-wrap: wrap;
-                }";
 
             $sql = "
                 SELECT cm.id AS cmid, sv.videourl

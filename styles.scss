@@ -50,7 +50,7 @@ body:not(.distraction-free-mode) {
         .logo {
             position: absolute;
             height: 40px;
-            background: #fff;
+            background: #ffffff;
             right: 2px;
             top: 2px;
             z-index: 2
@@ -108,7 +108,7 @@ body:not(.distraction-free-mode) {
         font-size: 8px;
         position: relative;
         z-index: 2;
-        color: #000;
+        color: #000000;
         text-align: center;
         transition: all ease 0.3s;
         span {
@@ -148,6 +148,12 @@ body:not(.distraction-free-mode) {
     }
 }
 #page-mod-supervideo-view {
+    #page.drawers div[role="main"] {
+        background: #0000000;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
     .activity-description {
         iframe {
             width: 96% !important;
@@ -214,19 +220,15 @@ body:not(.distraction-free-mode) {
     }
 }
 @import "style_player";
-
 .plyr--video {
     width: 100%;
 }
 .plyr__control {
     margin: 0;
-    
     text-shadow: none;
     -webkit-text-shadow: none;
-    
     box-shadow: none;
     -webkit-box-shadow: none;
-    
     appearance: none;
     -webkit-appearance: none;
 }
@@ -255,7 +257,7 @@ body:not(.distraction-free-mode) {
         border-radius: 4px;
         background: #393f46;
     }
-    div[role="main"]{
+    div[role="main"] {
         background: transparent !important;
         padding: 0 !important;
         border-radius: 0 !important;
@@ -496,7 +498,6 @@ body:not(.distraction-free-mode) {
             }
         }
     }
-    
     // VLibras
     [vw] {
         display: none !important;

@@ -71,8 +71,8 @@
     background: var(--plyr-badge-background, #4a5464);
     border-radius: 2px;
     border-radius: var(--plyr-badge-border-radius, 2px);
-    color: #fff;
-    color: var(--plyr-badge-text-color, #fff);
+    color: #ffffff;
+    color: var(--plyr-badge-text-color, #ffffff);
     font-size: 9px;
     font-size: var(--plyr-font-size-badge, 9px);
     line-height: 1;
@@ -120,13 +120,13 @@
     transform: translateY(calc(var(--plyr-control-spacing, 10px) * -4))
 }
 .plyr__caption {
-    background: #000c;
-    background: var(--plyr-captions-background, #000c);
+    background: #000000cc;
+    background: var(--plyr-captions-background, #000000cc);
     border-radius: 2px;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: #fff;
-    color: var(--plyr-captions-text-color, #fff);
+    color: #ffffff;
+    color: var(--plyr-captions-text-color, #ffffff);
     line-height: 185%;
     padding: .2em .5em;
     white-space: pre-wrap
@@ -135,7 +135,7 @@
     display: inline
 }
 .plyr__control {
-    background: #0000;
+    background: #00000000;
     border: 0;
     border-radius: 4px;
     border-radius: var(--plyr-control-radius, 4px);
@@ -247,9 +247,9 @@ a.plyr__control {
     transition: height .35s cubic-bezier(.4, 0, .2, 1), width .35s cubic-bezier(.4, 0, .2, 1)
 }
 .plyr__menu__container:after {
-    border: 4px solid #0000;
+    border: 4px solid #00000000;
     border-top-color: #ffffffe6;
-    border: var(--plyr-menu-arrow-size, 4px) solid #0000;
+    border: var(--plyr-menu-arrow-size, 4px) solid #00000000;
     border-top-color: var(--plyr-menu-background, #ffffffe6);
     content: "";
     height: 0;
@@ -288,8 +288,8 @@ a.plyr__control {
     width: 100%
 }
 .plyr__menu__container .plyr__control:after {
-    border: 4px solid #0000;
-    border: var(--plyr-menu-item-arrow-size, 4px) solid #0000;
+    border: 4px solid #00000000;
+    border: var(--plyr-menu-item-arrow-size, 4px) solid #00000000;
     content: "";
     position: absolute;
     top: 50%;
@@ -330,8 +330,8 @@ a.plyr__control {
 .plyr__menu__container .plyr__control--back:before {
     background: #dcdfe5;
     background: var(--plyr-menu-back-border-color, #dcdfe5);
-    box-shadow: 0 1px 0 #fff;
-    box-shadow: 0 1px 0 var(--plyr-menu-back-border-shadow-color, #fff);
+    box-shadow: 0 1px 0 #ffffff;
+    box-shadow: 0 1px 0 var(--plyr-menu-back-border-shadow-color, #ffffff);
     content: "";
     height: 1px;
     left: 0;
@@ -364,7 +364,7 @@ a.plyr__control {
     width: 16px
 }
 .plyr__menu__container .plyr__control[role=menuitemradio]:after {
-    background: #fff;
+    background: #ffffff;
     border: 0;
     height: 6px;
     left: 12px;
@@ -399,7 +399,7 @@ a.plyr__control {
 .plyr--full-ui input[type=range] {
     -webkit-appearance: none;
     appearance: none;
-    background: #0000;
+    background: #00000000;
     border: 0;
     border-radius: 26px;
     border-radius: calc(var(--plyr-range-thumb-height, 13px) * 2);
@@ -415,9 +415,9 @@ a.plyr__control {
     width: 100%
 }
 .plyr--full-ui input[type=range]::-webkit-slider-runnable-track {
-    background: #0000;
-    background-image: linear-gradient(90deg, currentColor 0, #0000 0);
-    background-image: linear-gradient(to right, currentColor var(--value, 0), #0000 var(--value, 0));
+    background: #00000000;
+    background-image: linear-gradient(90deg, currentColor 0, #00000000 0);
+    background-image: linear-gradient(to right, currentColor var(--value, 0), #00000000 var(--value, 0));
     border: 0;
     border-radius: 2.5px;
     border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
@@ -431,8 +431,8 @@ a.plyr__control {
 .plyr--full-ui input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    background: #fff;
-    background: var(--plyr-range-thumb-background, #fff);
+    background: #ffffff;
+    background: var(--plyr-range-thumb-background, #ffffff);
     border: 0;
     border-radius: 100%;
     box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
@@ -448,7 +448,7 @@ a.plyr__control {
     width: var(--plyr-range-thumb-height, 13px)
 }
 .plyr--full-ui input[type=range]::-moz-range-track {
-    background: #0000;
+    background: #00000000;
     border: 0;
     border-radius: 2.5px;
     border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
@@ -459,8 +459,8 @@ a.plyr__control {
     user-select: none
 }
 .plyr--full-ui input[type=range]::-moz-range-thumb {
-    background: #fff;
-    background: var(--plyr-range-thumb-background, #fff);
+    background: #ffffff;
+    background: var(--plyr-range-thumb-background, #ffffff);
     border: 0;
     border-radius: 100%;
     box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
@@ -481,10 +481,10 @@ a.plyr__control {
     height: var(--plyr-range-track-height, 5px)
 }
 .plyr--full-ui input[type=range]::-ms-track {
-    color: #0000
+    color: #00000000;
 }
 .plyr--full-ui input[type=range]::-ms-fill-upper, .plyr--full-ui input[type=range]::-ms-track {
-    background: #0000;
+    background: #00000000;
     border: 0;
     border-radius: 2.5px;
     border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
@@ -495,7 +495,7 @@ a.plyr__control {
     user-select: none
 }
 .plyr--full-ui input[type=range]::-ms-fill-lower {
-    background: #0000;
+    background: #00000000;
     background: currentColor;
     border: 0;
     border-radius: 2.5px;
@@ -507,8 +507,8 @@ a.plyr__control {
     user-select: none
 }
 .plyr--full-ui input[type=range]::-ms-thumb {
-    background: #fff;
-    background: var(--plyr-range-thumb-background, #fff);
+    background: #ffffff;
+    background: var(--plyr-range-thumb-background, #ffffff);
     border: 0;
     border-radius: 100%;
     box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
@@ -547,8 +547,8 @@ a.plyr__control {
     outline-offset: 2px
 }
 .plyr__poster {
-    background-color: #000;
-    background-color: var(--plyr-video-background, var(--plyr-video-background, #000));
+    background-color: #000000;
+    background-color: var(--plyr-video-background, var(--plyr-video-background, #000000));
     background-position: 50% 50%;
     background-repeat: no-repeat;
     background-size: contain;
@@ -582,8 +582,8 @@ a.plyr__control {
     }
 }
 .plyr__tooltip {
-    background: #fff;
-    background: var(--plyr-tooltip-background, #fff);
+    background: #ffffff;
+    background: var(--plyr-tooltip-background, #ffffff);
     border-radius: 5px;
     border-radius: var(--plyr-tooltip-radius, 5px);
     bottom: 100%;
@@ -611,12 +611,12 @@ a.plyr__control {
     z-index: 2
 }
 .plyr__tooltip:before {
-    border-left: 4px solid #0000;
-    border-left: var(--plyr-tooltip-arrow-size, 4px) solid #0000;
-    border-right: 4px solid #0000;
-    border-right: var(--plyr-tooltip-arrow-size, 4px) solid #0000;
-    border-top: 4px solid #fff;
-    border-top: var(--plyr-tooltip-arrow-size, 4px) solid var(--plyr-tooltip-background, #fff);
+    border-left: 4px solid #00000000;
+    border-left: var(--plyr-tooltip-arrow-size, 4px) solid #00000000;
+    border-right: 4px solid #00000000;
+    border-right: var(--plyr-tooltip-arrow-size, 4px) solid #00000000;
+    border-top: 4px solid #ffffff;
+    border-top: var(--plyr-tooltip-arrow-size, 4px) solid var(--plyr-tooltip-background, #ffffff);
     bottom: -4px;
     bottom: calc(var(--plyr-tooltip-arrow-size, 4px) * -1);
     content: "";
@@ -684,7 +684,7 @@ a.plyr__control {
 }
 .plyr__progress__buffer {
     -webkit-appearance: none;
-    background: #0000;
+    background: #00000000;
     border: 0;
     border-radius: 100px;
     height: 5px;
@@ -697,7 +697,7 @@ a.plyr__control {
     top: 50%
 }
 .plyr__progress__buffer::-webkit-progress-bar {
-    background: #0000
+    background: #00000000;
 }
 .plyr__progress__buffer::-webkit-progress-value {
     background: currentColor;
@@ -705,7 +705,7 @@ a.plyr__control {
     min-width: 5px;
     min-width: var(--plyr-range-track-height, 5px);
     -webkit-transition: width .2s ease;
-    transition: width .2s ease
+    transition: width .2s ease;
 }
 .plyr__progress__buffer::-moz-progress-bar {
     background: currentColor;
@@ -713,33 +713,33 @@ a.plyr__control {
     min-width: 5px;
     min-width: var(--plyr-range-track-height, 5px);
     -moz-transition: width .2s ease;
-    transition: width .2s ease
+    transition: width .2s ease;
 }
 .plyr__progress__buffer::-ms-fill {
     border-radius: 100px;
     -ms-transition: width .2s ease;
-    transition: width .2s ease
+    transition: width .2s ease;
 }
 .plyr--loading .plyr__progress__buffer {
     animation: plyr-progress 1s linear infinite;
-    background-image: linear-gradient(-45deg, #23282f99 25%, #0000 0, #0000 50%, #23282f99 0, #23282f99 75%, #0000 0, #00000000);
-    background-image: linear-gradient(-45deg, var(--plyr-progress-loading-background, #23282f99) 25%, #0000 25%, #0000 50%, var(--plyr-progress-loading-background, #23282f99) 50%, var(--plyr-progress-loading-background, #23282f99) 75%, #0000 75%, #00000000);
+    background-image: linear-gradient(-45deg, #23282f99 25%, #00000000 0, #00000000 50%, #23282f99 0, #23282f99 75%, #00000000 0, #00000000);
+    background-image: linear-gradient(-45deg, var(--plyr-progress-loading-background, #23282f99) 25%, #00000000 25%, #00000000 50%, var(--plyr-progress-loading-background, #23282f99) 50%, var(--plyr-progress-loading-background, #23282f99) 75%, #00000000 75%, #00000000);
     background-repeat: repeat-x;
     background-size: 25px 25px;
     background-size: var(--plyr-progress-loading-size, 25px) var(--plyr-progress-loading-size, 25px);
-    color: #0000
+    color: #00000000;
 }
 .plyr--video.plyr--loading .plyr__progress__buffer {
     background-color: #ffffff40;
-    background-color: var(--plyr-video-progress-buffered-background, #ffffff40)
+    background-color: var(--plyr-video-progress-buffered-background, #ffffff40);
 }
 .plyr--audio.plyr--loading .plyr__progress__buffer {
     background-color: #c1c8d199;
-    background-color: var(--plyr-audio-progress-buffered-background, #c1c8d199)
+    background-color: var(--plyr-audio-progress-buffered-background, #c1c8d199);
 }
 .plyr__progress__marker {
-    background-color: #fff;
-    background-color: var(--plyr-progress-marker-background, #fff);
+    background-color: #ffffff;
+    background-color: var(--plyr-progress-marker-background, #ffffff);
     border-radius: 1px;
     height: 5px;
     height: var(--plyr-range-track-height, 5px);
@@ -748,12 +748,12 @@ a.plyr__control {
     transform: translate(-50%, -50%);
     width: 3px;
     width: var(--plyr-progress-marker-width, 3px);
-    z-index: 3
+    z-index: 3;
 }
 .plyr__volume {
     align-items: center;
     display: flex;
-    position: relative
+    position: relative;
 }
 .plyr__volume input[type=range] {
     margin-left: 5px;
@@ -763,10 +763,10 @@ a.plyr__control {
     max-width: 90px;
     min-width: 60px;
     position: relative;
-    z-index: 2
+    z-index: 2;
 }
 .plyr--audio {
-    display: block
+    display: block;
 }
 .plyr--audio .plyr__controls {
     //background: #fff;
@@ -776,29 +776,29 @@ a.plyr__control {
     color: #4a5464;
     color: var(--plyr-audio-control-color, #4a5464);
     padding: 10px;
-    padding: var(--plyr-control-spacing, 10px)
+    padding: var(--plyr-control-spacing, 10px);
 }
 .plyr--audio .plyr__control:focus-visible, .plyr--audio .plyr__control:hover, .plyr--audio .plyr__control[aria-expanded=true] {
     background: #00b2ff;
     background: var(--plyr-audio-control-background-hover, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
-    color: #fff;
-    color: var(--plyr-audio-control-color-hover, #fff)
+    color: #ffffff;
+    color: var(--plyr-audio-control-color-hover, #ffffff);
 }
 .plyr--full-ui.plyr--audio input[type=range]::-webkit-slider-runnable-track {
     background-color: #c1c8d199;
-    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199))
+    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199));
 }
 .plyr--full-ui.plyr--audio input[type=range]::-moz-range-track {
     background-color: #c1c8d199;
-    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199))
+    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199));
 }
 .plyr--full-ui.plyr--audio input[type=range]::-ms-track {
     background-color: #c1c8d199;
-    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199))
+    background-color: var(--plyr-audio-range-track-background, var(--plyr-audio-progress-buffered-background, #c1c8d199));
 }
 .plyr--full-ui.plyr--audio input[type=range]:active::-webkit-slider-thumb {
     box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #23282f1a;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #23282f1a)
+    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #23282f1a);
 }
 .plyr--full-ui.plyr--audio input[type=range]:active::-moz-range-thumb {
     box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #23282f1a;
@@ -819,8 +819,8 @@ a.plyr__control {
     overflow: visible
 }
 .plyr__video-wrapper {
-    background: #000;
-    background: var(--plyr-video-background, var(--plyr-video-background, #000));
+    background: #000000;
+    background: var(--plyr-video-background, var(--plyr-video-background, #000000));
     border-radius: inherit;
     height: 100%;
     margin: auto;
@@ -852,13 +852,13 @@ a.plyr__control {
     transform: translateY(-38.28125%)
 }
 .plyr--video .plyr__controls {
-    background: linear-gradient(#0000, #000000bf);
-    background: var(--plyr-video-controls-background, linear-gradient(#0000, #000000bf));
+    background: linear-gradient(#00000000, #000000bf);
+    background: var(--plyr-video-controls-background, linear-gradient(#00000000, #000000bf));
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
     bottom: 0;
-    color: #fff;
-    color: var(--plyr-video-control-color, #fff);
+    color: #ffffff;
+    color: var(--plyr-video-control-color, #ffffff);
     left: 0;
     padding: 5px;
     padding: calc(var(--plyr-control-spacing, 10px) / 2);
@@ -867,14 +867,14 @@ a.plyr__control {
     position: absolute;
     right: 0;
     transition: opacity .4s ease-in-out, transform .4s ease-in-out;
-    z-index: 3
+    z-index: 3;
 }
 @media (min-width: 480px) {
     .plyr--video .plyr__controls {
         padding: 10px;
         padding: var(--plyr-control-spacing, 10px);
         padding-top: 35px;
-        padding-top: calc(var(--plyr-control-spacing, 10px) * 3.5)
+        padding-top: calc(var(--plyr-control-spacing, 10px) * 3.5);
     }
 }
 .plyr--video.plyr--hide-controls .plyr__controls {
@@ -885,16 +885,16 @@ a.plyr__control {
 .plyr--video .plyr__control:focus-visible, .plyr--video .plyr__control:hover, .plyr--video .plyr__control[aria-expanded=true] {
     background: #00b2ff;
     background: var(--plyr-video-control-background-hover, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
-    color: #fff;
-    color: var(--plyr-video-control-color-hover, #fff)
+    color: #ffffff;
+    color: var(--plyr-video-control-color-hover, #ffffff)
 }
 .plyr__control--overlaid {
     background: #00b2ff;
     background: var(--plyr-video-control-background-hover, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
     border: 0;
     border-radius: 100%;
-    color: #fff;
-    color: var(--plyr-video-control-color, #fff);
+    color: #ffffff;
+    color: var(--plyr-video-control-color, #ffffff);
     display: none;
     left: 50%;
     opacity: .9;
@@ -949,7 +949,7 @@ a.plyr__control {
     color: var(--plyr-video-progress-buffered-background, #ffffff40)
 }
 .plyr:fullscreen {
-    background: #000;
+    background: #000000;
     border-radius: 0 !important;
     height: 100%;
     margin: 0;
@@ -974,7 +974,7 @@ a.plyr__control {
     }
 }
 .plyr--fullscreen-fallback {
-    background: #000;
+    background: #000000;
     border-radius: 0 !important;
     bottom: 0;
     height: 100%;
@@ -1025,7 +1025,7 @@ a.plyr__control {
     border-radius: 2px;
     bottom: 10px;
     bottom: var(--plyr-control-spacing, 10px);
-    color: #fff;
+    color: #ffffff;
     content: attr(data-badge-text);
     font-size: 11px;
     padding: 2px 6px;
@@ -1052,8 +1052,8 @@ a.plyr__control {
     z-index: 3
 }
 .plyr__preview-thumb {
-    background-color: #fff;
-    background-color: var(--plyr-tooltip-background, #fff);
+    background-color: #ffffff;
+    background-color: var(--plyr-tooltip-background, #ffffff);
     border-radius: 8px;
     border-radius: var(--plyr-menu-radius, 8px);
     bottom: 100%;
@@ -1075,12 +1075,12 @@ a.plyr__control {
     transform: translate(0) scale(1)
 }
 .plyr__preview-thumb:before {
-    border-left: 4px solid #0000;
-    border-left: var(--plyr-tooltip-arrow-size, 4px) solid #0000;
-    border-right: 4px solid #0000;
-    border-right: var(--plyr-tooltip-arrow-size, 4px) solid #0000;
-    border-top: 4px solid #fff;
-    border-top: var(--plyr-tooltip-arrow-size, 4px) solid var(--plyr-tooltip-background, #fff);
+    border-left: 4px solid #00000000;
+    border-left: var(--plyr-tooltip-arrow-size, 4px) solid #00000000;
+    border-right: 4px solid #00000000;
+    border-right: var(--plyr-tooltip-arrow-size, 4px) solid #00000000;
+    border-top: 4px solid #ffffff;
+    border-top: var(--plyr-tooltip-arrow-size, 4px) solid var(--plyr-tooltip-background, #ffffff);
     bottom: -4px;
     bottom: calc(var(--plyr-tooltip-arrow-size, 4px) * -1);
     content: "";
@@ -1117,8 +1117,8 @@ a.plyr__control {
     max-width: none
 }
 .plyr__preview-thumb__time-container {
-    background: linear-gradient(#0000, #000000bf);
-    background: var(--plyr-video-controls-background, linear-gradient(#0000, #000000bf));
+    background: linear-gradient(#00000000, #000000bf);
+    background: var(--plyr-video-controls-background, linear-gradient(#00000000, #000000bf));
     border-bottom-left-radius: 7px;
     border-bottom-left-radius: calc(var(--plyr-menu-radius, 8px) - 1px);
     border-bottom-right-radius: 7px;
@@ -1132,7 +1132,7 @@ a.plyr__control {
     z-index: 3
 }
 .plyr__preview-thumb__time-container span {
-    color: #fff;
+    color: #ffffff;
     font-size: 13px;
     font-size: var(--plyr-font-size-time, var(--plyr-font-size-small, 13px))
 }
