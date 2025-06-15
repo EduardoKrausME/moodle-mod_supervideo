@@ -232,16 +232,15 @@ function supervideo_set_mainfile($supervideo) {
 
         $context = context_module::instance($cmid);
         if ($draftitemid) {
-            $options = [
-                "subdirs" => true,
-                "embed" => true,
-            ];
-            file_save_draft_area_files($draftitemid, $context->id, "mod_supervideo", "content", $supervideo->id, $options);
+            $options = ["subdirs" => true, "embed" => true,];
+            file_save_draft_area_files($draftitemid, $context->id, "mod_supervideo", "content", $supervideo->id,
+                $options);
         }
         $files = supervideo_get_area_files($context->id);
         if ($files && count($files) == 1) {
             $file = reset($files);
-            file_set_sortorder($context->id, "mod_supervideo", "content", 0, $file->get_filepath(), $file->get_filename(), 1);
+            file_set_sortorder($context->id, "mod_supervideo", "content", 0, $file->get_filepath(),
+                $file->get_filename(), 1);
         }
     }
 }
@@ -315,10 +314,7 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
                AND sv.user_id = :user_id
                AND percent    > 0
           ORDER BY sv.timecreated ASC";
-    $param = [
-        "cm_id" => $mod->id,
-        "user_id" => $user->id,
-    ];
+    $param = ["cm_id" => $mod->id, "user_id" => $user->id,];
     if ($registros = $DB->get_records_sql($sql, $param)) {
         echo "<table><tr>";
         echo "      <th>" . get_string("report_userid", "mod_supervideo") . "</th>";
@@ -402,9 +398,8 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
 
     if (has_capability("mod/supervideo:addinstance", $PAGE->cm->context)) {
         $node = navigation_node::create(get_string("report", "mod_supervideo"),
-            new moodle_url("/mod/supervideo/report.php", ["id" => $PAGE->cm->id]),
-            navigation_node::TYPE_SETTING, null, "mod_supervideo_report",
-            new pix_icon("i/report", ""));
+            new moodle_url("/mod/supervideo/report.php", ["id" => $PAGE->cm->id]), navigation_node::TYPE_SETTING, null,
+            "mod_supervideo_report", new pix_icon("i/report", ""));
         $supervideonode->add_node($node, $beforekey);
     }
 }
@@ -430,13 +425,13 @@ function supervideo_extend_navigation_course($navigation, $course, $context) {
 /**
  * Serve the files from the supervideo file areas
  *
- * @param stdClass $course    the course object
- * @param stdClass $cm        the course module object
- * @param context $context    the context
- * @param string $filearea    the name of the file area
- * @param array $args         extra arguments (itemid, path)
+ * @param stdClass $course the course object
+ * @param stdClass $cm the course module object
+ * @param context $context the context
+ * @param string $filearea the name of the file area
+ * @param array $args extra arguments (itemid, path)
  * @param bool $forcedownload whether or not force download
- * @param array $options      additional options affecting the file serving
+ * @param array $options additional options affecting the file serving
  *
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  *
@@ -481,34 +476,12 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
  * @throws Exception
  */
 function supervideo_dndupload_register() {
-    $ret = [
-        "files" => [
-            [
-                "extension" => "mp3",
-                "message" => get_string("dnduploadlabel-mp3", "mod_supervideo"),
-            ],
-            [
-                "extension" => "mp4",
-                "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
-            ],
-            [
-                "extension" => "webm",
-                "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
-            ],
-        ],
-        "types" => [
-            [
-                "identifier" => "text/html",
-                "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
-                "noname" => true,
-            ],
-            [
-                "identifier" => "text",
-                "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
-                "noname" => true,
-            ],
-        ],
-    ];
+    $ret = ["files" => [["extension" => "mp3", "message" => get_string("dnduploadlabel-mp3",
+        "mod_supervideo"),], ["extension" => "mp4", "message" => get_string("dnduploadlabel-mp4",
+        "mod_supervideo"),], ["extension" => "webm", "message" => get_string("dnduploadlabel-mp4",
+        "mod_supervideo"),],], "types" => [["identifier" => "text/html", "message" => get_string("dnduploadlabeltext",
+        "mod_supervideo"), "noname" => true,], ["identifier" => "text", "message" => get_string("dnduploadlabeltext",
+        "mod_supervideo"), "noname" => true,],],];
     return $ret;
 }
 
@@ -551,8 +524,8 @@ function supervideo_dndupload_handle($uploadinfo) {
 
             $data->videourl = "{$file->get_filename()}";
             $options = ["subdirs" => true, "embed" => true];
-            file_save_draft_area_files(
-                $uploadinfo->draftitemid, $context->id, "mod_supervideo", "content", $data->instance, $options);
+            file_save_draft_area_files($uploadinfo->draftitemid, $context->id, "mod_supervideo", "content",
+                $data->instance, $options);
 
             supervideo_update_instance($data, null);
         }
@@ -588,9 +561,9 @@ function mod_supervideo_get_completion_active_rule_descriptions($cm) {
 /**
  * Sets the automatic completion state for this database item based on the count of on its entries.
  *
- * @param object $data   The data object for this activity
+ * @param object $data The data object for this activity
  * @param object $course Course
- * @param object $cm     course-module
+ * @param object $cm course-module
  *
  * @throws Exception
  */
@@ -614,10 +587,10 @@ function supervideo_update_completion_state($data, $course, $cm) {
  * on its settings. The call for this is in completion lib where the modulename is appended
  * to the function name. This is why there are unused parameters.
  *
- * @param stdClass $course     Course
+ * @param stdClass $course Course
  * @param cm_info|stdClass $cm course-module
- * @param int $userid          User ID
- * @param bool $type           Type of comparison (or/and; can be used as return value if no conditions)
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
  *
  * @return bool True if completed, false if not, $type if conditions not set.
  *
@@ -653,20 +626,17 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
 /**
  * Mark the activity completed (if required) and trigger the course_module_viewed event.
  *
- * @param  stdClass $supervideo supervideo object
- * @param  stdClass $course     course object
- * @param  stdClass $cm         course module object
- * @param  stdClass $context    context object
+ * @param stdClass $supervideo supervideo object
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
  *
  * @throws Exception
  */
 function supervideo_view($supervideo, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
-    $params = [
-        "context" => $context,
-        "objectid" => $supervideo->id,
-    ];
+    $params = ["context" => $context, "objectid" => $supervideo->id,];
 
     $event = \mod_supervideo\event\course_module_viewed::create($params);
     $event->add_record_snapshot("course_modules", $cm);
@@ -713,9 +683,15 @@ function supervideo_get_coursemodule_info($coursemodule) {
         $info->customdata["customcompletionrules"]["completionpercent"] = $supervideo->completionpercent;
     }
 
-    @$info->completionpassgrade = false;
-    @$info->downloadcontent = false;
-    @$info->lang = false;
+    if (isset($info->completionpassgrade)) {
+        $info->completionpassgrade = false;
+    }
+    if (isset($info->downloadcontent)) {
+        $info->downloadcontent = false;
+    }
+    if (isset($info->lang)) {
+        $info->lang = false;
+    }
 
     return $info;
 }
