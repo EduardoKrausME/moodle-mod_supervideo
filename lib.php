@@ -232,7 +232,7 @@ function supervideo_set_mainfile($supervideo) {
 
         $context = context_module::instance($cmid);
         if ($draftitemid) {
-            $options = ["subdirs" => true, "embed" => true,];
+            $options = ["subdirs" => true, "embed" => true];
             file_save_draft_area_files($draftitemid, $context->id, "mod_supervideo", "content", $supervideo->id,
                 $options);
         }
@@ -314,7 +314,7 @@ function supervideo_user_complete($course, $user, $mod, $supervideo) {
                AND sv.user_id = :user_id
                AND percent    > 0
           ORDER BY sv.timecreated ASC";
-    $param = ["cm_id" => $mod->id, "user_id" => $user->id,];
+    $param = ["cm_id" => $mod->id, "user_id" => $user->id];
     if ($registros = $DB->get_records_sql($sql, $param)) {
         echo "<table><tr>";
         echo "      <th>" . get_string("report_userid", "mod_supervideo") . "</th>";
@@ -476,12 +476,34 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
  * @throws Exception
  */
 function supervideo_dndupload_register() {
-    $ret = ["files" => [["extension" => "mp3", "message" => get_string("dnduploadlabel-mp3",
-        "mod_supervideo"),], ["extension" => "mp4", "message" => get_string("dnduploadlabel-mp4",
-        "mod_supervideo"),], ["extension" => "webm", "message" => get_string("dnduploadlabel-mp4",
-        "mod_supervideo"),],], "types" => [["identifier" => "text/html", "message" => get_string("dnduploadlabeltext",
-        "mod_supervideo"), "noname" => true,], ["identifier" => "text", "message" => get_string("dnduploadlabeltext",
-        "mod_supervideo"), "noname" => true,],],];
+    $ret = [
+        "files" => [
+            [
+                "extension" => "mp3",
+                "message" => get_string("dnduploadlabel-mp3", "mod_supervideo"),
+            ],
+            [
+                "extension" => "mp4",
+                "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
+            ],
+            [
+                "extension" => "webm",
+                "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
+            ],
+        ],
+        "types" => [
+            [
+                "identifier" => "text/html",
+                "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
+                "noname" => true,
+            ],
+            [
+                "identifier" => "text",
+                "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
+                "noname" => true,
+            ],
+        ],
+    ];
     return $ret;
 }
 
@@ -636,7 +658,10 @@ function supervideo_get_completion_state($course, $cm, $userid, $type) {
 function supervideo_view($supervideo, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
-    $params = ["context" => $context, "objectid" => $supervideo->id,];
+    $params = [
+        "context" => $context,
+        "objectid" => $supervideo->id,
+    ];
 
     $event = \mod_supervideo\event\course_module_viewed::create($params);
     $event->add_record_snapshot("course_modules", $cm);
