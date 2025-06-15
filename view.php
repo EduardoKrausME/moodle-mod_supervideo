@@ -27,9 +27,8 @@ use mod_supervideo\analytics\supervideo_view;
 use mod_supervideo\event\course_module_viewed;
 use mod_supervideo\util\config_util;
 
-global $CFG, $PAGE, $OUTPUT, $DB, $USER;
-
 require_once("../../config.php");
+global $CFG, $PAGE, $OUTPUT, $DB, $USER;
 require_once($CFG->libdir . "/completionlib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
