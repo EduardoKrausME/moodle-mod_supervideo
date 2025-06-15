@@ -273,7 +273,7 @@ if ($supervideo->videourl) {
             $mustachedata = [
                 "elementid" => $elementid,
                 "videourl" => $fullurl,
-                "autoplay" => $supervideo->autoplay ? 1 : 0,
+                "autoplay" => $supervideo->autoplay ? "true" : "false",
                 "showcontrols" => $supervideo->showcontrols ? 1 : 0,
                 "controls" => $config->controls,
                 "speed" => $config->speed,
