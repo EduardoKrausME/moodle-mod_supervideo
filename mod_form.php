@@ -132,10 +132,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         // Player size.
         $sizeoptions = [
-            1 => "Video HD (16x9)",
-            2 => "Video ED (4x3)",
-
-            5 => "PDF / DOC / XLS",
+            "pdf" => "PDF / DOC / XLS",
             "4x3" => "Video 4x3",
             "16x9" => "Video 16x9",
         ];
