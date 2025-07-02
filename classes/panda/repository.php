@@ -27,8 +27,17 @@ namespace mod_supervideo\panda;
 use dml_exception;
 use Exception;
 
+/**
+ * Class Panda repository
+ *
+ * @package mod_supervideo\panda
+ */
 class repository {
+
+    /** @var string */
     private static $baseurl = 'https://api-v2.pandavideo.com.br';
+
+    /** @var string */
     private static $basedataurl = 'https://data.pandavideo.com';
 
     /**
