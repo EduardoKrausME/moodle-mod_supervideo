@@ -387,6 +387,32 @@ if ($supervideo->videourl) {
             $elementid,
         ]);
     }
+    if ($supervideo->origem == "panda") {
+
+        try {
+            $video = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
+
+            echo $OUTPUT->render_from_template("mod_supervideo/embed_panda", [
+                "elementid" => $elementid,
+                "id" => $video->id,
+                "video_player" => $video->video_player,
+            ]);
+
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "panda", [
+                (int)$supervideoview->id,
+                $supervideoview->currenttime,
+                $elementid,
+                $supervideo->videourl,
+            ]);
+
+        } catch (dml_exception $e) {
+            echo $OUTPUT->render_from_template("mod_supervideo/error", [
+                "elementId" => "panda-error",
+                "type" => "danger",
+                "message" => $e->getMessage(),
+            ]);
+        }
+    }
 
     if ($showerrors) {
         $errors = [

@@ -192,7 +192,7 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
 function supervideo_youtube_size($supervideo, $save = false) {
 
     if ($supervideo->origem != "youtube") {
-        return $supervideo->playersize;
+        return @$supervideo->playersize;
     }
 
     if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',

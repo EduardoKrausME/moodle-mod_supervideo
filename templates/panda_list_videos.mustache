@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template mod_supervideo/panda_list_videos
+
+    Example context (json):
+    {
+        "videos": [
+            {
+                "video_id": "3cbf7d58-09c2-42d9-8272-0f5fd359c2df",
+                "title": "test 1",
+                "status": "CONVERTED",
+                "video_player": "https:\/\/player-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/embed\/?v=2847033d-9429-42c4-b0b2-aeb2a4b73383",
+                "video_hls": "https:\/\/b-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/2847033d-9429-42c4-b0b2-aeb2a4b73383\/playlist.m3u8",
+                "width": 1280,
+                "height": 720,
+                "thumbnail": "https:\/\/b-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/2847033d-9429-42c4-b0b2-aeb2a4b73383\/thumbnail.jpg"
+            },
+            {
+                "video_id": "9228838c-a587-4fe0-82b4-47d02909254a",
+                "title": "test 2",
+                "status": "CONVERTED",
+                "video_player": "https:\/\/player-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/embed\/?v=22553ccf-4877-43bf-8aeb-9e908440222f",
+                "video_hls": "https:\/\/b-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/22553ccf-4877-43bf-8aeb-9e908440222f\/playlist.m3u8",
+                "width": 1280,
+                "height": 720,
+                "thumbnail": "https:\/\/b-vz-b6abcc7b-7a4.tv.pandavideo.com.br\/22553ccf-4877-43bf-8aeb-9e908440222f\/thumbnail.jpg"
+            }
+        ]
+    }
+}}
+<div class="container">
+    <div class="row">
+        {{#videos}}
+            <div class="col-md-3 mb-3 btn btn-link">
+                <div class="card h-100 shadow-sm panda-item-video"
+                    data-videoid="{{video_id}}">
+                    <img src="{{thumbnail}}" class="card-img-top" alt="Thumbnail">
+                    <div class="card-body">
+                        <h5 class="card-title">{{title}}</h5>
+                    </div>
+                </div>
+            </div>
+        {{/videos}}
+    </div>
+</div>

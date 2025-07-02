@@ -275,6 +275,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
+        panda: function(view_id, ) {
+            progress._internal_resize(16, 9);
+        },
+
         _error_load: function(elementId) {
             function errorF(e) {
                 $(`#${elementId}, #mapa-visualizacao`).hide();

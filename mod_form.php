@@ -59,7 +59,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
         // Origem.
-        $origems = ["upload", "ottflix", "youtube", "vimeo", "drive", "link"];
+        $origems = ["upload", "ottflix", "panda", "youtube", "vimeo", "drive", "link"];
         if ($supervideo && in_array($supervideo->origem, $origems)) {
             $mform->addElement("hidden", "origem", $supervideo->origem);
             $mform->setType("origem", PARAM_TEXT);
@@ -113,6 +113,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia", "origem", "eq", "youtube");
         $mform->hideIf("ottflix_ia", "origem", "eq", "vimeo");
         $mform->hideIf("ottflix_ia", "origem", "eq", "drive");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "panda");
         $mform->hideIf("ottflix_ia", "origem", "eq", "link");
 
         // Upload.
@@ -147,6 +148,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("playersize", "origem", "eq", "vimeo");
         $mform->hideIf("playersize", "origem", "eq", "youtube");
         $mform->hideIf("playersize", "origem", "eq", "ottflix");
+        $mform->hideIf("playersize", "origem", "eq", "panda");
         $mform->hideIf("playersize", "origem", "eq", "link");
 
         $config = get_config("supervideo");
@@ -155,12 +157,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->addElement("advcheckbox", "showcontrols", get_string("showcontrols_desc", "mod_supervideo"));
             $mform->setDefault("showcontrols", $config->showcontrols);
             $mform->hideIf("showcontrols", "origem", "eq", "ottflix");
+            $mform->hideIf("showcontrols", "origem", "eq", "panda");
         }
 
         if ($config->autoplay <= 1) {
             $mform->addElement("advcheckbox", "autoplay", get_string("autoplay_desc", "mod_supervideo"));
             $mform->setDefault("autoplay", $config->autoplay);
             $mform->hideIf("autoplay", "origem", "eq", "ottflix");
+            $mform->hideIf("autoplay", "origem", "eq", "panda");
         }
 
         // Adding the standard "intro" and "introformat" fields.
@@ -259,7 +263,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @throws coding_exception
      */
     public function add_completion_rules_oold() {
-        $mform =& $this->_form;
+        $mform = &$this->_form;
 
         $mform->addElement("text", "completionpercent", get_string("completionpercent", "mod_supervideo"), ["size" => 4]);
         $mform->addHelpButton("completionpercent", "completionpercent", "mod_supervideo");

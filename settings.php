@@ -102,12 +102,12 @@ if ($ADMIN->fulltree) {
         $title, $description, 0, PARAM_INT);
     $settings->add($setting);
 
+    // OttFlix.
     $title = get_string("ottflix_title", "mod_supervideo");
     $description = "";
     $setting = new admin_setting_heading("supervideo/ottflix", $title, $description);
     $settings->add($setting);
 
-    // OttFlix.
     $title = get_string("ottflix_url", "mod_supervideo");
     $description = get_string("ottflix_url_desc", "mod_supervideo");
     $setting = new admin_setting_configtext("supervideo/ottflix_url",
@@ -118,5 +118,17 @@ if ($ADMIN->fulltree) {
     $description = get_string("ottflix_token_desc", "mod_supervideo");
     $setting = new admin_setting_configtext("supervideo/ottflix_token",
         $title, $description, "HMAC-SHA2048-xxxxxxxx", PARAM_TEXT);
+    $settings->add($setting);
+
+    // Panda.
+    $title = get_string("panda_title", "mod_supervideo");
+    $description = get_string("panda_title_desc", "mod_supervideo");
+    $setting = new admin_setting_heading("supervideo/panda", $title, $description);
+    $settings->add($setting);
+
+    $title = get_string("panda_token", "mod_supervideo");
+    $description = get_string("panda_token_desc", "mod_supervideo");
+    $setting = new admin_setting_configtext("supervideo/panda_token",
+        $title, $description, "panda-xxxxxxxx", PARAM_TEXT);
     $settings->add($setting);
 }
