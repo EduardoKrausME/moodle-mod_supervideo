@@ -258,6 +258,7 @@ body:not(.distraction-free-mode) {
         background: #393f46;
     }
     div[role="main"] {
+        margin-top: -1px;
         background: transparent !important;
         padding: 0 !important;
         border-radius: 0 !important;

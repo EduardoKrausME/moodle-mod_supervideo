@@ -1606,6 +1606,7 @@ a.plyr__control {
   background: #393f46;
 }
 .distraction-free-mode div[role=main] {
+  margin-top: -1px;
   background: transparent !important;
   padding: 0 !important;
   border-radius: 0 !important;
