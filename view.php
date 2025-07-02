@@ -390,19 +390,19 @@ if ($supervideo->videourl) {
     if ($supervideo->origem == "panda") {
 
         try {
-            $video = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
+            $pandavideo = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
 
             echo $OUTPUT->render_from_template("mod_supervideo/embed_panda", [
                 "elementid" => $elementid,
-                "id" => $video->id,
-                "video_player" => $video->video_player,
+                "id" => $pandavideo->id,
+                "video_player" => $pandavideo->video_player,
             ]);
 
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "panda", [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
-                $supervideo->videourl,
+                ["width" => $pandavideo->width, "height" => $pandavideo->height],
             ]);
 
         } catch (dml_exception $e) {

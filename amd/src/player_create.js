@@ -13,11 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function($, Ajax, PlayerRender) {
-    let progress = {
+define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, PlayerRender) {
+    let player_create = {
 
-        ottflix: function(view_id, start_currenttime, elementId, identifier) {
-            // progress._internal_resize(16, 9);
+        ottflix: function (view_id, start_currenttime, elementId, identifier) {
+            // player_create._internal_resize(16, 9);
             window.addEventListener("message", function receiveMessage(event) {
                 if (event.data.origem == "OTTFLIX-player") {
 
@@ -25,10 +25,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
                     if (event.data.identifier == identifier) {
                         if (event.data.name == "progress") {
-                            progress._internal_saveprogress(event.data.currentTime, event.data.duration);
+                            player_create._internal_saveprogress(event.data.currentTime, event.data.duration);
                         } else if (event.data.name == "loadeddata") {
                             // Tamanho vem do OTTFlix
-                            // progress._internal_resize(event.data.width, event.data.height);
+                            // player_create._internal_resize(event.data.width, event.data.height);
                         }
                     }
                 }
@@ -39,7 +39,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 .show()
                 .css({"right": morewidth + 11})
                 .tabs({
-                    activate: function(event, ui) {
+                    activate: function (event, ui) {
                         let panel = ui.newPanel;
                         let iframe = panel.find("iframe");
 
@@ -50,8 +50,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 });
         },
 
-        youtube: function(view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
-            progress._internal_view_id = view_id;
+        youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
+            player_create._internal_view_id = view_id;
 
             let playerVars = {
                 rel: 0,
@@ -68,46 +68,46 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     width: "100%",
                     playerVars: playerVars,
                     events: {
-                        "onReady": function(event) {
+                        "onReady": function (event) {
 
                             let sizes = playersize.split("x");
                             console.log(sizes);
                             if (sizes && sizes[1]) {
                                 console.log(sizes);
-                                progress._internal_resize(sizes[0], sizes[1]);
+                                player_create._internal_resize(sizes[0], sizes[1]);
                             } else {
-                                progress._internal_resize(16, 9);
+                                player_create._internal_resize(16, 9);
                             }
 
-                            document.addEventListener("setCurrentTime", function(event) {
+                            document.addEventListener("setCurrentTime", function (event) {
                                 player.seekTo(event.detail.goCurrentTime);
                             });
                         },
-                        "onStateChange": function(event) {
+                        "onStateChange": function (event) {
                             console.log(event);
                         }
                     }
                 });
             } else {
                 let html =
-                        `<div class="alert alert-danger">
+                    `<div class="alert alert-danger">
                              Error loading the JavaScript at https://www.youtube.com/iframe_api
                              Please check for any Security Policy restrictions.
                          </div>`;
                 $("#supervideo_area_embed").html(html);
             }
 
-            setInterval(function() {
+            setInterval(function () {
                 if (player && player.getCurrentTime != undefined) {
-                    progress._internal_saveprogress(player.getCurrentTime(), player.getDuration() - 1);
+                    player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration() - 1);
                 }
             }, 150);
         },
 
-        resource_audio: function(view_id, start_currenttime, elementId) {
+        resource_audio: function (view_id, start_currenttime, elementId) {
             $("body").removeClass("distraction-free-mode");
 
-            progress._internal_view_id = view_id;
+            player_create._internal_view_id = view_id;
 
             let $element = $(`#${elementId}`);
             let fullurl = $element.attr("data-videourl");
@@ -126,7 +126,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             let embed = `<audio ${embedparameters} crossorigin playsinline id="${elementId}_audio"></audio>`;
             $element.html(embed);
-            progress._error_load(`${elementId}_audio`);
+            player_create._error_load(`${elementId}_audio`);
             $(`#${elementId}_audio`).attr("src", fullurl);
 
             let config = {
@@ -139,10 +139,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
             };
             let player = new PlayerRender(`#${elementId} audio`, config);
-            player.on("ready", function() {
+            player.on("ready", function () {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
-                    setTimeout(function() {
+                    setTimeout(function () {
                         player.currentTime = parseInt(start_currenttime);
                     }, 1000);
 
@@ -152,17 +152,17 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             });
 
-            document.addEventListener("setCurrentTime", function(event) {
+            document.addEventListener("setCurrentTime", function (event) {
                 player.currentTime = event.detail.goCurrentTime;
             });
 
-            setInterval(function() {
-                progress._internal_saveprogress(player.currentTime, player.duration);
+            setInterval(function () {
+                player_create._internal_saveprogress(player.currentTime, player.duration);
             }, 200);
         },
 
-        resource_video: function(view_id, start_currenttime, elementId) {
-            progress._internal_view_id = view_id;
+        resource_video: function (view_id, start_currenttime, elementId, isHls) {
+            player_create._internal_view_id = view_id;
 
             const $element = $(`#${elementId}`);
             const fullurl = $element.attr("data-videourl");
@@ -180,7 +180,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             $element.html(`<video ${embedparameters} crossorigin playsinline id="${elementId}_video"></video>`);
-            progress._error_load(`${elementId}_video`);
+            player_create._error_load(`${elementId}_video`);
             $(`#${elementId}_video`).attr("src", fullurl);
 
             const config = {
@@ -192,38 +192,90 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
             };
-            const player = new PlayerRender(`#${elementId} video`, config);
 
-            player.on("ready", function() {
-                if (start_currenttime) {
-                    player.currentTime = parseInt(start_currenttime);
-                    setTimeout(function() {
+            function playerReady(player) {
+                player.on("ready", function () {
+                    if (start_currenttime) {
                         player.currentTime = parseInt(start_currenttime);
-                    }, 1000);
+                        setTimeout(function () {
+                            player.currentTime = parseInt(start_currenttime);
+                        }, 1000);
 
-                    if (!autoplay) {
-                        player.pause();
+                        if (!autoplay) {
+                            player.pause();
+                        }
                     }
+                    player_create._internal_resize(16, 9);
+                });
+
+                document.addEventListener("setCurrentTime", function (event) {
+                    player.currentTime = event.detail.goCurrentTime;
+                });
+
+                setInterval(function () {
+                    player_create._internal_saveprogress(player.currentTime, player.duration);
+                }, 200);
+            }
+
+            const video = document.querySelector(`#${elementId} video`);
+
+            if (isHls) {
+                if (Hls.isSupported()) {
+
+                    let source = $(`#${elementId}`).attr("data-videourl");
+
+                    // For more Hls.js options, see https://github.com/dailymotion/hls.js
+                    const hls = new Hls();
+                    hls.loadSource(source);
+
+                    // From the m3u8 playlist, hls parses the manifest and returns
+                    // all available video qualities. This is important, in this approach,
+                    // we will have one source on the Plyr player.
+                    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+
+                        // Transform available levels into an array of integers (height values).
+                        const availableQualities = hls.levels.map((l) => l.height)
+
+                        // Add new qualities to option
+                        config.quality = {
+                            default: availableQualities[0],
+                            options: availableQualities,
+                            // this ensures Plyr to use Hls to update quality level
+                            forced: true,
+                            onChange: (e) => updateQuality(e),
+                        }
+
+                        function updateQuality(newQuality) {
+                            window.hls.levels.forEach((level, levelIndex) => {
+                                if (level.height === newQuality) {
+                                    console.log("Found quality match with " + newQuality);
+                                    window.hls.currentLevel = levelIndex;
+                                }
+                            });
+                        }
+
+                        // Initialize here
+                        const player = new PlayerRender(video, config);
+                        playerReady(player)
+                    });
+                    hls.attachMedia(video);
+                    window.hls = hls;
+                } else {
+                    const player = new PlayerRender(video, config);
+                    playerReady(player);
                 }
-                progress._internal_resize(16, 9);
-            });
+            } else {
+                const player = new PlayerRender(video, config);
+                playerReady(player);
+            }
 
-            const video = document.getElementById(elementId);
-            video.addEventListener("loadedmetadata", function(event) {
-                progress._internal_resize(video.videoWidth, video.videoHeight);
+            video.addEventListener("loadedmetadata", function (event) {
+                player_create._internal_resize(video.videoWidth, video.videoHeight);
             });
-
-            document.addEventListener("setCurrentTime", function(event) {
-                player.currentTime = event.detail.goCurrentTime;
-            });
-
-            setInterval(function() {
-                progress._internal_saveprogress(player.currentTime, player.duration);
-            }, 200);
         },
 
-        vimeo: function(view_id, start_currenttime, vimeoid, elementId) {
-            progress._internal_view_id = view_id;
+        vimeo: function (view_id, start_currenttime, vimeoid, elementId) {
+            player_create._internal_view_id = view_id;
 
             const iframe = document.getElementById(elementId);
             const player = new Vimeo.Player(iframe);
@@ -232,54 +284,72 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player.setCurrentTime(start_currenttime);
             }
 
-            document.addEventListener("setCurrentTime", function(event) {
+            document.addEventListener("setCurrentTime", function (event) {
                 player.setCurrentTime(event.detail.goCurrentTime);
             });
 
-            Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function(dimensions) {
+            Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function (dimensions) {
                 const width = dimensions[0];
                 const height = dimensions[1];
 
-                progress._internal_resize(width, height);
+                player_create._internal_resize(width, height);
             });
 
             let duration = 0;
-            setInterval(function() {
+            setInterval(function () {
                 if (duration > 1) {
-                    player.getCurrentTime().then(function(_currenttime) {
+                    player.getCurrentTime().then(function (_currenttime) {
                         _currenttime = parseInt(_currenttime);
-                        progress._internal_saveprogress(_currenttime, duration);
+                        player_create._internal_saveprogress(_currenttime, duration);
                     });
                 } else {
-                    player.getDuration().then(function(_duration) {
+                    player.getDuration().then(function (_duration) {
                         duration = _duration;
                     });
                 }
             }, 300);
         },
 
-        drive: function(view_id, elementId, playersize) {
+        drive: function (view_id, elementId, playersize) {
             $("#mapa-visualizacao").hide();
 
-            progress._internal_view_id = view_id;
-            progress._internal_saveprogress(1, 1);
+            player_create._internal_view_id = view_id;
+            player_create._internal_saveprogress(1, 1);
 
             if (playersize == "4x3") {
-                progress._internal_resize(4, 3);
+                player_create._internal_resize(4, 3);
             } else if (playersize == "16x9") {
-                progress._internal_resize(16, 9);
+                player_create._internal_resize(16, 9);
             } else {
                 $("body").removeClass("distraction-free-mode");
 
-                progress._internal_resize(100, 640);
+                player_create._internal_resize(100, 640);
             }
         },
 
-        panda: function(view_id, ) {
-            progress._internal_resize(16, 9);
+        panda: function (view_id, currenttime, elementId, size) {
+            player_create._internal_resize(size.width, size.height);
+
+            player_create._internal_view_id = view_id;
+
+            let duration = false;
+            window.addEventListener("message", (event) => {
+                const {data} = event;
+
+                if (data.message === 'panda_allData') {
+                    duration = data.playerData.duration
+                } else if (data.message === 'panda_timeupdate') {
+                    if (duration) {
+                        player_create._internal_saveprogress(data.currentTime, duration);
+                    }
+                }
+            }, false);
+
+            const iframe = document.getElementById(elementId).contentWindow;
+            iframe.postMessage({type: 'currentTime', parameter: currenttime});
         },
 
-        _error_load: function(elementId) {
+        _error_load: function (elementId) {
             function errorF(e) {
                 $(`#${elementId}, #mapa-visualizacao`).hide();
                 //$("body").removeClass("distraction-free-mode");
@@ -309,16 +379,16 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
         _internal_resize__width: 0,
         _internal_resize__height: 0,
-        _internal_resize: function(width, height) {
+        _internal_resize: function (width, height) {
             console.log([width, height]);
-            progress._internal_resize__width = width;
-            progress._internal_resize__height = height;
+            player_create._internal_resize__width = width;
+            player_create._internal_resize__height = height;
 
-            $(window).resize(progress._internal_max_height__resizePage);
-            progress._internal_max_height__resizePage();
+            $(window).resize(player_create._internal_max_height__resizePage);
+            player_create._internal_max_height__resizePage();
         },
 
-        _internal_max_height__resizePage: function() {
+        _internal_max_height__resizePage: function () {
 
             let windowHeight = $(window).height();
             if ($("body").hasClass("distraction-free-mode")) {
@@ -354,10 +424,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
                     let maxHeight = $(window).height() - $("#header").height();
                     let width = $supervideo_area_embed.width();
-                    let height = (width * progress._internal_resize__height) / progress._internal_resize__width;
+                    let height = (width * player_create._internal_resize__height) / player_create._internal_resize__width;
 
                     if (height < maxHeight) {
-                        let ratio = (progress._internal_resize__height / progress._internal_resize__width) * 100;
+                        let ratio = (player_create._internal_resize__height / player_create._internal_resize__width) * 100;
                         if (ratio > 10) {
                             $supervideo_area_embed.css({
                                 paddingBottom: `${ratio}%`,
@@ -365,7 +435,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                             });
                         }
                     } else {
-                        // let newWidth = (maxHeight * progress._internal_resize__width) / progress._internal_resize__height;
+                        // let newWidth = (maxHeight * player_create._internal_resize__width) / player_create._internal_resize__height;
                         $supervideo_area_embed.css({
                             // width         : newWidth,
                             // margin        : "0 auto",
@@ -384,7 +454,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         _internal_view_id: 0,
         _internal_progress_length: 100,
         _internal_sizenum: -1,
-        _internal_saveprogress: function(currenttime, duration) {
+        _internal_saveprogress: function (currenttime, duration) {
 
             currenttime = Math.floor(currenttime);
             duration = Math.floor(duration);
@@ -393,64 +463,64 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 return 0;
             }
 
-            if (duration && progress._internal_assistido.length == 0) {
-                progress._internal_progress_create(duration);
+            if (duration && player_create._internal_assistido.length == 0) {
+                player_create._internal_progress_create(duration);
             }
 
-            if (progress._internal_progress_length < 100) {
+            if (player_create._internal_progress_length < 100) {
                 posicao_video = currenttime;
             } else {
-                let posicao_video = parseInt(currenttime / duration * progress._internal_progress_length);
+                let posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
             }
 
-            if (progress._internal_last_posicao_video == posicao_video) return;
-            progress._internal_last_posicao_video = posicao_video;
+            if (player_create._internal_last_posicao_video == posicao_video) return;
+            player_create._internal_last_posicao_video = posicao_video;
 
             if (posicao_video) {
-                progress._internal_assistido[posicao_video] = 1;
+                player_create._internal_assistido[posicao_video] = 1;
             }
 
             let percent = 0;
-            for (let j = 1; j <= progress._internal_progress_length; j++) {
-                if (progress._internal_assistido[j]) {
+            for (let j = 1; j <= player_create._internal_progress_length; j++) {
+                if (player_create._internal_assistido[j]) {
                     percent++;
                     $("#mapa-visualizacao-" + j).css({opacity: 1});
                 }
             }
 
-            if (progress._internal_progress_length < 100) {
-                percent = Math.floor(percent / progress._internal_progress_length * 100);
+            if (player_create._internal_progress_length < 100) {
+                percent = Math.floor(percent / player_create._internal_progress_length * 100);
             }
 
-            if (progress._internal_last_percent == percent) {
+            if (player_create._internal_last_percent == percent) {
                 return;
             }
-            progress._internal_last_percent = percent;
+            player_create._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
                 let $mapa = $("#mapa-visualizacao");
                 if ($mapa.length && !$mapa.is(":hidden")) {
                     if (currenttime > (duration * .90)) {
-                        if (progress._internal_sizenum != 1) {
+                        if (player_create._internal_sizenum != 1) {
                             $(".activity-navigation").hide();
                             $mapa.addClass("fixed-booton");
-                            progress._internal_max_height__resizePage();
-                            progress._internal_sizenum = 1;
+                            player_create._internal_max_height__resizePage();
+                            player_create._internal_sizenum = 1;
                         }
                     } else {
-                        if (progress._internal_sizenum != 2) {
+                        if (player_create._internal_sizenum != 2) {
                             $(".activity-navigation").show();
                             $mapa.removeClass("fixed-booton");
-                            progress._internal_max_height__resizePage();
-                            progress._internal_sizenum = 2;
+                            player_create._internal_max_height__resizePage();
+                            player_create._internal_sizenum = 2;
                         }
                     }
                 } else {
-                    if (progress._internal_sizenum != 3) {
+                    if (player_create._internal_sizenum != 3) {
                         $(".activity-navigation").show();
                         $mapa.removeClass("fixed-booton");
-                        progress._internal_max_height__resizePage();
-                        progress._internal_sizenum = 3;
+                        player_create._internal_max_height__resizePage();
+                        player_create._internal_sizenum = 3;
                     }
                 }
             }
@@ -459,11 +529,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 Ajax.call([{
                     methodname: "mod_supervideo_progress_save",
                     args: {
-                        view_id: progress._internal_view_id,
+                        view_id: player_create._internal_view_id,
                         currenttime: parseInt(currenttime),
                         duration: parseInt(duration),
                         percent: parseInt(percent),
-                        mapa: JSON.stringify(progress._internal_assistido)
+                        mapa: JSON.stringify(player_create._internal_assistido)
                     }
                 }]);
             }
@@ -473,7 +543,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
-        _internal_progress_create: function(duration) {
+        _internal_progress_create: function (duration) {
 
             let $mapa = $("#mapa-visualizacao .mapa");
             if (!$mapa.length) {
@@ -491,19 +561,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             if (Math.floor(duration) <= 100) {
-                progress._internal_progress_length = Math.floor(duration);
+                player_create._internal_progress_length = Math.floor(duration);
             }
-            for (let i = 1; i <= progress._internal_progress_length; i++) {
+            for (let i = 1; i <= player_create._internal_progress_length; i++) {
                 if (typeof supervideo_view_mapa[i] != "undefined") {
-                    progress._internal_assistido[i] = supervideo_view_mapa[i];
+                    player_create._internal_assistido[i] = supervideo_view_mapa[i];
                 } else {
-                    progress._internal_assistido[i] = 0;
+                    player_create._internal_assistido[i] = 0;
                 }
                 let $mapa_item = $("<div id='mapa-visualizacao-" + i + "'>");
                 $mapa.append($mapa_item);
 
                 // Mapa Clique
-                let mapaTitle = Math.floor(duration / progress._internal_progress_length * i);
+                let mapaTitle = Math.floor(duration / player_create._internal_progress_length * i);
 
                 let hours = Math.floor(mapaTitle / 3600);
                 let minutes = (Math.floor(mapaTitle / 60)) % 60;
@@ -514,30 +584,30 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
                 let $mapa_clique =
-                        $("<div id='mapa-visualizacao-" + i + "'>")
-                            .attr("title", "Ir para " + tempo)
-                            .attr("data-currenttime", mapaTitle)
-                            .click(function() {
-                                let _setCurrentTime = $(this).attr("data-currenttime");
-                                _setCurrentTime = parseInt(_setCurrentTime);
+                    $("<div id='mapa-visualizacao-" + i + "'>")
+                        .attr("title", "Ir para " + tempo)
+                        .attr("data-currenttime", mapaTitle)
+                        .click(function () {
+                            let _setCurrentTime = $(this).attr("data-currenttime");
+                            _setCurrentTime = parseInt(_setCurrentTime);
 
-                                let event = document.createEvent("CustomEvent");
-                                event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
-                                document.dispatchEvent(event);
-                            });
+                            let event = document.createEvent("CustomEvent");
+                            event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
+                            document.dispatchEvent(event);
+                        });
                 $("#mapa-visualizacao .clique").append($mapa_clique);
             }
         },
 
-        _internal_add: function(accumulator, a) {
+        _internal_add: function (accumulator, a) {
             return accumulator + a;
         },
 
-        error_idnotfound: function() {
+        error_idnotfound: function () {
             $("body").removeClass("distraction-free-mode");
         },
 
-        secondary_navigation: function(course_id) {
+        secondary_navigation: function (course_id) {
             let newHeader = $(`<div id="distraction-free-mode-header"></div>`);
             $("#page-header").after(newHeader);
 
@@ -565,5 +635,5 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             });
         },
     };
-    return progress;
+    return player_create;
 });

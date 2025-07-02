@@ -78,7 +78,7 @@ class repository {
      *
      * @param string $videoid
      *
-     * @return array
+     * @return \stdClass
      *
      * @throws dml_exception
      */

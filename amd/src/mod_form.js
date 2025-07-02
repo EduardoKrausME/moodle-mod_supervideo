@@ -21,10 +21,12 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
 
             modform.origem(courseinfo);
             modform.panda();
+            modform.panda_youtube_vimeo();
 
             var player = new PlayerRender();
             player.loadposter($, lang);
         },
+
         origem:function (courseinfo){
             let id_origem = $("#id_origem");
             if (courseinfo) {
@@ -48,9 +50,10 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                 });
             }
         },
+
         panda:function (){
             let id_videourl_panda = $("#id_videourl_panda");
-            id_videourl_panda.after(`<div id="id_videourl_panda-videos"></div>`)
+            id_videourl_panda.after(`<div id="id_videourl_panda-videos"></div>`);
 
             let id_origem = $("#id_origem");
             id_origem.change(function () {
@@ -71,6 +74,17 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                                 });
                             });
                     }).fail(Notification.exception);
+                }
+            });
+        },
+
+        panda_youtube_vimeo:function (){
+            let id_origem = $("#id_origem");
+            id_origem.change(function () {
+                if ($(this).val() == "upload") {
+                    $("#kapture-open").show();
+                } else {
+                    $("#kapture-open").hide();
                 }
             });
         }
