@@ -35,10 +35,10 @@ use Exception;
 class repository {
 
     /** @var string */
-    private static $baseurl = 'https://api-v2.pandavideo.com.br';
+    private static $baseurl = "https://api-v2.pandavideo.com.br";
 
     /** @var string */
-    private static $basedataurl = 'https://data.pandavideo.com';
+    private static $basedataurl = "https://data.pandavideo.com";
 
     /**
      * List videos
@@ -52,7 +52,7 @@ class repository {
      * @throws dml_exception
      * @throws Exception
      */
-    public static function get_videos($page = 0, $limit = 100, $title = '') {
+    public static function get_videos($page = 0, $limit = 100, $title = "") {
         $params = [];
         if ($page) {
             $params[] = "page={$page}";
@@ -126,7 +126,11 @@ class repository {
      */
     private static function http_get($endpoint,  $baseurl) {
 
-        $config = get_config('supervideo');
+        $config = get_config("supervideo");
+
+        if (!isset($config->panda_token[10])) {
+            throw new Exception("<h2>Token is missing!</h2>" . get_string("panda_token_desc", "mod_supervideo"));
+        }
 
         $url = self::$baseurl . $endpoint;
 

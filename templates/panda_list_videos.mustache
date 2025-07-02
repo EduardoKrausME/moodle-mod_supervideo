@@ -46,16 +46,21 @@
 }}
 <div class="container">
     <div class="row">
-        {{#videos}}
-            <div class="col-md-3 mb-3 btn btn-link">
-                <div class="card h-100 shadow-sm panda-item-video videoid-{{video_id}}"
-                    data-videoid="{{video_id}}">
-                    <img src="{{thumbnail}}" class="card-img-top" alt="Thumbnail">
-                    <div class="card-body">
-                        <span class="card-title">{{title}}</span>
+        {{^status}}
+            <div class="alert alert-danger">{{{error}}}</div>
+        {{/status}}
+        {{#status}}
+            {{#videos}}
+                <div class="col-md-3 mb-3 btn btn-link">
+                    <div class="card h-100 shadow-sm panda-item-video videoid-{{video_id}}"
+                         data-videoid="{{video_id}}">
+                        <img src="{{thumbnail}}" class="card-img-top" alt="Thumbnail">
+                        <div class="card-body">
+                            <span class="card-title">{{title}}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {{/videos}}
+            {{/videos}}
+        {{/status}}
     </div>
 </div>

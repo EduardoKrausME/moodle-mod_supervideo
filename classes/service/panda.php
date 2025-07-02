@@ -103,10 +103,9 @@ class panda extends external_api {
         return new external_single_structure(
             [
                 "status" => new external_value(PARAM_BOOL, "status: true if success"),
-                "error"  => new external_value(PARAM_TEXT, "text error", VALUE_OPTIONAL),
+                "error"  => new external_value(PARAM_RAW, "text error", VALUE_OPTIONAL),
                 "videos" => new external_multiple_structure(
-                    new external_single_structure(
-                        [
+                    new external_single_structure([
                             "video_id" => new external_value(PARAM_TEXT, "video_id"),
                             "title" => new external_value(PARAM_TEXT, "title"),
                             "status" => new external_value(PARAM_TEXT, "status"),
@@ -115,9 +114,8 @@ class panda extends external_api {
                             "width" => new external_value(PARAM_INT, "width"),
                             "height" => new external_value(PARAM_INT, "height"),
                             "thumbnail" => new external_value(PARAM_TEXT, "thumbnail"),
-                        ], 'List Videos', VALUE_OPTIONAL
-                    )
-                ),
+                        ], 'Iten Video', VALUE_OPTIONAL )
+                    , 'List Videos', VALUE_OPTIONAL),
             ]
         );
     }
