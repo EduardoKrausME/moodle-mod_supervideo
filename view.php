@@ -239,21 +239,16 @@ if ($supervideo->videourl) {
             "showcontrols" => $supervideo->showcontrols ? 1 : 0,
             "controls" => $config->controls,
             "speed" => $config->speed,
+            "hls" => preg_match("/^https?.*\.(m3u8)/i", $supervideo->videourl, $output),
+            "has_audio" => preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output),
         ];
         echo $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
-        if (preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output)) {
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
+        $PAGE->requires->js_call_amd("mod_supervideo/player_create",
+            $mustachedata["has_audio"] ? "resource_audio" : "resource_video", [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
             ]);
-        } else {
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-            ]);
-        }
         $showerrors = true;
     }
     if ($supervideo->origem == "upload") {
