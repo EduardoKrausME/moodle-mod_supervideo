@@ -72,7 +72,7 @@ class core_hook_output {
                         $status = ottflix_repository::getstatus($video->videourl);
                         $thumb = $status->data->THUMB;
                     } else if ($video->videourl == "youtube") {
-                        $pattern = '/(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
+                        $pattern = '/(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
                         preg_match_all($pattern, $video->videourl, $videos);
                         if (isset($videos[1][0])) {
                             $youtubeid = $videos[1][0];
