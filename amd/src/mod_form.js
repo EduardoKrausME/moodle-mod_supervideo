@@ -17,9 +17,11 @@ define(["jquery", "core/ajax", "core/notification", "core/templates", "mod_super
 function ($, Ajax, Notification, Templates, PlayerRender) {
     var modform = {
 
-        init: function (lang, courseinfo) {
+        init: function (lang, courseinfo, has_panda_token) {
 
             modform.origem(courseinfo);
+
+            modform.has_panda_token = has_panda_token;
             modform.panda();
             modform.panda_youtube_vimeo(lang);
 
@@ -52,6 +54,10 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
         },
 
         panda:function (){
+            if (!modform.has_panda_token) {
+                return;
+            }
+
             let id_videourl_panda = $("#id_videourl_panda");
             id_videourl_panda.after(`
                 <div style="background: #00000075;padding: 10px;margin-top: 5px;border-radius: 7px;width: 100%;">
@@ -87,7 +93,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                 let videoid = id_videourl_panda.val();
                 $(`.panda-item-video:not(.videoid-${videoid})`).css("background", "");
                 $(`.panda-item-video.videoid-${videoid}`).css("background", "#D2DAE1");
-            };
+            }
 
             function loadVideosPanda(){
                 console.log("calll");
@@ -119,7 +125,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                 let clipboardData = (e.originalEvent || e).clipboardData.getData("text");
                 let match = clipboardData.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
                 if (match) {
-                    id_videourl_panda.val(match[0]);
+                    id_videourl_panda.val(`https://dashboard.pandavideo.com.br/#/videos/${match[0]}`);
                     markActive ();
                 } else {
                     id_videourl_panda.val("");

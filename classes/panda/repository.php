@@ -40,6 +40,13 @@ class repository {
     /** @var string */
     private static $basedataurl = "https://data.pandavideo.com";
 
+    public static function oembed($videoid) {
+        $dashboard = urlencode("https://dashboard.pandavideo.com.br/videos/{$videoid}");
+        $endpoint = "/oembed?url={$dashboard}";
+        $response = self::http_get($endpoint, self::$baseurl);
+        return $response;
+    }
+
     /**
      * List videos
      *

@@ -385,14 +385,18 @@ if ($supervideo->videourl) {
     if ($supervideo->origem == "panda") {
 
         try {
-            $pandavideo = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
+            if (isset($config->panda_token[10])) {
+                $pandavideo = \mod_supervideo\panda\repository::oembed($supervideo->videourl);
+                $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
+            } else {
+                $pandavideo = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
+            }
 
             echo $OUTPUT->render_from_template("mod_supervideo/embed_panda", [
                 "elementid" => $elementid,
                 "id" => $pandavideo->id,
                 "video_player" => $pandavideo->video_player,
             ]);
-
             $PAGE->requires->js_call_amd("mod_supervideo/player_create", "panda", [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
