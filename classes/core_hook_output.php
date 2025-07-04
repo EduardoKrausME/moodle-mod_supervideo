@@ -24,6 +24,7 @@
 
 namespace mod_supervideo;
 
+use mod_supervideo\ottflix\repository as ottflix_repository;
 
 /**
  * Class core_hook_output
@@ -50,26 +51,39 @@ class core_hook_output {
             $cache = \cache::make("theme_boost_training", "css_cache");
             $cachekey = "supervideo_icon_{$COURSE->id}";
             if ($cache->has($cachekey)) {
-                return $cache->get($cachekey);
+                $css = $cache->get($cachekey);
+                echo "<style>{$css}</style>";
+                return;
             }
 
             $sql = "
-                SELECT cm.id AS cmid, sv.videourl
+                SELECT cm.id AS cmid, sv.videourl, sv.origem
                   FROM {course_modules} cm
                   JOIN {modules}        md ON md.id = cm.module
                   JOIN {supervideo}     sv ON sv.id = cm.instance
                  WHERE sv.course = :course
-                   AND sv.origem = 'ottflix'
+                   AND sv.origem IN('ottflix','youtube')
                    AND md.name   = 'supervideo'";
             $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
             foreach ($videos as $video) {
                 if (isset($video->videourl[3])) {
-                    $status = \mod_supervideo\ottflix\repository::getstatus($video->videourl);
+                    $thumb = null;
+                    if ($video->videourl == "ottflix") {
+                        $status = ottflix_repository::getstatus($video->videourl);
+                        $thumb = $status->data->THUMB;
+                    } else if ($video->videourl == "youtube") {
+                        $pattern = '/(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
+                        preg_match_all($pattern, $video->videourl, $videos);
+                        if (isset($videos[1][0])) {
+                            $youtubeid = $videos[1][0];
+                            $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
+                        }
+                    }
 
-                    if (isset($status->data->THUMB)) {
+                    if ($thumb) {
                         $formatblockcss = file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/format-block.css");
                         $formatblockcss = str_replace("customiconid", $video->cmid, $formatblockcss);
-                        $formatblockcss = str_replace("{imageurl}", $status->data->THUMB, $formatblockcss);
+                        $formatblockcss = str_replace("{imageurl}", $thumb, $formatblockcss);
                         $css .= $formatblockcss;
                     }
                 }
