@@ -40,6 +40,13 @@ class repository {
     /** @var string */
     private static $basedataurl = "https://data.pandavideo.com";
 
+    /**
+     * oEmbed function
+     *
+     * @param $videoid
+     * @return mixed
+     * @throws dml_exception
+     */
     public static function oembed($videoid) {
         $dashboard = urlencode("https://dashboard.pandavideo.com.br/videos/{$videoid}");
         $endpoint = "/oembed?url={$dashboard}";
