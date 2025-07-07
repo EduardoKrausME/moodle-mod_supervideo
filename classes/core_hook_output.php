@@ -41,56 +41,56 @@ class core_hook_output {
         if (isset($_SESSION["SESSION"]->theme)) {
             $theme = $_SESSION["SESSION"]->theme;
         }
-        if ($theme != "boost_training") {
+        if ($theme != "boost_training" && $theme != "eadflix") {
+            return;
+        }
+        if ($COURSE->id == $SITE->id) {
+            return;
+        }
+
+        $cache = \cache::make("theme_boost_training", "css_cache");
+        $cachekey = "supervideo_icon_{$COURSE->id}";
+        if (false && $cache->has($cachekey)) {
+            $css = $cache->get($cachekey);
+            echo "<style>{$css}</style>";
             return;
         }
 
         $css = "";
-        if ($COURSE->id != $SITE->id) {
-
-            $cache = \cache::make("theme_boost_training", "css_cache");
-            $cachekey = "supervideo_icon_{$COURSE->id}";
-            if ($cache->has($cachekey)) {
-                $css = $cache->get($cachekey);
-                echo "<style>{$css}</style>";
-                return;
-            }
-
-            $sql = "
-                SELECT cm.id AS cmid, sv.videourl, sv.origem
-                  FROM {course_modules} cm
-                  JOIN {modules}        md ON md.id = cm.module
-                  JOIN {supervideo}     sv ON sv.id = cm.instance
-                 WHERE sv.course = :course
-                   AND sv.origem IN('ottflix','youtube')
-                   AND md.name   = 'supervideo'";
-            $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
-            foreach ($videos as $video) {
-                if (isset($video->videourl[3])) {
-                    $thumb = null;
-                    if ($video->videourl == "ottflix") {
-                        $status = ottflix_repository::getstatus($video->videourl);
-                        $thumb = $status->data->THUMB;
-                    } else if ($video->videourl == "youtube") {
-                        $pattern = '/(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
-                        preg_match_all($pattern, $video->videourl, $videos);
-                        if (isset($videos[1][0])) {
-                            $youtubeid = $videos[1][0];
-                            $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
-                        }
-                    }
-
-                    if ($thumb) {
-                        $formatblockcss = file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/format-block.css");
-                        $formatblockcss = str_replace("customiconid", $video->cmid, $formatblockcss);
-                        $formatblockcss = str_replace("{imageurl}", $thumb, $formatblockcss);
-                        $css .= $formatblockcss;
+        $sql = "
+            SELECT cm.id AS cmid, sv.videourl, sv.origem
+              FROM {course_modules} cm
+              JOIN {modules}        md ON md.id = cm.module
+              JOIN {supervideo}     sv ON sv.id = cm.instance
+             WHERE sv.course = :course
+               AND sv.origem IN('ottflix','youtube')
+               AND md.name   = 'supervideo'";
+        $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
+        foreach ($videos as $video) {
+            if (isset($video->videourl[3])) {
+                $thumb = null;
+                if ($video->origem == "ottflix") {
+                    $status = ottflix_repository::getstatus($video->videourl);
+                    $thumb = $status->data->THUMB;
+                } else if ($video->origem == "youtube") {
+                    $pattern = '/(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
+                    preg_match_all($pattern, $video->videourl, $videos);
+                    if (isset($videos[1][0])) {
+                        $youtubeid = $videos[1][0];
+                        $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
                     }
                 }
-            }
 
-            $cache->set($cachekey, $css);
-            echo "<style>{$css}</style>";
+                if ($thumb) {
+                    $formatblockcss = file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/format-block.css");
+                    $formatblockcss = str_replace("customiconid", $video->cmid, $formatblockcss);
+                    $formatblockcss = str_replace("{imageurl}", $thumb, $formatblockcss);
+                    $css .= $formatblockcss;
+                }
+            }
         }
+
+        $cache->set($cachekey, $css);
+        echo "<style>{$css}</style>";
     }
 }
