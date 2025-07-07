@@ -48,49 +48,61 @@ class core_hook_output {
             return;
         }
 
+        $blocks = [];
+
         $cache = \cache::make("theme_boost_training", "css_cache");
         $cachekey = "supervideo_icon_{$COURSE->id}";
-        if ($cache->has($cachekey)) {
-            $css = $cache->get($cachekey);
-            echo "<style>{$css}</style>";
-            return;
-        }
-
-        $css = "";
-        $sql = "
-            SELECT cm.id AS cmid, sv.videourl, sv.origem
-              FROM {course_modules} cm
-              JOIN {modules}        md ON md.id = cm.module
-              JOIN {supervideo}     sv ON sv.id = cm.instance
-             WHERE sv.course = :course
-               AND sv.origem IN('ottflix','youtube')
-               AND md.name   = 'supervideo'";
-        $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
-        foreach ($videos as $video) {
-            if (isset($video->videourl[3])) {
-                $thumb = null;
-                if ($video->origem == "ottflix") {
-                    $status = ottflix_repository::getstatus($video->videourl);
-                    $thumb = $status->data->THUMB;
-                } else if ($video->origem == "youtube") {
-                    $pattern = '/(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user|shorts)\/))([^\?&\"\'>]+)/';
-                    preg_match_all($pattern, $video->videourl, $videos);
-                    if (isset($videos[1][0])) {
-                        $youtubeid = $videos[1][0];
-                        $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
+        if (false && $cache->has($cachekey)) {
+            $blocks = json_decode($cache->get($cachekey));
+        } else {
+            $sql = "
+                SELECT cm.id AS cmid, sv.videourl, sv.origem
+                  FROM {course_modules} cm
+                  JOIN {modules}        md ON md.id = cm.module
+                  JOIN {supervideo}     sv ON sv.id = cm.instance
+                 WHERE sv.course = :course
+                   AND sv.origem IN('ottflix','youtube')
+                   AND md.name   = 'supervideo'";
+            $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
+            foreach ($videos as $video) {
+                if (isset($video->videourl[3])) {
+                    $thumb = null;
+                    if ($video->origem == "ottflix") {
+                        $status = ottflix_repository::getstatus($video->videourl);
+                        $thumb = $status->data->THUMB;
+                    } else if ($video->origem == "youtube") {
+                        if (self::get_youtube_videoid($video->videourl)) {
+                            $youtubeid = $videos[1][0];
+                            $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
+                        }
                     }
-                }
 
-                if ($thumb) {
-                    $formatblockcss = file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/format-block.css");
-                    $formatblockcss = str_replace("customiconid", $video->cmid, $formatblockcss);
-                    $formatblockcss = str_replace("{imageurl}", $thumb, $formatblockcss);
-                    $css .= $formatblockcss;
+                    if ($thumb) {
+                        $blocks[] = ["cmid", $video->cmid, "thumb", $thumb];
+                    }
                 }
             }
         }
 
-        $cache->set($cachekey, $css);
-        echo "<style>{$css}</style>";
+        global $PAGE;
+        foreach ($blocks as $block) {
+            $PAGE->requires->js_call_amd("theme_{$theme}/blocks", "create", [$block->cmid, $block->thumb]);
+        }
+
+        $cache->set($cachekey, json_encode($blocks));
+    }
+
+    /**
+     * get youtube videoid
+     *
+     * @param $url
+     * @return string|null
+     */
+    private static function get_youtube_videoid($url) {
+        $pattern = '/(?:youtube\.com\/.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 }
