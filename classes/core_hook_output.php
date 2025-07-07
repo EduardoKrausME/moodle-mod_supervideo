@@ -50,7 +50,7 @@ class core_hook_output {
 
         $cache = \cache::make("theme_boost_training", "css_cache");
         $cachekey = "supervideo_icon_{$COURSE->id}";
-        if (false && $cache->has($cachekey)) {
+        if ($cache->has($cachekey)) {
             $css = $cache->get($cachekey);
             echo "<style>{$css}</style>";
             return;
