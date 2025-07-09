@@ -51,9 +51,9 @@ class core_hook_output {
         $blocks = [];
 
         $cache = \cache::make("theme_boost_training", "css_cache");
-        $cachekey = "supervideo_icon_{$COURSE->id}";
-        if (false && $cache->has($cachekey)) {
-            $blocks = json_decode($cache->get($cachekey));
+        $cachekey = "supervideo_icon_{$COURSE->id}_v2";
+        if ($cache->has($cachekey)) {
+            $blocks = json_decode($cache->get($cachekey), true);
         } else {
             $sql = "
                 SELECT cm.id AS cmid, sv.videourl, sv.origem
@@ -78,7 +78,7 @@ class core_hook_output {
                     }
 
                     if ($thumb) {
-                        $blocks[] = ["cmid", $video->cmid, "thumb", $thumb];
+                        $blocks[] = ["cmid" => $video->cmid, "thumb" => $thumb];
                     }
                 }
             }
@@ -86,7 +86,7 @@ class core_hook_output {
 
         global $PAGE;
         foreach ($blocks as $block) {
-            $PAGE->requires->js_call_amd("theme_{$theme}/blocks", "create", [$block->cmid, $block->thumb]);
+            $PAGE->requires->js_call_amd("theme_{$theme}/blocks", "create", [$block["cmid"], $block["thumb"]]);
         }
 
         $cache->set($cachekey, json_encode($blocks));
