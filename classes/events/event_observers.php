@@ -24,7 +24,7 @@
 
 namespace mod_supervideo\events;
 
-use core\event\base as event_base;
+use core\event\base;
 
 /**
  * Class event_observers
@@ -33,9 +33,9 @@ class event_observers {
     /**
      * Function process_event
      *
-     * @param event_base $event
+     * @param base $event
      */
-    public static function process_event(event_base $event) {
+    public static function process_event(base $event) {
         $eventname = str_replace("\\\\", "\\", $event->eventname);
         switch ($eventname) {
             case '\core\event\course_module_created':
