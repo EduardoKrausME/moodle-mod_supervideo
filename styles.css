@@ -74,6 +74,7 @@ body:not(.distraction-free-mode) #supervideo_area_embed iframe {
   width: 100%;
   position: relative;
   transition: all ease 0.3s;
+  z-index: 9999;
 }
 #mapa-visualizacao .mapa,
 #mapa-visualizacao .clique {
