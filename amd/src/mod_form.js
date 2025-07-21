@@ -110,7 +110,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
 
                             $("#id_videourl_panda-videos .panda-item-video").click(function () {
                                 let videoid = $(this).attr("data-videoid");
-                                id_videourl_panda.val(videoid);
+                                id_videourl_panda.val(`https://dashboard.pandavideo.com.br/#/videos/${videoid}`);
 
                                 markActive ();
                             });

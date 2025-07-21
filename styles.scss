@@ -76,6 +76,7 @@ body:not(.distraction-free-mode) {
     width: 100%;
     position: relative;
     transition: all ease 0.3s;
+    z-index: 9999;
     .mapa,
     .clique {
         display: flex;
