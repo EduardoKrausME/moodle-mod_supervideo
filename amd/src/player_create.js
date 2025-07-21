@@ -61,8 +61,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 start: start_currenttime ? start_currenttime : 0,
             };
 
+            let player;
             if (YT && YT.Player) {
-                let player = new YT.Player(elementId, {
+                player = new YT.Player(elementId, {
                     suggestedQuality: "large",
                     videoId: videoid,
                     width: "100%",
@@ -587,7 +588,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
                 let $mapa_clique =
-                    $("</div>")
+                    $("<div></div>")
                         .attr("title", tempo)
                         .attr("data-currenttime", mapaTitle)
                         .click(function () {
