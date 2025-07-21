@@ -385,7 +385,7 @@ if ($supervideo->videourl) {
     if ($supervideo->origem == "panda") {
 
         try {
-            if (isset($config->panda_token[10])) {
+            if (isset($config->panda_token[20])) {
                 $pandavideo = \mod_supervideo\panda\repository::oembed($supervideo->videourl);
                 $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
             } else {

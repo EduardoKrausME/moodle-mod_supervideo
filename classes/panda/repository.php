@@ -142,7 +142,7 @@ class repository {
 
         $config = get_config("supervideo");
 
-        if (!isset($config->panda_token[10])) {
+        if (!isset($config->panda_token[20])) {
             throw new Exception("<h2>Token is missing!</h2>" . get_string("panda_token_desc", "mod_supervideo"));
         }
 

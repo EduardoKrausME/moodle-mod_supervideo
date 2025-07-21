@@ -214,7 +214,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $config = get_config("supervideo");
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
         $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init",
-            [$USER->lang, $courseinfo, isset($config->panda_token[10])]);
+            [$USER->lang, $courseinfo, isset($config->panda_token[20])]);
     }
 
     /**

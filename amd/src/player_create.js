@@ -467,13 +467,16 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player_create._internal_progress_create(duration);
             }
 
+            let posicao_video;
             if (player_create._internal_progress_length < 100) {
                 posicao_video = currenttime;
             } else {
-                let posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
+                posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
             }
 
-            if (player_create._internal_last_posicao_video == posicao_video) return;
+            if (player_create._internal_last_posicao_video == posicao_video) {
+                return;
+            }
             player_create._internal_last_posicao_video = posicao_video;
 
             if (posicao_video) {
@@ -484,7 +487,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             for (let j = 1; j <= player_create._internal_progress_length; j++) {
                 if (player_create._internal_assistido[j]) {
                     percent++;
-                    $("#mapa-visualizacao-" + j).css({opacity: 1});
+                    $(`#mapa-visualizacao-${j}`).css({opacity: 1});
                 }
             }
 
@@ -539,7 +542,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             if (percent >= 0) {
-                $("#seu-mapa-view span").html(percent + "%");
+                $("#seu-mapa-view span").html(`${percent}%`);
             }
         },
 
@@ -569,7 +572,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 } else {
                     player_create._internal_assistido[i] = 0;
                 }
-                let $mapa_item = $("<div id='mapa-visualizacao-" + i + "'>");
+                let $mapa_item = $(`<div id="mapa-visualizacao-${i}">`);
                 $mapa.append($mapa_item);
 
                 // Mapa Clique
@@ -584,8 +587,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
                 let $mapa_clique =
-                    $("<div id='mapa-visualizacao-" + i + "'>")
-                        .attr("title", "Ir para " + tempo)
+                    $("</div>")
+                        .attr("title", tempo)
                         .attr("data-currenttime", mapaTitle)
                         .click(function () {
                             let _setCurrentTime = $(this).attr("data-currenttime");

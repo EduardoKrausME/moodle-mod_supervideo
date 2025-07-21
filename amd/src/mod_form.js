@@ -63,7 +63,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                 <div style="background: #00000075;padding: 10px;margin-top: 5px;border-radius: 7px;width: 100%;">
                     <div class="simplesearchform" style="display:inline-block;">
                         <div class="input-group">
-                            <input type="search" id="find-panda-videos" placeholder="Buscar no panda vídeos">
+                            <input type="search" id="find-panda-videos" placeholder="Buscar no Panda Video">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-submit" data-action="submit">
                                     <i class="icon fa fa-magnifying-glass fa-fw"></i>
