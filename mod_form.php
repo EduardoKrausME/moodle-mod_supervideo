@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_supervideo\form\supervideo_filepicker;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/course/moodleform_mod.php");
@@ -68,8 +70,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $mform->addElement("hidden", "videourl", $supervideo->videourl);
                 $mform->setType("videourl", PARAM_TEXT);
             } else {
-                $mform->addElement("text", "videourl",
-                    get_string("origem_{$supervideo->origem}", "mod_supervideo"), ["size" => "60"], []);
+                $mform->addElement(
+                    "text",
+                    "videourl",
+                    get_string("origem_{$supervideo->origem}", "mod_supervideo"),
+                    ["size" => "60"],
+                    []
+                );
                 $mform->setType("videourl", PARAM_TEXT);
                 $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
             }
@@ -89,10 +96,37 @@ class mod_supervideo_mod_form extends moodleform_mod {
                     continue;
                 }
 
-                $mform->addElement("text", "videourl_{$origem}",
-                    get_string("origem_{$origem}", "mod_supervideo"), ["size" => "60"], []);
-                $mform->setType("videourl_{$origem}", PARAM_TEXT);
-                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                if ($origem == "panda" || $origem == "ottflix") {
+                    $filemanageroptions = [
+                        "accepted_types" => ["video/{$origem}"],
+                        "maxbytes" => -1,
+                        "return_types" => 1,
+                    ];
+
+                    MoodleQuickForm::registerElementType(
+                        "supervideo_filepicker",
+                        "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
+                        supervideo_filepicker::class
+                    );
+
+                    $mform->addElement(
+                        "supervideo_filepicker",
+                        "videourl_{$origem}",
+                        get_string("origem_{$origem}", "mod_supervideo"),
+                        null,
+                        $filemanageroptions
+                    );
+                    $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                } else {
+                    $mform->addElement(
+                        "text",
+                        "videourl_{$origem}",
+                        get_string("origem_{$origem}", "mod_supervideo"),
+                        ["size" => "60"], []
+                    );
+                    $mform->setType("videourl_{$origem}", PARAM_TEXT);
+                    $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                }
                 if (!$supervideo) {
                     $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
                 }
@@ -123,7 +157,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 "maxbytes" => -1,
                 // Retornar "maxfiles" => 1,.
             ];
-            $mform->addElement("filemanager", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
+            $mform->addElement("filepicker", "videofile", get_string("videofile", "mod_supervideo"), null, $filemanageroptions);
             $mform->addHelpButton("videofile", "videofile", "mod_supervideo");
 
             if (!$supervideo || !in_array($supervideo->origem, $origems)) {
@@ -183,8 +217,12 @@ class mod_supervideo_mod_form extends moodleform_mod {
         ];
         $mform->addElement("select", "grade_approval", get_string("grade_approval", "mod_supervideo"), $values);
 
-        $mform->addElement("select", "gradecat", get_string("gradecategoryonmodform", "grades"),
-            grade_get_categories_menu($COURSE->id, false));
+        $mform->addElement(
+            "select",
+            "gradecat",
+            get_string("gradecategoryonmodform", "grades"),
+            grade_get_categories_menu($COURSE->id, false)
+        );
         $mform->addHelpButton("gradecat", "gradecategoryonmodform", "grades");
         $mform->hideIf("gradecat", "grade_approval", "eq", "0");
 
@@ -213,8 +251,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $config = get_config("supervideo");
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
-        $PAGE->requires->js_call_amd("mod_supervideo/mod_form", "init",
-            [$USER->lang, $courseinfo, isset($config->panda_token[20])]);
+        $PAGE->requires->js_call_amd(
+            "mod_supervideo/mod_form",
+            "init",
+            [$USER->lang, $courseinfo]
+        );
     }
 
     /**
@@ -225,7 +266,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
         if ($this->current->instance) {
-
             $draftitemid = file_get_submitted_draft_itemid("videofile");
             if (isset($defaultvalues["id"])) {
                 $id = intval($defaultvalues["id"]);
@@ -286,15 +326,28 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = &$this->_form;
         $group = [
-            $mform->createElement("checkbox", "completionpercentenabled", "",
-                get_string("completionpercent_label", "mod_supervideo")),
-            $mform->createElement("text", "completionpercent",
-                get_string("completionpercent_label", "mod_supervideo"), ["size" => "2"]),
+            $mform->createElement(
+                "checkbox",
+                "completionpercentenabled",
+                "",
+                get_string("completionpercent_label", "mod_supervideo")
+            ),
+            $mform->createElement(
+                "text",
+                "completionpercent",
+                get_string("completionpercent_label", "mod_supervideo"),
+                ["size" => "2"]
+            ),
             $mform->createElement("html", "%"),
         ];
 
-        $mform->addGroup($group, "completionpercentgroup", get_string("completionpercent", "mod_supervideo"),
-            [" "], false);
+        $mform->addGroup(
+            $group,
+            "completionpercentgroup",
+            get_string("completionpercent", "mod_supervideo"),
+            [" "],
+            false
+        );
         $mform->disabledIf("completionpercent", "completionpercentenabled", "notchecked");
         $mform->setDefault("completionpercent", 0);
         $mform->setType("completionpercent", PARAM_INT);
