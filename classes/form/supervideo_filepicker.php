@@ -1,10 +1,33 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Class supervideo_filepicker
+ *
+ * @package   mod_supervideo
+ * @copyright 2025 Eduardo Kraus {@link https://www.eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace mod_supervideo\form;
 
+defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
 
-use context_user;
 use Exception;
 use renderer_base;
 use templatable;
@@ -37,13 +60,13 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
     /**
      * Constructor
      *
-     * @param string $elementName (optional) name of the filepicker
-     * @param string $elementLabel (optional) filepicker label
+     * @param string $elementname (optional) name of the filepicker
+     * @param string $elementlabel (optional) filepicker label
      * @param array $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
      * @param array $options set of options to initalize filepicker
      */
-    public function __construct($elementName = null, $elementLabel = null, $attributes = null, $options = null) {
+    public function __construct($elementname = null, $elementlabel = null, $attributes = null, $options = null) {
         $options = (array)$options;
         foreach ($options as $name => $value) {
             if (array_key_exists($name, $this->options)) {
@@ -51,7 +74,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
             }
         }
         $this->_type = "filepicker";
-        parent::__construct($elementName, $elementLabel, $attributes);
+        parent::__construct($elementname, $elementlabel, $attributes);
     }
 
     /**
@@ -59,7 +82,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
      *
      * @return string html for help button
      */
-    function getHelpButton() {
+    public function getHelpButton() { // phpcs:disable
         return $this->helpbutton;
     }
 
@@ -68,7 +91,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
      *
      * @return string
      */
-    function getElementTemplateType() {
+    public function getElementTemplateType() { // phpcs:disable
         if ($this->_flagFrozen) {
             return "nodisplay";
         } else {
@@ -82,7 +105,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
      * @return string
      * @throws Exception
      */
-    function toHtml() {
+    public function toHtml() { // phpcs:disable
         global $PAGE;
 
         if ($this->_flagFrozen) {
@@ -90,7 +113,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
         }
 
         $args = new stdClass();
-        // need these three to filter repositories list
+        // need these three to filter repositories list.
         $args->accepted_types = $this->options["accepted_types"] ? $this->options["accepted_types"] : "*";
         $args->return_types = $this->options["return_types"];
         $args->itemid = $this->getValue();
