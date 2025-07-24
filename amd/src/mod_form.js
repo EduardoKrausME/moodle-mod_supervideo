@@ -17,12 +17,9 @@ define(["jquery", "core/ajax", "core/notification", "core/templates", "mod_super
 function ($, Ajax, Notification, Templates, PlayerRender) {
     var modform = {
 
-        init: function (lang, courseinfo, has_panda_token) {
+        init: function (lang, courseinfo) {
 
             modform.origem(courseinfo);
-
-            modform.has_panda_token = has_panda_token;
-            modform.panda();
             modform.panda_youtube_vimeo(lang);
 
             var player = new PlayerRender();
@@ -51,90 +48,6 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
                     }
                 });
             }
-        },
-
-        panda:function (){
-            if (!modform.has_panda_token) {
-                return;
-            }
-
-            let id_videourl_panda = $("#id_videourl_panda");
-            id_videourl_panda.after(`
-                <div style="background: #00000075;padding: 10px;margin-top: 5px;border-radius: 7px;width: 100%;">
-                    <div class="simplesearchform" style="display:inline-block;">
-                        <div class="input-group">
-                            <input type="search" id="find-panda-videos" placeholder="Buscar no Panda Video">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-submit" data-action="submit">
-                                    <i class="icon fa fa-magnifying-glass fa-fw"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="id_videourl_panda-videos"></div>
-                </div>`);
-
-            let id_origem = $("#id_origem");
-            id_origem.change(function () {
-                if (id_origem.val() == "panda") {
-                    loadVideosPanda();
-                }
-            });
-
-            var typingTimer;
-            $("#find-panda-videos").on("input", function() {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(function() {
-                    loadVideosPanda();
-                }, 1000);
-            });
-
-            function markActive (){
-                let videoid = id_videourl_panda.val();
-                $(`.panda-item-video:not(.videoid-${videoid})`).css("background", "");
-                $(`.panda-item-video.videoid-${videoid}`).css("background", "#D2DAE1");
-            }
-
-            function loadVideosPanda(){
-                console.log("calll");
-                Ajax.call([{
-                    methodname: "mod_supervideo_panda_list_videos",
-                    args: {
-                        title: $("#find-panda-videos").val(),
-                    }
-                }])[0].done(function(data) {
-                    console.log("done...");
-                    Templates.render("mod_supervideo/panda_list_videos", data)
-                        .then(function(templatehtml) {
-                            $("#id_videourl_panda-videos").html(templatehtml);
-
-                            $("#id_videourl_panda-videos .panda-item-video").click(function () {
-                                let videoid = $(this).attr("data-videoid");
-                                id_videourl_panda.val(`https://dashboard.pandavideo.com.br/#/videos/${videoid}`);
-
-                                markActive ();
-                            });
-
-                            markActive ();
-                        });
-                }).fail(Notification.exception);
-            }
-
-            id_videourl_panda.on("paste", function(e) {
-                e.preventDefault();
-                let clipboardData = (e.originalEvent || e).clipboardData.getData("text");
-                let match = clipboardData.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
-                if (match) {
-                    id_videourl_panda.val(`https://dashboard.pandavideo.com.br/#/videos/${match[0]}`);
-                    markActive ();
-                } else {
-                    id_videourl_panda.val("");
-                    markActive ();
-                }
-            });
-            id_videourl_panda.on("input", function(e) {
-                markActive ();
-            });
         },
 
         panda_youtube_vimeo:function (lang){
