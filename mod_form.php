@@ -45,6 +45,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function definition() {
         global $DB, $CFG, $PAGE, $COURSE, $USER;
 
+        // Register Element Type supervideo_filepicker.
+        MoodleQuickForm::registerElementType(
+            "supervideo_filepicker",
+            "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
+            supervideo_filepicker::class
+        );
+
         $supervideo = null;
         if ($this->_cm && $this->_cm->instance) {
             $supervideo = $DB->get_record("supervideo", ["id" => $this->_cm->instance]);
@@ -102,12 +109,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
                         "maxbytes" => -1,
                         "return_types" => 1,
                     ];
-
-                    MoodleQuickForm::registerElementType(
-                        "supervideo_filepicker",
-                        "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
-                        supervideo_filepicker::class
-                    );
 
                     $mform->addElement(
                         "supervideo_filepicker",
