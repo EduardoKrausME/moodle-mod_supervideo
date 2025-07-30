@@ -71,8 +71,7 @@ class core_hook_output {
                         $status = ottflix_repository::getstatus($video->videourl);
                         $thumb = $status->data->THUMB;
                     } else if ($video->origem == "youtube") {
-                        if (self::get_youtube_videoid($video->videourl)) {
-                            $youtubeid = $videos[1][0];
+                        if ($youtubeid = self::get_youtube_videoid($video->videourl)) {
                             $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
                         }
                     }
