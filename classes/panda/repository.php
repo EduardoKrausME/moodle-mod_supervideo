@@ -24,8 +24,8 @@
 
 namespace mod_supervideo\panda;
 
-use dml_exception;
 use Exception;
+use stdClass;
 
 /**
  * Class Panda repository
@@ -43,12 +43,12 @@ class repository {
     /**
      * oEmbed function
      *
-     * @param $videoid
+     * @param $videourl
      * @return mixed
-     * @throws dml_exception
+     * @throws Exception
      */
-    public static function oembed($videoid) {
-        $dashboard = urlencode("https://dashboard.pandavideo.com.br/videos/{$videoid}");
+    public static function oembed($videourl) {
+        $dashboard = urlencode("https://dashboard.pandavideo.com.br/videos/{$videourl}");
         $endpoint = "/oembed?url={$dashboard}";
 
         $ch = curl_init(self::$baseurl . $endpoint);
@@ -70,7 +70,11 @@ class repository {
 
         switch ($status) {
             case 200:
-                return json_decode($body);
+                $panda = json_decode($body);
+                if (!isset($panda->id)) {
+                    $panda->id = md5($videourl);
+                }
+                return $panda;
             case 400:
                 throw new Exception("Bad request. Check the provided parameters.");
             case 401:
@@ -90,10 +94,7 @@ class repository {
      * @param $page
      * @param $limit
      * @param $title
-     *
      * @return array
-     *
-     * @throws dml_exception
      * @throws Exception
      */
     public static function get_videos($page = 0, $limit = 100, $title = "") {
@@ -121,10 +122,8 @@ class repository {
      * Get video properties
      *
      * @param string $videoid
-     *
-     * @return \stdClass
-     *
-     * @throws dml_exception
+     * @return stdClass
+     * @throws Exception
      */
     public static function get_video_properties($videoid) {
         $endpoint = "/videos/{$videoid}";
@@ -137,7 +136,7 @@ class repository {
      *
      * @param $videoid
      * @return mixed
-     * @throws dml_exception
+     * @throws Exception
      */
     public static function get_analytics_from_video($videoid) {
         $endpoint = "/general/{$videoid}";
@@ -152,7 +151,7 @@ class repository {
      * @param $startdate
      * @param $enddate
      * @return mixed
-     * @throws dml_exception
+     * @throws Exception
      */
     public static function get_bandwidth_by_video($videoid, $startdate, $enddate) {
         $endpoint = "/analytics/traffic";
@@ -165,7 +164,7 @@ class repository {
      *
      * @param string $endpoint
      *
-     * @throws \dml_exception
+     * @throws \Exception
      * @throws Exception
      */
     private static function http_get($endpoint,  $baseurl) {

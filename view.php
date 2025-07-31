@@ -25,6 +25,7 @@
 use core\output\notification;
 use mod_supervideo\analytics\supervideo_view;
 use mod_supervideo\event\course_module_viewed;
+use mod_supervideo\panda\repository;
 use mod_supervideo\util\config_util;
 
 require_once("../../config.php");
@@ -386,10 +387,10 @@ if ($supervideo->videourl) {
 
         try {
             if (isset($config->panda_token[20])) {
-                $pandavideo = \mod_supervideo\panda\repository::oembed($supervideo->videourl);
-                $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
+                $pandavideo = repository::get_video_properties($supervideo->videourl);
             } else {
-                $pandavideo = \mod_supervideo\panda\repository::get_video_properties($supervideo->videourl);
+                $pandavideo = repository::oembed($supervideo->videourl);
+                $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
             }
 
             echo $OUTPUT->render_from_template("mod_supervideo/embed_panda", [
