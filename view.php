@@ -405,7 +405,7 @@ if ($supervideo->videourl) {
                 ["width" => $pandavideo->width, "height" => $pandavideo->height],
             ]);
 
-        } catch (dml_exception $e) {
+        } catch (Exception $e) {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
                 "elementId" => "panda-error",
                 "type" => "danger",
