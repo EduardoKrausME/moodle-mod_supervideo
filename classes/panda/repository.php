@@ -50,8 +50,38 @@ class repository {
     public static function oembed($videoid) {
         $dashboard = urlencode("https://dashboard.pandavideo.com.br/videos/{$videoid}");
         $endpoint = "/oembed?url={$dashboard}";
-        $response = self::http_get($endpoint, self::$baseurl);
-        return $response;
+
+        $ch = curl_init(self::$baseurl . $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+        $response = curl_exec($ch);
+        if ($response === false) {
+            curl_close($ch);
+            throw new Exception("Unexpected error.");
+        }
+
+        $headersize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $body = substr($response, $headersize);
+
+        curl_close($ch);
+
+        switch ($status) {
+            case 200:
+                return json_decode($body);
+            case 400:
+                throw new Exception("Bad request. Check the provided parameters.");
+            case 401:
+                throw new Exception("Unauthorized. Authentication failed or not provided.");
+            case 404:
+                throw new Exception("Not found. Videos or the API were not found.");
+            case 500:
+                throw new Exception("Internal server error. Please try again later.");
+            default:
+                throw new Exception("Unexpected error. HTTP code: {$status}");
+        }
     }
 
     /**
