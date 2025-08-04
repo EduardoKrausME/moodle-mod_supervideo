@@ -22,11 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once($CFG->dirroot . "/course/moodleform_mod.php");
+
 use mod_supervideo\form\supervideo_filepicker;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . "/course/moodleform_mod.php");
 
 /**
  * class mod_supervideo_mod_for
@@ -39,18 +39,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
     /**
      * Defines forms elements
      *
-     * @throws coding_exception
-     * @throws dml_exception
+     * @throws Exception
      */
     public function definition() {
         global $DB, $CFG, $PAGE, $COURSE, $USER;
-
-        // Register Element Type supervideo_filepicker.
-        MoodleQuickForm::registerElementType(
-            "supervideo_filepicker",
-            "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
-            supervideo_filepicker::class
-        );
 
         $supervideo = null;
         if ($this->_cm && $this->_cm->instance) {
@@ -68,7 +60,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
         // Origem.
-        $origems = ["upload", "ottflix", "panda", "youtube", "vimeo", "drive", "link"];
+        $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link"];
         if ($supervideo && in_array($supervideo->origem, $origems)) {
             $mform->addElement("hidden", "origem", $supervideo->origem);
             $mform->setType("origem", PARAM_TEXT);
@@ -76,14 +68,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
             if ($supervideo->origem == "upload") {
                 $mform->addElement("hidden", "videourl", $supervideo->videourl);
                 $mform->setType("videourl", PARAM_TEXT);
+            } else if ($supervideo->origem == "pandavideo" || $supervideo->origem == "ottflix") {
+                supervideo_filepicker::add_form($mform, $supervideo->origem, "videourl");
             } else {
-                $mform->addElement(
-                    "text",
-                    "videourl",
-                    get_string("origem_{$supervideo->origem}", "mod_supervideo"),
-                    ["size" => "60"],
-                    []
-                );
+                $title = get_string("origem_{$supervideo->origem}", "mod_supervideo");
+                $mform->addElement("text", "videourl", $title, ["size" => "60"], []);
                 $mform->setType("videourl", PARAM_TEXT);
                 $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
             }
@@ -103,21 +92,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
                     continue;
                 }
 
-                if ($origem == "panda" || $origem == "ottflix") {
-                    $filemanageroptions = [
-                        "accepted_types" => ["video/{$origem}"],
-                        "maxbytes" => -1,
-                        "return_types" => 1,
-                    ];
-
-                    $mform->addElement(
-                        "supervideo_filepicker",
-                        "videourl_{$origem}",
-                        get_string("origem_{$origem}", "mod_supervideo"),
-                        null,
-                        $filemanageroptions
-                    );
-                    $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
+                if ($origem == "pandavideo" || $origem == "ottflix") {
+                    supervideo_filepicker::add_form($mform, $origem, "videourl_{$origem}");
                 } else {
                     $mform->addElement(
                         "text",
@@ -148,7 +124,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia", "origem", "eq", "youtube");
         $mform->hideIf("ottflix_ia", "origem", "eq", "vimeo");
         $mform->hideIf("ottflix_ia", "origem", "eq", "drive");
-        $mform->hideIf("ottflix_ia", "origem", "eq", "panda");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "pandavideo");
         $mform->hideIf("ottflix_ia", "origem", "eq", "link");
 
         // Upload.
@@ -183,7 +159,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("playersize", "origem", "eq", "vimeo");
         $mform->hideIf("playersize", "origem", "eq", "youtube");
         $mform->hideIf("playersize", "origem", "eq", "ottflix");
-        $mform->hideIf("playersize", "origem", "eq", "panda");
+        $mform->hideIf("playersize", "origem", "eq", "pandavideo");
         $mform->hideIf("playersize", "origem", "eq", "link");
 
         $config = get_config("supervideo");
@@ -192,14 +168,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->addElement("advcheckbox", "showcontrols", get_string("showcontrols_desc", "mod_supervideo"));
             $mform->setDefault("showcontrols", $config->showcontrols);
             $mform->hideIf("showcontrols", "origem", "eq", "ottflix");
-            $mform->hideIf("showcontrols", "origem", "eq", "panda");
+            $mform->hideIf("showcontrols", "origem", "eq", "pandavideo");
         }
 
         if ($config->autoplay <= 1) {
             $mform->addElement("advcheckbox", "autoplay", get_string("autoplay_desc", "mod_supervideo"));
             $mform->setDefault("autoplay", $config->autoplay);
             $mform->hideIf("autoplay", "origem", "eq", "ottflix");
-            $mform->hideIf("autoplay", "origem", "eq", "panda");
+            $mform->hideIf("autoplay", "origem", "eq", "pandavideo");
         }
 
         // Adding the standard "intro" and "introformat" fields.
@@ -303,8 +279,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * add_completion_rules_oold function
      *
      * @return array
-     *
-     * @throws coding_exception
+     * @throws Exception
      */
     public function add_completion_rules_oold() {
         $mform = &$this->_form;
@@ -321,8 +296,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * Part of the API defined by moodleform_mod
      *
      * @return array Array of string IDs of added items, empty array if none
-     *
-     * @throws coding_exception
+     * @throws Exception
      */
     public function add_completion_rules() {
         $mform = &$this->_form;
@@ -359,7 +333,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * completion_rule_enabled function
      *
      * @param array $data
-     *
      * @return bool
      */
     public function completion_rule_enabled($data) {
@@ -371,10 +344,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
      *
      * @param $data
      * @param $files
-     *
      * @return array
-     *
-     * @throws coding_exception
+     * @throws Exception
      */
     public function validation($data, $files) {
         global $USER;

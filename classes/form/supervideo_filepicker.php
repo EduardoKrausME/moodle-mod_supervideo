@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use Exception;
+use MoodleQuickForm;
 use renderer_base;
 use templatable;
 use file_picker;
@@ -46,6 +47,35 @@ require_once("{$CFG->dirroot}/lib/form/templatable_form_element.php");
 class supervideo_filepicker extends HTML_QuickForm_input implements templatable {
     use templatable_form_element {
         export_for_template as export_for_template_base;
+    }
+
+    /**
+     * add_form
+     *
+     * @param MoodleQuickForm $mform
+     * @param string $origem
+     * @param string $elementname
+     * @return void
+     * @throws \coding_exception
+     */
+    public static function add_form(MoodleQuickForm $mform, string $origem, $elementname) {
+        global $CFG;
+
+        static $loaded = false;
+        if (!$loaded) {
+            // Register Element Type supervideo_filepicker.
+            MoodleQuickForm::registerElementType(
+                "supervideo_filepicker",
+                "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
+                supervideo_filepicker::class
+            );
+            $loaded = true;
+        }
+
+        $filepickeroptions = ["accepted_types" => ["video/{$origem}"], "maxbytes" => -1, "return_types" => 1];
+        $title = get_string("origem_{$origem}", "mod_supervideo");
+        $mform->addElement("supervideo_filepicker", $elementname, $title, null, $filepickeroptions);
+        $mform->addHelpButton("videourl", "origem_{$origem}", "mod_supervideo");
     }
 
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
