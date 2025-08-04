@@ -108,8 +108,8 @@ $string['origem_link_help'] = 'Use this option to provide a direct URL to any vi
 $string['origem_name'] = 'Video Source';
 $string['origem_ottflix'] = 'OttFlix Link or Identifier';
 $string['origem_ottflix_help'] = 'Use this option to link to a video available on OttFlix. You can enter either the link or the video identifier.';
-$string['origem_panda'] = 'Video from Panda';
-$string['origem_panda_help'] = 'Link to a video stored in your Panda.';
+$string['origem_pandavideo'] = 'Video from Panda Video';
+$string['origem_pandavideo_help'] = 'Link to a video stored in your Panda Video.';
 $string['origem_upload'] = 'Upload a Video';
 $string['origem_upload_help'] = 'Select this option to upload a video file directly from your device. Supported formats include MP3, MP4, WEBM, M4V, MOV, AAC and M4A.';
 $string['origem_vimeo'] = 'Video from Vimeo';
@@ -124,10 +124,8 @@ $string['ottflix_token_desc'] = 'Enter the OttFlix access token for request auth
 $string['ottflix_url'] = 'OttFlix URL';
 $string['ottflix_url_desc'] = 'Enter the OttFlix URL for integration.';
 $string['ou'] = 'or';
-$string['panda_title'] = 'Panda Videos';
-$string['panda_title_desc'] = 'Integration with the Panda Videos streaming service to display content hosted on the platform. Learn more at <a href="https://pandavideo.com.br/?ref=mjy1ndz" target="_blank" rel="noopener noreferrer">pandavideo.com.br</a>.';
-$string['panda_token'] = 'Access Token';
-$string['panda_token_desc'] = 'Enter the authentication token provided by the Panda Videos platform to enable secure integration with Moodle.<br>Try it free for 14 days at <a href="https://pandavideo.com.br/?ref=mjy1ndz" target="_blank" rel="noopener noreferrer">pandavideo.com.br</a></p>';
+$string['pandavideo_title'] = 'Panda Videos';
+$string['pandavideo_title_desc'] = 'Integration with the Panda Videos streaming service to display content hosted on the platform. Learn more at <a href="https://pandavideo.com.br/?ref=mjy1ndz" target="_blank" rel="noopener noreferrer">pandavideo.com.br</a>.';
 $string['playersize'] = 'Video size';
 $string['pluginadministration'] = 'Super Videos';
 $string['pluginname'] = 'Super Video';

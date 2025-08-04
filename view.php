@@ -25,7 +25,7 @@
 use core\output\notification;
 use mod_supervideo\analytics\supervideo_view;
 use mod_supervideo\event\course_module_viewed;
-use mod_supervideo\panda\repository;
+use mod_supervideo\pandavideo\repository;
 use mod_supervideo\util\config_util;
 
 require_once("../../config.php");
@@ -383,22 +383,17 @@ if ($supervideo->videourl) {
             $elementid,
         ]);
     }
-    if ($supervideo->origem == "panda") {
-
+    if ($supervideo->origem == "pandavideo") {
         try {
-            if (isset($config->panda_token[20])) {
-                $pandavideo = repository::get_video_properties($supervideo->videourl);
-            } else {
-                $pandavideo = repository::oembed($supervideo->videourl);
-                $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
-            }
+            $pandavideo = repository::oembed($supervideo->videourl);
+            $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
 
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_panda", [
+            echo $OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", [
                 "elementid" => $elementid,
                 "id" => $pandavideo->id,
                 "video_player" => $pandavideo->video_player,
             ]);
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "panda", [
+            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "pandavideo", [
                 (int)$supervideoview->id,
                 $supervideoview->currenttime,
                 $elementid,
@@ -407,7 +402,7 @@ if ($supervideo->videourl) {
 
         } catch (Exception $e) {
             echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => "panda-error",
+                "elementId" => "pandavideo-error",
                 "type" => "danger",
                 "message" => $e->getMessage(),
             ]);
