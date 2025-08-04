@@ -58,13 +58,4 @@ $functions = [
         'capabilities' => 'mod/supervideo:view',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'mod_supervideo_panda_list_videos' => [
-        'classpath' => 'mod/supervideo/classes/service/panda.php',
-        'classname' => 'mod_supervideo\service\panda',
-        'methodname' => 'list_videos',
-        'description' => 'Get panda videos',
-        'type' => 'read',
-        'capabilities' => 'mod/supervideo:addinstance',
-        'ajax' => true,
-    ],
 ];
