@@ -67,7 +67,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
             MoodleQuickForm::registerElementType(
                 "supervideo_filepicker",
                 "{$CFG->dirroot}/mod/supervideo/classes/form/supervideo_filepicker.php",
-                supervideo_filepicker::class
+                self::class
             );
             $loaded = true;
         }
