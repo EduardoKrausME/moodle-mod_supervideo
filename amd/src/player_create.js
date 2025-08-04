@@ -328,7 +328,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
-        panda: function (view_id, currenttime, elementId, size) {
+        pandavideo: function (view_id, currenttime, elementId, size) {
             player_create._internal_resize(size.width, size.height);
 
             player_create._internal_view_id = view_id;

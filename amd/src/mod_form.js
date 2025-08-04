@@ -20,7 +20,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
         init: function (lang, courseinfo) {
 
             modform.origem(courseinfo);
-            modform.panda_youtube_vimeo(lang);
+            modform.pandavideo_youtube_vimeo(lang);
 
             var player = new PlayerRender();
             player.loadposter($, lang);
@@ -50,7 +50,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
             }
         },
 
-        panda_youtube_vimeo:function (lang){
+        pandavideo_youtube_vimeo:function (lang){
             let id_origem = $("#id_origem");
             id_origem.after(`<div id="banner_panda-videos" style="display:none;width:100%;"></div>`);
 
