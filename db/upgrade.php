@@ -239,6 +239,14 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025041600, "supervideo");
     }
 
+    if ($oldversion < 2025080400) {
+
+        $sql = "UPDATE {supervideo} SET origem = 'pandavideo' WHERE origem LIKE 'panda'";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2025080400, "supervideo");
+    }
+
     return true;
 }
 
