@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+use core_filetypes;
 use Exception;
 use MoodleQuickForm;
 use renderer_base;
@@ -56,7 +57,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
      * @param string $origem
      * @param string $elementname
      * @return void
-     * @throws \coding_exception
+     * @throws Exception
      */
     public static function add_form(MoodleQuickForm $mform, string $origem, $elementname) {
         global $CFG;
@@ -72,10 +73,14 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
             $loaded = true;
         }
 
-        $filepickeroptions = ["accepted_types" => ["video/{$origem}"], "maxbytes" => -1, "return_types" => 1];
+        $filepickeroptions = [
+            "accepted_types" => ["video/{$origem}"],
+            "maxbytes" => -1,
+            "return_types" => 1,
+        ];
         $title = get_string("origem_{$origem}", "mod_supervideo");
         $mform->addElement("supervideo_filepicker", $elementname, $title, null, $filepickeroptions);
-        $mform->addHelpButton("videourl", "origem_{$origem}", "mod_supervideo");
+        $mform->addHelpButton($elementname, "origem_{$origem}", "mod_supervideo");
     }
 
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
@@ -136,53 +141,73 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
      * @throws Exception
      */
     public function toHtml() { // phpcs:disable
-        global $PAGE;
+        global $DB, $CFG, $PAGE;
 
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         }
 
-        $args = new stdClass();
-        // need these three to filter repositories list.
-        $args->accepted_types = $this->options["accepted_types"] ? $this->options["accepted_types"] : "*";
-        $args->return_types = $this->options["return_types"];
-        $args->itemid = $this->getValue();
-        $args->context = $PAGE->context;
-        $args->buttonname = $this->_attributes["name"] . "choose";
-        $args->elementid = $this->_attributes["id"];
+        $origem = explode("/", $this->options["accepted_types"][0])[1];
+        $filerepository = "{$CFG->dirroot}/repository/{$origem}/lib.php";
+        if (file_exists($filerepository)) {
+            $fp = new file_picker((object)[
+                "accepted_types" => $this->options["accepted_types"],
+                "return_types" => $this->options["return_types"],
+                "itemid" => $this->getValue(),
+                "context" => $PAGE->context,
+                "buttonname" => $this->_attributes["name"] . "choose",
+                "elementid" => $this->_attributes["id"],
+            ]);
 
-        $html = $this->_getTabs();
-        $fp = new file_picker($args);
-        $options = $fp->options;
+            $straddfile = get_string("openpicker", "repository");
+            $buttonname = "";
+            if ($fp->options->buttonname) {
+                $buttonname = " name=\"{$fp->options->buttonname}\"";
+            }
 
-        $straddfile = get_string("openpicker", "repository");
-        $buttonname = "";
-        if ($options->buttonname) {
-            $buttonname = " name=\"{$options->buttonname}\"";
+            $repository = $DB->get_record("repository", ["type" => $origem]);
+            $message = "";
+            if (!$repository || !$repository->visible) {
+                $message = get_string("repository_{$origem}_disable", "mod_supervideo", $CFG->wwwroot);
+            }
+
+            $html = $this->_getTabs();
+
+            $html .= <<<EOD
+                <div class="col-md-9 d-flex gap-3 flex-wrap align-items-start felement">
+                    <input type="text" class="form-control" size="48"
+                           name="{$this->_attributes["name"]}"
+                           id="{$fp->options->elementid}"
+                           value="{$this->getValue()}"/>
+                    <input type="button" class="btn btn-primary fp-btn-choose me-3 ml-3"
+                           id="filepicker-button-{$fp->options->elementid}"
+                           value="{$straddfile}" style="display:none"
+                           {$buttonname}/>
+                </div>
+                {$message}
+            EOD;
+            $module = [
+                "name" => "supervideo_filepicker",
+                "fullpath" => "/mod/supervideo/classes/form/supervideo_filepicker.js",
+                "requires" => [
+                    "core_filepicker",
+                    "node",
+                    "node-event-simulate",
+                ],
+            ];
+            $PAGE->requires->js_init_call("M.supervideo_filepicker.init", [$fp->options], true, $module);
+        } else {
+            $message = get_string("repository_{$origem}_notinstall", "mod_supervideo");
+            $html = <<<EOD
+                <div class="col-md-9 d-flex gap-3 flex-wrap align-items-start felement">
+                    <input type="text" class="form-control" size="48"
+                           name="{$this->_attributes["name"]}"
+                           id="{$this->_attributes["id"]}"
+                           value="{$this->getValue()}"/>
+                </div>
+                {$message}
+            EOD;
         }
-        $html .= <<<EOD
-            <div class="col-md-9 d-flex flex-wrap align-items-start felement">
-                <input type="text" class="form-control" size="48"
-                       name="{$this->_attributes["name"]}"
-                       id="{$options->elementid}"
-                       value="{$this->getValue()}"/>
-                <input type="button" class="btn btn-primary fp-btn-choose me-3 ml-3"
-                       id="filepicker-button-{$options->elementid}"
-                       value="{$straddfile}" style="display:none"
-                       {$buttonname}/>
-            </div>
-        EOD;
-
-        $module = [
-            "name" => "supervideo_filepicker",
-            "fullpath" => "/mod/supervideo/classes/form/supervideo_filepicker.js",
-            "requires" => [
-                "core_filepicker",
-                "node",
-                "node-event-simulate",
-            ],
-        ];
-        $PAGE->requires->js_init_call("M.supervideo_filepicker.init", [$fp->options], true, $module);
 
         return $html;
     }
