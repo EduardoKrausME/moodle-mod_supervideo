@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, PlayerRender) {
-    let player_create = {
+    var player_create = {
 
         ottflix: function (view_id, start_currenttime, elementId, identifier) {
             // player_create._internal_resize(16, 9);
@@ -34,14 +34,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             });
 
-            let morewidth = $("#distraction-free-mode-header .more-nav").width();
+            var morewidth = $("#distraction-free-mode-header .more-nav").width();
             $("#ottflix-tabs")
                 .show()
                 .css({"right": morewidth + 11})
                 .tabs({
                     activate: function (event, ui) {
-                        let panel = ui.newPanel;
-                        let iframe = panel.find("iframe");
+                        var panel = ui.newPanel;
+                        var iframe = panel.find("iframe");
 
                         if (iframe.length && !iframe.attr("src")) {
                             iframe.attr("src", iframe.data("src"));
@@ -53,7 +53,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
             player_create._internal_view_id = view_id;
 
-            let playerVars = {
+            var playerVars = {
                 rel: 0,
                 controls: showcontrols,
                 autoplay: autoplay,
@@ -61,7 +61,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 start: start_currenttime ? start_currenttime : 0,
             };
 
-            let player;
+            var player;
             if (YT && YT.Player) {
                 player = new YT.Player(elementId, {
                     suggestedQuality: "large",
@@ -71,7 +71,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     events: {
                         "onReady": function (event) {
 
-                            let sizes = playersize.split("x");
+                            var sizes = playersize.split("x");
                             console.log(sizes);
                             if (sizes && sizes[1]) {
                                 console.log(sizes);
@@ -90,7 +90,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     }
                 });
             } else {
-                let html =
+                var html =
                     `<div class="alert alert-danger">
                              Error loading the JavaScript at https://www.youtube.com/iframe_api
                              Please check for any Security Policy restrictions.
@@ -110,14 +110,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             player_create._internal_view_id = view_id;
 
-            let $element = $(`#${elementId}`);
-            let fullurl = $element.attr("data-videourl");
-            let autoplay = $element.attr("data-autoplay");
-            let showcontrols = $element.attr("data-showcontrols");
-            let controls = $element.attr("data-controls");
-            let speed = $element.attr("data-speed");
+            var $element = $(`#${elementId}`);
+            var fullurl = $element.attr("data-videourl");
+            var autoplay = $element.attr("data-autoplay");
+            var showcontrols = $element.attr("data-showcontrols");
+            var controls = $element.attr("data-controls");
+            var speed = $element.attr("data-speed");
 
-            let embedparameters = "";
+            var embedparameters = "";
             if (showcontrols) {
                 embedparameters += "controls ";
             }
@@ -125,12 +125,12 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 embedparameters += "autoplay ";
             }
 
-            let embed = `<audio ${embedparameters} crossorigin playsinline id="${elementId}_audio"></audio>`;
+            var embed = `<audio ${embedparameters} crossorigin playsinline id="${elementId}_audio"></audio>`;
             $element.html(embed);
             player_create._error_load(`${elementId}_audio`);
             $(`#${elementId}_audio`).attr("src", fullurl);
 
-            let config = {
+            var config = {
                 controls: controls.split(","),
                 tooltips: {controls: showcontrols, seek: showcontrols},
                 settings: ["speed", "loop"],
@@ -139,7 +139,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
             };
-            let player = new PlayerRender(`#${elementId} audio`, config);
+            var player = new PlayerRender(`#${elementId} audio`, config);
             player.on("ready", function () {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
@@ -172,7 +172,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             const controls = $element.attr("data-controls");
             const speed = $element.attr("data-speed");
 
-            let embedparameters = "";
+            var embedparameters = "";
             if (showcontrols) {
                 embedparameters += "controls ";
             }
@@ -223,7 +223,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             if (isHls) {
                 if (Hls.isSupported()) {
 
-                    let source = $(`#${elementId}`).attr("data-videourl");
+                    var source = $(`#${elementId}`).attr("data-videourl");
 
                     // For more Hls.js options, see https://github.com/dailymotion/hls.js
                     const hls = new Hls();
@@ -296,7 +296,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player_create._internal_resize(width, height);
             });
 
-            let duration = 0;
+            var duration = 0;
             setInterval(function () {
                 if (duration > 1) {
                     player.getCurrentTime().then(function (_currenttime) {
@@ -333,7 +333,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             player_create._internal_view_id = view_id;
 
-            let duration = false;
+            var duration = false;
             window.addEventListener("message", (event) => {
                 const {data} = event;
 
@@ -374,7 +374,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             }
 
-            let videoElem = document.getElementById(elementId);
+            var videoElem = document.getElementById(elementId);
             videoElem.addEventListener("error", errorF);
         },
 
@@ -391,27 +391,27 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
         _internal_max_height__resizePage: function () {
 
-            let windowHeight = $(window).height();
+            var windowHeight = $(window).height();
             if ($("body").hasClass("distraction-free-mode")) {
-                let $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
+                var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
 
                 $supervideoArea.css({
                     "max-height": "inherit",
                     "height": "inherit",
                 });
 
-                let removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
-                let $activity = $(".activity-navigation");
+                var removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
+                var $activity = $(".activity-navigation");
                 if ($activity.length && !$activity.is(":hidden")) {
                     removeHeight += $activity.height();
                 }
 
-                let $mapa = $("#mapa-visualizacao");
+                var $mapa = $("#mapa-visualizacao");
                 if ($mapa.length && !$mapa.is(":hidden")) {
                     removeHeight += 12;
                 }
 
-                let playerMaxHeight = windowHeight - removeHeight;
+                var playerMaxHeight = windowHeight - removeHeight;
                 $("#supervideo_area_embed").css({
                     "max-height": playerMaxHeight,
                 });
@@ -421,14 +421,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 });
             } else {
                 if (document.querySelector("#supervideo_area_embed iframe")) {
-                    let $supervideo_area_embed = $("#supervideo_area_embed");
+                    var $supervideo_area_embed = $("#supervideo_area_embed");
 
-                    let maxHeight = $(window).height() - $("#header").height();
-                    let width = $supervideo_area_embed.width();
-                    let height = (width * player_create._internal_resize__height) / player_create._internal_resize__width;
+                    var maxHeight = $(window).height() - $("#header").height();
+                    var width = $supervideo_area_embed.width();
+                    var height = (width * player_create._internal_resize__height) / player_create._internal_resize__width;
 
                     if (height < maxHeight) {
-                        let ratio = (player_create._internal_resize__height / player_create._internal_resize__width) * 100;
+                        var ratio = (player_create._internal_resize__height / player_create._internal_resize__width) * 100;
                         if (ratio > 10) {
                             $supervideo_area_embed.css({
                                 paddingBottom: `${ratio}%`,
@@ -436,7 +436,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                             });
                         }
                     } else {
-                        // let newWidth = (maxHeight * player_create._internal_resize__width) / player_create._internal_resize__height;
+                        // var newWidth = (maxHeight * player_create._internal_resize__width) / player_create._internal_resize__height;
                         $supervideo_area_embed.css({
                             // width         : newWidth,
                             // margin        : "0 auto",
@@ -468,7 +468,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player_create._internal_progress_create(duration);
             }
 
-            let posicao_video;
+            var posicao_video;
             if (player_create._internal_progress_length < 100) {
                 posicao_video = currenttime;
             } else {
@@ -484,7 +484,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player_create._internal_assistido[posicao_video] = 1;
             }
 
-            let percent = 0;
+            var percent = 0;
             for (let j = 1; j <= player_create._internal_progress_length; j++) {
                 if (player_create._internal_assistido[j]) {
                     percent++;
@@ -502,7 +502,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             player_create._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
-                let $mapa = $("#mapa-visualizacao");
+                var $mapa = $("#mapa-visualizacao");
                 if ($mapa.length && !$mapa.is(":hidden")) {
                     if (currenttime > (duration * .90)) {
                         if (player_create._internal_sizenum != 1) {
@@ -549,14 +549,14 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
         _internal_progress_create: function (duration) {
 
-            let $mapa = $("#mapa-visualizacao .mapa");
+            var $mapa = $("#mapa-visualizacao .mapa");
             if (!$mapa.length) {
                 return;
             }
 
-            let supervideo_view_mapa = [];
+            var supervideo_view_mapa = [];
             try {
-                let mapa_json_base64 = $mapa.attr("data-mapa");
+                var mapa_json_base64 = $mapa.attr("data-mapa");
                 if (mapa_json_base64) {
                     supervideo_view_mapa = JSON.parse(atob(mapa_json_base64));
                 }
@@ -573,29 +573,29 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 } else {
                     player_create._internal_assistido[i] = 0;
                 }
-                let $mapa_item = $(`<div id="mapa-visualizacao-${i}">`);
+                var $mapa_item = $(`<div id="mapa-visualizacao-${i}">`);
                 $mapa.append($mapa_item);
 
                 // Mapa Clique
-                let mapaTitle = Math.floor(duration / player_create._internal_progress_length * i);
+                var mapaTitle = Math.floor(duration / player_create._internal_progress_length * i);
 
-                let hours = Math.floor(mapaTitle / 3600);
-                let minutes = (Math.floor(mapaTitle / 60)) % 60;
-                let seconds = mapaTitle % 60;
+                var hours = Math.floor(mapaTitle / 3600);
+                var minutes = (Math.floor(mapaTitle / 60)) % 60;
+                var seconds = mapaTitle % 60;
 
-                let tempo = minutes + ":" + seconds;
+                var tempo = minutes + ":" + seconds;
                 if (hours) {
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
-                let $mapa_clique =
+                var $mapa_clique =
                     $("<div></div>")
                         .attr("title", tempo)
                         .attr("data-currenttime", mapaTitle)
                         .click(function () {
-                            let _setCurrentTime = $(this).attr("data-currenttime");
+                            var _setCurrentTime = $(this).attr("data-currenttime");
                             _setCurrentTime = parseInt(_setCurrentTime);
 
-                            let event = document.createEvent("CustomEvent");
+                            var event = document.createEvent("CustomEvent");
                             event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
                             document.dispatchEvent(event);
                         });
@@ -612,25 +612,25 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         },
 
         secondary_navigation: function (course_id) {
-            let newHeader = $(`<div id="distraction-free-mode-header"></div>`);
+            var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
             $("#page-header").after(newHeader);
 
-            let back = `<a href="${M.cfg.wwwroot}/course/view.php?id=${course_id}" class="back-icon"></a>`;
+            var back = `<a href="${M.cfg.wwwroot}/course/view.php?id=${course_id}" class="back-icon"></a>`;
             newHeader.append(back);
 
-            let $icon = $(".activityiconcontainer.content");
+            var $icon = $(".activityiconcontainer.content");
             $icon.addClass("activityiconcontainer-icon");
             newHeader.append($icon.clone());
 
-            let $title = $(".page-header-headings h1");
+            var $title = $(".page-header-headings h1");
             $title.addClass("page-header-free");
             newHeader.append($title.clone());
 
-            let $navAdmin = $(".secondary-navigation .navigation .nav-tabs");
+            var $navAdmin = $(".secondary-navigation .navigation .nav-tabs");
             $navAdmin.addClass("free-secondary-navigation");
             newHeader.append($navAdmin.clone());
 
-            let $completionInfo = $("#id-activity-header .completion-info, .activity-header .completion-info");
+            var $completionInfo = $("#id-activity-header .completion-info, .activity-header .completion-info");
             $completionInfo.addClass("completion-free");
             newHeader.append($completionInfo.clone());
 
