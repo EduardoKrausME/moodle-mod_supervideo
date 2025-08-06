@@ -54,9 +54,11 @@ class config_util {
 
         $theme = isset($_SESSION["SESSION"]->theme) ? $_SESSION["SESSION"]->theme : $CFG->theme;
         if ($theme == "moove") {
-            $message = "The theme is not compatible with <em>Distraction-Free Mode</em>. " .
-                "To resolve this incompatibility, you can either choose a compatible theme or disable this setting.";
-            \core\notification::add($message, notification::NOTIFY_ERROR);
+            if ($config->distractionfreemode) {
+                $message = "The theme is not compatible with <em>Distraction-Free Mode</em>. " .
+                    "To resolve this incompatibility, you can either choose a compatible theme or disable this setting.";
+                \core\notification::add($message, notification::NOTIFY_ERROR);
+            }
             $config->distractionfreemode = false;
         } else if ($theme == "adaptable") {
             $config->distractionfreemode = false;
