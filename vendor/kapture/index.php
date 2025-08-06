@@ -11,20 +11,7 @@ require_once "config-kapture.php";
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=4"></script>
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=30"></script>
 </head>
 <body>
 
