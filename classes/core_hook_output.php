@@ -41,7 +41,7 @@ class core_hook_output {
         if (isset($_SESSION["SESSION"]->theme)) {
             $theme = $_SESSION["SESSION"]->theme;
         }
-        if ($theme != "boost_training" && $theme != "eadflix") {
+        if ($theme != "eadtraining" && $theme != "eadflix") {
             return;
         }
         if ($COURSE->id == $SITE->id) {
@@ -50,7 +50,7 @@ class core_hook_output {
 
         $blocks = [];
 
-        $cache = \cache::make("theme_boost_training", "css_cache");
+        $cache = \cache::make("theme_eadtraining", "css_cache");
         $cachekey = "supervideo_icon_{$COURSE->id}_v2";
         if ($cache->has($cachekey)) {
             $blocks = json_decode($cache->get($cachekey), true);
