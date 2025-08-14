@@ -40,7 +40,7 @@ class event_observers {
         switch ($eventname) {
             case '\core\event\course_module_created':
             case '\core\event\course_module_updated':
-                \cache::make("theme_boost_training", "css_cache")->purge();
+                \cache::make("theme_eadtraining", "css_cache")->purge();
                 break;
         }
     }
