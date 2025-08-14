@@ -17,37 +17,40 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
     var player_create = {
 
         ottflix: function (view_id, start_currenttime, elementId, identifier) {
-            // player_create._internal_resize(16, 9);
-            window.addEventListener("message", function receiveMessage(event) {
-                if (event.data.origem == "OTTFLIX-player") {
+            let totalDuration = false;
+            if (Array.isArray(identifier)) {
+                totalDuration = identifier.reduce((sum, item) => sum + (item.duration || 0), 0);
+            } else {
+                totalDuration = event.data.duration;
+            }
 
-                    // console.log(event.data);
 
-                    if (event.data.identifier == identifier) {
-                        if (event.data.name == "progress") {
-                            player_create._internal_saveprogress(event.data.currentTime, event.data.duration);
-                        } else if (event.data.name == "loadeddata") {
-                            // Tamanho vem do OTTFlix
-                            // player_create._internal_resize(event.data.width, event.data.height);
+            const identifiers = new Set(
+                (Array.isArray(identifier) ? identifier : [identifier])
+                    .filter(Boolean)
+                    .map(i => (typeof i === 'string' ? i : i.identifier))
+                    .filter(Boolean)
+            );
+
+            function receiveMessage(event) {
+                if (!(event && event.data)) {
+                    return;
+                }
+
+                if (event.data.origem === "OTTFLIX-player") {
+                    if (identifiers.has(event.data.identifier)) {
+                        if (event.data.name === "progress") {
+                            if (totalDuration) {
+                                player_create._internal_saveprogress(event.data.currentTime, totalDuration);
+                            } else {
+                                player_create._internal_saveprogress(event.data.currentTime, event.data.duration);
+                            }
                         }
                     }
                 }
-            });
+            }
 
-            var morewidth = $("#distraction-free-mode-header .more-nav").width();
-            $("#ottflix-tabs")
-                .show()
-                .css({"right": morewidth + 11})
-                .tabs({
-                    activate: function (event, ui) {
-                        var panel = ui.newPanel;
-                        var iframe = panel.find("iframe");
-
-                        if (iframe.length && !iframe.attr("src")) {
-                            iframe.attr("src", iframe.data("src"));
-                        }
-                    }
-                });
+            window.addEventListener("message", receiveMessage);
         },
 
         youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
@@ -106,8 +109,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         },
 
         resource_audio: function (view_id, start_currenttime, elementId) {
-            $("body").removeClass("distraction-free-mode");
-
             player_create._internal_view_id = view_id;
 
             var $element = $(`#${elementId}`);
@@ -601,43 +602,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                         });
                 $("#mapa-visualizacao .clique").append($mapa_clique);
             }
-        },
-
-        _internal_add: function (accumulator, a) {
-            return accumulator + a;
-        },
-
-        error_idnotfound: function () {
-            $("body").removeClass("distraction-free-mode");
-        },
-
-        secondary_navigation: function (course_id) {
-            var newHeader = $(`<div id="distraction-free-mode-header"></div>`);
-            $("#page-header").after(newHeader);
-
-            var back = `<a href="${M.cfg.wwwroot}/course/view.php?id=${course_id}" class="back-icon"></a>`;
-            newHeader.append(back);
-
-            var $icon = $(".activityiconcontainer.content");
-            $icon.addClass("activityiconcontainer-icon");
-            newHeader.append($icon.clone());
-
-            var $title = $(".page-header-headings h1");
-            $title.addClass("page-header-free");
-            newHeader.append($title.clone());
-
-            var $navAdmin = $(".secondary-navigation .navigation .nav-tabs");
-            $navAdmin.addClass("free-secondary-navigation");
-            newHeader.append($navAdmin.clone());
-
-            var $completionInfo = $("#id-activity-header .completion-info, .activity-header .completion-info");
-            $completionInfo.addClass("completion-free");
-            newHeader.append($completionInfo.clone());
-
-            $("#ottflix-tabs-ul").css({
-                "right": $("#distraction-free-mode-header ul").width()
-            });
-        },
+        }
     };
     return player_create;
 });

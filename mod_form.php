@@ -111,14 +111,29 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         // Ottflix IA.
+        $mform->addElement(
+            "static",
+            "ottflix_ia_text",
+            get_string("ottflix_ia", "mod_supervideo"),
+            get_string("ottflix_ia_desc", "mod_supervideo")
+        );
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "upload");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "youtube");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "vimeo");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "drive");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "pandavideo");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "link");
+
         $options = [
-            "book" => "Livro",
-            "glossary" => "Glossário",
-            "mindmap" => "Mapa Mental",
-            "quiz" => "Lições",
+            "InteractiveVideo" => get_string("ottflix_ia_interactivevideo", "mod_supervideo"),
+            "AdvancedText"     => get_string("ottflix_ia_advancedtext", "mod_supervideo"),
+            "Accordion"        => get_string("ottflix_ia_accordion", "mod_supervideo"),
+            "Dialogcards"      => get_string("ottflix_ia_dialogcards", "mod_supervideo"),
+            "QuestionSet"      => get_string("ottflix_ia_questionset", "mod_supervideo"),
+            "DragText"         => get_string("ottflix_ia_dragtext", "mod_supervideo"),
         ];
-        $attributes = ["multiple" => "multiple", "size" => 4];
-        $mform->addElement("select", "ottflix_ia", get_string("ottflix_ia", "mod_supervideo"), $options, $attributes);
+        $attributes = ["multiple" => "multiple", "size" => 6];
+        $mform->addElement("select", "ottflix_ia", "", $options, $attributes);
         $mform->setType("ottflix_ia", PARAM_TEXT);
         $mform->hideIf("ottflix_ia", "origem", "eq", "upload");
         $mform->hideIf("ottflix_ia", "origem", "eq", "youtube");

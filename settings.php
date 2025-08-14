@@ -118,4 +118,10 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configtext("supervideo/ottflix_token",
         $title, $description, "HMAC-SHA2048-xxxxxxxx", PARAM_TEXT);
     $settings->add($setting);
+
+    $title = get_string("distractionfreemode_h5p", "mod_supervideo");
+    $description = get_string("distractionfreemode_h5p_desc", "mod_supervideo");
+    $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode_h5p",
+        $title, $description, 1);
+    $settings->add($setting);
 }
