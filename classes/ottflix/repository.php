@@ -24,6 +24,8 @@
 
 namespace mod_supervideo\ottflix;
 
+use Exception;
+
 /**
  * Class repository
  *
@@ -38,9 +40,7 @@ class repository {
      * @param string $pathid
      * @param string $searchtitle
      * @param array $extensions
-     *
      * @return \stdClass
-     *
      * @throws \coding_exception
      * @throws \dml_exception
      */
@@ -69,11 +69,8 @@ class repository {
      * @param int $cmid
      * @param string $identifier
      * @param string $safetyplayer
-     *
      * @return string
-     *
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @throws Exception
      */
     public static function getplayer($cmid, $identifier, $safetyplayer = "") {
         global $USER;
@@ -94,11 +91,8 @@ class repository {
      * Call for get status.
      *
      * @param string $identifier
-     *
      * @return string
-     *
-     * @throws \dml_exception
-     * @throws \coding_exception
+     * @throws Exception
      */
     public static function getstatus($identifier) {
         $baseurl = "api/v1/assets/{$identifier}/status/";
@@ -110,11 +104,8 @@ class repository {
      *
      * @param string $metodth
      * @param array $params
-     *
      * @return bool|mixed
-     *
-     * @throws \dml_exception
-     * @throws \coding_exception
+     * @throws Exception
      */
     public static function load_ottfilx($metodth, $params = []) {
         $config = get_config('supervideo');
@@ -153,10 +144,8 @@ class repository {
      *
      * @param $identifier
      * @param $itens
-     *
      * @return object
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function ai($identifier, $itens) {
         $baseurl = "api/v1/assets/{$identifier}/ai/{$itens}";
@@ -164,5 +153,19 @@ class repository {
         return json_decode(self::load_ottfilx($baseurl, [
             "itens" => $itens,
         ]));
+    }
+
+    /**
+     * Function ai
+     *
+     * @param string $identifier
+     * @param string $ottflixia
+     * @return object
+     * @throws Exception
+     */
+    public static function h5p($identifier, $ottflixia) {
+        $baseurl = "api/v1/assetsh5p/{$identifier}/player";
+
+        return self::load_ottfilx($baseurl, ["ottflix_ia" => $ottflixia]);
     }
 }
