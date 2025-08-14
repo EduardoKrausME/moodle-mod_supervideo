@@ -1,0 +1,134 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_supervideo/view-freemode
+
+    Example context (json):
+    {
+      "elementid": "videoPlayer1",
+      "videourl": "https://example.com/video.mp4",
+      "autoplay": true,
+      "showcontrols": false,
+      "controls": "plat,pause",
+      "speed": "1,1.5"
+    }
+}}
+
+<div class="app" id="app">
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="left">
+            <a class="btn" id="btnBack" title="{{#str}}back{{/str}}"
+               href="{{{url-back}}}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                <span>Voltar</span>
+            </a>
+        </div>
+        <h1 class="title" id="pageTitle">{{{page-title}}}</h1>
+        <div class="controls"></div>
+        <a class="btn" id="btnSettings" title="{{#str}}settings{{/str}}"
+           href="{{{url-settings}}}">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 3.2l.06.06c.48.48 1.17.62 1.82.33A1.65 1.65 0 0 0 10.43 2.1V2a2 2 0 1 1 4 0v.09c0 .66.39 1.25 1 1.51.65.29 1.34.15 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06c-.48.48-.62 1.17-.33 1.82.26.61.85 1 1.51 1H22a2 2 0 1 1 0 4h-.09c-.66 0-1.25.39-1.51 1Z"/>
+            </svg>
+            <span>{{#str}}settings{{/str}}</span>
+        </a>
+    </header>
+
+    <!-- Área do vídeo -->
+    <main class="stage">
+        <div class="video-wrap" id="videoWrap">
+            {{{errosmessages}}}
+            <div class="pill">
+                <button class="btn" id="btnDF" title="{{#str}}freemode_focusmode, mod_supervideo{{/str}}">
+                    <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M3 8V5a2 2 0 0 1 2-2h3"/>
+                        <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+                        <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                        <path d="M21 16v3a2 2 0 0 1-2 2h-3"/>
+                    </svg>
+                    <span>{{#str}}freemode_focus, mod_supervideo{{/str}}</span>
+                </button>
+            </div>
+            {{{video-player}}}
+            {{#showmapa}}
+                {{{mapa}}}
+            {{/showmapa}}
+        </div>
+    </main>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const app = document.getElementById('app');
+        const btnSettings = document.getElementById('btnSettings');
+        const btnDF = document.getElementById('btnDF');
+
+        /* Muda o Foco */
+        const toggleDF = () => app.classList.toggle('df-active');
+        btnDF.addEventListener('click', toggleDF);
+
+        /* Mostrar/ocultar o btnDF2 quando o mouse se mover */
+        let df2Timeout;
+        const pill = document.querySelector('.pill');
+
+        function showDF() {
+            pill.style.opacity = '1';
+            pill.style.pointerEvents = 'auto';
+            clearTimeout(df2Timeout);
+            df2Timeout = setTimeout(() => {
+                if (!pill.matches(':hover')) {
+                    pill.style.opacity = '0';
+                    pill.style.pointerEvents = 'none';
+                }
+            }, 2000);
+        }
+
+        /* Detecta movimento de mouse sobre o vídeo */
+        document.getElementById('videoWrap').addEventListener('mousemove', showDF);
+        pill.addEventListener('mouseenter', () => clearTimeout(df2Timeout));
+        pill.addEventListener('mouseleave', showDF);
+
+        /* Estado inicial (oculto) */
+        pill.style.opacity = '0';
+        pill.style.pointerEvents = 'none';
+
+        const activityHeader = document.querySelector(".activity-header");
+        const controls = document.querySelector(".controls");
+
+        if (activityHeader && controls) {
+            controls.appendChild(activityHeader);
+        }
+
+        /* Diminui a fonte do Title até 24px para caber */
+        const title = document.querySelector('.title');
+        let fontSize = 40; /* inicial */
+
+        while (title.scrollWidth > title.clientWidth && fontSize > 24) {
+            fontSize--;
+            title.style.fontSize = fontSize + 'px';
+        }
+    });
+
+</script>

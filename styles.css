@@ -39,13 +39,13 @@
   display: inline-block;
 }
 
-body:not(.distraction-free-mode) #supervideo_area_embed {
+body #supervideo_area_embed {
   position: relative;
   z-index: 1;
   width: 100% !important;
   overflow: hidden !important;
 }
-body:not(.distraction-free-mode) #supervideo_area_embed .logo {
+body #supervideo_area_embed .logo {
   position: absolute;
   height: 40px;
   background: #ffffff;
@@ -53,7 +53,7 @@ body:not(.distraction-free-mode) #supervideo_area_embed .logo {
   top: 2px;
   z-index: 2;
 }
-body:not(.distraction-free-mode) #supervideo_area_embed iframe {
+body #supervideo_area_embed iframe:not(.h5p-iframe) {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -152,72 +152,13 @@ body:not(.distraction-free-mode) #supervideo_area_embed iframe {
 }
 
 #page-mod-supervideo-view #page.drawers div[role=main] {
-  background: #000000 0;
+  background: rgba(0, 0, 0, 0);
   padding: 0;
   border-radius: 0;
   box-shadow: none;
 }
 #page-mod-supervideo-view .activity-description iframe {
   width: 96% !important;
-}
-#page-mod-supervideo-view #ottflix-tabs {
-  border: none;
-  background: #000000 0;
-  color: #4b4b4b;
-  padding: 0;
-  margin: 0;
-}
-#page-mod-supervideo-view #ottflix-tabs a {
-  color: #4d6691;
-}
-#page-mod-supervideo-view #ottflix-tabs pre {
-  border: 1px solid #8c8c8c;
-  background: #d2d2d2;
-  padding: 7px 12px;
-  border-radius: 4px;
-  font-family: monospace;
-}
-#page-mod-supervideo-view #ottflix-tabs table {
-  margin-top: 0;
-}
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-header {
-  border: none;
-  background: transparent;
-}
-#page-mod-supervideo-view #ottflix-tabs .ui-state-default,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-content .ui-state-default,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-header .ui-state-default {
-  border: none;
-  background: #f2f2f2;
-  font-weight: 700;
-}
-#page-mod-supervideo-view #ottflix-tabs .ui-state-default a,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-content .ui-state-default a,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-header .ui-state-default a {
-  color: #424242;
-}
-#page-mod-supervideo-view #ottflix-tabs .ui-state-active,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-content .ui-state-active,
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-header .ui-state-active {
-  border: none;
-  background: #e4e4e4;
-  font-weight: 700;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-#page-mod-supervideo-view #ottflix-tabs .ui-widget-content {
-  background: #e4e4e4;
-  color: #3d3d3d;
-  border-radius: 5px;
-  padding: 0;
-}
-#page-mod-supervideo-view #ottflix-tabs, #page-mod-supervideo-view #ottflix-tabs > div, #page-mod-supervideo-view #ottflix-tabs > div * {
-  max-height: inherit;
-}
-#page-mod-supervideo-view #ottflix-tabs #tab-glossary,
-#page-mod-supervideo-view #ottflix-tabs #tab-quiz,
-#page-mod-supervideo-view #ottflix-tabs #tab-suggestion {
-  overflow: auto;
 }
 
 @keyframes plyr-progress {
@@ -1587,263 +1528,154 @@ a.plyr__control {
     display: none !important;
   }
 }
-#distraction-free-mode-header {
-  display: none;
+body.body-df {
+  height: 100%;
+  margin: 0;
+  background: linear-gradient(180deg, #0b0f14, #0e141c 40%, #0b0f14) !important;
+  color: #e8eef6 !important;
+  /* Layout base */
 }
-
-.distraction-free-mode {
-  background: #393f46;
-}
-.distraction-free-mode a:focus {
-  box-shadow: none !important;
-  outline: none !important;
-}
-.distraction-free-mode video,
-.distraction-free-mode iframe {
-  transition: all 0.3s ease;
-}
-.distraction-free-mode iframe {
-  border-radius: 4px;
-  background: #393f46;
-}
-.distraction-free-mode div[role=main] {
-  margin-top: -1px;
+body.body-df #page {
   background: transparent !important;
-  padding: 0 !important;
-  border-radius: 0 !important;
+  height: 100%;
 }
-.distraction-free-mode #page #topofscroll {
+body.body-df .app {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
   position: fixed;
-  z-index: 9999;
-  border-radius: 0 !important;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0;
-  margin: 0;
+  width: 100%;
+  height: 100%;
+  /* Botões */
+  /* Header */
+  /* Área do vídeo */
+  /* Distraction‑free mode */
 }
-.distraction-free-mode .activity-header,
-.distraction-free-mode #id-activity-header {
-  display: none;
-}
-.distraction-free-mode .secondary-navigation {
-  display: none;
-}
-.distraction-free-mode #distraction-free-mode-header {
-  display: flex !important;
+body.body-df .app .btn {
+  display: inline-flex;
   align-items: center;
-  padding: 5px 16px;
-  background: #202327;
-  height: 54px;
+  gap: 0.45rem;
+  border: 1px solid FFFFFF14;
+  color: #e8eef6;
+  background: linear-gradient(180deg, #FFFFFF0A, #FFFFFF05);
+  padding: 0.45rem 0.7rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.distraction-free-mode #distraction-free-mode-header * {
-  margin: 0;
-  padding: 0;
+body.body-df .app .btn:hover {
+  border-color: #FFFFFF2D;
+  box-shadow: 0 0 0 3px #3AA0FF 59 inset;
 }
-.distraction-free-mode #distraction-free-mode-header .back-icon {
-  color: #eceff8;
-  background: transparent;
-  font-size: 0;
+body.body-df .app .btn:active {
+  transform: translateY(1px);
 }
-.distraction-free-mode #distraction-free-mode-header .back-icon:after {
-  content: " ";
-  width: 20px;
-  height: 20px;
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHdpZHRoPSIyOTgiIGhlaWdodD0iNTEyIiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgaW1hZ2UtcmVuZGVyaW5nPSJvcHRpbWl6ZVF1YWxpdHkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiB2aWV3Qm94PSIwIDAgMjk4IDUxMS45MyI+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMjg1Ljc3IDQ0MWMxNi4yNCAxNi4xNyAxNi4zMiA0Mi40Ni4xNSA1OC43LTE2LjE2IDE2LjI0LTQyLjQ1IDE2LjMyLTU4LjY5LjE2bC0yMTUtMjE0LjQ3Yy0xNi4yNC0xNi4xNi0xNi4zMi00Mi40NS0uMTUtNTguNjlMMjI3LjIzIDEyLjA4YzE2LjI0LTE2LjE3IDQyLjUzLTE2LjA5IDU4LjY5LjE1IDE2LjE3IDE2LjI0IDE2LjA5IDQyLjU0LS4xNSA1OC43bC0xODUuNSAxODUuMDRMMjg1Ljc3IDQ0MXoiIGZpbGw9IiNlY2VmZjgiLz48L3N2Zz4=);
+body.body-df .app .btn svg {
+  width: 18px;
+  height: 18px;
   display: block;
-  background-size: contain;
-  background-repeat: no-repeat;
 }
-.distraction-free-mode #distraction-free-mode-header .activityiconcontainer-icon {
-  min-width: 44px;
-  height: 44px;
+@media (max-width: 680px) {
+  body.body-df .app .btn svg {
+    display: none;
+  }
 }
-.distraction-free-mode #distraction-free-mode-header h1 {
-  color: #eceff8 !important;
+body.body-df .app .header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 12px;
+  height: 56px;
+  background: #121821 E5;
+  backdrop-filter: saturate(150%) blur(10px);
+  border-bottom: 1px solid #FFFFFF0F;
+}
+body.body-df .app .header .left {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+body.body-df .app .header .title {
+  margin: 0 auto 0 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 40px;
+}
+@media (max-width: 680px) {
+  body.body-df .app .header .title {
+    font-size: 14px !important;
+  }
+}
+body.body-df .app .stage {
   width: 100%;
-  margin-left: 10px;
+  max-width: 1280px;
+  margin: 12px auto 24px;
+  padding: 0 12px;
+  height: 100%;
+  /* Controles flutuantes (opcionais) */
 }
-.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation {
+body.body-df .app .stage .video-wrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px #000000 59, 0 1px 0 #FFFFFF0A inset;
+  background: #000000;
+  height: 100%;
   display: flex;
-  flex-wrap: nowrap;
-  padding-bottom: 0 !important;
-  margin-left: 20px;
+  flex-direction: column;
 }
-.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation, .distraction-free-mode #distraction-free-mode-header .free-secondary-navigation * {
-  border: none !important;
+body.body-df .app .stage .video-wrap video,
+body.body-df .app .stage .video-wrap iframe {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  background: #000000;
 }
-.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-link {
-  white-space: nowrap;
-  color: #eceff8 !important;
-  padding: 7px;
-}
-.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-link.active {
-  display: none;
-}
-.distraction-free-mode #distraction-free-mode-header .free-secondary-navigation .nav-item.dropdown {
-  display: none;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free {
-  margin: 0 !important;
-  padding: 0 !important;
-  z-index: 9;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free .badge,
-.distraction-free-mode #distraction-free-mode-header .completion-free .btn {
-  padding: 3px 16px !important;
-  background: #f5f5f5;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free .btn-success,
-.distraction-free-mode #distraction-free-mode-header .completion-free .alert-success {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #e9f0e9;
-  background-color: #4caf50;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free .badge {
-  border-color: none;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free .automatic-completion-conditions {
-  display: flex;
-  gap: 4px;
-}
-.distraction-free-mode #distraction-free-mode-header .completion-free .automatic-completion-conditions .badge {
-  padding: 8px 13px !important;
-  border-radius: 8px;
-}
-.distraction-free-mode #page-header {
-  display: none !important;
-}
-.distraction-free-mode #supervideoheading,
-.distraction-free-mode .text-muted,
-.distraction-free-mode footer {
-  display: none !important;
-}
-.distraction-free-mode .drawer {
-  z-index: 99999;
-  top: 61px !important;
-}
-.distraction-free-mode .container {
-  max-width: 100%;
-  width: 100%;
-  height: calc(100% - 55px + 16px);
-}
-.distraction-free-mode .container #page-content,
-.distraction-free-mode .container #region-main-box,
-.distraction-free-mode .container .row {
+body.body-df .app .stage .video-wrap #h5p-container,
+body.body-df .app .stage .video-wrap #h5p-container .h5p-iframe-wrapper {
   height: 100%;
 }
-.distraction-free-mode #page-content #region-main-box .section-courseindex {
-  display: none;
-}
-.distraction-free-mode #page-content #region-main-box #region-main {
-  background: transparent !important;
-  flex: 0 0 100%;
-  max-width: 100%;
-  width: 100%;
-  padding: 0 !important;
-}
-.distraction-free-mode #page-content #region-main-box #region-main #id-activity-header {
-  background-color: rgba(57, 63, 70, 0.17);
-}
-.distraction-free-mode #page-content #region-main-box #region-main .image-top-course {
-  display: none;
-}
-.distraction-free-mode .activity-navigation.mt-5, .distraction-free-mode .activity-navigation.mb-1 {
-  margin-top: 6px !important;
-  margin-bottom: 0 !important;
-}
-.distraction-free-mode .activity-navigation #jump-to-activity.custom-select {
-  z-index: 9;
-}
-.distraction-free-mode #mapa-visualizacao.fixed-booton {
-  position: fixed;
-  bottom: 0;
-  left: 10px;
-  width: calc(100% - 20px);
-}
-.distraction-free-mode .plyr__video-wrapper {
-  border-radius: 12px;
-}
-.distraction-free-mode .plyr__controls {
-  border-radius: 0 0 12px 12px;
-}
-.distraction-free-mode #geniai-chat,
-.distraction-free-mode #mic-init-access-tool {
-  display: none !important;
-}
-.distraction-free-mode.support-trema.format-topics:not(#page-course-view-topics) #page-content:before, .distraction-free-mode.support-trema.pagelayout-incourse #page-content:before {
-  display: none;
-}
-.distraction-free-mode.support-trema.format-topics:not(#page-course-view-topics) #page-content:after, .distraction-free-mode.support-trema.pagelayout-incourse #page-content:after {
-  display: none;
-}
-.distraction-free-mode.support-trema #page #page-content {
-  max-width: 100%;
-  width: 100%;
-  margin: 0;
-}
-.distraction-free-mode #ottflix-tabs #ottflix-tabs-ul {
-  position: fixed;
-  top: 23px;
-  right: 240px;
-  z-index: 9999;
-}
-.distraction-free-mode #ottflix-tabs .ui-state-default,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default {
-  background: #f2f2f200 !important;
-}
-.distraction-free-mode #ottflix-tabs .ui-state-default, .distraction-free-mode #ottflix-tabs .ui-state-default *,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default *,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default * {
-  transition: all 0.5s ease;
-}
-.distraction-free-mode #ottflix-tabs .ui-state-default a,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default a,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default a {
-  color: #e7e2e2 !important;
-  padding: 6px 11px 3px !important;
-  font-size: 14px !important;
-}
-.distraction-free-mode #ottflix-tabs .ui-state-default:before,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-default:before,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-default:before {
-  content: "";
+body.body-df .app .stage .pill {
   position: absolute;
-  z-index: -1;
-  top: 50%;
-  bottom: 0;
-  left: 5px;
-  right: 5px;
-  border-radius: 100px/10px;
-  box-shadow: 0 2px 3px rgba(255, 255, 255, 0.3);
-  opacity: 0;
+  right: 12px;
+  top: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
 }
-.distraction-free-mode #ottflix-tabs .ui-state-active,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active {
-  background: #139aaf !important;
-  zoom: 1.2;
-  margin-top: -3.8px;
+body.body-df .app .stage .pill .btn {
+  background: #0C0F16 BF;
 }
-.distraction-free-mode #ottflix-tabs .ui-state-active a,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active a,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active a {
-  color: #dcdcdc !important;
+body.body-df .app.df-active .header {
+  display: none;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
-.distraction-free-mode #ottflix-tabs .ui-state-active:before,
-.distraction-free-mode #ottflix-tabs .ui-widget-content .ui-state-active:before,
-.distraction-free-mode #ottflix-tabs .ui-widget-header .ui-state-active:before {
-  opacity: 1;
+body.body-df .app.df-active .stage {
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
-.distraction-free-mode [vw] {
+body.body-df .app.df-active .video-wrap {
+  border-radius: 0;
+  box-shadow: none;
+  aspect-ratio: auto;
+  height: 100vh;
+}
+body.body-df .app.df-active .drawer {
+  top: 0;
+  height: 100%;
+}
+body.body-df [vw] {
   display: none !important;
 }

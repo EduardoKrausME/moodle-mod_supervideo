@@ -22,11 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\output\notification;
-use mod_supervideo\analytics\supervideo_view;
 use mod_supervideo\event\course_module_viewed;
-use mod_supervideo\pandavideo\repository;
-use mod_supervideo\util\config_util;
+use mod_supervideo\output\view;
 
 require_once("../../config.php");
 global $CFG, $PAGE, $OUTPUT, $DB, $USER;
@@ -47,31 +44,16 @@ if ($id) {
     throw new Exception("You must specify a course_module ID or an instance ID");
 }
 
-$context = context_module::instance($cm->id);
+require_course_login($course, true, $cm);
 
-$mobile = optional_param("mobile", 0, PARAM_INT);
-if ($mobile) {
-    session_write_close();
-    if ($user) {
-        $USER = $user;
-    }
-    $PAGE->set_cm($cm, $course);
-    $PAGE->set_course($course);
-} else {
-    require_course_login($course, true, $cm);
-    require_capability("mod/supervideo:view", $context);
-}
+$context = context_module::instance($cm->id);
 
 // Update "viewed" state if required by completion system.
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-$params = [
-    "n" => $n,
-    "id" => $id,
-    "mobile" => $mobile,
-];
-$PAGE->set_url("/mod/supervideo/view.php", $params);
+$PAGE->set_cm($cm, $course);
+$PAGE->set_url("/mod/supervideo/view.php", ["n" => $n, "id" => $id]);
 $PAGE->set_title($supervideo->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
@@ -84,371 +66,38 @@ $event->add_record_snapshot("course", $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $supervideo);
 $event->trigger();
 
-$hasteacher = has_capability("mod/supervideo:addinstance", $context);
-$config = config_util::get_config($supervideo);
-
-if ($mobile) {
-    $PAGE->set_pagelayout("embedded");
-    $config->distractionfreemode = false;
-    $config->maxwidth = false;
-}
-
-if ($config->distractionfreemode) {
-    if (isset($USER->editing) && $USER->editing) {
-        $PAGE->add_body_class("distraction-free-mode--editing");
-    } else {
-        $PAGE->add_body_class("distraction-free-mode");
-    }
-}
+$view = new view($cm, $course, $supervideo, $context);
+$videoplayer = $view->get_player();
 
 $PAGE->requires->jquery();
-$PAGE->requires->jquery_plugin("ui");
-$PAGE->requires->jquery_plugin("ui-css");
 
-echo $OUTPUT->header();
+if ($view->freemode) {
+    $PAGE->set_pagelayout("embedded");
+    $PAGE->add_body_class("body-df");
+    echo $OUTPUT->header();
 
-if ($CFG->branch <= 311) {
-    $linkreport = "";
-    if ($hasteacher) {
-        $linkreport = "<a class='supervideo-report-link' href='report.php?id={$cm->id}'>" .
-            get_string("report_title", "mod_supervideo") . "</a>";
-    }
-    $title = format_string($supervideo->name);
-    echo $OUTPUT->heading("<span class='supervideoheading-title'>{$title}</span> {$linkreport}",
-        2, "main", "supervideoheading");
-}
+    $mustachedata = [
+        "showmapa" => $view->config->showmapa,
+        "mapa" => $view->get_maps(),
+        "errosmessages" => $view->errosmessages,
+        "video-player" => $videoplayer,
+        "page-title" => $view->supervideo->name,
+        "url-back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
+        "url-settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
+    ];
+    echo $OUTPUT->render_from_template("mod_supervideo/view-freemode", $mustachedata);
 
-$extraembedtag = $config->maxwidth ? "margin:0 auto;max-width:{$config->maxwidth}px;" : "";
-echo "<div id='supervideo_area_embed' style='{$extraembedtag}'>";
-
-$supervideoview = supervideo_view::create($cm->id);
-
-if ($supervideo->videourl) {
-    $showerrors = false;
-    $uniqueid = uniqid();
-    $elementid = "{$supervideo->origem}-{$uniqueid}";
-
-    if ($supervideo->origem == "ottflix") {
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
-            (int)$supervideoview->id,
-            $supervideoview->currenttime,
-            $elementid,
-            $supervideo->videourl,
-        ]);
-
-        if (preg_match("/([A-Z0-9\-\_]{3,255})/", $supervideo->videourl, $path)) {
-            $identifier = $path[1];
-
-            $ai = \mod_supervideo\ottflix\repository::ai($identifier, $supervideo->ottflix_ia);
-            $tabs = [];
-            $contents = "";
-
-            // Criação das abas.
-            foreach ($ai->data->itens as $item) {
-                switch ($item->id) {
-                    case 'admin':
-                        if ($hasteacher) {
-                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
-                            $contents .= "
-                            <div id='tab-{$item->id}'>
-                                <a href='{$item->link_admin}' target='_blank'>{$item->title}</a>
-                            </div>";
-                        }
-                        break;
-                    case 'book':
-                    case 'mindmap':
-                        $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
-                        $allow = implode("; ", [
-                            "accelerometer",
-                            "autoplay",
-                            "clipboard-write",
-                            "encrypted-media",
-                            "gyroscope",
-                            "picture-in-picture",
-                            "web-share",
-                        ]);
-                        $contents .= "
-                            <div id='tab-{$item->id}'>
-                                <iframe data-src='{$item->html_iframe}' width='100%' height='600px'
-                                        style='border:none;'
-                                        sandbox='allow-scripts allow-popups allow-forms allow-same-origin allow-modals'
-                                        allow='{$allow}'
-                                ></iframe>
-                            </div>";
-                        break;
-                    case 'glossary':
-                    case 'quiz':
-                        $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
-                        $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
-                        break;
-                    case 'suggestion':
-                        if ($hasteacher) {
-                            // Adiciona a aba.
-                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
-                            $contents .= "<div id='tab-{$item->id}'>{$item->html}</div>";
-                        }
-                        break;
-                    case 'caption':
-                        if ($hasteacher) {
-                            // Adiciona a aba.
-                            $tabs[] = "<li><a href='#tab-{$item->id}'>{$item->title}</a></li>";
-                            $contents .= "
-                                <div id='tab-{$item->id}'>
-                                    <pre>{$item->html}</pre>
-                                </div>";
-                        }
-                        break;
-                }
-            }
-
-            if (count($tabs)) {
-
-                $playerhtml = \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
-
-                $contents = "<div id='tab-player'>{$playerhtml}</div>{$contents}";
-
-                array_unshift($tabs, "<li><a href='#tab-player'>Vídeo</a></li>");
-
-                $tabshtml = implode("\n", $tabs);
-                echo "
-                    <link href='{$ai->data->css}' rel='stylesheet'>
-                    <div id='ottflix-tabs' style='display:none'><ul id='ottflix-tabs-ul'>{$tabshtml}</ul>{$contents}</div>";
-            } else {
-                echo \mod_supervideo\ottflix\repository::getplayer($id, $identifier, $USER->id);
-            }
-
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "ottflix", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                $identifier,
-            ]);
-        } else {
-            echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => "message_notfound",
-                "type" => "danger",
-                "message" => get_string("idnotfound", "mod_supervideo"),
-            ]);
-            $config->showmapa = false;
-        }
-    }
-    if ($supervideo->origem == "link") {
-        $mustachedata = [
-            "elementid" => $elementid,
-            "videourl" => $supervideo->videourl,
-            "autoplay" => $supervideo->autoplay ? 1 : 0,
-            "showcontrols" => $supervideo->showcontrols ? 1 : 0,
-            "controls" => $config->controls,
-            "speed" => $config->speed,
-            "hls" => preg_match("/^https?.*\.(m3u8)/i", $supervideo->videourl, $output),
-            "has_audio" => preg_match("/^https?.*\.(mp3|aac|m4a)/i", $supervideo->videourl, $output),
-        ];
-        echo $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create",
-            $mustachedata["has_audio"] ? "resource_audio" : "resource_video", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-            ]);
-        $showerrors = true;
-    }
-    if ($supervideo->origem == "upload") {
-        $files = supervideo_get_area_files($context->id);
-        $file = reset($files);
-        if ($file) {
-            $path = implode("/", [
-                "",
-                $context->id,
-                "mod_supervideo/content",
-                $file->get_id(),
-                "{$file->get_itemid()}{$file->get_filepath()}{$file->get_filename()}",
-            ]);
-            $fullurl = moodle_url::make_file_url("/pluginfile.php", $path, false)->out();
-
-            $mustachedata = [
-                "elementid" => $elementid,
-                "videourl" => $fullurl,
-                "autoplay" => $supervideo->autoplay ? "true" : "false",
-                "showcontrols" => $supervideo->showcontrols ? 1 : 0,
-                "controls" => $config->controls,
-                "speed" => $config->speed,
-            ];
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
-
-            $extension = strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
-            if ($extension == "mp3" || $extension == "aac" || $extension == "m4a") {
-                $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_audio", [
-                    (int)$supervideoview->id,
-                    $supervideoview->currenttime,
-                    $elementid,
-                ]);
-            } else {
-                $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
-                    (int)$supervideoview->id,
-                    $supervideoview->currenttime,
-                    $elementid,
-                ]);
-            }
-            $showerrors = true;
-        } else {
-            $message = get_string("filenotfound", "mod_supervideo");
-            $notification = new notification($message, notification::NOTIFY_ERROR);
-            $notification->set_show_closebutton(false);
-            echo \html_writer::span($PAGE->get_renderer("core")->render($notification));
-        }
-    }
-    if ($supervideo->origem == "youtube") {
-        echo "<script src='https://www.youtube.com/iframe_api'></script>";
-        echo $OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $elementid]);
-
-        if (!isset($supervideo->playersize[3])) {
-            $supervideo->playersize = supervideo_youtube_size($supervideo, true);
-        }
-
-        if (preg_match('/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i',
-            $supervideo->videourl, $output)) {
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "youtube", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                $output[3],
-                $supervideo->playersize,
-                $supervideo->showcontrols ? 1 : 0,
-                $supervideo->autoplay ? 1 : 0,
-            ]);
-        } else {
-            echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => "message_notfound",
-                "type" => "danger",
-                "message" => get_string("idnotfound", "mod_supervideo"),
-            ]);
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
-            $config->showmapa = false;
-        }
-    }
-    if ($supervideo->origem == "drive") {
-        if (preg_match('/\/d\/\K[^\/]+(?=\/)/', $supervideo->videourl, $output)) {
-            $parametersdrive = implode("&amp;", [
-                $supervideo->showcontrols ? "controls=1" : "controls=0",
-                $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
-            ]);
-
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_drive", [
-                "elementid" => $elementid,
-                "driveid" => $output[0],
-                "parametersdrive" => $parametersdrive,
-            ]);
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "drive", [
-                (int)$supervideoview->id,
-                $elementid,
-                $supervideo->playersize,
-            ]);
-        } else {
-            echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => "message_notfound",
-                "type" => "danger",
-                "message" => get_string("idnotfound", "mod_supervideo"),
-            ]);
-        }
-        $config->showmapa = false;
-    }
-    if ($supervideo->origem == "vimeo") {
-        $parametersvimeo = implode("&amp;", [
-            "pip=1",
-            "title=0",
-            "byline=0",
-            $supervideo->showcontrols ? "title=1" : "title=0",
-            $supervideo->autoplay ? "autoplay=1" : "autoplay=0",
-            $supervideo->showcontrols ? "controls=1" : "controls=0",
-        ]);
-
-        if (preg_match("/vimeo.com\/(\d+)(\/(\w+))?/", $supervideo->videourl, $output)) {
-            if (isset($output[3])) {
-                $url = "{$output[1]}?h={$output[3]}&pip{$parametersvimeo}";
-            } else {
-                $url = "{$output[1]}?pip{$parametersvimeo}";
-            }
-        }
-
-        echo $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", [
-            "elementid" => $elementid,
-            "vimeo_id" => $url,
-            "parametersvimeo" => $parametersvimeo,
-        ]);
-
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "vimeo", [
-            $supervideoview->id,
-            $supervideoview->currenttime,
-            $supervideo->videourl,
-            $elementid,
-        ]);
-    }
-    if ($supervideo->origem == "pandavideo") {
-        try {
-            $pandavideo = repository::oembed($supervideo->videourl);
-            $pandavideo->video_player = preg_replace('/.*src="(.*?)".*/', '$1', $pandavideo->html);
-
-            echo $OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", [
-                "elementid" => $elementid,
-                "id" => $pandavideo->id,
-                "video_player" => $pandavideo->video_player,
-            ]);
-            $PAGE->requires->js_call_amd("mod_supervideo/player_create", "pandavideo", [
-                (int)$supervideoview->id,
-                $supervideoview->currenttime,
-                $elementid,
-                ["width" => $pandavideo->width, "height" => $pandavideo->height],
-            ]);
-
-        } catch (Exception $e) {
-            echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => "pandavideo-error",
-                "type" => "danger",
-                "message" => $e->getMessage(),
-            ]);
-        }
-    }
-
-    if ($showerrors) {
-        $errors = [
-            "error_media_err_aborted",
-            "error_media_err_network",
-            "error_media_err_decode",
-            "error_media_err_src_not_supported",
-            "error_default",
-        ];
-        foreach ($errors as $error) {
-            echo $OUTPUT->render_from_template("mod_supervideo/error", [
-                "elementId" => $error,
-                "type" => "danger",
-                "message" => get_string($error, "mod_supervideo"),
-                "extratags" => "style='display:none;'",
-            ]);
-        }
-    }
-
-    if (!(isset($USER->editing) && $USER->editing)) {
-        $PAGE->requires->js_call_amd("mod_supervideo/player_create", "secondary_navigation", [$course->id]);
-    }
-
+    echo $OUTPUT->footer();
 } else {
-    echo $OUTPUT->render_from_template("mod_supervideo/error", [
-        "elementId" => "message_notfound",
-        "type" => "danger",
-        "message" => get_string("idnotfound", "mod_supervideo"),
-    ]);
-    $PAGE->requires->js_call_amd("mod_supervideo/player_create", "error_idnotfound");
-    $config->showmapa = false;
+    $PAGE->requires->jquery_plugin("ui");
+    $PAGE->requires->jquery_plugin("ui-css");
+    echo $OUTPUT->header();
+
+    echo $view->errosmessages;
+    echo $videoplayer;
+    if ($view->config->showmapa) {
+        echo $view->get_maps();
+    }
+
+    echo $OUTPUT->footer();
 }
-
-echo "</div>";
-
-$text = $OUTPUT->heading(get_string("seu_mapa_view", "mod_supervideo") . " <span></span>",
-    3, "main-view", "seu-mapa-view");
-echo $OUTPUT->render_from_template("mod_supervideo/mapa", [
-    "style" => $config->showmapa ? "" : "style='display:none'",
-    "data-mapa" => base64_encode($supervideoview->mapa),
-    "text" => $text,
-]);
-
-echo $OUTPUT->footer();

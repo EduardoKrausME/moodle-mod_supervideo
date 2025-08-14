@@ -1,0 +1,150 @@
+body.body-df {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, #0b0f14, #0e141c 40%, #0b0f14) !important;
+    color: #e8eef6 !important;
+    #page {
+        background: transparent !important;
+        height: 100%;
+    }
+    /* Layout base */
+    .app {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100%;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        /* Botões */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border: 1px solid FFFFFF14;
+            color: #e8eef6;
+            background: linear-gradient(180deg, #FFFFFF0A, #FFFFFF05);
+            padding: .45rem .7rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+            &:hover {
+                border-color: #FFFFFF2D;
+                box-shadow: 0 0 0 3px #3AA0FF59 inset;
+            }
+            &:active {
+                transform: translateY(1px);
+            }
+            svg {
+                width: 18px;
+                height: 18px;
+                display: block;
+                @media (max-width: 680px) {
+                    display: none;
+                }
+            }
+        }
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: 8px 12px;
+            height: 56px;
+            background: #121821E5;
+            backdrop-filter: saturate(150%) blur(10px);
+            border-bottom: 1px solid #FFFFFF0F;
+            .left {
+                display: flex;
+                gap: .5rem;
+                align-items: center;
+            }
+            .title {
+                margin: 0 auto 0 .5rem;
+                font-weight: 600;
+                letter-spacing: .2px;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 40px;
+                @media (max-width: 680px) {
+                    font-size: 14px !important;
+                }
+            }
+        }
+        /* Área do vídeo */
+        .stage {
+            width: 100%;
+            max-width: 1280px;
+            margin: 12px auto 24px;
+            padding: 0 12px;
+            height: 100%;
+            .video-wrap {
+                position: relative;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 0 20px 50px #00000059, 0 1px 0 #FFFFFF0A inset;
+                background: #000000;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                video,
+                iframe {
+                    width: 100% !important;
+                    height: 100% !important;;
+                    display: block;
+                    background: #000000;
+                }
+                #h5p-container,
+                #h5p-container .h5p-iframe-wrapper {
+                    height: 100%;
+                }
+            }
+            /* Controles flutuantes (opcionais) */
+            .pill {
+                position: absolute;
+                right: 12px;
+                top: 12px;
+                z-index: 5;
+                display: flex;
+                gap: .5rem;
+                transition: opacity 0.3s ease;
+                .btn {
+                    background: #0C0F16BF;
+                }
+            }
+        }
+        /* Distraction‑free mode */
+        &.df-active {
+            .header {
+                display: none;
+                pointer-events: none;
+                transform: translateY(-8px);
+                transition: opacity .25s ease, transform .25s ease;
+            }
+            .stage {
+                max-width: none;
+                margin: 0;
+                padding: 0
+            }
+            .video-wrap {
+                border-radius: 0;
+                box-shadow: none;
+                aspect-ratio: auto;
+                height: 100vh
+            }
+            .drawer {
+                top: 0;
+                height: 100%;
+            }
+        }
+    }
+    // VLibras
+    [vw] {
+        display: none !important;
+    }
+}

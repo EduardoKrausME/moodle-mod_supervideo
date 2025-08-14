@@ -380,10 +380,10 @@ a.plyr__control {
 }
 .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]:after {
     opacity: 1;
-    transform: translateY(-50%) scale(1)
+    transform: translateY(-50%) scale(1);
 }
 .plyr__menu__container .plyr__control[role=menuitemradio]:focus-visible:before, .plyr__menu__container .plyr__control[role=menuitemradio]:hover:before {
-    background: #23282f1a
+    background: #23282f1a;
 }
 .plyr__menu__container .plyr__menu__value {
     align-items: center;
