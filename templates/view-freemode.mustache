@@ -19,12 +19,13 @@
 
     Example context (json):
     {
-      "elementid": "videoPlayer1",
-      "videourl": "https://example.com/video.mp4",
-      "autoplay": true,
-      "showcontrols": false,
-      "controls": "plat,pause",
-      "speed": "1,1.5"
+        "showmapa" : true,
+        "mapa" : "<div....",
+        "errosmessages" : "<div...",
+        "video-player" : <video...",
+        "page-title" : "Video ....",
+        "url-back" : "https://site/course/view.php?id=123",
+        "url-settings" : "https://site/course/modedit.php?update=123"
     }
 }}
 
@@ -38,7 +39,7 @@
                      stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
-                <span>Voltar</span>
+                <span>{{#str}}back{{/str}}</span>
             </a>
         </div>
         <h1 class="title" id="pageTitle">{{{page-title}}}</h1>
@@ -130,5 +131,4 @@
             title.style.fontSize = fontSize + 'px';
         }
     });
-
 </script>
