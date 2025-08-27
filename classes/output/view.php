@@ -103,7 +103,6 @@ class view {
             }
         }
 
-        require_course_login($this->course);
         require_capability("mod/supervideo:view", $this->context);
     }
 

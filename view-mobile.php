@@ -40,6 +40,7 @@ $user = $DB->get_record("user", ["id" => $externaltoken->userid]);
 
 if ($user) {
     manager::login_user($user);
+    require_course_login($this->course);
 } else {
     redirect(new moodle_url("/mod/supervideo/view.php", ["id" => $id]));
 }
