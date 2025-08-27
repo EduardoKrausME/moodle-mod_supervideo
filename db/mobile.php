@@ -26,18 +26,19 @@ defined('MOODLE_INTERNAL') || die;
 
 $addons = [
     "mod_supervideo" => [
-        'handlers' => [
-            'coursesupervideo' => [
-                'delegate' => 'CoreCourseModuleDelegate',
-                'method' => 'mobile_course_view',
-                'displaydata' => [
-                    'icon' => $CFG->wwwroot . '/mod/supervideo/pix/icon.svg',
-                    'class' => '',
+        "handlers" => [
+            "coursesupervideo" => [
+                "displaydata" => [
+                    "icon" => "{$CFG->wwwroot}/mod/supervideo/pix/icon.svg",
+                    "class" => "",
                 ],
+                "delegate" => "CoreCourseModuleDelegate",
+                "method" => "mobile_course_view",
+                "init" => "view_init",
             ],
         ],
-        'lang' => [
-            ['pluginname', 'mod_supervideo'],
+        "lang" => [
+            ["pluginname", "mod_supervideo"],
         ],
     ],
 ];

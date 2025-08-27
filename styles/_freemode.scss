@@ -23,14 +23,14 @@ body.body-df {
             gap: .45rem;
             border: 1px solid FFFFFF14;
             color: #e8eef6;
-            background: linear-gradient(180deg, #FFFFFF0A, #FFFFFF05);
+            background: linear-gradient(180deg, #ffffff0a, #ffffff05);
             padding: .45rem .7rem;
             border-radius: 12px;
             cursor: pointer;
             transition: transform .08s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
             &:hover {
-                border-color: #FFFFFF2D;
-                box-shadow: 0 0 0 3px #3AA0FF59 inset;
+                border-color: #ffffff2d;
+                box-shadow: 0 0 0 3px #3aa0ff59 inset;
             }
             &:active {
                 transform: translateY(1px);
@@ -54,9 +54,9 @@ body.body-df {
             gap: .5rem;
             padding: 8px 12px;
             height: 56px;
-            background: #121821E5;
+            background: #121821e5;
             backdrop-filter: saturate(150%) blur(10px);
-            border-bottom: 1px solid #FFFFFF0F;
+            border-bottom: 1px solid #ffffff0f;
             .left {
                 display: flex;
                 gap: .5rem;
@@ -87,7 +87,7 @@ body.body-df {
                 position: relative;
                 border-radius: 16px;
                 overflow: hidden;
-                box-shadow: 0 20px 50px #00000059, 0 1px 0 #FFFFFF0A inset;
+                box-shadow: 0 20px 50px #00000059, 0 1px 0 #ffffff0a inset;
                 background: #000000;
                 height: 100%;
                 display: flex;
@@ -114,11 +114,11 @@ body.body-df {
                 gap: .5rem;
                 transition: opacity 0.3s ease;
                 .btn {
-                    background: #0C0F16BF;
+                    background: #0c0f16bf;
                 }
             }
         }
-        /* Distraction‑free mode */
+        /* Focus Distraction‑free */
         &.df-active {
             .header {
                 display: none;
@@ -146,5 +146,27 @@ body.body-df {
     // VLibras
     [vw] {
         display: none !important;
+    }
+    .activity-header {
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        border: none;
+        .activity-information {
+            .completion-info {
+                padding: 0;
+                margin: 0;
+                border: none;
+            }
+        }
+        .activity-description {
+            display: none;
+        }
+    }
+    &.body-df-noheader {
+        .activity-header,
+        #header {
+            display: none;
+        }
     }
 }

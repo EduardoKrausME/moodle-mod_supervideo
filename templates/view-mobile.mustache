@@ -15,16 +15,26 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_supervideo/mobile
+    @template mod_supervideo/view-freemode
 
     Example context (json):
     {
-      "iframe-url": "https://example.com/video.mp4",
+        "showmapa" : true,
+        "mapa" : "<div....",
+        "errosmessages" : "<div...",
+        "video-player" : <video..."
     }
 }}
 
-<iframe id="iframe-{{{cmid}}}"
-        src="{{{iframe-url}}}" style="height: 100vw; width: 100%;"
-        webkitallowfullscreen mozallowfullscreen allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        sandbox="allow-scripts allow-forms allow-same-origin allow-modals"></iframe>
+<div  id="app" class="app df-active">
+    <main class="stage">
+        <div class="video-wrap" id="videoWrap">
+            {{{errosmessages}}}
+            {{{video-player}}}
+            {{#showmapa}}
+                {{{mapa}}}
+            {{/showmapa}}
+        </div>
+    </main>
+
+</div>

@@ -103,30 +103,8 @@ class view {
             }
         }
 
-        $this->is_mobile();
-    }
-
-    /**
-     * is_mobile
-     *
-     * @return void
-     * @throws Exception
-     */
-    private function is_mobile() {
-        global $PAGE;
-        $mobile = optional_param("mobile", 0, PARAM_INT);
-        if ($mobile) {
-            session_write_close();
-            $user = false;
-            if ($user) {
-                $USER = $user;
-            }
-            $PAGE->set_cm($this->cm, $this->course);
-            $PAGE->set_course($this->course);
-        } else {
-            require_course_login($this->course, true, $this->cm);
-            require_capability("mod/supervideo:view", $this->context);
-        }
+        require_course_login($this->course);
+        require_capability("mod/supervideo:view", $this->context);
     }
 
     /**
