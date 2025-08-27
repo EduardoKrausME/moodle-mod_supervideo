@@ -89,8 +89,6 @@ if ($view->freemode) {
 
     echo $OUTPUT->footer();
 } else {
-    $PAGE->requires->jquery_plugin("ui");
-    $PAGE->requires->jquery_plugin("ui-css");
     echo $OUTPUT->header();
 
     echo $view->errosmessages;
