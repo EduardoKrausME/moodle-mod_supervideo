@@ -48,6 +48,9 @@ class mobile {
                     'html' => $html,
                 ],
             ],
+            'javascript' => '',
+            'otherdata' => '',
+            'files' => [],
         ];
     }
 }

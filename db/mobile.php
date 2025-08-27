@@ -36,5 +36,8 @@ $addons = [
                 ],
             ],
         ],
+        'lang' => [
+            ['pluginname', 'mod_supervideo'],
+        ],
     ],
 ];
