@@ -18,7 +18,7 @@
  * Prints an instance of mod_supervideo.
  *
  * @package   mod_supervideo
- * @copyright 2025 Eduardo kraus (http://eduardokraus.com)
+ * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -40,7 +40,7 @@ $user = $DB->get_record("user", ["id" => $externaltoken->userid]);
 
 if ($user) {
     manager::login_user($user);
-    require_course_login($course);
+    require_course_login($course, false, null, false, true);
 } else {
     redirect(new moodle_url("/mod/supervideo/view.php", ["id" => $id]));
 }

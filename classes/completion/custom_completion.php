@@ -24,7 +24,7 @@ use core_completion\activity_custom_completion;
  * Custom ompletion Class
  *
  * @package   mod_supervideo
- * @copyright 2024 Eduardo Kraus {@link http://eduardokraus.com}
+ * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
