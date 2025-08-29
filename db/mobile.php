@@ -34,7 +34,6 @@ $addons = [
                 ],
                 "delegate" => "CoreCourseModuleDelegate",
                 "method" => "mobile_course_view",
-                "init" => "view_init",
             ],
         ],
         "lang" => [
