@@ -41,7 +41,7 @@ class core_hook_output {
         if (isset($_SESSION["SESSION"]->theme)) {
             $theme = $_SESSION["SESSION"]->theme;
         }
-        if ($theme != "eadtraining" && $theme != "eadflix") {
+        if ($theme != "eadtraining" && $theme != "eadflix" && $theme != "boost_magnific" && $theme != "degrade") {
             return;
         }
         if ($COURSE->id == $SITE->id) {
