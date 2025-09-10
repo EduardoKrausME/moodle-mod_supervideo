@@ -36,11 +36,25 @@ class event_observers {
      * @param base $event
      */
     public static function process_event(base $event) {
+        global $CFG;
+
+        $theme = $CFG->theme;
+        if (isset($_SESSION["SESSION"]->theme)) {
+            $theme = $_SESSION["SESSION"]->theme;
+        }
+        if ($theme != "eadtraining" && $theme != "eadflix" && $theme != "boost_magnific" && $theme != "degrade") {
+            return;
+        }
+
         $eventname = str_replace("\\\\", "\\", $event->eventname);
         switch ($eventname) {
             case '\core\event\course_module_created':
             case '\core\event\course_module_updated':
-                \cache::make("theme_eadtraining", "css_cache")->purge();
+                if ($theme != "eadflix") {
+                    \cache::make("theme_eadtraining", "css_cache")->purge();
+                } else {
+                    \cache::make("theme_{$theme}", "css_cache")->purge();
+                }
                 break;
         }
     }
