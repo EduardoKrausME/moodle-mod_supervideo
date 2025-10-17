@@ -186,6 +186,7 @@ class view {
                         (int)$this->supervideoview->id,
                         $this->supervideoview->currenttime,
                         $elementid,
+                        $mustachedata["hls"],
                     ]
                 );
                 $this->create_errosmessages();
