@@ -29,6 +29,8 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
 /**
+ * phpcs:disable Universal.OOStructures.AlphabeticExtendsImplements.ImplementsWrongOrder
+ *
  * Privacy Subsystem implementation for mod_supervideo.
  *
  * @package   mod_supervideo
