@@ -64,6 +64,9 @@ jobs:
     needs:
       auto-release
 
+    if:
+      needs.auto-release.outputs.tag != ''
+
     runs-on:
       ubuntu-latest
 
