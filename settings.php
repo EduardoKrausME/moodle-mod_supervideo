@@ -27,16 +27,16 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
 
-    $title = get_string("distractionfreemode", "mod_supervideo");
-    $description = get_string("distractionfreemode_desc", "mod_supervideo");
     $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode",
-        $title, $description, 1);
+        get_string("distractionfreemode", "mod_supervideo"),
+        get_string("distractionfreemode_desc", "mod_supervideo"),
+        1);
     $settings->add($setting);
 
-    $title = get_string("showmapa", "mod_supervideo");
-    $description = get_string("showmapa_desc", "mod_supervideo");
     $setting = new admin_setting_configcheckbox("supervideo/showmapa",
-        $title, $description, 1);
+        get_string("showmapa", "mod_supervideo"),
+        get_string("showmapa_desc", "mod_supervideo"),
+        1);
     $settings->add($setting);
 
     $options = [
@@ -56,10 +56,10 @@ if ($ADMIN->fulltree) {
         "fullscreen" => get_string("controls_fullscreen", "mod_supervideo"),
     ];
     $optionsdefault = ["play", "pause", "progress", "current-time", "pip", "duration", "settings", "fullscreen"];
-    $title = get_string("controls", "mod_supervideo");
-    $description = get_string("controls_desc", "mod_supervideo");
     $setting = new admin_setting_configmultiselect("supervideo/controls",
-        $title, $description, $optionsdefault, $options);
+        get_string("controls", "mod_supervideo"),
+        get_string("controls_desc", "mod_supervideo"),
+        $optionsdefault, $options);
     $settings->add($setting);
 
     $options = [
@@ -72,10 +72,10 @@ if ($ADMIN->fulltree) {
         "2" => get_string("speed_2", "mod_supervideo"),
         "4" => get_string("speed_4", "mod_supervideo"),
     ];
-    $title = get_string("speed", "mod_supervideo");
-    $description = get_string("speed_desc", "mod_supervideo");
     $setting = new admin_setting_configmultiselect("supervideo/speed",
-        $title, $description, array_keys($options), $options);
+        get_string("speed", "mod_supervideo"),
+        get_string("speed_desc", "mod_supervideo"),
+        array_keys($options), $options);
     $settings->add($setting);
 
     $options = [
@@ -84,22 +84,22 @@ if ($ADMIN->fulltree) {
         2 => get_string("settings_obrigatorio_desmarcado", "mod_supervideo"),
         3 => get_string("settings_obrigatorio_marcado", "mod_supervideo"),
     ];
-    $title = get_string("showcontrols", "mod_supervideo");
-    $description = get_string("showcontrols_desc", "mod_supervideo");
     $setting = new admin_setting_configselect("supervideo/showcontrols",
-        $title, $description, 1, $options);
+        get_string("showcontrols", "mod_supervideo"),
+        get_string("showcontrols_desc", "mod_supervideo"),
+        1, $options);
     $settings->add($setting);
 
-    $title = get_string("autoplay", "mod_supervideo");
-    $description = get_string("autoplay_desc", "mod_supervideo");
     $setting = new admin_setting_configselect("supervideo/autoplay",
-        $title, $description, 0, $options);
+        get_string("autoplay", "mod_supervideo"),
+        get_string("autoplay_desc", "mod_supervideo"),
+        0, $options);
     $settings->add($setting);
 
-    $title = get_string("maxwidth", "mod_supervideo");
-    $description = get_string("maxwidth_desc", "mod_supervideo");
     $setting = new admin_setting_configtext("supervideo/maxwidth",
-        $title, $description, 0, PARAM_INT);
+        get_string("maxwidth", "mod_supervideo"),
+        get_string("maxwidth_desc", "mod_supervideo"),
+        0, PARAM_INT);
     $settings->add($setting);
 
     // OttFlix.
@@ -107,21 +107,54 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_heading("supervideo/ottflix", $title, "");
     $settings->add($setting);
 
-    $title = get_string("ottflix_url", "mod_supervideo");
-    $description = get_string("ottflix_url_desc", "mod_supervideo");
     $setting = new admin_setting_configtext("supervideo/ottflix_url",
-        $title, $description, "https://app.ottflix.com.br/", PARAM_URL);
+        get_string("ottflix_url", "mod_supervideo"),
+        get_string("ottflix_url_desc", "mod_supervideo"),
+        "https://app.ottflix.com.br/", PARAM_URL);
     $settings->add($setting);
 
-    $title = get_string("ottflix_token", "mod_supervideo");
-    $description = get_string("ottflix_token_desc", "mod_supervideo");
-    $setting = new admin_setting_configtext("supervideo/ottflix_token",
-        $title, $description, "HMAC-SHA2048-xxxxxxxx", PARAM_TEXT);
+    $setting = new admin_setting_configpasswordunmask("supervideo/ottflix_token",
+        get_string("ottflix_token", "mod_supervideo"),
+        get_string("ottflix_token_desc", "mod_supervideo"),
+        "HMAC-SHA2048-xxxxxxxx");
     $settings->add($setting);
 
     $title = get_string("distractionfreemode_h5p", "mod_supervideo");
     $description = get_string("distractionfreemode_h5p_desc", "mod_supervideo");
     $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode_h5p",
         $title, $description, 1);
+    $settings->add($setting);
+
+    // Kapture converter.
+    $options = [
+        "none" => get_string("kapture_convert_none", "mod_supervideo"),
+        "ffmpeg" => get_string("kapture_convert_ffmpeg", "mod_supervideo"),
+        "qencode" => get_string("kapture_convert_qencode", "mod_supervideo"),
+    ];
+
+    // Conversion method selector.
+    $setting = new admin_setting_configselect("supervideo/kapture_convert",
+        get_string("kapture_convert", "mod_supervideo"),
+        get_string("kapture_convert_desc", "mod_supervideo"),
+        "none",
+        $options
+    );
+    $settings->add($setting);
+
+    // FFmpeg path (only used when "ffmpeg" is selected).
+    $setting = new admin_setting_configtext("supervideo/kapture_ffmpeg",
+        get_string("kapture_ffmpeg", "mod_supervideo"),
+        get_string("kapture_ffmpeg_desc", "mod_supervideo"),
+        "/usr/bin/ffmpeg",
+        PARAM_PATH
+    );
+    $settings->add($setting);
+
+    // Qencode API key (only used when "qencode" is selected).
+    $setting = new admin_setting_configpasswordunmask("supervideo/kapture_qencode",
+        get_string("kapture_qencode", "mod_supervideo"),
+        get_string("kapture_qencode_desc", "mod_supervideo"),
+        ""
+    );
     $settings->add($setting);
 }
