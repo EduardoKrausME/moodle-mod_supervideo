@@ -86,7 +86,7 @@ function xmldb_supervideo_upgrade($oldversion) {
     if ($oldversion < 2023071800) {
 
         $table = new xmldb_table("supervideo");
-        $field = new xmldb_field("showshowinfo", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, "showcontrols");
+        $field = new xmldb_field("showshowinfo", XMLDB_TYPE_INTEGER, 10, null, null, null, 0, "showcontrols");
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, "showinfo");
         }
@@ -97,7 +97,7 @@ function xmldb_supervideo_upgrade($oldversion) {
     if ($oldversion < 2023072700) {
 
         $table = new xmldb_table("supervideo");
-        $field = new xmldb_field("complet_percent", XMLDB_TYPE_INTEGER, 10, null, null, null, null, null, 0, "grade_approval");
+        $field = new xmldb_field("complet_percent", XMLDB_TYPE_INTEGER, 10, null, null, null, 0, "grade_approval");
         if ($dbman->field_exists($table, $field)) {
             $dbman->rename_field($table, $field, "completionpercent");
         }
@@ -245,6 +245,20 @@ function xmldb_supervideo_upgrade($oldversion) {
         $DB->execute($sql);
 
         upgrade_mod_savepoint(true, 2025080400, "supervideo");
+    }
+
+    if ($oldversion < 2025111600) {
+
+        $table = new xmldb_table("supervideo");
+        $converted = new xmldb_field("converted", XMLDB_TYPE_INTEGER, 1, null, null, null, 0, "origem");
+        if (!$dbman->field_exists($table, $converted)) {
+            $dbman->add_field($table, $converted);
+        }
+
+        $sql = "UPDATE {supervideo} SET converted = 1 WHERE origem <> 'upload' OR videourl NOT LIKE '%\.webm%'";
+        $DB->execute($sql);
+
+        upgrade_mod_savepoint(true, 2025111600, "supervideo");
     }
 
     return true;

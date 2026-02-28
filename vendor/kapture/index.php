@@ -11,21 +11,22 @@ require_once "config-kapture.php";
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=30"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="all.min.js?build=0"></script>
 </head>
 <body>
 
 <input id="Config-rootPath" type="hidden" value="<?php echo $rootPath ?>">
 
 <div id="app" class="record-parado">
-    <input type="hidden" id="pasta" value="<?php echo @$_GET['pasta'] ?>">
-    <input type="hidden" id="videotitle" value="<?php echo @$_GET['videotitle'] ?>">
-    <input type="hidden" id="descricao" value="<?php echo @$_GET['descricao'] ?>">
-    <input type="hidden" id="identificador" value="<?php echo @$_GET['identificador'] ?>">
-    <input type="hidden" id="course" value="<?php echo @$_GET['course'] ?>">
-    <input type="hidden" id="section" value="<?php echo @$_GET['section'] ?>">
-    <input type="hidden" id="token" value="<?php echo @$_GET['token'] ?>">
-    <input type="hidden" id="webhooks" value="<?php echo @$_GET['webhooks'] ?>">
+    <input type="hidden" id="pasta" value="<?php echo get_and_htmlspecialchars('pasta') ?>">
+    <input type="hidden" id="videotitle" value="<?php echo get_and_htmlspecialchars('videotitle') ?>">
+    <input type="hidden" id="descricao" value="<?php echo get_and_htmlspecialchars('descricao') ?>">
+    <input type="hidden" id="identificador" value="<?php echo get_and_htmlspecialchars('identificador') ?>">
+    <input type="hidden" id="course" value="<?php echo get_and_htmlspecialchars('course') ?>">
+    <input type="hidden" id="section" value="<?php echo get_and_htmlspecialchars('section') ?>">
+    <input type="hidden" id="token" value="<?php echo get_and_htmlspecialchars('token') ?>">
+    <input type="hidden" id="webhooks" value="<?php echo get_and_htmlspecialchars('webhooks') ?>">
 
     <img class="logo" src="<?php echo $logo ?>" alt="<?php echo kapture_get_string("logo_title"); ?>"
          title="<?php echo kapture_get_string("logo_title"); ?>">
@@ -164,7 +165,7 @@ require_once "config-kapture.php";
             <div id="systemAudio-area" class="controle-device mic-config-area">
                 <?php echo kapture_get_string("compartilhar_audio_sistema"); ?>
                 <label class='el-switch small'>
-                    <input type="checkbox" id="cam-round">
+                    <input type="checkbox" id="systemAudio">
                     <span class='el-switch-style'></span>
                 </label>
             </div>

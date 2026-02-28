@@ -15,17 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version file
+ * Defines the list of the module's scheduled tasks.
  *
  * @package   mod_supervideo
- * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
+ * @category  task
+ * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2025111600;
-$plugin->release = "2.11.4";
-$plugin->requires = 2021041900;
-$plugin->component = "mod_supervideo";
-$plugin->maturity = MATURITY_STABLE;
+$tasks = [
+    [
+        "classname" => "\\mod_supervideo\\task\\kapture_video_converter",
+        "blocking" => 0,
+        "minute" => "R",
+        "hour" => "*",
+        "day" => "*",
+        "dayofweek" => "*",
+        "month" => "*",
+    ],
+];
