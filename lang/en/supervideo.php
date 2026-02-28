@@ -86,24 +86,6 @@ $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
 $string['iniciar_gravacao'] = 'Start Recording';
 $string['iniciar_gravacao_fullscreen'] = 'Start Recording in FullScreen';
 $string['inverter_camera'] = 'Invert Camera';
-$string['kapture_convert'] = 'Kapture video conversion';
-$string['kapture_convert_desc'] = 'Choose how Kapture videos will be converted after upload:
-<ul>
-  <li><strong>Do not convert</strong>: keeps the original file without processing.</li>
-  <li><strong>FFmpeg (on server)</strong>: uses the FFmpeg binary installed on your server.</li>
-  <li><strong>Qencode (cloud)</strong>: sends the job to Qencode’s cloud encoding service. <a href="https://cloud.qencode.com/pricing" target="_blank" rel="noopener">See pricing</a>.</li>
-</ul>';
-$string['kapture_convert_ffmpeg'] = 'FFmpeg (on server)';
-$string['kapture_convert_qencode'] = 'Qencode (cloud)';
-$string['kapture_convert_none'] = 'Do not convert';
-$string['kapture_ffmpeg'] = 'FFmpeg path';
-$string['kapture_ffmpeg_desc'] = 'Enter the full path to the FFmpeg executable on the server.
-Common examples: <code>/usr/bin/ffmpeg</code>, <code>/usr/local/bin/ffmpeg</code>.
-<br>Required only when the conversion method is <em>FFmpeg (on server)</em>.';
-$string['kapture_qencode'] = 'Qencode API key';
-$string['kapture_qencode_desc'] = 'Project API key used to authenticate and create encoding jobs on Qencode.
-You can get/manage yours at <a href="https://portal.qencode.com/project/vod_projects" target="_blank" rel="noopener">portal.qencode.com/project/vod_projects</a>.
-<br>Required only when the conversion method is <em>Qencode (cloud)</em>.';
 $string['kapture_precisa_camera'] = 'Kapture needs access to your microphone and camera.';
 $string['layout_1'] = 'Layout 1';
 $string['layout_2'] = 'Layout 2';

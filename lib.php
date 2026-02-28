@@ -22,8 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_supervideo\grade\grades_util;
-
 /**
  * Supervideo_supports function.
  *
@@ -32,6 +30,7 @@ use mod_supervideo\grade\grades_util;
  * @return bool|int|null
  */
 function supervideo_supports($feature) {
+
     switch ($feature) {
         case FEATURE_GROUPS:
             return true;
@@ -69,7 +68,8 @@ function supervideo_supports($feature) {
  * @param int $userid
  * @param bool $nullifnone
  *
- * @throws Exception
+ * @throws coding_exception
+ * @throws dml_exception
  */
 function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) {
     global $CFG;
@@ -77,7 +77,7 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
 
     if ($supervideo->grade_approval) {
         if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
-            grades_util::grade_item_update($supervideo, $grades);
+            \mod_supervideo\grade\grades_util::grade_item_update($supervideo, $grades);
         }
     }
 }
@@ -89,7 +89,8 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
  * @param int $userid
  *
  * @return array|bool
- * @throws Exception
+ * @throws coding_exception
+ * @throws dml_exception
  */
 function supervideo_get_user_grades($supervideo, $userid = 0) {
     global $DB;
@@ -122,7 +123,9 @@ function supervideo_get_user_grades($supervideo, $userid = 0) {
  * @param mod_supervideo_mod_form $mform
  *
  * @return bool|int
- * @throws Exception
+ * @throws dml_exception
+ * @throws coding_exception
+ * @throws moodle_exception
  */
 function supervideo_add_instance(stdClass $supervideo, $mform = null) {
     global $DB;
@@ -142,7 +145,7 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
 
     $supervideo->id = $DB->insert_record("supervideo", $supervideo);
 
-    grades_util::grade_item_update($supervideo);
+    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $supervideo->id;
@@ -155,7 +158,9 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
  * @param mod_supervideo_mod_form $mform
  *
  * @return bool
- * @throws Exception
+ * @throws dml_exception
+ * @throws coding_exception
+ * @throws moodle_exception
  */
 function supervideo_update_instance(stdClass $supervideo, $mform = null) {
     global $DB;
@@ -169,7 +174,7 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
 
     $result = $DB->update_record("supervideo", $supervideo);
 
-    grades_util::grade_item_update($supervideo);
+    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $result;
@@ -182,9 +187,10 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
  * @param bool $save
  *
  * @return string
- * @throws Exception
+ * @throws dml_exception
  */
 function supervideo_youtube_size($supervideo, $save = false) {
+
     if ($supervideo->origem != "youtube") {
         return @$supervideo->playersize;
     }
@@ -215,7 +221,9 @@ function supervideo_youtube_size($supervideo, $save = false) {
  *
  * @param stdClass $supervideo
  *
- * @throws Exception
+ * @throws coding_exception
+ * @throws dml_exception
+ * @throws moodle_exception
  */
 function supervideo_set_mainfile($supervideo) {
     $cmid = $supervideo->coursemodule;
@@ -243,7 +251,9 @@ function supervideo_set_mainfile($supervideo) {
  * @param int $id
  *
  * @return bool
- * @throws Exception
+ * @throws dml_exception
+ * @throws coding_exception
+ * @throws moodle_exception
  */
 function supervideo_delete_instance($id) {
     global $DB;
@@ -471,14 +481,13 @@ function supervideo_dndupload_register() {
             [
                 "extension" => "mp3",
                 "message" => get_string("dnduploadlabel-mp3", "mod_supervideo"),
-            ], [
+            ],
+            [
                 "extension" => "mp4",
                 "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
-            ], [
+            ],
+            [
                 "extension" => "webm",
-                "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
-            ], [
-                "extension" => "mov",
                 "message" => get_string("dnduploadlabel-mp4", "mod_supervideo"),
             ],
         ],
@@ -487,7 +496,8 @@ function supervideo_dndupload_register() {
                 "identifier" => "text/html",
                 "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
                 "noname" => true,
-            ], [
+            ],
+            [
                 "identifier" => "text",
                 "message" => get_string("dnduploadlabeltext", "mod_supervideo"),
                 "noname" => true,

@@ -71,12 +71,6 @@ if (file_exists(__DIR__ . "/../../repository_ajax.php") && file_exists(__DIR__ .
 }
 
 $text = "";
-/**
- * Function kapture_get_string
- *
- * @param $str
- * @return string
- */
 function kapture_get_string($str) {
     global $strings, $text;
 
@@ -88,28 +82,10 @@ function kapture_get_string($str) {
     return $strings[$str];
 }
 
-/**
- * Function kapture_get_string_js
- *
- * @return void
- */
 function kapture_get_string_js() {
     global $strings;
 
     echo "<script>langs = ";
     echo json_encode($strings);
     echo "</script>";
-}
-
-/**
- * Function get_and_htmlspecialchars
- *
- * @param $key
- * @return string
- */
-function get_and_htmlspecialchars($key) {
-    if (isset($_GET[$key])) {
-        return htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
-    }
-    return "";
 }
