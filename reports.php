@@ -23,7 +23,7 @@
  */
 
 require_once("../../config.php");
-require_once($CFG->libdir . "/tablelib.php");
+require_once("{$CFG->libdir}/tablelib.php");
 
 $courseid = optional_param("course", 0, PARAM_INT);
 $course = $DB->get_record("course", ["id" => $courseid], "*", MUST_EXIST);

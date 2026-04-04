@@ -76,7 +76,7 @@ function supervideo_supports($feature) {
  */
 function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) {
     global $CFG;
-    require_once($CFG->libdir . "/gradelib.php");
+    require_once("{$CFG->libdir}/gradelib.php");
 
     if ($supervideo->grade_approval) {
         if ($grades = supervideo_get_user_grades($supervideo, $userid)) {

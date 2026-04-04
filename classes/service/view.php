@@ -31,7 +31,7 @@ use restricted_context_exception;
 defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
-require_once("$CFG->libdir/externallib.php");
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * Service view for mod_supervideo.
@@ -68,10 +68,12 @@ class view extends external_api {
      */
     public static function view_supervideo($supervideoid) {
         global $DB, $CFG;
-        require_once($CFG->dirroot . "/mod/supervideo/lib.php");
+        require_once("{$CFG->dirroot}/mod/supervideo/lib.php");
 
-        $params = self::validate_parameters(self::view_supervideo_parameters(),
-            ['supervideoid' => $supervideoid]);
+        $params = self::validate_parameters(
+            self::view_supervideo_parameters(),
+            ['supervideoid' => $supervideoid]
+        );
         $warnings = [];
 
         // Request and permission validation.

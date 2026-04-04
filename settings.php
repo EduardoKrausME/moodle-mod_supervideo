@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    require_once("$CFG->libdir/resourcelib.php");
+    require_once("{$CFG->libdir}/resourcelib.php");
 
     $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode",
         get_string("distractionfreemode", "mod_supervideo"),

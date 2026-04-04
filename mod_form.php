@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . "/course/moodleform_mod.php");
+require_once("{$CFG->dirroot}/course/moodleform_mod.php");
 
 use mod_supervideo\form\supervideo_filepicker;
 
@@ -126,11 +126,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $options = [
             "InteractiveVideo" => get_string("ottflix_ia_interactivevideo", "mod_supervideo"),
-            "AdvancedText"     => get_string("ottflix_ia_advancedtext", "mod_supervideo"),
-            "Accordion"        => get_string("ottflix_ia_accordion", "mod_supervideo"),
-            "Dialogcards"      => get_string("ottflix_ia_dialogcards", "mod_supervideo"),
-            "QuestionSet"      => get_string("ottflix_ia_questionset", "mod_supervideo"),
-            "DragText"         => get_string("ottflix_ia_dragtext", "mod_supervideo"),
+            "AdvancedText" => get_string("ottflix_ia_advancedtext", "mod_supervideo"),
+            "Accordion" => get_string("ottflix_ia_accordion", "mod_supervideo"),
+            "Dialogcards" => get_string("ottflix_ia_dialogcards", "mod_supervideo"),
+            "QuestionSet" => get_string("ottflix_ia_questionset", "mod_supervideo"),
+            "DragText" => get_string("ottflix_ia_dragtext", "mod_supervideo"),
         ];
         $attributes = ["multiple" => "multiple", "size" => 6];
         $mform->addElement("select", "ottflix_ia", "", $options, $attributes);

@@ -27,7 +27,7 @@ use mod_supervideo\output\view;
 
 require_once("../../config.php");
 global $CFG, $PAGE, $OUTPUT, $DB, $USER;
-require_once($CFG->libdir . "/completionlib.php");
+require_once("{$CFG->libdir}/completionlib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
 $n = optional_param("n", 0, PARAM_INT);

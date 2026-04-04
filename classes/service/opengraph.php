@@ -26,7 +26,7 @@ use mod_supervideo\util\opengraph_util;
 defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
-require_once($CFG->libdir . '/externallib.php');
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * Service opengraph for mod_supervideo.

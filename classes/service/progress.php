@@ -29,7 +29,7 @@ use moodle_exception;
 defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
-require_once($CFG->libdir . '/externallib.php');
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * Service progress for mod_supervideo.

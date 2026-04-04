@@ -25,7 +25,7 @@
 use mod_supervideo\report\supervideo_view;
 
 require_once("../../config.php");
-require_once($CFG->libdir . "/tablelib.php");
+require_once("{$CFG->libdir}/tablelib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
 $userid = optional_param("u", false, PARAM_INT);
