@@ -14,11 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace mod_supervideo\completion;
 
+use coding_exception;
 use core_completion\activity_custom_completion;
+use Exception;
 
 /**
  * Custom ompletion Class
@@ -36,14 +38,15 @@ class custom_completion extends activity_custom_completion {
      *
      * @return int The completion state.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function get_state(string $rule): int {
         global $DB;
 
         $this->validate_rule($rule);
 
-        $userentries = $DB->get_field("supervideo_view", "MAX(percent)", ["cm_id" => $this->cm->id, "user_id" => $this->userid]);
+        $params = ["cm_id" => $this->cm->id, "user_id" => $this->userid];
+        $userentries = (int) ($DB->get_field("supervideo_view", "MAX(percent)", $params) ?? 0);
         $completionpercent = $this->cm->customdata['customcompletionrules']['completionpercent'];
 
         return ($completionpercent <= $userentries) ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
@@ -63,7 +66,7 @@ class custom_completion extends activity_custom_completion {
      *
      * @return array
      *
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_custom_rule_descriptions(): array {
         $entries = $this->cm->customdata['customcompletionrules']['completionpercent'] ?? 0;
