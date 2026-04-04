@@ -24,6 +24,7 @@
 
 namespace mod_supervideo;
 
+use cache;
 use mod_supervideo\ottflix\repository as ottflix_repository;
 
 /**
@@ -48,49 +49,53 @@ class core_hook_output {
             return;
         }
 
-        $blocks = [];
+        $hasicons = get_config("theme_{$CFG->theme}", "course_sections_icons_{$COURSE->id}");
+        if ($hasicons) {
 
-        $cache = \cache::make("theme_eadtraining", "css_cache");
-        $cachekey = "supervideo_icon_{$COURSE->id}_v2";
-        if ($cache->has($cachekey)) {
-            $blocks = json_decode($cache->get($cachekey), true);
-        } else {
-            $sql = "
-                SELECT cm.id AS cmid, sv.videourl, sv.origem
-                  FROM {course_modules} cm
-                  JOIN {modules}        md ON md.id = cm.module
-                  JOIN {supervideo}     sv ON sv.id = cm.instance
-                 WHERE sv.course = :course
-                   AND sv.origem IN('ottflix','youtube')
-                   AND md.name   = 'supervideo'";
-            $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
-            foreach ($videos as $video) {
-                if (isset($video->videourl[3])) {
-                    $thumb = null;
-                    if ($video->origem == "ottflix") {
-                        $status = ottflix_repository::getstatus($video->videourl);
-                        if (isset($status->data->THUMB)) {
-                            $thumb = $status->data->THUMB;
-                        }
-                    } else if ($video->origem == "youtube") {
-                        if ($youtubeid = self::get_youtube_videoid($video->videourl)) {
-                            $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
-                        }
-                    }
+            $blocks = [];
 
-                    if ($thumb) {
-                        $blocks[] = ["cmid" => $video->cmid, "thumb" => $thumb];
+            $cache = cache::make("theme_{$CFG->theme}", "css_cache");
+            $cachekey = "supervideo_icon_{$COURSE->id}_v2";
+            if ($cache->has($cachekey)) {
+                $blocks = json_decode($cache->get($cachekey), true);
+            } else {
+                $sql = "
+                    SELECT cm.id AS cmid, sv.videourl, sv.origem
+                      FROM {course_modules} cm
+                      JOIN {modules}        md ON md.id = cm.module
+                      JOIN {supervideo}     sv ON sv.id = cm.instance
+                     WHERE sv.course = :course
+                       AND sv.origem IN('ottflix','youtube')
+                       AND md.name   = 'supervideo'";
+                $videos = $DB->get_records_sql($sql, ["course" => $COURSE->id]);
+                foreach ($videos as $video) {
+                    if (isset($video->videourl[3])) {
+                        $thumb = null;
+                        if ($video->origem == "ottflix") {
+                            $status = ottflix_repository::getstatus($video->videourl);
+                            if (isset($status->data->THUMB)) {
+                                $thumb = $status->data->THUMB;
+                            }
+                        } else if ($video->origem == "youtube") {
+                            if ($youtubeid = self::get_youtube_videoid($video->videourl)) {
+                                $thumb = "https://i.ytimg.com/vi/{$youtubeid}/mqdefault.jpg";
+                            }
+                        }
+
+                        if ($thumb) {
+                            $blocks[] = ["cmid" => $video->cmid, "thumb" => $thumb];
+                        }
                     }
                 }
             }
-        }
 
-        global $PAGE;
-        foreach ($blocks as $block) {
-            $PAGE->requires->js_call_amd("theme_{$theme}/blocks", "create", [$block["cmid"], $block["thumb"]]);
-        }
+            global $PAGE;
+            foreach ($blocks as $block) {
+                $PAGE->requires->js_call_amd("theme_{$theme}/blocks", "create", [$block["cmid"], $block["thumb"], "cover"]);
+            }
 
-        $cache->set($cachekey, json_encode($blocks));
+            $cache->set($cachekey, json_encode($blocks));
+        }
     }
 
     /**

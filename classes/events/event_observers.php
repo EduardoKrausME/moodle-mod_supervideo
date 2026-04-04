@@ -24,6 +24,7 @@
 
 namespace mod_supervideo\events;
 
+use cache;
 use core\event\base;
 
 /**
@@ -38,11 +39,7 @@ class event_observers {
     public static function process_event(base $event) {
         global $CFG;
 
-        $theme = $CFG->theme;
-        if (isset($_SESSION["SESSION"]->theme)) {
-            $theme = $_SESSION["SESSION"]->theme;
-        }
-        if ($theme != "eadtraining" && $theme != "eadflix" && $theme != "boost_magnific" && $theme != "degrade") {
+        if ($CFG->theme != "eadtraining" && $CFG->theme != "eadflix" && $CFG->theme != "boost_magnific" && $CFG->theme != "degrade") {
             return;
         }
 
@@ -50,10 +47,10 @@ class event_observers {
         switch ($eventname) {
             case '\core\event\course_module_created':
             case '\core\event\course_module_updated':
-                if ($theme != "eadflix") {
-                    \cache::make("theme_eadtraining", "css_cache")->purge();
+                if ($CFG->theme == "eadflix") {
+                    cache::make("theme_eadtraining", "css_cache")->purge();
                 } else {
-                    \cache::make("theme_{$theme}", "css_cache")->purge();
+                    cache::make("theme_{$CFG->theme}", "css_cache")->purge();
                 }
                 break;
         }
