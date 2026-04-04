@@ -11,21 +11,36 @@ require_once "config-kapture.php";
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=30"></script>
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=22"></script>
+
+    <script src="ffmpeg/ffmpeg.js"></script>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </head>
 <body>
 
 <input id="Config-rootPath" type="hidden" value="<?php echo $rootPath ?>">
 
 <div id="app" class="record-parado">
-    <input type="hidden" id="pasta" value="<?php echo @$_GET['pasta'] ?>">
-    <input type="hidden" id="videotitle" value="<?php echo @$_GET['videotitle'] ?>">
-    <input type="hidden" id="descricao" value="<?php echo @$_GET['descricao'] ?>">
-    <input type="hidden" id="identificador" value="<?php echo @$_GET['identificador'] ?>">
-    <input type="hidden" id="course" value="<?php echo @$_GET['course'] ?>">
-    <input type="hidden" id="section" value="<?php echo @$_GET['section'] ?>">
-    <input type="hidden" id="token" value="<?php echo @$_GET['token'] ?>">
-    <input type="hidden" id="webhooks" value="<?php echo @$_GET['webhooks'] ?>">
+    <input type="hidden" id="pasta" value="<?php echo get_and_htmlspecialchars('pasta') ?>">
+    <input type="hidden" id="videotitle" value="<?php echo get_and_htmlspecialchars('videotitle') ?>">
+    <input type="hidden" id="description" value="<?php echo get_and_htmlspecialchars('description') ?>">
+    <input type="hidden" id="identifier" value="<?php echo get_and_htmlspecialchars('identifier') ?>">
+    <input type="hidden" id="course" value="<?php echo get_and_htmlspecialchars('course') ?>">
+    <input type="hidden" id="section" value="<?php echo get_and_htmlspecialchars('section') ?>">
+    <input type="hidden" id="token" value="<?php echo get_and_htmlspecialchars('token') ?>">
+    <input type="hidden" id="webhooks" value="<?php echo get_and_htmlspecialchars('webhooks') ?>">
 
     <img class="logo" src="<?php echo $logo ?>" alt="<?php echo kapture_get_string("logo_title"); ?>"
          title="<?php echo kapture_get_string("logo_title"); ?>">
@@ -34,8 +49,8 @@ require_once "config-kapture.php";
         <div class="controles-layout">
             <div id="ppt-select-icon">
                 <img src="img/icons/presentation/presentation.svg"
-                     alt="<?php echo kapture_get_string("selecionar_slide"); ?>"
-                     title="<?php echo kapture_get_string("selecionar_slide"); ?>">
+                     alt="<?php echo kapture_get_string("select_slide"); ?>"
+                     title="<?php echo kapture_get_string("select_slide"); ?>">
             </div>
             <img src="img/layout/layout-only-cam.jpg" data-layout="layout-only-cam"
                  alt="<?php echo kapture_get_string("layout_cam"); ?>"
@@ -71,14 +86,13 @@ require_once "config-kapture.php";
                  title="<?php echo kapture_get_string("layout_1"); ?>"
                  class="layout layout-pip-1">
 
-
             <div id="record-time">00:00</div>
 
             <div class="controle-device btn-control btn-concluir"
-                 title="<?php echo kapture_get_string("finalizar_gravacao"); ?>"
+                 title="<?php echo kapture_get_string("finish_recording"); ?>"
                  style="display:none">
                 <div id="btn-stop" class="btn">
-                    <?php echo kapture_get_string("finalizar"); ?>
+                    <?php echo kapture_get_string("finish"); ?>
                 </div>
             </div>
         </div>
@@ -115,11 +129,11 @@ require_once "config-kapture.php";
         <div id="screen-shared-option">
             <div class="item selected" data-share="tab">
                 <?php echo file_get_contents("img/screen/tabs.svg") ?>
-                <div><?php echo kapture_get_string("esta_aba"); ?></div>
+                <div><?php echo kapture_get_string("this_tab"); ?></div>
             </div>
             <div class="item item-window" data-share="window">
                 <?php echo file_get_contents("img/screen/monitor.svg") ?>
-                <div><?php echo kapture_get_string("tela_inteira"); ?></div>
+                <div><?php echo kapture_get_string("fullscreen"); ?></div>
             </div>
         </div>
 
@@ -127,7 +141,7 @@ require_once "config-kapture.php";
             <div id="select-video-area" class="controle-device background">
                 <?php echo file_get_contents("img/icons/controle/cam.svg") ?>
                 <select name="camera" id="select-video"></select>
-                <div class="off"><?php echo kapture_get_string("desligado"); ?></div>
+                <div class="off"><?php echo kapture_get_string("switched_off"); ?></div>
             </div>
 
             <div id="cam-invert-area" class="controle-device cam-config-area">
@@ -139,7 +153,7 @@ require_once "config-kapture.php";
             </div>
 
             <div id="cam-round-area" class="controle-device cam-config-area">
-                <?php echo kapture_get_string("camera_redonda"); ?>
+                <?php echo kapture_get_string("round_camera"); ?>
                 <label class='el-switch small'>
                     <input type="checkbox" id="cam-round">
                     <span class='el-switch-style'></span>
@@ -148,7 +162,7 @@ require_once "config-kapture.php";
 
             <div id="cam-size-area" class="controle-device cam-config-area"
                  style="gap:16px;">
-                <?php echo kapture_get_string("tamanho_camera"); ?>
+                <?php echo kapture_get_string("camera_size"); ?>
                 <input type="range" id="cam-size" min="200" max="600" value="300" step="10"
                        style="width:100%;"/>
             </div>
@@ -159,12 +173,12 @@ require_once "config-kapture.php";
                  style="margin-top:10px;">
                 <?php echo file_get_contents("img/icons/controle/mic.svg") ?>
                 <select name="microfone" id="select-audio"></select>
-                <div class="off"><?php echo kapture_get_string("desligado"); ?></div>
+                <div class="off"><?php echo kapture_get_string("switched_off"); ?></div>
             </div>
             <div id="systemAudio-area" class="controle-device mic-config-area">
-                <?php echo kapture_get_string("compartilhar_audio_sistema"); ?>
+                <?php echo kapture_get_string("share_audio_system"); ?>
                 <label class='el-switch small'>
-                    <input type="checkbox" id="cam-round">
+                    <input type="checkbox" id="systemAudio">
                     <span class='el-switch-style'></span>
                 </label>
             </div>
@@ -173,7 +187,7 @@ require_once "config-kapture.php";
 
             <div id="countdown-area" class="controle-device"
                  style="margin-bottom:10px;margin-top:10px;">
-                <?php echo kapture_get_string("contagem_regressiva"); ?>
+                <?php echo kapture_get_string("countdown"); ?>
                 <label class='el-switch small'>
                     <input type="checkbox" id="countdown">
                     <span class='el-switch-style'></span>
@@ -182,29 +196,28 @@ require_once "config-kapture.php";
 
             <div class="controle-device btn-control"
                  style="margin-bottom:10px;">
-                <div id="btn-record" class="btn" title="<?php echo kapture_get_string("iniciar_gravacao"); ?>">
+                <div id="btn-record" class="btn" title="<?php echo kapture_get_string("start_recording"); ?>">
                     <img src="img/icons/controle/record.svg">
-                    <?php echo kapture_get_string("iniciar_gravacao"); ?>
+                    <?php echo kapture_get_string("start_recording"); ?>
                 </div>
             </div>
             <div class="controle-device btn-control"
                  style="margin-bottom:10px;">
                 <div id="btn-record-fullscreen" class="btn"
-                     title="<?php echo kapture_get_string("iniciar_gravacao_fullscreen"); ?>">
+                     title="<?php echo kapture_get_string("start_recording_fullscreen"); ?>">
                     <img src="img/icons/controle/fullscreen.svg">
-                    <?php echo kapture_get_string("iniciar_gravacao_fullscreen"); ?>
+                    <?php echo kapture_get_string("start_recording_fullscreen"); ?>
                 </div>
             </div>
             <div class="controle-device btn-control btn-save"
                  style="margin-bottom:10px;display:none">
-                <div id="btn-save" class="btn" title="<?php echo kapture_get_string("salvar_ottflix"); ?>">
-                    <?php echo kapture_get_string("salvar_ottflix"); ?>
+                <div id="btn-save" class="btn" title="<?php echo kapture_get_string("save_ottflix"); ?>">
+                    <?php echo kapture_get_string("save_ottflix"); ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 
 <div id="sleep-allow-video" class="app-status">
     <div class="info">
@@ -214,8 +227,8 @@ require_once "config-kapture.php";
         <span>
             <img src="img/icons/controle/cam.svg" alt="<?php echo kapture_get_string("camera"); ?>"
                  title="<?php echo kapture_get_string("camera"); ?>"></span>
-        <h3 class="info-title"><?php echo kapture_get_string("kapture_precisa_camera"); ?></h3>
-        <span class="info-text"><?php echo kapture_get_string("aprovar_permissao"); ?></span>
+        <h3 class="info-title"><?php echo kapture_get_string("requires_camera"); ?></h3>
+        <span class="info-text"><?php echo kapture_get_string("approve_permission"); ?></span>
     </div>
 </div>
 <div id="error-allow-video" class="app-status">
@@ -227,30 +240,32 @@ require_once "config-kapture.php";
             <img src="img/icons/controle/cam.svg" alt="<?php echo kapture_get_string("camera"); ?>"
                  title="<?php echo kapture_get_string("camera"); ?>"></span>
         <h3 class="info-title"><?php echo kapture_get_string("erro_camera_microfone."); ?></h3>
-        <h4 class="info-text"><?php echo kapture_get_string("entre_contato_suporte_erro"); ?></h4>
+        <h4 class="info-text"><?php echo kapture_get_string("contact_support_error"); ?></h4>
         <div class="error-message"></div>
     </div>
 </div>
 <div id="error-video" class="app-status">
     <div class="info">
-        <h3 class="info-title"><?php echo kapture_get_string("erro"); ?></h3>
+        <h3 class="info-title"><?php echo kapture_get_string("error"); ?></h3>
         <span class="info-text"></span>
     </div>
 </div>
 
-<div id="popup-geral">
-    <div class="popup">
-        <h2>&nbsp;</h2>
-        <span class="close"></span>
+<div id="popup-geral" aria-hidden="true">
+    <div class="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+        <div class="popup-header">
+            <h2 id="popup-title">&nbsp;</h2>
+            <button type="button" class="close" aria-label="Fechar popup"></button>
+        </div>
         <div class="content">&nbsp;</div>
     </div>
 </div>
 
-<div class="mobileViewOnly">
-    <h1 class="headText"><?php echo kapture_get_string("nao_suportado_celular"); ?></h1>
-    <img class="mobileViewImg" src="img/mobileView.png"
-         alt="<?php echo kapture_get_string("nao_suportado_celular"); ?>"
-         title="<?php echo kapture_get_string("nao_suportado_celular"); ?>">
+<div class="mobile-view-only">
+    <h1 class="headText"><?php echo kapture_get_string("not_supported_mobile"); ?></h1>
+    <img class="mobile-view-img" src="img/mobileView.png"
+         alt="<?php echo kapture_get_string("not_supported_mobile"); ?>"
+         title="<?php echo kapture_get_string("not_supported_mobile"); ?>">
 </div>
 
 <?php echo $text; ?>

@@ -1,10 +1,10 @@
 <?php
 
 $strings = [
-    "destino" => "ottflix", // "ottflix"   "supervideo"
+    "destination" => "ottflix", // "ottflix"   "supervideo"
     "app_title" => 'OTTFlix Kapture',
     "logo_title" => 'Logo',
-    "selecionar_slide" => 'Selecionar Slide',
+    "select_slide" => 'Selecionar Slide',
     "layout_cam" => 'Layout Cam',
     "layout_presentation" => 'Layout Presentation',
     "layout_1" => 'Layout 1',
@@ -13,42 +13,44 @@ $strings = [
     "layout_4" => 'Layout 4',
     "layout_6" => 'Layout 6',
     "layout_3" => 'Layout 3',
-    "finalizar_gravacao" => 'Finalizar a gravação',
-    "esta_aba" => 'Esta aba',
-    "tela_inteira" => 'Tela Inteira',
-    "desligado" => 'desligado',
+    "finish_recording" => 'Finalizar a gravação',
+    "this_tab" => 'Esta aba',
+    "fullscreen" => 'Tela Inteira',
+    "switched_off" => 'desligado',
     "inverter_camera" => 'Inverter Câmera',
-    "camera_redonda" => 'Câmera Redonda',
-    "tamanho_camera" => 'Tamanho da câmera',
-    "compartilhar_audio_sistema" => 'Compartilhar áudio do sistema',
-    "contagem_regressiva" => 'Contagem regressiva',
-    "iniciar_gravacao" => 'Iniciar gravação',
-    "iniciar_gravacao_fullscreen" => 'Iniciar gravação em FullScreen',
-    "kapture_precisa_camera" => 'O Kapture precisa acessar seu microfone e câmera.',
-    "aprovar_permissao" => 'Selecione <b><i>Permitir</i></b> quando seu navegador solicitar permissões.',
+    "round_camera" => 'Câmera Redonda',
+    "camera_size" => 'Tamanho da câmera',
+    "share_audio_system" => 'Compartilhar áudio do sistema',
+    "countdown" => 'Contagem regressiva',
+    "start_recording" => 'Iniciar gravação',
+    "start_recording_fullscreen" => 'Iniciar gravação em FullScreen',
+    "requires_camera" => 'O Kapture precisa acessar seu microfone e câmera.',
+    "approve_permission" => 'Selecione <b><i>Permitir</i></b> quando seu navegador solicitar permissões.',
     "erro_camera_microfone." => 'Ocorreu um erro ao solicitar a Câmera e Microfone.',
-    "entre_contato_suporte_erro" => 'Entre em contato com suporte e informe o erro ',
+    "contact_support_error" => 'Entre em contato com suporte e informe o erro ',
     "camera" => 'Câmera',
     "none_camera" => 'Não usar a câmera',
     "microfone" => 'Microfone',
-    "erro" => 'Erro:',
-    "nao_suportado_celular" => 'Não suportado em Celular',
-    "finalizar" => 'Finalizar',
-    "salvar_gravacao_ottflix" => 'Salve sua gravação no OttFlix',
-    "title_captura" => 'Captura ',
-    "salvar_ottflix" => 'Salvar no OttFlix',
-    "salvar_computador" => 'Salvar no Computador',
-    "selecione_apresentacao" => 'Selecione a apresentação',
-    "buscar_arquivos" => 'Buscar arquivos',
-    "enviar_novo" => 'Enviar novo',
-    "ou" => 'ou',
-    "carregando_documentos" => 'Carregando documentos...',
-    "processando" => 'Processando...',
-    "titulo_muito_curto" => 'Título muito curto!',
-    "upload_concluido" => 'Upload concluído. Aguardando processamento!',
+    "error" => 'Erro:',
+    "not_supported_mobile" => 'Não suportado em Celular',
+    "finish" => 'Finalizar',
+    "save_recording_ottflix" => 'Salve sua gravação no OttFlix',
+    "video_title" => 'Título da sua gravação',
+    "video_title_desc" => 'Escolha um nome fácil para encontrar depois.',
+    "video_default_title" => 'Captura ',
+    "save_ottflix" => 'Enviar para o OttFlix',
+    "save_computer" => 'Salvar no Computador',
+    "select_presentation" => 'Selecione a apresentação',
+    "search_files" => 'Buscar arquivos',
+    "send_new" => 'Enviar novo',
+    "or" => 'ou',
+    "loading_documents" => 'Carregando documentos...',
+    "processing" => 'Processando...',
+    "title_too_short" => 'Título muito curto!',
+    "upload_completed" => 'Upload concluído. Aguardando processamento!',
     "ottflix" => 'OttFlix',
-    "falha_upload_ottflix" => 'Falha no Upload para a OttFlix',
-    "abortado_upload_ottflix" => 'Upload para a OttFlix foi abortado!',
+    "ottflix_upload_failure" => 'Falha no Upload para a OttFlix',
+    "aborted_upload_ottflix" => 'Upload para a OttFlix foi abortado!',
     "error_accessing_camera" => 'Error accessing camera or capturing screen',
 ];
 
@@ -58,11 +60,11 @@ $rootPath = "";
 if (file_exists(__DIR__ . "/../../repository_ajax.php") && file_exists(__DIR__ . "/../../../../config.php")) {
     require_once(__DIR__ . "/../../../../config.php");
 
-    $strings["destino"] = "supervideo";
+    $strings["destination"] = "supervideo";
 
     foreach ($strings as $key => $value) {
-        if ($key != "destino") {
-            $string = get_string($key, "mod_supervideo");
+        if ($key != "destination") {
+            $string = get_string("kapture_{$key}", "mod_supervideo");
             if ($string) {
                 $strings[$key] = $string;
             }
@@ -71,7 +73,14 @@ if (file_exists(__DIR__ . "/../../repository_ajax.php") && file_exists(__DIR__ .
 }
 
 $text = "";
-function kapture_get_string($str) {
+/**
+ * Function kapture_get_string
+ *
+ * @param $str
+ * @return string
+ */
+function kapture_get_string($str)
+{
     global $strings, $text;
 
     if (!isset($strings[$str])) {
@@ -82,10 +91,30 @@ function kapture_get_string($str) {
     return $strings[$str];
 }
 
-function kapture_get_string_js() {
+/**
+ * Function kapture_get_string_js
+ *
+ * @return void
+ */
+function kapture_get_string_js()
+{
     global $strings;
 
     echo "<script>langs = ";
     echo json_encode($strings);
     echo "</script>";
+}
+
+/**
+ * Function get_and_htmlspecialchars
+ *
+ * @param $key
+ * @return string
+ */
+function get_and_htmlspecialchars($key)
+{
+    if (isset($_GET[$key])) {
+        return htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+    }
+    return "";
 }
