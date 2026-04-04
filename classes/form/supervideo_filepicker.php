@@ -181,7 +181,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
                            name="{$this->_attributes["name"]}"
                            id="{$fp->options->elementid}"
                            value="{$this->getValue()}"/>
-                    <input type="button" class="btn btn-primary fp-btn-choose me-3 ml-3"
+                    <input type="button" class="btn btn-primary fp-btn-choose me-3 ms-3"
                            id="filepicker-button-{$fp->options->elementid}"
                            value="{$straddfile}" style="display:none"
                            {$buttonname}/>
