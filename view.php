@@ -80,10 +80,10 @@ if ($view->freemode) {
         "showmapa" => $view->config->showmapa,
         "mapa" => $view->get_maps(),
         "errosmessages" => $view->errosmessages,
-        "video-player" => $videoplayer,
-        "page-title" => $view->supervideo->name,
-        "url-back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
-        "url-settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
+        "video_player" => $videoplayer,
+        "page_title" => $view->supervideo->name,
+        "url_back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
+        "url_settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
     ];
     echo $OUTPUT->render_from_template("mod_supervideo/view-freemode", $mustachedata);
 

@@ -609,7 +609,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             var supervideo_view_mapa = [];
             try {
-                var mapa_json_base64 = $mapa.attr("data-mapa");
+                var mapa_json_base64 = $mapa.attr("data_mapa");
                 if (mapa_json_base64) {
                     supervideo_view_mapa = JSON.parse(atob(mapa_json_base64));
                 }

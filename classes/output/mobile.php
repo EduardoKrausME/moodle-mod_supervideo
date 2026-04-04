@@ -46,7 +46,7 @@ class mobile {
         ]);
         $data = [
             "cmid" => $args["cmid"],
-            "iframe-url" => $url->out(false),
+            "iframe_url" => $url->out(false),
         ];
 
         return [

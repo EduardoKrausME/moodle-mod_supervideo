@@ -22,10 +22,10 @@
         "showmapa": true,
         "mapa": "<div....",
         "errosmessages": "<div...",
-        "video-player": "<video...",
-        "page-title": "Video ....",
-        "url-back": "https://site/course/view.php?id=123",
-        "url-settings": "https://site/course/modedit.php?update=123"
+        "video_player": "<video...",
+        "page_title": "Video ....",
+        "url_back": "https://site/course/view.php?id=123",
+        "url_settings": "https://site/course/modedit.php?update=123"
     }
 }}
 
@@ -34,7 +34,7 @@
     <header class="header" id="header">
         <div class="left">
             <a class="btn" id="btnBack" title="{{#str}}back{{/str}}"
-               href="{{{url-back}}}">
+               href="{{{url_back}}}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                      stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
@@ -42,10 +42,10 @@
                 <span>{{#str}}back{{/str}}</span>
             </a>
         </div>
-        <h1 class="title" id="pageTitle">{{{page-title}}}</h1>
+        <h1 class="title" id="pageTitle">{{{page_title}}}</h1>
         <div class="controls"></div>
         <a class="btn" id="btnSettings" title="{{#str}}settings{{/str}}"
-           href="{{{url-settings}}}">
+           href="{{{url_settings}}}">
             <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                  stroke-linejoin="round">
                 <circle cx="12" cy="12" r="3"/>
@@ -71,7 +71,7 @@
                     <span>{{#str}}freemode_focus, mod_supervideo{{/str}}</span>
                 </button>
             </div>
-            {{{video-player}}}
+            {{{video_player}}}
             {{#showmapa}}
                 {{{mapa}}}
             {{/showmapa}}

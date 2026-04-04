@@ -122,7 +122,7 @@ class view {
         );
         return $OUTPUT->render_from_template("mod_supervideo/mapa", [
             "style" => $this->config->showmapa ? "" : "style='display:none'",
-            "data-mapa" => base64_encode($this->supervideoview->mapa),
+            "data_mapa" => base64_encode($this->supervideoview->mapa),
             "text" => $text,
         ]);
     }
