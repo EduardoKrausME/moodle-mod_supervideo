@@ -39,7 +39,10 @@ class event_observers {
     public static function process_event(base $event) {
         global $CFG;
 
-        if ($CFG->theme != "eadtraining" && $CFG->theme != "eadflix" && $CFG->theme != "boost_magnific" && $CFG->theme != "degrade") {
+        if ($CFG->theme != "eadtraining"
+            && $CFG->theme != "eadflix"
+            && $CFG->theme != "boost_magnific"
+            && $CFG->theme != "degrade") {
             return;
         }
 
