@@ -16,9 +16,15 @@
 
 namespace mod_supervideo\service;
 
+use coding_exception;
+use dml_exception;
+use external_api;
 use external_function_parameters;
 use external_single_structure;
+use external_value;
+use invalid_parameter_exception;
 use mod_supervideo\analytics\supervideo_view;
+use moodle_exception;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -32,19 +38,19 @@ require_once($CFG->libdir . '/externallib.php');
  * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class progress extends \external_api {
+class progress extends external_api {
     /**
      * Describes the parameters for save
      *
      * @return external_function_parameters
      */
     public static function save_parameters() {
-        return new \external_function_parameters([
-            'view_id' => new \external_value(PARAM_INT, 'The instance id', VALUE_REQUIRED),
-            'currenttime' => new \external_value(PARAM_INT, 'The current time', VALUE_REQUIRED),
-            'duration' => new \external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
-            'percent' => new \external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
-            'mapa' => new \external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED),
+        return new external_function_parameters([
+            'view_id' => new external_value(PARAM_INT, 'The instance id', VALUE_REQUIRED),
+            'currenttime' => new external_value(PARAM_INT, 'The current time', VALUE_REQUIRED),
+            'duration' => new external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
+            'percent' => new external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
+            'mapa' => new external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED),
         ]);
     }
 
@@ -60,10 +66,10 @@ class progress extends \external_api {
      *
      * @return array
      *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \invalid_parameter_exception
-     * @throws \moodle_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
      */
     public static function save($viewid, $currenttime, $duration, $percent, $mapa) {
 
@@ -89,9 +95,9 @@ class progress extends \external_api {
      * @return external_single_structure
      */
     public static function save_returns() {
-        return new \external_single_structure([
-            'success' => new \external_value(PARAM_BOOL),
-            'exec' => new \external_value(PARAM_RAW),
+        return new external_single_structure([
+            'success' => new external_value(PARAM_BOOL),
+            'exec' => new external_value(PARAM_RAW),
         ]);
     }
 }

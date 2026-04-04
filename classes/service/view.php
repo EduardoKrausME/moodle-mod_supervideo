@@ -17,11 +17,16 @@
 namespace mod_supervideo\service;
 
 use context_module;
+use dml_exception;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
 use external_warnings;
+use invalid_parameter_exception;
+use moodle_exception;
+use required_capability_exception;
+use restricted_context_exception;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -55,11 +60,11 @@ class view extends external_api {
      *
      * @return array of warnings and status result
      *
-     * @throws \dml_exception
-     * @throws \invalid_parameter_exception
-     * @throws \moodle_exception
-     * @throws \required_capability_exception
-     * @throws \restricted_context_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
      */
     public static function view_supervideo($supervideoid) {
         global $DB, $CFG;
@@ -71,7 +76,7 @@ class view extends external_api {
 
         // Request and permission validation.
         $supervideo = $DB->get_record('supervideo', ['id' => $params['supervideoid']], '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($supervideo, 'supervideo');
+        [$course, $cm] = get_course_and_cm_from_instance($supervideo, 'supervideo');
 
         $context = context_module::instance($cm->id);
         self::validate_context($context);

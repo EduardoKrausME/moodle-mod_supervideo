@@ -16,6 +16,11 @@
 
 namespace mod_supervideo\grade;
 
+use coding_exception;
+use completion_info;
+use dml_exception;
+use moodle_exception;
+
 /**
  * Grades implementation for mod_supervideo.
  *
@@ -31,9 +36,9 @@ class grades_util {
      * @param $cmid
      * @param $percent
      *
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public static function update($cmid, $percent) {
         global $DB, $CFG, $USER;
@@ -44,7 +49,7 @@ class grades_util {
         $course = get_course($cm->course);
         $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
-        $completion = new \completion_info($course);
+        $completion = new completion_info($course);
         if ($completion->is_enabled($cm)) {
             if ($percent >= $supervideo->completionpercent) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);

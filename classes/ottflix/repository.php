@@ -24,8 +24,11 @@
 
 namespace mod_supervideo\ottflix;
 
+use coding_exception;
 use curl;
+use dml_exception;
 use Exception;
+use stdClass;
 
 /**
  * Class repository
@@ -41,9 +44,8 @@ class repository {
      * @param string $pathid
      * @param string $searchtitle
      * @param array $extensions
-     * @return \stdClass
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @return stdClass
+     * @throws Exception
      */
     public static function listing($page, $perpage, $pathid, $searchtitle, $extensions) {
         global $SESSION, $USER;

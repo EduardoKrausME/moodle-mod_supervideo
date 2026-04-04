@@ -16,9 +16,13 @@
 
 namespace mod_supervideo\report;
 
+use coding_exception;
+use dml_exception;
 use html_writer;
 use mod_supervideo\util\url;
+use moodle_exception;
 use moodle_url;
+use table_sql;
 
 /**
  * Supervideo View implementation for mod_supervideo.
@@ -27,7 +31,7 @@ use moodle_url;
  * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class supervideo_view extends \table_sql {
+class supervideo_view extends table_sql {
 
     /**
      * Var cmid
@@ -49,8 +53,8 @@ class supervideo_view extends \table_sql {
      * @param $cmid
      * @param $supervideo
      *
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @throws coding_exception
+     * @throws dml_exception
      */
     public function __construct($uniqueid, $cmid, $userid, $supervideo) {
         global $DB;
@@ -171,7 +175,7 @@ class supervideo_view extends \table_sql {
      *
      * @return string contents of cell in column 'fullname', for this row.
      *
-     * @throws \moodle_exception
+     * @throws moodle_exception
      */
     public function col_fullname($linha) {
         global $COURSE;
@@ -290,12 +294,12 @@ class supervideo_view extends \table_sql {
      * @param $linha
      *
      * @return string
-     * @throws \coding_exception
-     * @throws \moodle_exception
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     public function col_extra($linha) {
-        $profileurl = new \moodle_url('/mod/supervideo/report.php?', ['id' => $linha->cm_id, 'u' => $linha->user_id]);
-        return \html_writer::link($profileurl, get_string('report_all', 'mod_supervideo'));
+        $profileurl = new moodle_url('/mod/supervideo/report.php?', ['id' => $linha->cm_id, 'u' => $linha->user_id]);
+        return html_writer::link($profileurl, get_string('report_all', 'mod_supervideo'));
     }
 
     /**
@@ -304,7 +308,7 @@ class supervideo_view extends \table_sql {
      * @param int $pagesize
      * @param bool $useinitialsbar
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public function query_db($pagesize, $useinitialsbar = true) {
         global $CFG;
@@ -322,7 +326,7 @@ class supervideo_view extends \table_sql {
      * @param $pagesize
      * @param bool $useinitialsbar
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     private function query_db_default($pagesize, $useinitialsbar = true) {
         global $DB;
@@ -415,7 +419,7 @@ class supervideo_view extends \table_sql {
      * @param $pagesize
      * @param bool $useinitialsbar
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     private function query_db_postgresql($pagesize, $useinitialsbar = true) {
         global $DB;

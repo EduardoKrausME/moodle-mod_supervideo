@@ -16,7 +16,10 @@
 
 namespace mod_supervideo\analytics;
 
+use coding_exception;
+use dml_exception;
 use mod_supervideo\grade\grades_util;
+use moodle_exception;
 
 /**
  * Supervideo View implementation for mod_supervideo.
@@ -33,7 +36,7 @@ class supervideo_view {
      *
      * @return object
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public static function create($cmid) {
         global $USER, $DB;
@@ -93,9 +96,9 @@ class supervideo_view {
      * @param $mapa
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
         global $DB, $USER, $CFG;

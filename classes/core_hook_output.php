@@ -25,6 +25,7 @@
 namespace mod_supervideo;
 
 use cache;
+use Exception;
 use mod_supervideo\ottflix\repository as ottflix_repository;
 
 /**
@@ -34,7 +35,7 @@ class core_hook_output {
     /**
      * Function before_footer_html_generation
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function before_footer_html_generation() {
         global $DB, $CFG, $COURSE, $SITE;
