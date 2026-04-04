@@ -124,37 +124,4 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode_h5p",
         $title, $description, 1);
     $settings->add($setting);
-
-    // Kapture converter.
-    $options = [
-        "none" => get_string("kapture_convert_none", "mod_supervideo"),
-        "ffmpeg" => get_string("kapture_convert_ffmpeg", "mod_supervideo"),
-        "qencode" => get_string("kapture_convert_qencode", "mod_supervideo"),
-    ];
-
-    // Conversion method selector.
-    $setting = new admin_setting_configselect("supervideo/kapture_convert",
-        get_string("kapture_convert", "mod_supervideo"),
-        get_string("kapture_convert_desc", "mod_supervideo"),
-        "none",
-        $options
-    );
-    $settings->add($setting);
-
-    // FFmpeg path (only used when "ffmpeg" is selected).
-    $setting = new admin_setting_configtext("supervideo/kapture_ffmpeg",
-        get_string("kapture_ffmpeg", "mod_supervideo"),
-        get_string("kapture_ffmpeg_desc", "mod_supervideo"),
-        "/usr/bin/ffmpeg",
-        PARAM_PATH
-    );
-    $settings->add($setting);
-
-    // Qencode API key (only used when "qencode" is selected).
-    $setting = new admin_setting_configpasswordunmask("supervideo/kapture_qencode",
-        get_string("kapture_qencode", "mod_supervideo"),
-        get_string("kapture_qencode_desc", "mod_supervideo"),
-        ""
-    );
-    $settings->add($setting);
 }
