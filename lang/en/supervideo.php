@@ -114,7 +114,7 @@ $string['kapture_title_too_short'] = 'Title too short!';
 $string['kapture_upload_completed'] = 'Upload completed. Awaiting processing!';
 $string['kapture_video_default_title'] = 'Vídeo title';
 $string['kapture_video_title'] = 'Capture ';
-$string['video_title_desc'] = 'Choose a name that\'s easy to find later.';
+$string['kapture_video_title_desc'] = 'Choose a name that\'s easy to find later.';
 
 $string['maxwidth'] = 'Maximum Width for Video Player';
 $string['maxwidth_desc'] = 'Maximum width, in pixels, that the video player can expand to. Values below 500 pixels will be considered.<br>This value is completely ignored when the video is in "Distraction-Free Mode."';
