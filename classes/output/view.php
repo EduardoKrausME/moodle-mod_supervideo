@@ -254,8 +254,7 @@ class view {
                         $this->supervideo->autoplay ? 1 : 0,
                     ]);
 
-                    $link = "<script src='https://www.youtube.com/iframe_api'></script>";
-                    return $link . $OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $elementid]);
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $elementid]);
                 } else {
                     return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
                 }

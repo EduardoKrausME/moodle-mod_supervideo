@@ -14,7 +14,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, PlayerRender) {
+    var youtubeApiCallbacks = [];
+    var youtubeApiHooked = false;
+    var youtubeApiRequested = false;
+
     var player_create = {
+
+        _youtube_when_ready: function(callback) {
+            if (window.YT && window.YT.Player) {
+                callback();
+                return;
+            }
+
+            youtubeApiCallbacks.push(callback);
+
+            if (!youtubeApiHooked) {
+                youtubeApiHooked = true;
+
+                var previousReady = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = function() {
+                    if (typeof previousReady === "function") {
+                        previousReady();
+                    }
+
+                    var callbacks = youtubeApiCallbacks.slice(0);
+                    youtubeApiCallbacks = [];
+
+                    callbacks.forEach(function(cb) {
+                        cb();
+                    });
+                };
+            }
+
+            if (!youtubeApiRequested &&
+                !document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+                youtubeApiRequested = true;
+
+                var tag = document.createElement("script");
+                tag.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(tag);
+            }
+        },
 
         ottflix: function (view_id, start_currenttime, elementId, identifier) {
             let totalDuration = false;
@@ -24,11 +64,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 totalDuration = event.data.duration;
             }
 
-
             const identifiers = new Set(
                 (Array.isArray(identifier) ? identifier : [identifier])
                     .filter(Boolean)
-                    .map(i => (typeof i === 'string' ? i : i.identifier))
+                    .map(i => (typeof i === "string" ? i : i.identifier))
                     .filter(Boolean)
             );
 
@@ -64,26 +103,38 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 start: start_currenttime ? start_currenttime : 0,
             };
 
-            var player;
-            if (YT && YT.Player) {
-                player = new YT.Player(elementId, {
+            var player = null;
+
+            var showApiError = function() {
+                var html =
+                    `<div class="alert alert-danger">
+                        Error loading the YouTube iframe API.
+                     </div>`;
+                $("#supervideo_area_embed").html(html);
+            };
+
+            var initPlayer = function() {
+                if (!(window.YT && window.YT.Player)) {
+                    showApiError();
+                    return;
+                }
+
+                player = new window.YT.Player(elementId, {
                     suggestedQuality: "large",
                     videoId: videoid,
                     width: "100%",
                     playerVars: playerVars,
                     events: {
-                        "onReady": function (event) {
-
+                        "onReady": function () {
                             var sizes = playersize.split("x");
-                            console.log(sizes);
+
                             if (sizes && sizes[1]) {
-                                console.log(sizes);
                                 player_create._internal_resize(sizes[0], sizes[1]);
                             } else {
                                 player_create._internal_resize(16, 9);
                             }
 
-                            document.addEventListener("setCurrentTime", function (event) {
+                            document.addEventListener("setCurrentTime", function(event) {
                                 player.seekTo(event.detail.goCurrentTime);
                             });
                         },
@@ -92,17 +143,18 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                         }
                     }
                 });
-            } else {
-                var html =
-                    `<div class="alert alert-danger">
-                             Error loading the JavaScript at https://www.youtube.com/iframe_api
-                             Please check for any Security Policy restrictions.
-                         </div>`;
-                $("#supervideo_area_embed").html(html);
-            }
+            };
 
-            setInterval(function () {
-                if (player && player.getCurrentTime != undefined) {
+            player_create._youtube_when_ready(initPlayer);
+
+            window.setTimeout(function() {
+                if (!player && !(window.YT && window.YT.Player)) {
+                    showApiError();
+                }
+            }, 8000);
+
+            window.setInterval(function () {
+                if (player && player.getCurrentTime !== undefined) {
                     player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration() - 1);
                 }
             }, 150);
