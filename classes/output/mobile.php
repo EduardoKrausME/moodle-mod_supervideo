@@ -57,7 +57,7 @@ class mobile {
                 ],
             ],
             "javascript" => "",
-            "otherdata" => "",
+            "otherdata" => [],
             "files" => [],
         ];
     }

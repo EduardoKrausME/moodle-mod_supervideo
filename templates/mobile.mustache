@@ -24,9 +24,13 @@
     }
 }}
 
-<iframe id="iframe-{{{cmid}}}"
-        src="{{{iframe_url}}}"
-        style="height: 100vh; width: 100%;"
-        webkitallowfullscreen mozallowfullscreen allowfullscreen
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        sandbox="allow-scripts allow-forms allow-same-origin allow-modals"></iframe>
+{{=<% %>=}}
+<div class="mod-supervideo-mobile">
+    <iframe
+            title="Super Video"
+            src="{{{iframe_url}}}"
+            style="width:100%; min-height: 70vh; border:0;"
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowfullscreen="true">
+    </iframe>
+</div>
