@@ -30,7 +30,7 @@ function ($, Ajax, Notification, Templates, PlayerRender) {
             let id_origem = $("#id_origem");
             if (courseinfo) {
                 id_origem.after(
-                    `<a id="kapture-open" class="btn btn-primary ml-2" style="padding:6px 18px;" 
+                    `<a id="kapture-open" class="btn btn-primary ms-2" style="padding:6px 18px;" 
                         href="${M.cfg.wwwroot}/mod/supervideo/vendor/kapture/?${courseinfo}">
                          ${M.util.get_string("record_kapture", "supervideo")}   
                      </a>`);
