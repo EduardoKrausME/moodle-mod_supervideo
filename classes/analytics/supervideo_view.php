@@ -147,7 +147,7 @@ class supervideo_view {
         foreach ($new as $key => $value) {
             if (!empty($value)) {
                 $old[$key] = 1;
-            } elseif (!isset($old[$key])) {
+            } else if (!isset($old[$key])) {
                 $old[$key] = 0;
             }
         }
