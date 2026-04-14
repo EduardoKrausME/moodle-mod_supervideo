@@ -509,24 +509,27 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         _internal_view_id: 0,
         _internal_progress_length: 100,
         _internal_sizenum: -1,
-        _internal_saveprogress: function (currenttime, duration) {
-
-            currenttime = Math.floor(currenttime);
-            duration = Math.floor(duration);
-
+        _internal_saveprogress: function(currenttime, duration) {
             if (!duration) {
-                return 0;
+                return;
             }
 
             if (duration && player_create._internal_assistido.length == 0) {
                 player_create._internal_progress_create(duration);
             }
 
+            const tolerance = Math.min(3, Math.max(1, Math.ceil(duration * 0.01)));
+
             var posicao_video;
             if (player_create._internal_progress_length < 100) {
-                posicao_video = currenttime;
+                posicao_video = Math.floor(currenttime);
             } else {
                 posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
+            }
+
+            if (currenttime >= (duration - tolerance)) {
+                posicao_video = player_create._internal_progress_length;
+                player_create._internal_assistido[player_create._internal_progress_length] = 1;
             }
 
             if (player_create._internal_last_posicao_video == posicao_video) {
@@ -548,6 +551,10 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             if (player_create._internal_progress_length < 100) {
                 percent = Math.floor(percent / player_create._internal_progress_length * 100);
+            }
+
+            if (currenttime >= (duration - tolerance)) {
+                percent = 100;
             }
 
             if (player_create._internal_last_percent == percent) {
