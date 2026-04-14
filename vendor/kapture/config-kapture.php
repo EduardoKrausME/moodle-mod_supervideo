@@ -52,6 +52,10 @@ $strings = [
     "ottflix_upload_failure" => 'Falha no Upload para a OttFlix',
     "aborted_upload_ottflix" => 'Upload para a OttFlix foi abortado!',
     "error_accessing_camera" => 'Error accessing camera or capturing screen',
+    "camera_not_found" => "Não foi encontrada nenhuma câmera no computador.",
+    "microphone_not_found" => "Não foi encontrado nenhum microfone no computador.",
+    "no_camera_found" => "Nenhuma câmera encontrada",
+    "no_microphone_found" => "Nenhum microfone encontrado",
 ];
 
 $logo = "img/logo.svg";
@@ -114,7 +118,7 @@ function kapture_get_string_js()
 function get_and_htmlspecialchars($key)
 {
     if (isset($_GET[$key])) {
-        return htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars($_GET[$key], ENT_QUOTES, 'UTF-8');
     }
     return "";
 }

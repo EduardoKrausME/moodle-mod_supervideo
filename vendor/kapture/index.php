@@ -11,22 +11,9 @@ require_once "config-kapture.php";
     <title><?php echo kapture_get_string("app_title"); ?></title>
 
     <?php kapture_get_string_js() ?>
-    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=22"></script>
+    <link rel="stylesheet" href="css/style.css"><script type="text/javascript" src="all.min.js?build=52"></script>
 
     <script src="ffmpeg/ffmpeg.js"></script>
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 </head>
 <body>
 
@@ -143,6 +130,9 @@ require_once "config-kapture.php";
                 <select name="camera" id="select-video"></select>
                 <div class="off"><?php echo kapture_get_string("switched_off"); ?></div>
             </div>
+            <div id="select-video-alert" class="device-not-found-alert" style="display:none;">
+                <?php echo kapture_get_string("camera_not_found"); ?>
+            </div>
 
             <div id="cam-invert-area" class="controle-device cam-config-area">
                 <?php echo kapture_get_string("inverter_camera"); ?>
@@ -150,6 +140,9 @@ require_once "config-kapture.php";
                     <input type="checkbox" id="cam-invert">
                     <span class='el-switch-style'></span>
                 </label>
+            </div>
+            <div id="select-audio-alert" class="device-not-found-alert" style="display:none;">
+                <?php echo kapture_get_string("microphone_not_found"); ?>
             </div>
 
             <div id="cam-round-area" class="controle-device cam-config-area">
