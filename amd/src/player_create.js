@@ -502,6 +502,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
+        _internal_last_ajax_at: 0,
         _internal_last_posicao_video: -1,
         _internal_last_percent: -1,
         _internal_assistido: [],
@@ -583,16 +584,22 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             if (currenttime) {
-                Ajax.call([{
-                    methodname: "mod_supervideo_progress_save",
-                    args: {
-                        view_id: player_create._internal_view_id,
-                        currenttime: parseInt(currenttime),
-                        duration: parseInt(duration),
-                        percent: parseInt(percent),
-                        mapa: JSON.stringify(player_create._internal_assistido)
-                    }
-                }]);
+                var now = Date.now();
+
+                if ((now - player_create._internal_last_ajax_at) >= 10000) {
+                    player_create._internal_last_ajax_at = now;
+
+                    Ajax.call([{
+                        methodname: "mod_supervideo_progress_save",
+                        args: {
+                            view_id: player_create._internal_view_id,
+                            currenttime: parseInt(currenttime),
+                            duration: parseInt(duration),
+                            percent: parseInt(percent),
+                            mapa: JSON.stringify(player_create._internal_assistido)
+                        }
+                    }]);
+                }
             }
 
             if (percent >= 0) {
