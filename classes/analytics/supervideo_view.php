@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Supervideo View implementation for mod_supervideo.
+ *
+ * @package   mod_supervideo
+ * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_supervideo\analytics;
 
 use coding_exception;
@@ -22,11 +30,7 @@ use mod_supervideo\grade\grades_util;
 use moodle_exception;
 
 /**
- * Supervideo View implementation for mod_supervideo.
- *
- * @package   mod_supervideo
- * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Class supervideo_view
  */
 class supervideo_view {
     /**
@@ -79,7 +83,7 @@ class supervideo_view {
 
         try {
             $supervideoview->id = $DB->insert_record("supervideo_view", $supervideoview);
-        } catch (\dml_exception $e) {
+        } catch (dml_exception) {
             return (object)['id' => 0];
         }
 
@@ -103,22 +107,53 @@ class supervideo_view {
     public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
         global $DB, $USER, $CFG;
 
-        $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
+        $supervideoview = $DB->get_record("supervideo_view", ["id" => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
             $supervideoview->currenttime = $currenttime;
-            $supervideoview->duration = $duration;
-            $supervideoview->percent = $percent;
-            $supervideoview->mapa = $mapa;
+            $supervideoview->duration = max((int)$supervideoview->duration, (int)$duration);
+            $supervideoview->percent = max((int)$supervideoview->percent, (int)$percent);
+            $supervideoview->mapa = self::merge_map($supervideoview->mapa, $mapa);
             $supervideoview->timemodified = time();
 
             $status = $DB->update_record("supervideo_view", $supervideoview);
 
             require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
-            grades_util::update($supervideoview->cm_id, $percent);
+            grades_util::update($supervideoview->cm_id, $supervideoview->percent);
 
             return $status;
         }
         return false;
+    }
+
+    /**
+     * Function merge_map
+     *
+     * @param $oldmap
+     * @param $newmap
+     * @return false|string
+     */
+    private static function merge_map($oldmap, $newmap) {
+        $old = json_decode($oldmap ?: "[]", true);
+        $new = json_decode($newmap ?: "[]", true);
+
+        if (!is_array($old)) {
+            $old = [];
+        }
+        if (!is_array($new)) {
+            $new = [];
+        }
+
+        foreach ($new as $key => $value) {
+            if (!empty($value)) {
+                $old[$key] = 1;
+            } elseif (!isset($old[$key])) {
+                $old[$key] = 0;
+            }
+        }
+
+        ksort($old, SORT_NATURAL);
+
+        return json_encode($old);
     }
 }
