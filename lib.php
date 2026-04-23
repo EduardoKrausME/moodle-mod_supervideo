@@ -175,6 +175,12 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
         $supervideo->ottflix_ia = implode(",", $supervideo->ottflix_ia);
     }
 
+    if ($supervideo->origem == "upload") {
+        $supervideo->videourl = "file";
+    } else if ($videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT)) {
+        $supervideo->videourl = $videourl;
+    }
+
     $result = $DB->update_record("supervideo", $supervideo);
 
     grades_util::grade_item_update($supervideo);
