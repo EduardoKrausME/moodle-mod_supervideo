@@ -381,6 +381,48 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
+        embed: function (view_id, start_currenttime, elementId, playersize) {
+            player_create._internal_view_id = view_id;
+
+            if (playersize == "4x3") {
+                player_create._internal_resize(4, 3);
+            } else if (playersize == "16x9") {
+                player_create._internal_resize(16, 9);
+            } else {
+                player_create._internal_resize(16, 9);
+            }
+
+            var iframe = document.getElementById(elementId);
+
+            if (iframe && start_currenttime > 0) {
+                iframe.addEventListener("load", function () {
+                    iframe.contentWindow.postMessage({
+                        type: "player:seekTo",
+                        currentTime: parseInt(start_currenttime)
+                    }, "*");
+                });
+            }
+
+            // Listen for progress messages from embedded player iframe
+            var embedStableDuration = 0;
+            var embedDurationSamples = 0;
+            window.addEventListener("message", function (event) {
+                if (event.data && event.data.origem === "supervideo-embed" && event.data.name === "progress") {
+                    var ct = event.data.currentTime;
+                    var dur = event.data.duration;
+
+                    // Wait for duration to stabilize (HLS may report wrong duration initially)
+                    if (embedDurationSamples < 3) {
+                        embedStableDuration = dur;
+                        embedDurationSamples++;
+                        return;
+                    }
+
+                    player_create._internal_saveprogress(ct, embedStableDuration);
+                }
+            });
+        },
+
         pandavideo: function (view_id, currenttime, elementId, size) {
             player_create._internal_resize(size.width, size.height);
 
@@ -502,44 +544,49 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
-        _internal_last_ajax_at: 0,
         _internal_last_posicao_video: -1,
         _internal_last_percent: -1,
         _internal_assistido: [],
         _internal_view_id: 0,
         _internal_progress_length: 100,
         _internal_sizenum: -1,
-        _internal_saveprogress: function(currenttime, duration) {
+        _internal_saveprogress: function (currenttime, duration) {
+
+            currenttime = Math.floor(currenttime);
+            duration = Math.floor(duration);
+
             if (!duration) {
-                return;
+                return 0;
+            }
+
+            // When near the end (within 1 second), treat as complete
+            if (duration - currenttime <= 1 && currenttime > 0) {
+                currenttime = duration;
             }
 
             if (duration && player_create._internal_assistido.length == 0) {
                 player_create._internal_progress_create(duration);
             }
 
-            const tolerance = Math.min(3, Math.max(1, Math.ceil(duration * 0.01)));
-
             var posicao_video;
             if (player_create._internal_progress_length < 100) {
-                posicao_video = Math.floor(currenttime);
+                posicao_video = currenttime;
             } else {
                 posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
-            }
-
-            if (currenttime >= (duration - tolerance)) {
-                posicao_video = player_create._internal_progress_length;
-                player_create._internal_assistido[player_create._internal_progress_length] = 1;
             }
 
             if (player_create._internal_last_posicao_video == posicao_video) {
                 return;
             }
-            player_create._internal_last_posicao_video = posicao_video;
 
-            if (posicao_video) {
-                player_create._internal_assistido[posicao_video] = 1;
+            // Fill all segments between last position and current position
+            var from = player_create._internal_last_posicao_video > 0 ? player_create._internal_last_posicao_video + 1 : posicao_video;
+            for (var p = from; p <= posicao_video; p++) {
+                if (p > 0 && p <= player_create._internal_progress_length) {
+                    player_create._internal_assistido[p] = 1;
+                }
             }
+            player_create._internal_last_posicao_video = posicao_video;
 
             var percent = 0;
             for (let j = 1; j <= player_create._internal_progress_length; j++) {
@@ -551,10 +598,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             if (player_create._internal_progress_length < 100) {
                 percent = Math.floor(percent / player_create._internal_progress_length * 100);
-            }
-
-            if (currenttime >= (duration - tolerance)) {
-                percent = 100;
             }
 
             if (player_create._internal_last_percent == percent) {
@@ -591,22 +634,16 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             if (currenttime) {
-                var now = Date.now();
-
-                if ((now - player_create._internal_last_ajax_at) >= 10000) {
-                    player_create._internal_last_ajax_at = now;
-
-                    Ajax.call([{
-                        methodname: "mod_supervideo_progress_save",
-                        args: {
-                            view_id: player_create._internal_view_id,
-                            currenttime: parseInt(currenttime),
-                            duration: parseInt(duration),
-                            percent: parseInt(percent),
-                            mapa: JSON.stringify(player_create._internal_assistido)
-                        }
-                    }]);
-                }
+                Ajax.call([{
+                    methodname: "mod_supervideo_progress_save",
+                    args: {
+                        view_id: player_create._internal_view_id,
+                        currenttime: parseInt(currenttime),
+                        duration: parseInt(duration),
+                        percent: parseInt(percent),
+                        mapa: JSON.stringify(player_create._internal_assistido)
+                    }
+                }]);
             }
 
             if (percent >= 0) {

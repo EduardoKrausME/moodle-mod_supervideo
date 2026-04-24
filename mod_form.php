@@ -60,7 +60,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
         // Origem.
-        $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link"];
+        $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link", "embed"];
         if ($supervideo && in_array($supervideo->origem, $origems)) {
             $mform->addElement("hidden", "origem", $supervideo->origem);
             $mform->setType("origem", PARAM_TEXT);
@@ -123,6 +123,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "drive");
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "pandavideo");
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "link");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "embed");
 
         $options = [
             "InteractiveVideo" => get_string("ottflix_ia_interactivevideo", "mod_supervideo"),
@@ -141,6 +142,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia", "origem", "eq", "drive");
         $mform->hideIf("ottflix_ia", "origem", "eq", "pandavideo");
         $mform->hideIf("ottflix_ia", "origem", "eq", "link");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "embed");
 
         // Upload.
         if (!$supervideo || $supervideo->origem == "upload" || !in_array($supervideo->origem, $origems)) {
@@ -184,6 +186,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->setDefault("showcontrols", $config->showcontrols);
             $mform->hideIf("showcontrols", "origem", "eq", "ottflix");
             $mform->hideIf("showcontrols", "origem", "eq", "pandavideo");
+            $mform->hideIf("showcontrols", "origem", "eq", "embed");
         }
 
         if ($config->autoplay <= 1) {
@@ -191,6 +194,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->setDefault("autoplay", $config->autoplay);
             $mform->hideIf("autoplay", "origem", "eq", "ottflix");
             $mform->hideIf("autoplay", "origem", "eq", "pandavideo");
+            $mform->hideIf("autoplay", "origem", "eq", "embed");
         }
 
         // Adding the standard "intro" and "introformat" fields.

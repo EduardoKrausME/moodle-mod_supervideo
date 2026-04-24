@@ -30,7 +30,7 @@ use mod_supervideo\grade\grades_util;
 use moodle_exception;
 
 /**
- * Class supervideo_view
+ * Supervideo View implementation for mod_supervideo.
  */
 class supervideo_view {
     /**
@@ -83,7 +83,7 @@ class supervideo_view {
 
         try {
             $supervideoview->id = $DB->insert_record("supervideo_view", $supervideoview);
-        } catch (dml_exception) {
+        } catch (\dml_exception $e) {
             return (object)['id' => 0];
         }
 
@@ -107,53 +107,22 @@ class supervideo_view {
     public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
         global $DB, $USER, $CFG;
 
-        $supervideoview = $DB->get_record("supervideo_view", ["id" => $viewid, "user_id" => $USER->id]);
+        $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
             $supervideoview->currenttime = $currenttime;
-            $supervideoview->duration = max((int)$supervideoview->duration, (int)$duration);
-            $supervideoview->percent = max((int)$supervideoview->percent, (int)$percent);
-            $supervideoview->mapa = self::merge_map($supervideoview->mapa, $mapa);
+            $supervideoview->duration = $duration;
+            $supervideoview->percent = $percent;
+            $supervideoview->mapa = $mapa;
             $supervideoview->timemodified = time();
 
             $status = $DB->update_record("supervideo_view", $supervideoview);
 
             require_once("{$CFG->dirroot}/mod/supervideo/classes/grade/grades_util.php");
-            grades_util::update($supervideoview->cm_id, $supervideoview->percent);
+            grades_util::update($supervideoview->cm_id, $percent);
 
             return $status;
         }
         return false;
-    }
-
-    /**
-     * Function merge_map
-     *
-     * @param $oldmap
-     * @param $newmap
-     * @return false|string
-     */
-    private static function merge_map($oldmap, $newmap) {
-        $old = json_decode($oldmap ?: "[]", true);
-        $new = json_decode($newmap ?: "[]", true);
-
-        if (!is_array($old)) {
-            $old = [];
-        }
-        if (!is_array($new)) {
-            $new = [];
-        }
-
-        foreach ($new as $key => $value) {
-            if (!empty($value)) {
-                $old[$key] = 1;
-            } else if (!isset($old[$key])) {
-                $old[$key] = 0;
-            }
-        }
-
-        ksort($old, SORT_NATURAL);
-
-        return json_encode($old);
     }
 }

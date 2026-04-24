@@ -44,41 +44,34 @@ class grades_util {
         global $DB, $CFG, $USER;
 
         require_once("{$CFG->libdir}/completionlib.php");
-        require_once("{$CFG->libdir}/gradelib.php");
 
-        $cm = get_coursemodule_from_id("supervideo", $cmid, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_id('supervideo', $cmid, 0, false, MUST_EXIST);
         $course = get_course($cm->course);
-        $supervideo = $DB->get_record("supervideo", ["id" => $cm->instance], "*", MUST_EXIST);
+        $supervideo = $DB->get_record('supervideo', ['id' => $cm->instance], '*', MUST_EXIST);
 
-        if ((int)$supervideo->completionpercent > 0) {
-            $completion = new completion_info($course);
-            if ($completion->is_enabled($cm)) {
-                if ((int)$percent >= (int)$supervideo->completionpercent) {
-                    $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
-                } else {
-                    $completion->update_state($cm, COMPLETION_INCOMPLETE, $USER->id);
-                }
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm)) {
+            if ($percent >= $supervideo->completionpercent) {
+                $completion->update_state($cm, COMPLETION_COMPLETE);
             }
         }
 
-        if ((int)$supervideo->grade_approval !== 1) {
-            return;
-        }
+        if ($supervideo->grade_approval == 1) {
+            $grade = [
+                "userid" => $USER->id,
+                "rawgrade" => $percent,
+            ];
 
-        $grade = [
-            "userid" => $USER->id,
-            "rawgrade" => (float)$percent,
-        ];
-
-        $gradeinfo = grade_get_grades($course->id, "mod", "supervideo", $supervideo->id, $USER->id);
-        $currentgrade = null;
-
-        if (!empty($gradeinfo->items[0]->grades[$USER->id])) {
-            $currentgrade = $gradeinfo->items[0]->grades[$USER->id]->grade;
-        }
-
-        if ($currentgrade === null || (float)$percent > (float)$currentgrade) {
-            self::grade_item_update($supervideo, $grade);
+            require_once("{$CFG->libdir}/gradelib.php");
+            $grades = grade_get_grades($course->id, 'mod', 'supervideo', $supervideo->id, $USER->id);
+            if (isset($grades->items[0]->grades)) {
+                foreach ($grades->items[0]->grades as $gradeitem) {
+                    if (intval($percent) > intval($gradeitem->grade)) {
+                        self::grade_item_update($supervideo, $grade);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -89,70 +82,32 @@ class grades_util {
      * @param null $grades
      *
      * @return int
-     * @throws \moodle_exception
      */
     public static function grade_item_update($supervideo, $grades = null) {
         global $CFG;
 
         require_once("{$CFG->dirroot}/lib/gradelib.php");
 
-        if (!defined("GRADE_TYPE_VALUE")) {
-            define("GRADE_TYPE_VALUE", 1);
+        if (!defined('GRADE_TYPE_VALUE')) {
+            define('GRADE_TYPE_VALUE', 1);
         }
 
         $params = [
-            "itemname" => $supervideo->name,
-            "gradetype" => GRADE_TYPE_VALUE,
-            "grademax" => 100,
-            "grademin" => 0,
+            'itemname' => $supervideo->name,
+            'gradetype' => GRADE_TYPE_VALUE,
+            'grademax' => 100,
+            'grademin' => 0,
         ];
 
         if (isset($supervideo->cmidnumber)) {
-            $params["idnumber"] = $supervideo->cmidnumber;
+            $params['idnumber'] = $supervideo->cmidnumber;
         }
 
-        if ($grades === "reset") {
-            $params["reset"] = true;
+        if ($grades === 'reset') {
+            $params['reset'] = true;
             $grades = null;
         }
 
-        $result = grade_update(
-            "mod/supervideo",
-            $supervideo->course,
-            "mod",
-            "supervideo",
-            $supervideo->id,
-            0,
-            $grades,
-            $params
-        );
-
-        $gradeitem = \grade_item::fetch([
-            "courseid" => $supervideo->course,
-            "itemtype" => "mod",
-            "itemmodule" => "supervideo",
-            "iteminstance" => $supervideo->id,
-            "itemnumber" => 0,
-        ]);
-
-        if ($gradeitem) {
-            $changed = false;
-
-            $gradepass = isset($supervideo->gradepass) ? (float)$supervideo->gradepass : 0.0;
-            if ((float)$gradeitem->gradepass !== $gradepass) {
-                $gradeitem->gradepass = $gradepass;
-                $changed = true;
-            }
-
-            if ($changed) {
-                $gradeitem->update();
-            }
-
-            if (!empty($supervideo->gradecat) && (int)$gradeitem->categoryid !== (int)$supervideo->gradecat) {
-                $gradeitem->set_parent((int)$supervideo->gradecat);
-            }
-        }
-
-        return $result;
+        return grade_update('mod/supervideo', $supervideo->course, 'mod', 'supervideo', $supervideo->id, 0, $grades, $params);
     }
 }

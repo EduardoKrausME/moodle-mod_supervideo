@@ -92,7 +92,20 @@ if ($view->freemode) {
     echo $OUTPUT->header();
 
     echo $view->errosmessages;
+
+    $aspectstyle = '';
+    if (isset($supervideo->playersize)) {
+        if ($supervideo->playersize == '4x3') {
+            $aspectstyle = 'aspect-ratio: 4 / 3;';
+        } else if ($supervideo->playersize == '16x9') {
+            $aspectstyle = 'aspect-ratio: 16 / 9;';
+        } else {
+            $aspectstyle = 'aspect-ratio: 16 / 9;';
+        }
+    }
+    echo "<div id=\"supervideo_area_embed\" style=\"{$aspectstyle}\">";
     echo $videoplayer;
+    echo '</div>';
     if ($view->config->showmapa) {
         echo $view->get_maps();
     }

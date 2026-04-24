@@ -332,6 +332,30 @@ class view {
                     return $this->create_error_message($e->getMessage());
                 }
             }
+            if ($this->supervideo->origem == "embed") {
+                if (preg_match("/^https?:\/\/.+/i", $this->supervideo->videourl)) {
+                    $PAGE->requires->js_call_amd("mod_supervideo/player_create", "embed", [
+                        (int)$this->supervideoview->id,
+                        $this->supervideoview->currenttime,
+                        $elementid,
+                        $this->supervideo->playersize,
+                    ]);
+                    // Append saved playback position to the iframe URL so the player resumes.
+                    $videourl = $this->supervideo->videourl;
+                    $currenttime = (int)$this->supervideoview->currenttime;
+                    if ($currenttime > 0) {
+                        $separator = (strpos($videourl, '?') !== false) ? '&' : '?';
+                        $videourl .= "{$separator}t={$currenttime}";
+                    }
+
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_iframe", [
+                        "elementid" => $elementid,
+                        "videourl" => $videourl,
+                    ]);
+                } else {
+                    return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
+                }
+            }
         } else {
             return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
         }

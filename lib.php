@@ -704,6 +704,9 @@ function supervideo_get_coursemodule_info($coursemodule) {
         $info->customdata["customcompletionrules"]["completionpercent"] = $supervideo->completionpercent;
     }
 
+    if (isset($info->completionpassgrade)) {
+        $info->completionpassgrade = false;
+    }
     if (isset($info->downloadcontent)) {
         $info->downloadcontent = false;
     }
