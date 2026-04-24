@@ -61,53 +61,32 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         // Origem.
         $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link", "embed"];
-        if ($supervideo && in_array($supervideo->origem, $origems)) {
-            $mform->addElement("hidden", "origem", $supervideo->origem);
-            $mform->setType("origem", PARAM_TEXT);
 
-            if ($supervideo->origem == "upload") {
-                $mform->addElement("hidden", "videourl", $supervideo->videourl);
-                $mform->setType("videourl", PARAM_TEXT);
-            } else if ($supervideo->origem == "pandavideo" || $supervideo->origem == "ottflix") {
-                supervideo_filepicker::add_form($mform, $supervideo->origem, "videourl");
+        $origemselect = [];
+        foreach ($origems as $origem) {
+            $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
+        }
+
+        $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
+
+        foreach ($origems as $origem) {
+            if ($origem == "upload") {
+                continue;
+            }
+
+            if ($origem == "pandavideo" || $origem == "ottflix") {
+                supervideo_filepicker::add_form($mform, $origem, "videourl_{$origem}");
             } else {
-                $title = get_string("origem_{$supervideo->origem}", "mod_supervideo");
-                $mform->addElement("text", "videourl", $title, ["size" => "60"], []);
-                $mform->setType("videourl", PARAM_TEXT);
-                $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
+                $mform->addElement(
+                    "text",
+                    "videourl_{$origem}",
+                    get_string("origem_{$origem}", "mod_supervideo"),
+                    ["size" => "60"], []
+                );
+                $mform->setType("videourl_{$origem}", PARAM_TEXT);
+                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
             }
-        } else {
-            $origemselect = [];
-            foreach ($origems as $origem) {
-                $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
-            }
-
-            $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
-
-            foreach ($origems as $origem) {
-                if ($origem == "upload") {
-                    continue;
-                }
-                if ($supervideo && $origem != $supervideo->origem) {
-                    continue;
-                }
-
-                if ($origem == "pandavideo" || $origem == "ottflix") {
-                    supervideo_filepicker::add_form($mform, $origem, "videourl_{$origem}");
-                } else {
-                    $mform->addElement(
-                        "text",
-                        "videourl_{$origem}",
-                        get_string("origem_{$origem}", "mod_supervideo"),
-                        ["size" => "60"], []
-                    );
-                    $mform->setType("videourl_{$origem}", PARAM_TEXT);
-                    $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
-                }
-                if (!$supervideo) {
-                    $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
-                }
-            }
+            $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
         }
 
         // Ottflix IA.
@@ -268,6 +247,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ["subdirs" => true]);
                 $defaultvalues["videofile"] = $draftitemid;
             }
+
+            // Populate the videourl_{origem} field with the existing videourl value.
+            if (!empty($defaultvalues["origem"]) && !empty($defaultvalues["videourl"])) {
+                $defaultvalues["videourl_{$defaultvalues['origem']}"] = $defaultvalues["videourl"];
+            }
         }
 
         $defaultvalues["completionpercentenabled"] = !empty($defaultvalues["completionpercent"]) ? 1 : 0;
@@ -399,14 +383,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 return $errors;
             }
         } else {
-            if ($data["instance"]) {
-                if (!isset($data["videourl"]) || empty($data["videourl"])) {
-                    $errors["videourl"] = get_string("required");
-                }
-            } else {
-                if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
-                    $errors["videourl_{$origem}"] = get_string("required");
-                }
+            if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
+                $errors["videourl_{$origem}"] = get_string("required");
             }
         }
         return $errors;

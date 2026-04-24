@@ -394,31 +394,30 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             var iframe = document.getElementById(elementId);
 
-            if (iframe && start_currenttime > 0) {
-                iframe.addEventListener("load", function () {
+            // Allow the progress map to seek inside the embedded player.
+            document.addEventListener("setCurrentTime", function (event) {
+                if (iframe && iframe.contentWindow) {
                     iframe.contentWindow.postMessage({
                         type: "player:seekTo",
-                        currentTime: parseInt(start_currenttime)
+                        currentTime: event.detail.goCurrentTime
                     }, "*");
-                });
-            }
+                }
+            });
 
-            // Listen for progress messages from embedded player iframe
-            var embedStableDuration = 0;
-            var embedDurationSamples = 0;
+            // Listen for progress and dimension messages from embedded player iframe.
             window.addEventListener("message", function (event) {
-                if (event.data && event.data.origem === "supervideo-embed" && event.data.name === "progress") {
-                    var ct = event.data.currentTime;
-                    var dur = event.data.duration;
-
-                    // Wait for duration to stabilize (HLS may report wrong duration initially)
-                    if (embedDurationSamples < 3) {
-                        embedStableDuration = dur;
-                        embedDurationSamples++;
-                        return;
+                if (event.data && event.data.origem === "supervideo-embed") {
+                    if (event.data.name === "dimensions" && event.data.width && event.data.height) {
+                        player_create._internal_resize(event.data.width, event.data.height);
                     }
+                    if (event.data.name === "progress") {
+                        var ct = event.data.currentTime;
+                        var dur = event.data.duration;
 
-                    player_create._internal_saveprogress(ct, embedStableDuration);
+                        if (dur > 0) {
+                            player_create._internal_saveprogress(ct, dur);
+                        }
+                    }
                 }
             });
         },
