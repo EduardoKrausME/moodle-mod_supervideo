@@ -271,6 +271,10 @@ function supervideo_delete_instance($id) {
         return false;
     }
 
+    if (!isset($supervideo->id)) {
+        return false;
+    }
+
     $cm = get_coursemodule_from_id("supervideo", $supervideo->id);
     if ($cm) {
         $files = supervideo_get_area_files(context_module::instance($cm->id)->id);
