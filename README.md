@@ -1,22 +1,21 @@
 # Moodle mod_supervideo
 
-Um módulo projetado para simplificar a incorporação de vídeos do YouTube, Vimeo e Google Drive no ambiente Moodle.
+A module designed to simplify embedding YouTube, Vimeo, and Google Drive videos in the Moodle environment.
 
-Com o intuito de proporcionar uma experiência de ensino mais dinâmica e personalizável, apresento o Módulo Super Vídeo, uma ferramenta inovadora que amplia as capacidades do Moodle, permitindo a fácil adição de vídeos do YouTube, Google Drive ou Vimeo.
+To provide a more dynamic and customizable teaching experience, I present the Super Video Module, an innovative tool that extends Moodle's capabilities by allowing videos from YouTube, Google Drive, or Vimeo to be added easily.
 
-Uma das características notáveis do Super Vídeo é sua capacidade de adaptação ao Moodle. O Player do vídeo ajusta automaticamente sua largura para evitar inconvenientes, garantindo que o conteúdo seja exibido de maneira otimizada, nem muito pequeno, nem excessivamente grande.
+One of Super Video's notable features is its ability to adapt to Moodle. The video player automatically adjusts its width to avoid display issues, ensuring that the content is shown optimally—neither too small nor excessively large.
 
-Além disso, o Super Vídeo prioriza a continuidade do progresso do aluno. O sistema salva automaticamente o ponto em que o aluno parou, proporcionando uma experiência de aprendizado contínua e personalizada. Quando o aluno retorna ao vídeo, o reprodutor automaticamente o posiciona no ponto exato em que ele interrompeu, eliminando a necessidade de procurar manualmente.
+In addition, Super Video prioritizes continuity in student progress. The system automatically saves the point where the student stopped, providing a continuous and personalized learning experience. When the student returns to the video, the player automatically positions them at the exact point where they left off, eliminating the need to search manually.
 
-Uma inovação adicional é a barra de mapa de visualização, localizada abaixo do vídeo. Essa barra fornece uma representação visual da porcentagem real do vídeo que o aluno assistiu. Essa abordagem impede que o aluno avance até o final do vídeo sem ter consumido todo o conteúdo, promovendo uma visualização mais cuidadosa e uma compreensão mais profunda do material.
+An additional innovation is the viewing map bar, located below the video. This bar provides a visual representation of the actual percentage of the video that the student has watched. This approach prevents the student from skipping to the end of the video without consuming all the content, promoting more careful viewing and a deeper understanding of the material.
 
-## Relatórios
+## Reports
 
-Além disso, o Super Vídeo gera relatórios abrangentes, fornecendo aos instrutores insights valiosos sobre as visualizações dos alunos e mapas de visualizações. Essa análise detalhada possibilita ajustes contínuos no conteúdo e na abordagem pedagógica, garantindo uma entrega eficaz do material.
+In addition, Super Video generates comprehensive reports, providing instructors with valuable insights into student views and viewing maps. This detailed analysis enables continuous adjustments to the content and teaching approach, ensuring effective delivery of the material.
 
-## Configurações globais
+## Global settings
 
-Para administradores, a funcionalidade de configurações globais oferece uma personalização abrangente. É possível definir campos padrão para todos os vídeos, garantindo consistência em todo o ambiente de aprendizado. No entanto, a flexibilidade não é comprometida, pois os instrutores têm a liberdade de modificar esses dados em vídeos específicos, sem afetar as configurações globais.
+For administrators, the global settings feature offers comprehensive customization. Default fields can be defined for all videos, ensuring consistency throughout the learning environment. However, flexibility is not compromised, as instructors are free to modify this data in specific videos without affecting the global settings.
 
-Para acessar essas configurações, basta navegar até a seção de Administração do Site, selecionar "Plugins", em seguida "Módulos de Atividades" e, finalmente, escolher "Super Vídeo". Aqui, as opções de personalização estão ao alcance, permitindo uma adaptação refinada conforme as necessidades específicas de cada curso.
-
+To access these settings, simply navigate to the Site Administration section, select "Plugins", then "Activity Modules", and finally choose "Super Video." Here, the customization options are readily available, allowing refined adaptation according to the specific needs of each course.

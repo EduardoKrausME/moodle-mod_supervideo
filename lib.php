@@ -319,7 +319,7 @@ function supervideo_user_outline($course, $user, $mod, $supervideo) {
 function supervideo_user_complete($course, $user, $mod, $supervideo) {
     global $DB;
 
-    $sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
+    $sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.map,
                    u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename, u.email
               FROM {supervideo_view} sv
               JOIN {user} u ON u.id = sv.user_id

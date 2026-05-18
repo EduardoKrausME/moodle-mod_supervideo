@@ -15,18 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_supervideo/mapa
+    @template mod_supervideo/map
 
     Example context (json):
     {
       "style": "style='width: 100%; height: 400px; background-color: #f0f0f0;'",
-      "data_mapa": "latitude: -23.5505, longitude: -46.6333, zoom: 10",
-      "text": "<p>Visualização do mapa centralizada em São Paulo, SP.</p>"
+      "data_map": "{...}",
+      "text": "<p>Video map view</p>"
     }
 }}
 
-<div id="mapa-visualizacao" {{{style}}}>
-    <div class="mapa" data-mapa="{{{data_mapa}}}"></div>
+<div id="map-visualization" {{{style}}}>
+    <div class="map" data-map="{{{data_map}}}"></div>
     {{{text}}}
     <div class="clique"></div>
 </div>

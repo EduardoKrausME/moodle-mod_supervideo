@@ -76,7 +76,7 @@ class supervideo_view {
             "currenttime" => 0,
             "duration" => 0,
             "percent" => 0,
-            "mapa" => "{}",
+            "map" => "{}",
             "timecreated" => time(),
             "timemodified" => time(),
         ];
@@ -97,14 +97,14 @@ class supervideo_view {
      * @param $currenttime
      * @param $duration
      * @param $percent
-     * @param $mapa
+     * @param $map
      *
      * @return bool
      * @throws coding_exception
      * @throws dml_exception
      * @throws moodle_exception
      */
-    public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
+    public static function update($viewid, $currenttime, $duration, $percent, $map) {
         global $DB, $USER, $CFG;
 
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
@@ -113,7 +113,7 @@ class supervideo_view {
             $supervideoview->currenttime = $currenttime;
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
-            $supervideoview->mapa = $mapa;
+            $supervideoview->map = $map;
             $supervideoview->timemodified = time();
 
             $status = $DB->update_record("supervideo_view", $supervideoview);

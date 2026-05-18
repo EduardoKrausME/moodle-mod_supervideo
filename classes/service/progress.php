@@ -50,7 +50,7 @@ class progress extends external_api {
             'currenttime' => new external_value(PARAM_INT, 'The current time', VALUE_REQUIRED),
             'duration' => new external_value(PARAM_INT, 'The duration', VALUE_REQUIRED),
             'percent' => new external_value(PARAM_INT, 'The percent', VALUE_REQUIRED),
-            'mapa' => new external_value(PARAM_RAW, 'The mapa', VALUE_REQUIRED),
+            'map' => new external_value(PARAM_RAW, 'The map', VALUE_REQUIRED),
         ]);
     }
 
@@ -62,7 +62,7 @@ class progress extends external_api {
      * @param int $duration
      * @param int $percent
      *
-     * @param     $mapa
+     * @param     $map
      *
      * @return array
      *
@@ -71,21 +71,21 @@ class progress extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      */
-    public static function save($viewid, $currenttime, $duration, $percent, $mapa) {
+    public static function save($viewid, $currenttime, $duration, $percent, $map) {
 
         $params = self::validate_parameters(self::save_parameters(), [
             'view_id' => $viewid,
             'currenttime' => $currenttime,
             'duration' => $duration,
             'percent' => $percent,
-            'mapa' => $mapa,
+            'map' => $map,
         ]);
         $viewid = $params['view_id'];
         $currenttime = $params['currenttime'];
         $duration = $params['duration'];
         $percent = $params['percent'];
 
-        supervideo_view::update($viewid, $currenttime, $duration, $percent, $mapa);
+        supervideo_view::update($viewid, $currenttime, $duration, $percent, $map);
         return ['success' => true, 'exec' => "OK"];
     }
 

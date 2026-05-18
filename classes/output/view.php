@@ -115,14 +115,14 @@ class view {
     public function get_maps() {
         global $OUTPUT;
         $text = $OUTPUT->heading(
-            get_string("seu_mapa_view", "mod_supervideo") . " <span></span>",
+            get_string("your_map_view", "mod_supervideo") . " <span></span>",
             3,
             "main-view",
-            "seu-mapa-view"
+            "your-map-view"
         );
-        return $OUTPUT->render_from_template("mod_supervideo/mapa", [
-            "style" => $this->config->showmapa ? "" : "style='display:none'",
-            "data_mapa" => base64_encode($this->supervideoview->mapa),
+        return $OUTPUT->render_from_template("mod_supervideo/map", [
+            "style" => $this->config->showmap ? "" : "style='display:none'",
+            "data_map" => base64_encode($this->supervideoview->map),
             "text" => $text,
         ]);
     }
@@ -266,7 +266,7 @@ class view {
                         $this->supervideo->autoplay ? "autoplay=1" : "autoplay=0",
                     ]);
 
-                    $this->config->showmapa = false;
+                    $this->config->showmap = false;
 
                     $PAGE->requires->js_call_amd("mod_supervideo/player_create", "drive", [
                         (int)$this->supervideoview->id,
@@ -397,7 +397,7 @@ class view {
         global $OUTPUT;
 
         $this->freemode = false;
-        $this->config->showmapa = false;
+        $this->config->showmap = false;
         return $OUTPUT->render_from_template("mod_supervideo/error", [
             "elementId" => "message_notfound",
             "type" => "danger",

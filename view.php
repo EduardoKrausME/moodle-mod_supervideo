@@ -77,8 +77,8 @@ if ($view->freemode) {
     echo $OUTPUT->header();
 
     $mustachedata = [
-        "showmapa" => $view->config->showmapa,
-        "mapa" => $view->get_maps(),
+        "showmap" => $view->config->showmap,
+        "map" => $view->get_maps(),
         "errosmessages" => $view->errosmessages,
         "video_player" => $videoplayer,
         "page_title" => $view->supervideo->name,
@@ -106,7 +106,7 @@ if ($view->freemode) {
     echo "<div id=\"supervideo_area_embed\" style=\"{$aspectstyle}\">";
     echo $videoplayer;
     echo '</div>';
-    if ($view->config->showmapa) {
+    if ($view->config->showmap) {
         echo $view->get_maps();
     }
 

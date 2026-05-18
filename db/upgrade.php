@@ -247,6 +247,20 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025080400, "supervideo");
     }
 
+    if ($oldversion < 2026051800) {
+
+        $table = new xmldb_table('supervideo_view');
+        $oldfield = new xmldb_field('mapa', XMLDB_TYPE_TEXT);
+        if ($dbman->field_exists($table, $oldfield)) {
+            $dbman->rename_field($table, $oldfield, 'map');
+        }
+
+        $showmap = get_config("supervideo", "showmapa");
+        set_config("showmap", $showmap, "supervideo");
+
+        upgrade_mod_savepoint(true, 2026051800, "supervideo");
+    }
+
     return true;
 }
 

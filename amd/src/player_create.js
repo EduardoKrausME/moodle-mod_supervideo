@@ -365,7 +365,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         },
 
         drive: function (view_id, elementId, playersize) {
-            $("#mapa-visualizacao").hide();
+            $("#map-visualization").hide();
 
             player_create._internal_view_id = view_id;
             player_create._internal_saveprogress(1, 1);
@@ -446,7 +446,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
         _error_load: function (elementId) {
             function errorF(e) {
-                $(`#${elementId}, #mapa-visualizacao`).hide();
+                $(`#${elementId}, #map-visualization`).hide();
                 //$("body").removeClass("distraction-free-mode");
 
                 switch (e.target.error.code) {
@@ -500,8 +500,8 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     removeHeight += $activity.height();
                 }
 
-                var $mapa = $("#mapa-visualizacao");
-                if ($mapa.length && !$mapa.is(":hidden")) {
+                var $map = $("#map-visualization");
+                if ($map.length && !$map.is(":hidden")) {
                     removeHeight += 12;
                 }
 
@@ -543,9 +543,9 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
-        _internal_last_posicao_video: -1,
+        _internal_last_position_video: -1,
         _internal_last_percent: -1,
-        _internal_assistido: [],
+        _internal_assisted: [],
         _internal_view_id: 0,
         _internal_progress_length: 100,
         _internal_sizenum: -1,
@@ -563,35 +563,35 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 currenttime = duration;
             }
 
-            if (duration && player_create._internal_assistido.length == 0) {
+            if (duration && player_create._internal_assisted.length == 0) {
                 player_create._internal_progress_create(duration);
             }
 
-            var posicao_video;
+            var video_position;
             if (player_create._internal_progress_length < 100) {
-                posicao_video = currenttime;
+                video_position = currenttime;
             } else {
-                posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
+                video_position = parseInt(currenttime / duration * player_create._internal_progress_length);
             }
 
-            if (player_create._internal_last_posicao_video == posicao_video) {
+            if (player_create._internal_last_position_video == video_position) {
                 return;
             }
 
             // Fill all segments between last position and current position
-            var from = player_create._internal_last_posicao_video > 0 ? player_create._internal_last_posicao_video + 1 : posicao_video;
-            for (var p = from; p <= posicao_video; p++) {
+            var from = player_create._internal_last_position_video > 0 ? player_create._internal_last_position_video + 1 : video_position;
+            for (var p = from; p <= video_position; p++) {
                 if (p > 0 && p <= player_create._internal_progress_length) {
-                    player_create._internal_assistido[p] = 1;
+                    player_create._internal_assisted[p] = 1;
                 }
             }
-            player_create._internal_last_posicao_video = posicao_video;
+            player_create._internal_last_position_video = video_position;
 
             var percent = 0;
             for (let j = 1; j <= player_create._internal_progress_length; j++) {
-                if (player_create._internal_assistido[j]) {
+                if (player_create._internal_assisted[j]) {
                     percent++;
-                    $(`#mapa-visualizacao-${j}`).css({opacity: 1});
+                    $(`#map-visualization-${j}`).css({opacity: 1});
                 }
             }
 
@@ -605,19 +605,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             player_create._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
-                var $mapa = $("#mapa-visualizacao");
-                if ($mapa.length && !$mapa.is(":hidden")) {
+                var $map = $("#map-visualization");
+                if ($map.length && !$map.is(":hidden")) {
                     if (currenttime > (duration * .90)) {
                         if (player_create._internal_sizenum != 1) {
                             $(".activity-navigation").hide();
-                            $mapa.addClass("fixed-booton");
+                            $map.addClass("fixed-booton");
                             player_create._internal_max_height__resizePage();
                             player_create._internal_sizenum = 1;
                         }
                     } else {
                         if (player_create._internal_sizenum != 2) {
                             $(".activity-navigation").show();
-                            $mapa.removeClass("fixed-booton");
+                            $map.removeClass("fixed-booton");
                             player_create._internal_max_height__resizePage();
                             player_create._internal_sizenum = 2;
                         }
@@ -625,7 +625,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 } else {
                     if (player_create._internal_sizenum != 3) {
                         $(".activity-navigation").show();
-                        $mapa.removeClass("fixed-booton");
+                        $map.removeClass("fixed-booton");
                         player_create._internal_max_height__resizePage();
                         player_create._internal_sizenum = 3;
                     }
@@ -640,60 +640,60 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                         currenttime: parseInt(currenttime),
                         duration: parseInt(duration),
                         percent: parseInt(percent),
-                        mapa: JSON.stringify(player_create._internal_assistido)
+                        map: JSON.stringify(player_create._internal_assisted)
                     }
                 }]);
             }
 
             if (percent >= 0) {
-                $("#seu-mapa-view span").html(`${percent}%`);
+                $("#your-map-view span").html(`${percent}%`);
             }
         },
 
         _internal_progress_create: function (duration) {
 
-            var $mapa = $("#mapa-visualizacao .mapa");
-            if (!$mapa.length) {
+            var $map = $("#map-visualization .map");
+            if (!$map.length) {
                 return;
             }
 
-            var supervideo_view_mapa = [];
+            var supervideo_view_map = [];
             try {
-                var mapa_json_base64 = $mapa.attr("data-mapa");
-                if (mapa_json_base64) {
-                    supervideo_view_mapa = JSON.parse(atob(mapa_json_base64));
+                var map_json_base64 = $map.attr("data-map");
+                if (map_json_base64) {
+                    supervideo_view_map = JSON.parse(atob(map_json_base64));
                 }
             } catch (e) {
-                supervideo_view_mapa = [];
+                supervideo_view_map = [];
             }
 
             if (Math.floor(duration) <= 100) {
                 player_create._internal_progress_length = Math.floor(duration);
             }
             for (let i = 1; i <= player_create._internal_progress_length; i++) {
-                if (typeof supervideo_view_mapa[i] != "undefined") {
-                    player_create._internal_assistido[i] = supervideo_view_mapa[i];
+                if (typeof supervideo_view_map[i] != "undefined") {
+                    player_create._internal_assisted[i] = supervideo_view_map[i];
                 } else {
-                    player_create._internal_assistido[i] = 0;
+                    player_create._internal_assisted[i] = 0;
                 }
-                var $mapa_item = $(`<div id="mapa-visualizacao-${i}">`);
-                $mapa.append($mapa_item);
+                var $map_item = $(`<div id="map-visualization-${i}">`);
+                $map.append($map_item);
 
-                // Mapa Clique
-                var mapaTitle = Math.floor(duration / player_create._internal_progress_length * i);
+                // Map Clik
+                var mapTitle = Math.floor(duration / player_create._internal_progress_length * i);
 
-                var hours = Math.floor(mapaTitle / 3600);
-                var minutes = (Math.floor(mapaTitle / 60)) % 60;
-                var seconds = mapaTitle % 60;
+                var hours = Math.floor(mapTitle / 3600);
+                var minutes = (Math.floor(mapTitle / 60)) % 60;
+                var seconds = mapTitle % 60;
 
                 var tempo = minutes + ":" + seconds;
                 if (hours) {
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
-                var $mapa_clique =
+                var $map_clique =
                     $("<div></div>")
                         .attr("title", tempo)
-                        .attr("data-currenttime", mapaTitle)
+                        .attr("data-currenttime", mapTitle)
                         .click(function () {
                             var _setCurrentTime = $(this).attr("data-currenttime");
                             _setCurrentTime = parseInt(_setCurrentTime);
@@ -702,7 +702,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                             event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
                             document.dispatchEvent(event);
                         });
-                $("#mapa-visualizacao .clique").append($mapa_clique);
+                $("#map-visualization .clique").append($map_clique);
             }
         }
     };

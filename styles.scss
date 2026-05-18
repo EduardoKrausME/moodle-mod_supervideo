@@ -67,7 +67,7 @@ body {
 #page-mod-supervideo-report table.flexible .header .commands {
     display: none;
 }
-#mapa-visualizacao {
+#map-visualization {
     margin: 5px 0;
     background: rgba(206, 206, 206, 0.5);
     padding: 1px;
@@ -75,7 +75,7 @@ body {
     position: relative;
     transition: all ease 0.3s;
     z-index: 9999;
-    .mapa,
+    .map,
     .clique {
         display: flex;
         width: 100%;
@@ -101,7 +101,7 @@ body {
             }
         }
     }
-    #seu-mapa-view {
+    #your-map-view {
         margin: -3px 0 !important;
         padding-bottom: 0;
         font-size: 8px;
@@ -120,7 +120,7 @@ body {
     }
     &:hover {
         margin-top: -10px;
-        #seu-mapa-view {
+        #your-map-view {
             font-size: 15px;
             margin: 3px 0 !important;
         }

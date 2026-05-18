@@ -67,8 +67,8 @@ $videoplayer = $view->get_player();
 
 echo $OUTPUT->header();
 $mustachedata = [
-    "showmapa" => $view->config->showmapa,
-    "mapa" => $view->get_maps(),
+    "showmap" => $view->config->showmap,
+    "map" => $view->get_maps(),
     "errosmessages" => $view->errosmessages,
     "video_player" => $videoplayer,
     "page_title" => $view->supervideo->name,

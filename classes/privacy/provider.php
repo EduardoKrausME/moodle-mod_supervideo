@@ -58,7 +58,7 @@ class provider implements
             'currenttime' => 'privacy:metadata:supervideo_view:currenttime',
             'duration' => 'privacy:metadata:supervideo_view:duration',
             'percent' => 'privacy:metadata:supervideo_view:percent',
-            'mapa' => 'privacy:metadata:supervideo_view:mapa',
+            'map' => 'privacy:metadata:supervideo_view:map',
             'timecreated' => 'privacy:metadata:supervideo_view:timecreated',
             'timemodified' => 'privacy:metadata:supervideo_view:timemodified',
         ], 'privacy:metadata:supervideo_view');

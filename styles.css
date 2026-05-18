@@ -66,7 +66,7 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   display: none;
 }
 
-#mapa-visualizacao {
+#map-visualization {
   margin: 5px 0;
   background: rgba(206, 206, 206, 0.5);
   padding: 1px;
@@ -75,34 +75,34 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   transition: all ease 0.3s;
   z-index: 9999;
 }
-#mapa-visualizacao .mapa,
-#mapa-visualizacao .clique {
+#map-visualization .map,
+#map-visualization .clique {
   display: flex;
   width: 100%;
   position: absolute;
   top: 0;
   bottom: 0;
 }
-#mapa-visualizacao .mapa div,
-#mapa-visualizacao .clique div {
+#map-visualization .map div,
+#map-visualization .clique div {
   height: 100%;
   background: #e60076;
   width: 100%;
   opacity: 0;
   transition: opacity 200ms;
 }
-#mapa-visualizacao .clique {
+#map-visualization .clique {
   z-index: 3;
 }
-#mapa-visualizacao .clique div {
+#map-visualization .clique div {
   cursor: pointer;
   background: rgba(0, 0, 0, 0);
 }
-#mapa-visualizacao .clique div:hover {
+#map-visualization .clique div:hover {
   background: rgba(0, 0, 0, 0.2);
   opacity: 1;
 }
-#mapa-visualizacao #seu-mapa-view {
+#map-visualization #your-map-view {
   margin: -3px 0 !important;
   padding-bottom: 0;
   font-size: 8px;
@@ -112,29 +112,29 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   text-align: center;
   transition: all ease 0.3s;
 }
-#mapa-visualizacao #seu-mapa-view span {
+#map-visualization #your-map-view span {
   font-weight: 700;
 }
 @media (max-width: 750px) {
-  #mapa-visualizacao #seu-mapa-view {
+  #map-visualization #your-map-view {
     font-size: 15px;
     margin: 3px 0 !important;
   }
 }
-#mapa-visualizacao:hover {
+#map-visualization:hover {
   margin-top: -10px;
 }
-#mapa-visualizacao:hover #seu-mapa-view {
+#map-visualization:hover #your-map-view {
   font-size: 15px;
   margin: 3px 0 !important;
 }
-#mapa-visualizacao.report {
+#map-visualization.report {
   display: flex;
   width: 100%;
   margin: 6px 0;
   height: 20px;
 }
-#mapa-visualizacao.report div {
+#map-visualization.report div {
   opacity: 0;
   background: #e60076;
   width: 100%;

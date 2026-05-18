@@ -33,9 +33,9 @@ if ($ADMIN->fulltree) {
         1);
     $settings->add($setting);
 
-    $setting = new admin_setting_configcheckbox("supervideo/showmapa",
-        get_string("showmapa", "mod_supervideo"),
-        get_string("showmapa_desc", "mod_supervideo"),
+    $setting = new admin_setting_configcheckbox("supervideo/showmap",
+        get_string("showmap", "mod_supervideo"),
+        get_string("showmap_desc", "mod_supervideo"),
         1);
     $settings->add($setting);
 

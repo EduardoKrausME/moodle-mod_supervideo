@@ -88,7 +88,7 @@ class supervideo_view extends table_sql {
                 'currenttime',
                 'duration',
                 'percent',
-                'mapa',
+                'map',
                 'timecreated',
                 'timemodified',
             ];
@@ -99,7 +99,7 @@ class supervideo_view extends table_sql {
                 get_string('report_tempo', 'mod_supervideo'),
                 get_string('report_duracao', 'mod_supervideo'),
                 get_string('report_porcentagem', 'mod_supervideo'),
-                get_string('report_mapa', 'mod_supervideo'),
+                get_string('report_map', 'mod_supervideo'),
                 get_string('report_comecou', 'mod_supervideo'),
                 get_string('report_terminou', 'mod_supervideo'),
             ];
@@ -242,28 +242,28 @@ class supervideo_view extends table_sql {
     }
 
     /**
-     * Function col_mapa
+     * Function col_map
      *
      * @param $linha
      *
      * @return string
      */
-    public function col_mapa($linha) {
-        $htmlmapa = "<div id='mapa-visualizacao' class='report'>";
+    public function col_map($linha) {
+        $htmlmap = "<div id='map-visualization' class='report'>";
 
-        $mapas = json_decode($linha->mapa);
-        foreach ($mapas as $id => $mapa) {
+        $maps = json_decode($linha->map);
+        foreach ($maps as $id => $map) {
             if ($id == 0) {
                 continue;
             }
-            if ($mapa) {
-                $htmlmapa .= "<div id='mapa-visualizacao-" . $id . "' style='opacity:1'></div>";
+            if ($map) {
+                $htmlmap .= "<div id='map-visualization-" . $id . "' style='opacity:1'></div>";
             } else {
-                $htmlmapa .= "<div id='mapa-visualizacao-" . $id . "'></div>";
+                $htmlmap .= "<div id='map-visualization-" . $id . "'></div>";
             }
         }
-        $htmlmapa .= "</div>";
-        return $htmlmapa;
+        $htmlmap .= "</div>";
+        return $htmlmap;
     }
 
     /**
@@ -345,7 +345,7 @@ class supervideo_view extends table_sql {
         if ($this->userid) {
             $params['user_id'] = $this->userid;
 
-            $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
+            $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.map,
                                  u.firstname, u.lastname, u.email,
                                  u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                             FROM {supervideo_view} sv
@@ -438,7 +438,7 @@ class supervideo_view extends table_sql {
         if ($this->userid) {
             $params['user_id'] = $this->userid;
 
-            $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
+            $this->sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.map,
                                  u.firstname, u.lastname, u.email,
                                  u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename
                             FROM {supervideo_view} sv
