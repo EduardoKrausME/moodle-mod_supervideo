@@ -287,6 +287,7 @@ class view {
                     "pip=1",
                     "title=0",
                     "byline=0",
+                    "playsinline=1",
                     $this->supervideo->showcontrols ? "title=1" : "title=0",
                     $this->supervideo->autoplay ? "autoplay=1" : "autoplay=0",
                     $this->supervideo->showcontrols ? "controls=1" : "controls=0",
