@@ -195,7 +195,6 @@ $string['settings_obrigatorio_desmarcado'] = 'It will be disabled for everyone a
 $string['settings_obrigatorio_marcado'] = 'It will be activated for everyone and there is no way to edit it on the FORM';
 $string['settings_opcional_desmarcado'] = 'The FORM will appear deactivated and the teacher can activate or deactivate';
 $string['settings_opcional_marcado'] = 'On the FORM it will appear activated and the teacher can activate or deactivate it';
-$string['your_map_view'] = 'Your View map:';
 $string['showcontrols'] = 'Display controls';
 $string['showcontrols_desc'] = 'Display player controls for YouTube and Vimeo.';
 $string['showmap'] = 'Show Map';
@@ -229,3 +228,4 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div>Add a URL of a video you have hosted on your own server:</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
+$string['your_map_view'] = 'Your View map:';
