@@ -258,7 +258,8 @@ class view {
                         $this->supervideo->autoplay ? 1 : 0,
                     ]);
 
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", $this->add_player_direction(["elementid" => $elementid]));
+                    $mustachedata = $this->add_player_direction(["elementid" => $elementid]);
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
                 } else {
                     return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
                 }
