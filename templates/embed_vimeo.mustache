@@ -21,13 +21,15 @@
     {
         "html_id": "id_123",
         "vimeo_id": "12345abcde",
-        "tags": ["class=iframe"]
+        "tags": ["class=iframe"],
+        "direction": "ltr"
     }
 }}
 
 <script src="https://player.vimeo.com/api/player.js"></script>
 
 <iframe id="{{{elementid}}}"
+           {{#direction}}dir="{{direction}}"{{/direction}}
         style="background: #000;max-height: 687.75px;height: 687.75px;width: 100%;"
         frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen
         sandbox="allow-scripts allow-forms allow-same-origin allow-modals allow-presentation"

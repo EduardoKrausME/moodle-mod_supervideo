@@ -87,7 +87,7 @@ if ($view->freemode) {
         "showsettings" => $view->caneditsettings,
         "url_back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
         "url_settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
-    ];
+    ] + $view->get_direction_data();
     echo $OUTPUT->render_from_template("mod_supervideo/view-freemode", $mustachedata);
 
     echo $OUTPUT->footer();
@@ -106,7 +106,12 @@ if ($view->freemode) {
             $aspectstyle = 'aspect-ratio: 16 / 9;';
         }
     }
-    echo "<div id=\"supervideo_area_embed\" style=\"{$aspectstyle}\">";
+    $directiondata = $view->get_direction_data();
+    $directionattr = "";
+    if (!empty($directiondata["direction"])) {
+        $directionattr = " dir=\"" . s($directiondata["direction"]) . "\"";
+    }
+    echo "<div id=\"supervideo_area_embed\"{$directionattr} style=\"{$aspectstyle}\">";
     echo $videoplayer;
     echo '</div>';
     if ($view->config->showmap) {

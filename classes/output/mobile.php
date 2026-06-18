@@ -48,6 +48,9 @@ class mobile {
             "cmid" => $args["cmid"],
             "iframe_url" => $url->out(false),
         ];
+        if (right_to_left()) {
+            $data["direction"] = "ltr";
+        }
 
         return [
             "templates" => [

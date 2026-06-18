@@ -27,11 +27,12 @@
         "showback": true,
         "showsettings": true,
         "url_back": "https://site/course/view.php?id=123",
-        "url_settings": "https://site/course/modedit.php?update=123"
+        "url_settings": "https://site/course/modedit.php?update=123",
+        "direction": "ltr"
     }
 }}
 
-<div class="app" id="app">
+<div class="app" id="app"{{#direction}} dir="{{direction}}"{{/direction}}>
     <!-- Header -->
     <header class="header" id="header">
         <div class="left">

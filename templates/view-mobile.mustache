@@ -22,11 +22,12 @@
         "showmap": true,
         "map": "<div....",
         "errosmessages": "<div...",
-        "video_player": "<video..."
+        "video_player": "<video...",
+        "direction": "ltr"
     }
 }}
 
-<div  id="app" class="app df-active">
+<div  id="app" class="app df-active"{{#direction}} dir="{{direction}}"{{/direction}}>
     <main class="stage">
         <div class="video-wrap" id="videoWrap">
             {{{errosmessages}}}

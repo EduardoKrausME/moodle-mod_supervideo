@@ -62,6 +62,39 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   border: none;
 }
 
+#supervideo_area_embed[dir=ltr],
+.mod-supervideo-mobile[dir=ltr],
+body.body-df .app[dir=ltr] .video-wrap {
+  direction: ltr !important;
+  unicode-bidi: isolate;
+}
+
+#supervideo_area_embed[dir=ltr] .plyr,
+#supervideo_area_embed[dir=ltr] .plyr__controls,
+#supervideo_area_embed[dir=ltr] .plyr__controls *,
+#supervideo_area_embed[dir=ltr] .plyr__progress,
+#supervideo_area_embed[dir=ltr] .plyr__progress *,
+#supervideo_area_embed[dir=ltr] .plyr__volume,
+#supervideo_area_embed[dir=ltr] .plyr__volume *,
+#supervideo_area_embed[dir=ltr] .plyr__menu,
+#supervideo_area_embed[dir=ltr] .plyr__menu *,
+body.body-df .app[dir=ltr] .plyr,
+body.body-df .app[dir=ltr] .plyr__controls,
+body.body-df .app[dir=ltr] .plyr__controls *,
+body.body-df .app[dir=ltr] .plyr__progress,
+body.body-df .app[dir=ltr] .plyr__progress *,
+body.body-df .app[dir=ltr] .plyr__volume,
+body.body-df .app[dir=ltr] .plyr__volume *,
+body.body-df .app[dir=ltr] .plyr__menu,
+body.body-df .app[dir=ltr] .plyr__menu * {
+  direction: ltr !important;
+}
+
+#supervideo_area_embed[dir=ltr] .plyr__menu__container,
+body.body-df .app[dir=ltr] .plyr__menu__container {
+  text-align: left !important;
+}
+
 #page-mod-supervideo-report table.flexible .header .commands {
   display: none;
 }

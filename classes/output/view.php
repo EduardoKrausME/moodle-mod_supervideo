@@ -195,7 +195,7 @@ class view {
                 );
                 $this->create_errosmessages();
                 $this->freemode = false;
-                return $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
+                return $OUTPUT->render_from_template("mod_supervideo/embed_div", $this->add_player_direction($mustachedata));
             }
             if ($this->supervideo->origem == "upload") {
                 $files = supervideo_get_area_files($this->context->id);
@@ -233,7 +233,7 @@ class view {
                         "controls" => $this->config->controls,
                         "speed" => $this->config->speed,
                     ];
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", $mustachedata);
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", $this->add_player_direction($mustachedata));
                 } else {
                     $message = get_string("filenotfound", "mod_supervideo");
                     $notification = new notification($message, notification::NOTIFY_ERROR);
@@ -258,7 +258,7 @@ class view {
                         $this->supervideo->autoplay ? 1 : 0,
                     ]);
 
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $elementid]);
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_div", $this->add_player_direction(["elementid" => $elementid]));
                 } else {
                     return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
                 }
@@ -277,11 +277,11 @@ class view {
                         $elementid,
                         $this->supervideo->playersize,
                     ]);
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_drive", [
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_drive", $this->add_player_direction([
                         "elementid" => $elementid,
                         "driveid" => $output[0],
                         "parametersdrive" => $parametersdrive,
-                    ]);
+                    ]));
                 } else {
                     return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
                 }
@@ -311,11 +311,11 @@ class view {
                     $this->supervideo->videourl,
                     $elementid,
                 ]);
-                return $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", [
+                return $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", $this->add_player_direction([
                     "elementid" => $elementid,
                     "vimeo_id" => $url,
                     "parametersvimeo" => $parametersvimeo,
-                ]);
+                ]));
             }
             if ($this->supervideo->origem == "pandavideo") {
                 try {
@@ -328,11 +328,11 @@ class view {
                         $elementid,
                         ["width" => $pandavideo->width, "height" => $pandavideo->height],
                     ]);
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", [
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", $this->add_player_direction([
                         "elementid" => $elementid,
                         "id" => $pandavideo->id,
                         "video_player" => $pandavideo->video_player,
-                    ]);
+                    ]));
                 } catch (Exception $e) {
                     return $this->create_error_message($e->getMessage());
                 }
@@ -353,10 +353,10 @@ class view {
                         $videourl .= "{$separator}t={$currenttime}";
                     }
 
-                    return $OUTPUT->render_from_template("mod_supervideo/embed_iframe", [
+                    return $OUTPUT->render_from_template("mod_supervideo/embed_iframe", $this->add_player_direction([
                         "elementid" => $elementid,
                         "videourl" => $videourl,
-                    ]);
+                    ]));
                 } else {
                     return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
                 }
@@ -364,6 +364,38 @@ class view {
         } else {
             return $this->create_error_message(get_string("idnotfound", "mod_supervideo"));
         }
+    }
+
+    /**
+     * Add player direction when the Moodle page is RTL.
+     *
+     * The player controls must stay LTR in RTL languages, but the dir attribute
+     * should only be rendered when this method defines it.
+     *
+     * @param array $mustachedata
+     * @return array
+     */
+    private function add_player_direction($mustachedata) {
+        $direction = right_to_left() ? "ltr" : "";
+        if ($direction) {
+            $mustachedata["direction"] = $direction;
+        }
+
+        return $mustachedata;
+    }
+
+    /**
+     * Get direction data for templates that wrap the player.
+     *
+     * @return array
+     */
+    public function get_direction_data() {
+        $direction = right_to_left() ? "ltr" : "";
+        if (!$direction) {
+            return [];
+        }
+
+        return ["direction" => $direction];
     }
 
     /**
