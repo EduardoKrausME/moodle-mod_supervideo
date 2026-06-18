@@ -97,8 +97,8 @@ class playback extends external_api {
             "config" => [
                 "showmap" => self::get_config_bool($config, "showmap", self::get_config_bool($config, "showmapa", false)),
                 "showmapa" => self::get_config_bool($config, "showmapa", self::get_config_bool($config, "showmap", false)),
-                "datamap" => base64_encode((string)($view->mapa ?? "")),
-                "viewid" => (int)$view->id,
+                "datamap" => base64_encode($view->map),
+                "viewid" => $view->id,
                 "currenttime" => (int)($view->currenttime ?? 0),
                 "showcontrols" => !empty($supervideo->showcontrols) ? 1 : 0,
                 "autoplay" => !empty($supervideo->autoplay) ? 1 : 0,

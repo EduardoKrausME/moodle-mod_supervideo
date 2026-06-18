@@ -256,9 +256,29 @@ function xmldb_supervideo_upgrade($oldversion) {
         }
 
         $showmap = get_config("supervideo", "showmapa");
-        set_config("showmap", $showmap, "supervideo");
+        if ($showmap === false) {
+            $showmap = get_config("supervideo", "showmap");
+        }
+        if ($showmap === false) {
+            $showmap = 1;
+        }
+        set_config("showmap", !empty($showmap) ? 1 : 0, "supervideo");
 
         upgrade_mod_savepoint(true, 2026051800, "supervideo");
+    }
+
+    if ($oldversion < 2026061801) {
+
+        $legacyshowmap = get_config("supervideo", "showmapa");
+        $showmap = get_config("supervideo", "showmap");
+
+        if ($legacyshowmap !== false) {
+            set_config("showmap", !empty($legacyshowmap) ? 1 : 0, "supervideo");
+        } else if ($showmap === false || $showmap === "") {
+            set_config("showmap", 1, "supervideo");
+        }
+
+        upgrade_mod_savepoint(true, 2026061801, "supervideo");
     }
 
     return true;
