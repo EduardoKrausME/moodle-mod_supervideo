@@ -43,6 +43,9 @@ class view {
     /** @var bool */
     public $hasteacher;
 
+    /** @var bool */
+    public $caneditsettings;
+
     /** @var mixed */
     public $config;
 
@@ -85,6 +88,7 @@ class view {
         $this->context = $context;
 
         $this->hasteacher = has_capability("mod/supervideo:addinstance", $context);
+        $this->caneditsettings = has_capability("moodle/course:manageactivities", $context);
         $this->config = config_util::get_config($supervideo);
 
         $this->supervideoview = supervideo_view::create($cm->id);

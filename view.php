@@ -31,6 +31,7 @@ require_once("{$CFG->libdir}/completionlib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
 $n = optional_param("n", 0, PARAM_INT);
+$embed = optional_param("embed", 0, PARAM_BOOL);
 
 if ($id) {
     $cm = get_coursemodule_from_id("supervideo", $id, 0, false, MUST_EXIST);
@@ -53,7 +54,7 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 $PAGE->set_cm($cm, $course);
-$PAGE->set_url("/mod/supervideo/view.php", ["n" => $n, "id" => $id]);
+$PAGE->set_url("/mod/supervideo/view.php", ["n" => $n, "id" => $id, "embed" => $embed]);
 $PAGE->set_title($supervideo->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
@@ -82,6 +83,8 @@ if ($view->freemode) {
         "errosmessages" => $view->errosmessages,
         "video_player" => $videoplayer,
         "page_title" => $view->supervideo->name,
+        "showback" => !$embed,
+        "showsettings" => $view->caneditsettings,
         "url_back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
         "url_settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
     ];
