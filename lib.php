@@ -696,7 +696,7 @@ function supervideo_get_coursemodule_info($coursemodule) {
     global $DB;
 
     if (!$supervideo = $DB->get_record("supervideo", ["id" => $coursemodule->instance],
-        "id, name, videourl, intro, introformat, completionpercent")) {
+        "id, name, origem, videourl, ottflix_ia, playersize, showcontrols, autoplay, intro, introformat, completionpercent")) {
         return null;
     }
 
