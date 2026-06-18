@@ -110,6 +110,8 @@ class supervideo_view {
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
+            $percent = self::calculate_percent_from_map($map, $duration);
+
             $supervideoview->currenttime = $currenttime;
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
@@ -124,5 +126,39 @@ class supervideo_view {
             return $status;
         }
         return false;
+    }
+
+    /**
+     * Calculate the watched percentage using the saved view map.
+     *
+     * @param string $map
+     * @param int $duration
+     *
+     * @return int
+     */
+    private static function calculate_percent_from_map($map, $duration) {
+        $duration = (int)$duration;
+        if ($duration <= 0) {
+            return 0;
+        }
+
+        $viewmap = json_decode($map, true);
+        if (!is_array($viewmap)) {
+            return 0;
+        }
+
+        $progresslength = $duration <= 100 ? $duration : 100;
+        if ($progresslength <= 0) {
+            return 0;
+        }
+
+        $watched = 0;
+        for ($i = 1; $i <= $progresslength; $i++) {
+            if (!empty($viewmap[$i])) {
+                $watched++;
+            }
+        }
+
+        return min(100, (int)floor($watched / $progresslength * 100));
     }
 }

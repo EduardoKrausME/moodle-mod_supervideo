@@ -574,16 +574,21 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 video_position = parseInt(currenttime / duration * player_create._internal_progress_length);
             }
 
+            if (video_position > player_create._internal_progress_length) {
+                video_position = player_create._internal_progress_length;
+            }
+            if (video_position < 0) {
+                video_position = 0;
+            }
+
             if (player_create._internal_last_position_video == video_position) {
                 return;
             }
 
-            // Fill all segments between last position and current position
-            var from = player_create._internal_last_position_video > 0 ? player_create._internal_last_position_video + 1 : video_position;
-            for (var p = from; p <= video_position; p++) {
-                if (p > 0 && p <= player_create._internal_progress_length) {
-                    player_create._internal_assisted[p] = 1;
-                }
+            // Do not fill skipped segments. A jump in currentTime can happen after seeking,
+            // so only the segment reached by this progress event is marked as watched.
+            if (video_position > 0 && video_position <= player_create._internal_progress_length) {
+                player_create._internal_assisted[video_position] = 1;
             }
             player_create._internal_last_position_video = video_position;
 

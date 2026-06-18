@@ -84,6 +84,7 @@ class progress extends external_api {
         $currenttime = $params['currenttime'];
         $duration = $params['duration'];
         $percent = $params['percent'];
+        $map = $params['map'];
 
         supervideo_view::update($viewid, $currenttime, $duration, $percent, $map);
         return ['success' => true, 'exec' => "OK"];
