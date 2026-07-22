@@ -155,6 +155,7 @@ $string['ottflix_token'] = 'OttFlix Access Token';
 $string['ottflix_token_desc'] = 'Enter the OttFlix access token for request authentication.';
 $string['ottflix_url'] = 'OttFlix URL';
 $string['ottflix_url_desc'] = 'Enter the OttFlix URL for integration.';
+$string['overview_requiredviewing'] = 'Required viewing';
 $string['pandavideo_title'] = 'Panda Videos';
 $string['pandavideo_title_desc'] = 'Integration with the Panda Videos streaming service to display content hosted on the platform. Learn more at <a href="https://pandavideo.com.br/?ref=mjy1ndz" target="_blank" rel="noopener noreferrer">pandavideo.com.br</a>.';
 $string['playersize'] = 'Video size';
