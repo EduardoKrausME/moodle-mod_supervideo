@@ -110,12 +110,30 @@ class supervideo_view {
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
-            $percent = self::calculate_percent_from_map($map, $duration);
+            // Never lose watched segments when two tabs save progress at nearly
+            // the same time. The database map and the incoming map are merged.
+            $storedmap = json_decode($supervideoview->map, true);
+            $incomingmap = json_decode($map, true);
+            $mergedmap = is_array($storedmap) ? $storedmap : [];
+            if (is_array($incomingmap)) {
+                foreach ($incomingmap as $position => $watched) {
+                    if (!empty($watched)) {
+                        $mergedmap[(int)$position] = 1;
+                    } else if (!isset($mergedmap[(int)$position])) {
+                        $mergedmap[(int)$position] = 0;
+                    }
+                }
+            }
+            ksort($mergedmap);
+
+            $duration = max((int)$duration, (int)$supervideoview->duration);
+            $percent = self::calculate_percent_from_map(json_encode($mergedmap), $duration);
+            $percent = max((int)$supervideoview->percent, $percent);
 
             $supervideoview->currenttime = $currenttime;
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
-            $supervideoview->map = $map;
+            $supervideoview->map = json_encode($mergedmap);
             $supervideoview->timemodified = time();
 
             $status = $DB->update_record("supervideo_view", $supervideoview);
