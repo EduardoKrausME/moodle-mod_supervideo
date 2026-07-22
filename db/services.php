@@ -32,6 +32,7 @@ $functions = [
         'description' => 'Save progress video.',
         'type' => 'write',
         'ajax' => true,
+        'loginrequired' => true,
     ],
 
     'mod_supervideo_progress_save_mobile' => [
