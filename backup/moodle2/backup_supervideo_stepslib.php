@@ -50,11 +50,14 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
                 "introformat",
                 "origem",
                 "videourl",
+                "ottflix_ia",
                 "playersize",
                 "showcontrols",
                 "autoplay",
                 "grade_approval",
                 "completionpercent",
+                "timecreated",
+                "timemodified",
             ]);
 
         // Define data sources.
