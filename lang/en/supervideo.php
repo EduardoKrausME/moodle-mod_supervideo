@@ -170,6 +170,7 @@ $string['privacy:metadata:supervideo_view:percent'] = 'The percentage of the vid
 $string['privacy:metadata:supervideo_view:timecreated'] = 'The timestamp when the video interaction record was created.';
 $string['privacy:metadata:supervideo_view:timemodified'] = 'The timestamp when the video interaction record was last modified.';
 $string['privacy:metadata:supervideo_view:user_id'] = 'The ID of the user who interacted with the video.';
+$string['privacy:progress'] = 'Video viewing progress';
 $string['record_kapture'] = 'Record your video with Kapture';
 $string['report'] = 'Report';
 $string['report_all'] = 'All views for this student';
