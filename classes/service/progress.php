@@ -17,6 +17,7 @@
 namespace mod_supervideo\service;
 
 use coding_exception;
+use context_module;
 use dml_exception;
 use external_api;
 use external_function_parameters;
@@ -72,6 +73,7 @@ class progress extends external_api {
      * @throws moodle_exception
      */
     public static function save($viewid, $currenttime, $duration, $percent, $map) {
+        global $DB, $USER;
 
         $params = self::validate_parameters(self::save_parameters(), [
             'view_id' => $viewid,
@@ -85,6 +87,41 @@ class progress extends external_api {
         $duration = $params['duration'];
         $percent = $params['percent'];
         $map = $params['map'];
+
+        $view = $DB->get_record('supervideo_view', [
+            'id' => $viewid,
+            'user_id' => $USER->id,
+        ], 'id, cm_id', MUST_EXIST);
+        $cm = get_coursemodule_from_id('supervideo', $view->cm_id, 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/supervideo:view', $context);
+
+        $currenttime = max(0, (int)$currenttime);
+        $duration = max(0, (int)$duration);
+        if ($duration > 0) {
+            $currenttime = min($currenttime, $duration);
+        }
+
+        // A progress map has at most 100 watched segments plus index zero.
+        // Normalising it here avoids oversized or malformed payloads.
+        if (strlen($map) > 10000) {
+            throw new invalid_parameter_exception('The progress map is too large.');
+        }
+        $decodedmap = json_decode($map, true);
+        if (!is_array($decodedmap)) {
+            throw new invalid_parameter_exception('The progress map is invalid.');
+        }
+        $normalisedmap = [];
+        foreach ($decodedmap as $position => $watched) {
+            $position = (int)$position;
+            if ($position < 0 || $position > 100) {
+                continue;
+            }
+            $normalisedmap[$position] = empty($watched) ? 0 : 1;
+        }
+        ksort($normalisedmap);
+        $map = json_encode($normalisedmap);
 
         supervideo_view::update($viewid, $currenttime, $duration, $percent, $map);
         return ['success' => true, 'exec' => "OK"];
