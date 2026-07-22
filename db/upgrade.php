@@ -281,6 +281,42 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026061801, "supervideo");
     }
 
+    if ($oldversion < 2026072200) {
+        $table = new xmldb_table('supervideo');
+
+        // Store long signed or parameterised video URLs without truncation.
+        $videourl = new xmldb_field('videourl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'origem');
+        if ($dbman->field_exists($table, $videourl)) {
+            $dbman->change_field_type($table, $videourl);
+        }
+
+        // supervideo_add_instance has populated this value for years, but the
+        // field was missing from the install schema.
+        $timecreated = new xmldb_field(
+            'timecreated',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completionpercent'
+        );
+        if (!$dbman->field_exists($table, $timecreated)) {
+            $dbman->add_field($table, $timecreated);
+            $DB->execute('UPDATE {supervideo} SET timecreated = timemodified WHERE timecreated = 0');
+        }
+
+        // Most progress and report lookups filter by activity and user.
+        $viewtable = new xmldb_table('supervideo_view');
+        $cmuserindex = new xmldb_index('cm_user', XMLDB_INDEX_NOTUNIQUE, ['cm_id', 'user_id']);
+        if (!$dbman->index_exists($viewtable, $cmuserindex)) {
+            $dbman->add_index($viewtable, $cmuserindex);
+        }
+
+        upgrade_mod_savepoint(true, 2026072200, 'supervideo');
+    }
+
     return true;
 }
 
