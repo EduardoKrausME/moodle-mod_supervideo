@@ -188,6 +188,7 @@ $string['report_terminou'] = 'Finished watching when';
 $string['report_title'] = 'Report';
 $string['report_userid'] = 'User ID';
 $string['report_visualizacoes'] = 'Visualizations';
+$string['overview_requiredviewing'] = 'Required viewing';
 $string['repository_ottflix_disable'] = 'The OttFlix repository is installed but not enabled. <a href="{$a}/admin/repository.php">Click here to enable it</a> and make it easier to organize your videos and files.';
 $string['repository_ottflix_notinstall'] = 'The OttFlix repository is not installed. We recommend <a href="https://moodle.org/plugins/repository_ottflix">clicking here</a> to install it and simplify access and organization of your videos and files.';
 $string['repository_pandavideo_disable'] = 'The Panda Video repository is installed but not enabled. <a href="{$a}/admin/repository.php">Click here to enable it</a> and optimize the use of your videos.';
