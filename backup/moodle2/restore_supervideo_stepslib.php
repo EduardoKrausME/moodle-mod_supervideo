@@ -58,10 +58,14 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
 
         if (empty($data->timecreated)) {
             $data->timecreated = time();
+        } else {
+            $data->timecreated = $this->apply_date_offset($data->timecreated);
         }
 
         if (empty($data->timemodified)) {
             $data->timemodified = time();
+        } else {
+            $data->timemodified = $this->apply_date_offset($data->timemodified);
         }
 
         if (isset($data->grade) && $data->grade < 0) {
