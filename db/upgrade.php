@@ -290,7 +290,7 @@ function xmldb_supervideo_upgrade($oldversion) {
             $dbman->change_field_type($table, $videourl);
         }
 
-        // supervideo_add_instance has populated this value for years, but the
+        // supervideo_add_instance has populated this value for years, but the.
         // field was missing from the install schema.
         $timecreated = new xmldb_field(
             'timecreated',
