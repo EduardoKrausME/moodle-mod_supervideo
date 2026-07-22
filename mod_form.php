@@ -177,11 +177,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         }
 
         // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        $this->standard_intro_elements();
 
         // Grade Element.
         $mform->addElement("header", "modstandardgrade", get_string("modgrade", "grades"));
