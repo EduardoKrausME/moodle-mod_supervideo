@@ -410,7 +410,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability("mod/supervideo:addinstance", $PAGE->cm->context)) {
+    if (has_capability("mod/supervideo:view_report", $PAGE->cm->context)) {
         $node = navigation_node::create(get_string("report", "mod_supervideo"),
             new moodle_url("/mod/supervideo/report.php", ["id" => $PAGE->cm->id]), navigation_node::TYPE_SETTING, null,
             "mod_supervideo_report", new pix_icon("i/report", ""));
