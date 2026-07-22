@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, PlayerRender) {
+define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, Notification, PlayerRender) {
     var youtubeApiCallbacks = [];
     var youtubeApiHooked = false;
     var youtubeApiRequested = false;
@@ -57,11 +57,11 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         },
 
         ottflix: function (view_id, start_currenttime, elementId, identifier) {
+            player_create._internal_view_id = view_id;
+
             let totalDuration = false;
             if (Array.isArray(identifier)) {
                 totalDuration = identifier.reduce((sum, item) => sum + (item.duration || 0), 0);
-            } else {
-                totalDuration = event.data.duration;
             }
 
             const identifiers = new Set(
@@ -137,9 +137,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                             document.addEventListener("setCurrentTime", function(event) {
                                 player.seekTo(event.detail.goCurrentTime);
                             });
-                        },
-                        "onStateChange": function (event) {
-                            console.log(event);
                         }
                     }
                 });
@@ -302,7 +299,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                         function updateQuality(newQuality) {
                             window.hls.levels.forEach((level, levelIndex) => {
                                 if (level.height === newQuality) {
-                                    console.log("Found quality match with " + newQuality);
                                     window.hls.currentLevel = levelIndex;
                                 }
                             });
@@ -475,7 +471,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         _internal_resize__width: 0,
         _internal_resize__height: 0,
         _internal_resize: function (width, height) {
-            console.log([width, height]);
             player_create._internal_resize__width = width;
             player_create._internal_resize__height = height;
 
@@ -647,7 +642,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                         percent: parseInt(percent),
                         map: JSON.stringify(player_create._internal_assisted)
                     }
-                }]);
+                }])[0].fail(Notification.exception);
             }
 
             if (percent >= 0) {
