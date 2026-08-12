@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once("{$CFG->dirroot}/course/moodleform_mod.php");
 
 use mod_supervideo\form\supervideo_filepicker;
+use mod_supervideo\util\marker_util;
 
 /**
  * class mod_supervideo_mod_for
@@ -176,6 +177,18 @@ class mod_supervideo_mod_form extends moodleform_mod {
             $mform->hideIf("autoplay", "origem", "eq", "embed");
         }
 
+        // Markers and optional jumps between them.
+        $mform->addElement(
+            "textarea",
+            "markers",
+            get_string("markers", "mod_supervideo"),
+            ["rows" => 6, "cols" => 60]
+        );
+        $mform->setType("markers", PARAM_RAW_TRIMMED);
+        $mform->addHelpButton("markers", "markers", "mod_supervideo");
+        $mform->hideIf("markers", "origem", "eq", "drive");
+        $mform->hideIf("markers", "origem", "eq", "ottflix");
+
         // Adding the standard "intro" and "introformat" fields.
         $this->standard_intro_elements();
 
@@ -192,7 +205,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             "select",
             "gradecat",
             get_string("gradecategoryonmodform", "grades"),
-            grade_get_categories_menu($COURSE->id, false)
+            grade_get_categories_menu($COURSE->id)
         );
         $mform->addHelpButton("gradecat", "gradecategoryonmodform", "grades");
         $mform->hideIf("gradecat", "grade_approval", "eq", "0");
@@ -220,7 +233,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-        $config = get_config("supervideo");
         $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
         $PAGE->requires->js_call_amd(
             "mod_supervideo/mod_form",
@@ -368,6 +380,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
             if ($data["gradepass"] > 100) {
                 $errors["gradepass"] = get_string("completionpercent_error", "mod_supervideo");
+            }
+        }
+        if (!empty($data["markers"])) {
+            try {
+                marker_util::parse($data["markers"], true);
+            } catch (InvalidArgumentException $exception) {
+                $errors["markers"] = get_string("markers_error", "mod_supervideo");
             }
         }
         $origem = $data["origem"];

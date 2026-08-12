@@ -32,6 +32,7 @@ use mod_supervideo\analytics\supervideo_view;
 use mod_supervideo\ottflix\repository as repositoryOttflix;
 use mod_supervideo\pandavideo\repository as repositoryPanda;
 use mod_supervideo\util\config_util;
+use mod_supervideo\util\marker_util;
 use moodle_url;
 use stdClass;
 
@@ -140,6 +141,11 @@ class view {
     public function get_player() {
         global $PAGE, $USER, $OUTPUT;
 
+        $markerconfig = [
+            "points" => marker_util::parse($this->supervideo->markers ?? ""),
+            "buttonlabel" => get_string("markers_jump", "mod_supervideo"),
+        ];
+
         if ($this->supervideo->videourl) {
             $uniqueid = uniqid();
             $elementid = "{$this->supervideo->origem}-{$uniqueid}";
@@ -183,15 +189,21 @@ class view {
                     "hls" => preg_match("/^https?.*\.(m3u8)/i", $this->supervideo->videourl, $output),
                     "has_audio" => preg_match("/^https?.*\.(mp3|aac|m4a)/i", $this->supervideo->videourl, $output),
                 ];
+                $playerargs = [
+                    (int)$this->supervideoview->id,
+                    $this->supervideoview->currenttime,
+                    $elementid,
+                ];
+                if ($mustachedata["has_audio"]) {
+                    $playerargs[] = $markerconfig;
+                } else {
+                    $playerargs[] = $mustachedata["hls"];
+                    $playerargs[] = $markerconfig;
+                }
                 $PAGE->requires->js_call_amd(
                     "mod_supervideo/player_create",
                     $mustachedata["has_audio"] ? "resource_audio" : "resource_video",
-                    [
-                        (int)$this->supervideoview->id,
-                        $this->supervideoview->currenttime,
-                        $elementid,
-                        $mustachedata["hls"],
-                    ]
+                    $playerargs
                 );
                 $this->create_errosmessages();
                 $this->freemode = false;
@@ -216,12 +228,15 @@ class view {
                             (int)$this->supervideoview->id,
                             $this->supervideoview->currenttime,
                             $elementid,
+                            $markerconfig,
                         ]);
                     } else {
                         $PAGE->requires->js_call_amd("mod_supervideo/player_create", "resource_video", [
                             (int)$this->supervideoview->id,
                             $this->supervideoview->currenttime,
                             $elementid,
+                            false,
+                            $markerconfig,
                         ]);
                     }
                     $this->create_errosmessages();
@@ -256,6 +271,7 @@ class view {
                         $this->supervideo->playersize,
                         $this->supervideo->showcontrols ? 1 : 0,
                         $this->supervideo->autoplay ? 1 : 0,
+                        $markerconfig,
                     ]);
 
                     $mustachedata = $this->add_player_direction(["elementid" => $elementid]);
@@ -311,6 +327,7 @@ class view {
                     $this->supervideoview->currenttime,
                     $this->supervideo->videourl,
                     $elementid,
+                    $markerconfig,
                 ]);
                 return $OUTPUT->render_from_template("mod_supervideo/embed_vimeo", $this->add_player_direction([
                     "elementid" => $elementid,
@@ -328,6 +345,7 @@ class view {
                         $this->supervideoview->currenttime,
                         $elementid,
                         ["width" => $pandavideo->width, "height" => $pandavideo->height],
+                        $markerconfig,
                     ]);
                     return $OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", $this->add_player_direction([
                         "elementid" => $elementid,
@@ -345,6 +363,7 @@ class view {
                         $this->supervideoview->currenttime,
                         $elementid,
                         $this->supervideo->playersize,
+                        $markerconfig,
                     ]);
                     // Append saved playback position to the iframe URL so the player resumes.
                     $videourl = $this->supervideo->videourl;

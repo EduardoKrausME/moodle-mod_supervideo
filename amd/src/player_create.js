@@ -19,6 +19,99 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
     var youtubeApiRequested = false;
 
     var player_create = {
+        /**
+         * Create the optional button that jumps from a marker to the next one.
+         *
+         * @param {String} elementId Player element ID.
+         * @param {Object} markerConfig Normalised marker configuration.
+         * @param {Function} seekTo Player-specific seek callback.
+         * @param {HTMLElement} preferredHost Optional element which should own the button.
+         * @returns {Object} Marker controller.
+         */
+        _markers_create: function(elementId, markerConfig, seekTo, preferredHost) {
+            var points = markerConfig && Array.isArray(markerConfig.points) ? markerConfig.points : [];
+            var emptyController = {update: function() {}};
+
+            if (points.length < 2 || typeof seekTo !== "function") {
+                return emptyController;
+            }
+
+            var playerElement = document.getElementById(elementId);
+            var host = preferredHost || (playerElement ? playerElement.parentElement : null);
+            if (!host) {
+                return emptyController;
+            }
+
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "supervideo-marker-jump";
+            button.hidden = true;
+            host.appendChild(button);
+
+            var nextMarker = null;
+            var update = function(currentTime) {
+                currentTime = Number(currentTime);
+                if (!Number.isFinite(currentTime)) {
+                    button.hidden = true;
+                    nextMarker = null;
+                    return;
+                }
+
+                var currentIndex = -1;
+                points.forEach(function(point, index) {
+                    if (Number(point.time) <= currentTime) {
+                        currentIndex = index;
+                    }
+                });
+
+                var currentMarker = points[currentIndex];
+                var candidate = points[currentIndex + 1];
+                var show = currentMarker && currentMarker.skip && candidate &&
+                    currentTime < Number(candidate.time);
+
+                if (!show) {
+                    button.hidden = true;
+                    nextMarker = null;
+                    return;
+                }
+
+                nextMarker = candidate;
+                button.textContent = markerConfig.buttonlabel || "Jump to next marker";
+                if (candidate.label) {
+                    button.textContent += ": " + candidate.label;
+                    button.title = candidate.label;
+                } else {
+                    button.removeAttribute("title");
+                }
+                button.hidden = false;
+            };
+
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (nextMarker) {
+                    seekTo(Number(nextMarker.time));
+                    update(Number(nextMarker.time));
+                }
+            });
+
+            return {update: update};
+        },
+
+        /**
+         * Get marker points in the format expected by Plyr.
+         *
+         * @param {Object} markerConfig Normalised marker configuration.
+         * @returns {Array} Marker points.
+         */
+        _markers_points: function(markerConfig) {
+            if (!markerConfig || !Array.isArray(markerConfig.points)) {
+                return [];
+            }
+            return markerConfig.points.map(function(point) {
+                return {time: Number(point.time), label: point.label};
+            });
+        },
 
         _youtube_when_ready: function(callback) {
             if (window.YT && window.YT.Player) {
@@ -92,7 +185,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             window.addEventListener("message", receiveMessage);
         },
 
-        youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
+        youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay, markerConfig) {
             player_create._internal_view_id = view_id;
 
             var playerVars = {
@@ -104,6 +197,11 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             };
 
             var player = null;
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                if (player && player.seekTo) {
+                    player.seekTo(time, true);
+                }
+            });
 
             var showApiError = function() {
                 var html =
@@ -152,12 +250,13 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             window.setInterval(function () {
                 if (player && player.getCurrentTime !== undefined) {
+                    markerController.update(player.getCurrentTime());
                     player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration() - 1);
                 }
             }, 150);
         },
 
-        resource_audio: function (view_id, start_currenttime, elementId) {
+        resource_audio: function (view_id, start_currenttime, elementId, markerConfig) {
             player_create._internal_view_id = view_id;
 
             var $element = $(`#${elementId}`);
@@ -188,8 +287,15 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 storage: {enabled: true, key: "id-" + view_id},
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                markers: {
+                    enabled: player_create._markers_points(markerConfig).length > 0,
+                    points: player_create._markers_points(markerConfig),
+                },
             };
             var player = new PlayerRender(`#${elementId} audio`, config);
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                player.currentTime = time;
+            }, player.elements.container);
             player.on("ready", function () {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
@@ -208,11 +314,12 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
 
             setInterval(function () {
+                markerController.update(player.currentTime);
                 player_create._internal_saveprogress(player.currentTime, player.duration);
             }, 200);
         },
 
-        resource_video: function (view_id, start_currenttime, elementId, isHls) {
+        resource_video: function (view_id, start_currenttime, elementId, isHls, markerConfig) {
             player_create._internal_view_id = view_id;
 
             const $element = $(`#${elementId}`);
@@ -242,9 +349,16 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 storage: {enabled: true, key: "id-" + view_id},
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                markers: {
+                    enabled: player_create._markers_points(markerConfig).length > 0,
+                    points: player_create._markers_points(markerConfig),
+                },
             };
 
             function playerReady(player) {
+                var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                    player.currentTime = time;
+                }, player.elements.container);
                 player.on("ready", function () {
                     if (start_currenttime) {
                         player.currentTime = parseInt(start_currenttime);
@@ -264,6 +378,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 });
 
                 setInterval(function () {
+                    markerController.update(player.currentTime);
                     player_create._internal_saveprogress(player.currentTime, player.duration);
                 }, 200);
             }
@@ -324,11 +439,14 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
         },
 
-        vimeo: function (view_id, start_currenttime, vimeoid, elementId) {
+        vimeo: function (view_id, start_currenttime, vimeoid, elementId, markerConfig) {
             player_create._internal_view_id = view_id;
 
             const iframe = document.getElementById(elementId);
             const player = new Vimeo.Player(iframe);
+            const markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                player.setCurrentTime(time);
+            });
 
             if (start_currenttime) {
                 player.setCurrentTime(start_currenttime);
@@ -350,6 +468,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 if (duration > 1) {
                     player.getCurrentTime().then(function (_currenttime) {
                         _currenttime = parseInt(_currenttime);
+                        markerController.update(_currenttime);
                         player_create._internal_saveprogress(_currenttime, duration);
                     });
                 } else {
@@ -377,7 +496,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             }
         },
 
-        embed: function (view_id, start_currenttime, elementId, playersize) {
+        embed: function (view_id, start_currenttime, elementId, playersize, markerConfig) {
             player_create._internal_view_id = view_id;
 
             if (playersize == "4x3") {
@@ -389,6 +508,14 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             }
 
             var iframe = document.getElementById(elementId);
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        type: "player:seekTo",
+                        currentTime: time
+                    }, "*");
+                }
+            });
 
             // Allow the progress map to seek inside the embedded player.
             document.addEventListener("setCurrentTime", function (event) {
@@ -411,6 +538,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         var dur = event.data.duration;
 
                         if (dur > 0) {
+                            markerController.update(ct);
                             player_create._internal_saveprogress(ct, dur);
                         }
                     }
@@ -418,12 +546,16 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
         },
 
-        pandavideo: function (view_id, currenttime, elementId, size) {
+        pandavideo: function (view_id, currenttime, elementId, size, markerConfig) {
             player_create._internal_resize(size.width, size.height);
 
             player_create._internal_view_id = view_id;
 
             var duration = false;
+            const iframe = document.getElementById(elementId).contentWindow;
+            const markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                iframe.postMessage({type: 'currentTime', parameter: time});
+            });
             window.addEventListener("message", (event) => {
                 const {data} = event;
 
@@ -431,12 +563,12 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     duration = data.playerData.duration
                 } else if (data.message === 'panda_timeupdate') {
                     if (duration) {
+                        markerController.update(data.currentTime);
                         player_create._internal_saveprogress(data.currentTime, duration);
                     }
                 }
             }, false);
 
-            const iframe = document.getElementById(elementId).contentWindow;
             iframe.postMessage({type: 'currentTime', parameter: currenttime});
         },
 

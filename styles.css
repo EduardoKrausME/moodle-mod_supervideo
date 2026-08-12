@@ -62,6 +62,43 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   border: none;
 }
 
+.supervideo-marker-jump {
+  position: absolute;
+  left: 50%;
+  bottom: 64px;
+  z-index: 10001;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.91);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.supervideo-marker-jump:hover, .supervideo-marker-jump:focus-visible {
+  background: #0057b8;
+  color: #ffffff;
+  transform: translateX(-50%) translateY(-2px);
+}
+.supervideo-marker-jump[hidden] {
+  display: none !important;
+}
+@media (max-width: 600px) {
+  .supervideo-marker-jump {
+    bottom: 54px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 #supervideo_area_embed[dir=ltr],
 .mod-supervideo-mobile[dir=ltr],
 body.body-df .app[dir=ltr] .video-wrap {

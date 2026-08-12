@@ -64,7 +64,6 @@ $string['grade_approval'] = 'Set grade for';
 $string['grade_approval_0'] = 'No grades';
 $string['grade_approval_1'] = 'Grade based on percentage of video views';
 $string['idnotfound'] = 'Unrecognized link like Youtube, Google Drive or Vimeo';
-
 $string['kapture_aborted_upload_ottflix'] = 'Upload to OttFlix was aborted!';
 $string['kapture_app_title'] = 'OTTFlix Kapture';
 $string['kapture_approve_permission'] = 'Select <b><i>Allow</i></b> when your browser requests permissions.';
@@ -115,7 +114,10 @@ $string['kapture_upload_completed'] = 'Upload completed. Awaiting processing!';
 $string['kapture_video_default_title'] = 'Vídeo title';
 $string['kapture_video_title'] = 'Capture ';
 $string['kapture_video_title_desc'] = 'Choose a name that\'s easy to find later.';
-
+$string['markers'] = 'Video markers';
+$string['markers_error'] = 'Use one marker per line in the format time | label | skip. Times must be unique and may use seconds, MM:SS, or HH:MM:SS.';
+$string['markers_help'] = 'Add one marker per line using <code>time | label</code>. Add <code>| skip</code> to show a button after that marker which jumps to the next marker.<br><br>Example:<br><code>00:30 | Question | skip<br>01:30 | Answer<br>02:10 | Next activity</code><br><br>Time may be entered as seconds, MM:SS, or HH:MM:SS. The markers are ordered automatically.';
+$string['markers_jump'] = 'Jump to next marker';
 $string['maxwidth'] = 'Maximum Width for Video Player';
 $string['maxwidth_desc'] = 'Maximum width, in pixels, that the video player can expand to. Values below 500 pixels will be considered.<br>This value is completely ignored when the video is in "Distraction-Free Mode."';
 $string['modulename'] = 'Super Video';
@@ -189,7 +191,6 @@ $string['report_terminou'] = 'Finished watching when';
 $string['report_title'] = 'Report';
 $string['report_userid'] = 'User ID';
 $string['report_visualizacoes'] = 'Visualizations';
-$string['overview_requiredviewing'] = 'Required viewing';
 $string['repository_ottflix_disable'] = 'The OttFlix repository is installed but not enabled. <a href="{$a}/admin/repository.php">Click here to enable it</a> and make it easier to organize your videos and files.';
 $string['repository_ottflix_notinstall'] = 'The OttFlix repository is not installed. We recommend <a href="https://moodle.org/plugins/repository_ottflix">clicking here</a> to install it and simplify access and organization of your videos and files.';
 $string['repository_pandavideo_disable'] = 'The Panda Video repository is installed but not enabled. <a href="{$a}/admin/repository.php">Click here to enable it</a> and optimize the use of your videos.';

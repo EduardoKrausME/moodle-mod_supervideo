@@ -317,6 +317,16 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026072200, 'supervideo');
     }
 
+    if ($oldversion < 2026072201) {
+        $table = new xmldb_table('supervideo');
+        $markers = new xmldb_field('markers', XMLDB_TYPE_TEXT);
+        if (!$dbman->field_exists($table, $markers)) {
+            $dbman->add_field($table, $markers);
+        }
+
+        upgrade_mod_savepoint(true, 2026072201, 'supervideo');
+    }
+
     return true;
 }
 

@@ -54,6 +54,7 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
                 "playersize",
                 "showcontrols",
                 "autoplay",
+                "markers",
                 "grade_approval",
                 "completionpercent",
                 "timecreated",
