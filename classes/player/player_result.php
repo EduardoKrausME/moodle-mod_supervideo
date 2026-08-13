@@ -24,7 +24,9 @@
 
 namespace mod_supervideo\player;
 
-/** Result returned by a player provider. */
+/**
+ * Result returned by a player provider.
+ */
 class player_result {
     /** @var string */
     public $html;
@@ -36,6 +38,8 @@ class player_result {
     public $mediaerrors;
 
     /**
+     * Construct
+     *
      * @param string $html Rendered HTML.
      * @param bool|null $freemode Override distraction free mode.
      * @param bool|null $showmap Override map visibility.
