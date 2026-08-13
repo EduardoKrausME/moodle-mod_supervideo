@@ -29,7 +29,7 @@ use mod_supervideo\ottflix\repository;
 use mod_supervideo\util\source_url_parser;
 
 /**
- * OTTFlix player provider. 
+ * OTTFlix player provider.
  */
 class ottflix_provider extends base_provider {
     /**
