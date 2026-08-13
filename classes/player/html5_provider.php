@@ -27,7 +27,7 @@ namespace mod_supervideo\player;
 use mod_supervideo\util\source_url_parser;
 use moodle_url;
 
-/** 
+/**
  * Upload and direct-link player provider.
  */
 class html5_provider extends base_provider {
