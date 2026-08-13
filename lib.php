@@ -205,7 +205,7 @@ function supervideo_youtube_size($supervideo, $save = false) {
     }
 
     $pattern = '/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i';
-    if (preg_match($pattern, $supervideo->videourl_youtube, $output)) {
+    if (preg_match($pattern, $supervideo->videourl, $output)) {
 
         $urloembed = "https://youtube.com/oembed?url=http://www.youtube.com/watch?v={$output[3]}&format=json";
 
