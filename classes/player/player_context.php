@@ -26,7 +26,9 @@ namespace mod_supervideo\player;
 
 use mod_supervideo\util\marker_util;
 
-/** Immutable-ish context shared by player providers. */
+/**
+ * Immutable-ish context shared by player providers.
+ */
 class player_context {
     /** @var object|string */
     public $cm;
