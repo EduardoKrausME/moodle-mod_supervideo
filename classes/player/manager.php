@@ -24,7 +24,11 @@
 
 namespace mod_supervideo\player;
 
-/** Selects a source-specific player provider. */
+use coding_exception;
+
+/**
+ * Selects a source-specific player provider.
+ */
 class manager {
     /** @var player_context */
     private $data;
@@ -47,6 +51,7 @@ class manager {
      * Select and render the provider for the current source.
      *
      * @return player_result
+     * @throws coding_exception
      */
     public function render() {
         $source = isset($this->data->supervideo->origem) ? $this->data->supervideo->origem : "";
