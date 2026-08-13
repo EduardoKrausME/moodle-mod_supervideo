@@ -24,15 +24,19 @@
 
 namespace mod_supervideo\player;
 
+use coding_exception;
 use mod_supervideo\ottflix\repository;
 use mod_supervideo\util\source_url_parser;
 
-/** OTTFlix player provider. */
+/**
+ * OTTFlix player provider. 
+ */
 class ottflix_provider extends base_provider {
     /**
      * Render this video source.
      *
      * @return player_result
+     * @throws coding_exception
      */
     public function render() {
         global $USER;
