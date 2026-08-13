@@ -27,7 +27,10 @@ namespace mod_supervideo;
 use advanced_testcase;
 use mod_supervideo\util\source_url_parser;
 
-/** Tests for the central video source URL parser. */
+
+/**
+ * Tests for the central video source URL parser.
+ */
 final class source_url_parser_test extends advanced_testcase {
     /**
      * YouTube URLs are normalized and foreign hosts are rejected.
