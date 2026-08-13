@@ -24,14 +24,18 @@
 
 namespace mod_supervideo\player;
 
+use coding_exception;
 use mod_supervideo\util\source_url_parser;
 
-/** Generic iframe provider. */
+/**
+ * Generic iframe provider.
+ */
 class embed_provider extends base_provider {
     /**
      * Render this video source.
      *
      * @return player_result
+     * @throws coding_exception
      */
     public function render() {
         $url = $this->data->supervideo->videourl;
