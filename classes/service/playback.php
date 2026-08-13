@@ -43,7 +43,9 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 require_once("{$CFG->libdir}/externallib.php");
 
-/** Playback data used by the official Moodle App. */
+/**
+ * Playback data used by the official Moodle App.
+ */
 class playback extends external_api {
     /**
      * Describe playback service parameters.
