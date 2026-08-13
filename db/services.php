@@ -49,8 +49,9 @@ $functions = [
         'classname' => 'mod_supervideo\\service\\opengraph',
         'methodname' => 'getinfo',
         'description' => 'Get OpenGraph information.',
-        'type' => 'write',
+        'type' => 'read',
         'ajax' => true,
+        'loginrequired' => true,
     ],
 
     'mod_supervideo_view_supervideo' => [

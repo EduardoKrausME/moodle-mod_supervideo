@@ -1,0 +1,56 @@
+{{!
+    @template mod_supervideo/mobileapp/mobile
+    Native Moodle App player. Moodle renders <% %>; Angular keeps {{ }} expressions.
+}}
+{{=<% %>=}}
+<div class="mod-supervideo-mobile" id="mod-supervideo-mobile-<%cmid%>"<%#direction%> dir="<%direction%>"<%/direction%>>
+    <span core-site-plugins-call-ws-on-load
+          name="mod_supervideo_get_playback_data"
+          [params]="{cmid: <%cmid%>, supervideoid: <%supervideoid%>}"
+          [preSets]="{getFromCache: 0, saveToCache: 0}"
+          (onSuccess)="supervideoPlaybackLoaded($event)"
+          (onError)="supervideoPlaybackError($event)"></span>
+
+    <span core-site-plugins-call-ws-on-load
+          name="mod_supervideo_view_supervideo"
+          [params]="{supervideoid: <%supervideoid%>}"
+          [preSets]="{getFromCache: 0, saveToCache: 0}"></span>
+
+    <ion-item *ngIf="supervideoLoading" lines="none">
+        <ion-spinner slot="start"></ion-spinner>
+        <ion-label>{{ 'core.loading' | translate }}</ion-label>
+    </ion-item>
+
+    <ion-card *ngIf="supervideoError">
+        <ion-card-content>{{ supervideoError }}</ion-card-content>
+    </ion-card>
+
+    <div class="mod-supervideo-mobile-player" *ngIf="supervideoData">
+        <video id="mod-supervideo-media-<%cmid%>"
+               *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && !supervideoData.content.isaudio"
+               [src]="supervideoData.content.fileurl"
+               core-external-content
+               playsinline
+               [attr.controls]="supervideoData.config.showcontrols ? '' : null"
+               [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></video>
+
+        <audio id="mod-supervideo-media-<%cmid%>"
+               *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && supervideoData.content.isaudio"
+               [src]="supervideoData.content.fileurl"
+               core-external-content
+               [attr.controls]="supervideoData.config.showcontrols ? '' : null"
+               [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></audio>
+
+        <div id="mod-supervideo-api-player-<%cmid%>"
+             *ngIf="supervideoData.content.type === 'youtube'"></div>
+
+        <core-iframe id="mod-supervideo-frame-<%cmid%>"
+                     *ngIf="supervideoData.content.type !== 'file' && supervideoData.content.type !== 'link' && supervideoData.content.type !== 'youtube'"
+                     [src]="supervideoData.content.fileurl"
+                     [addSiteReferer]="true"></core-iframe>
+    </div>
+
+    <ion-item *ngIf="supervideoPercent !== null && supervideoData && supervideoData.config.showmap" lines="none">
+        <ion-label>{{ supervideoPercent }}%</ion-label>
+    </ion-item>
+</div>

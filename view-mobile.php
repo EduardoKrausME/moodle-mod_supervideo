@@ -15,37 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints an instance of mod_supervideo.
+ * Browser fallback page for the Super Video activity.
  *
  * @package   mod_supervideo
- * @copyright 2025 Eduardo Kraus {@link https://eduardokraus.com}
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\session\manager;
+/**
+ * Browser fallback page for mod_supervideo.
+ *
+ * This endpoint deliberately does not accept Moodle Web Service tokens. The
+ * official Moodle App uses mod_supervideo_get_playback_data instead.
+ *
+ * @package mod_supervideo
+ */
+
 use mod_supervideo\event\course_module_viewed;
 use mod_supervideo\output\view;
 
 require(__DIR__ . "/../../config.php");
 
-$id = optional_param("id", 0, PARAM_INT);
+$id = required_param("id", PARAM_INT);
 $cm = get_coursemodule_from_id("supervideo", $id, 0, false, MUST_EXIST);
 $course = $DB->get_record("course", ["id" => $cm->course], "*", MUST_EXIST);
 $supervideo = $DB->get_record("supervideo", ["id" => $cm->instance], "*", MUST_EXIST);
 
-$token = required_param("token", PARAM_TEXT);
-$externalservice = $DB->get_record("external_services", ["shortname" => MOODLE_OFFICIAL_MOBILE_SERVICE]);
-$externaltoken = $DB->get_record("external_tokens", ["token" => $token, "externalserviceid" => $externalservice->id], "userid");
-$user = $DB->get_record("user", ["id" => $externaltoken->userid]);
-
-if ($user) {
-    manager::login_user($user);
-    require_course_login($course, false, null, false, true);
-} else {
-    redirect(new moodle_url("/mod/supervideo/view.php", ["id" => $id]));
-}
-
+require_course_login($course, false, $cm);
 $context = context_module::instance($cm->id);
+require_capability("mod/supervideo:view", $context);
+
 $PAGE->set_context($context);
 $PAGE->set_cm($cm, $course);
 $PAGE->set_url("/mod/supervideo/view-mobile.php", ["id" => $cm->id]);
@@ -66,14 +65,14 @@ $view = new view($cm, $course, $supervideo, $context);
 $videoplayer = $view->get_player();
 
 echo $OUTPUT->header();
-$mustachedata = [
+$data = [
     "showmap" => $view->config->showmap,
     "map" => $view->get_maps(),
     "errosmessages" => $view->errosmessages,
     "video_player" => $videoplayer,
     "page_title" => $view->supervideo->name,
-    "url_back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
-    "url_settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
+    "url_back" => $CFG->wwwroot . "/course/view.php?id=" . $cm->course,
+    "url_settings" => $CFG->wwwroot . "/course/modedit.php?update=" . $cm->id,
 ] + $view->get_direction_data();
-echo $OUTPUT->render_from_template("mod_supervideo/view-mobile", $mustachedata);
+echo $OUTPUT->render_from_template("mod_supervideo/view-mobile", $data);
 echo $OUTPUT->footer();

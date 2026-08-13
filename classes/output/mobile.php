@@ -14,67 +14,53 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_supervideo\output;
-
-use core_external\util;
-use Exception;
-use moodle_url;
-
 /**
- * Output Mobile for mod_supervideo.
+ * Moodle App output handler.
  *
  * @package   mod_supervideo
- * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mobile {
 
+namespace mod_supervideo\output;
+
+use context_module;
+
+/** Moodle App integration. */
+class mobile {
     /**
-     * Function mobile_course_view
+     * Render the activity using native App Web Services instead of a tokenised WebView.
      *
-     * @param $args
-     *
+     * @param array $args Handler arguments.
      * @return array
-     * @throws Exception
      */
     public static function mobile_course_view($args) {
-        global $OUTPUT;
+        global $CFG, $DB, $OUTPUT;
 
-        $url = new moodle_url("/mod/supervideo/view-mobile.php", [
-            "id" => $args["cmid"],
-            "token" => self::get_token(),
-        ]);
+        $cmid = (int)$args["cmid"];
+        $cm = get_coursemodule_from_id("supervideo", $cmid, 0, false, MUST_EXIST);
+        $course = $DB->get_record("course", ["id" => $cm->course], "*", MUST_EXIST);
+        require_login($course, false, $cm, true, true);
+        $context = context_module::instance($cm->id);
+        require_capability("mod/supervideo:view", $context);
+
         $data = [
-            "cmid" => $args["cmid"],
-            "iframe_url" => $url->out(false),
+            "cmid" => $cm->id,
+            "courseid" => $course->id,
+            "supervideoid" => $cm->instance,
         ];
         if (right_to_left()) {
             $data["direction"] = "ltr";
         }
 
         return [
-            "templates" => [
-                [
-                    "id" => "main",
-                    "html" => $OUTPUT->render_from_template("mod_supervideo/mobile", $data),
-                ],
-            ],
-            "javascript" => "",
-            "otherdata" => [],
+            "templates" => [[
+                "id" => "main",
+                "html" => $OUTPUT->render_from_template("mod_supervideo/mobileapp/mobile", $data),
+            ]],
+            "javascript" => file_get_contents($CFG->dirroot . "/mod/supervideo/js/mobileapp/player.js"),
+            "otherdata" => ["cmid" => $cm->id],
             "files" => [],
         ];
-    }
-
-    /**
-     * Get Token from access
-     *
-     * @return int returns token id.
-     * @throws Exception
-     */
-    private static function get_token() {
-        global $DB;
-
-        $service = $DB->get_record("external_services", ["shortname" => MOODLE_OFFICIAL_MOBILE_SERVICE], "*", MUST_EXIST);
-        return util::generate_token_for_current_user($service)->token;
     }
 }
