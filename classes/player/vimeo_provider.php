@@ -24,14 +24,18 @@
 
 namespace mod_supervideo\player;
 
+use coding_exception;
 use mod_supervideo\util\source_url_parser;
 
-/** Vimeo player provider. */
+/**
+ * Vimeo player provider.
+ */
 class vimeo_provider extends base_provider {
     /**
      * Render this video source.
      *
      * @return player_result
+     * @throws coding_exception
      */
     public function render() {
         $vimeo = source_url_parser::vimeo($this->data->supervideo->videourl);
