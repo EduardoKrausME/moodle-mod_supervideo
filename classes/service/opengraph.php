@@ -36,7 +36,9 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 require_once("{$CFG->libdir}/externallib.php");
 
-/** Secure Open Graph external service. */
+/**
+ * Secure Open Graph external service.
+ */
 class opengraph extends external_api {
     /**
      * Describe parameters.
