@@ -28,7 +28,9 @@ use Exception;
 use mod_supervideo\pandavideo\repository;
 use mod_supervideo\util\source_url_parser;
 
-/** Panda Video player provider. */
+/**
+ * Panda Video player provider.
+ */
 class pandavideo_provider extends base_provider {
     /**
      * Render this video source.
