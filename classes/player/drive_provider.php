@@ -26,7 +26,9 @@ namespace mod_supervideo\player;
 
 use mod_supervideo\util\source_url_parser;
 
-/** Google Drive player provider. */
+/**
+ * Google Drive player provider.
+ */
 class drive_provider extends base_provider {
     /**
      * Render this video source.
