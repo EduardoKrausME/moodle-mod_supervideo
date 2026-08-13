@@ -115,8 +115,8 @@ $string['kapture_video_default_title'] = 'Vídeo title';
 $string['kapture_video_title'] = 'Capture ';
 $string['kapture_video_title_desc'] = 'Choose a name that\'s easy to find later.';
 $string['markers'] = 'Video markers';
-$string['markers_error'] = 'Use one marker per line in the format time | label | skip. Times must be unique and may use seconds, MM:SS, or HH:MM:SS.';
-$string['markers_help'] = 'Add one marker per line using <code>time | label</code>. Add <code>| skip</code> to show a button after that marker which jumps to the next marker.<br><br>Example:<br><code>00:30 | Question | skip<br>01:30 | Answer<br>02:10 | Next activity</code><br><br>Time may be entered as seconds, MM:SS, or HH:MM:SS. The markers are ordered automatically.';
+$string['markers_error'] = 'Check the marker times and labels. Times must be unique and may use seconds, MM:SS, or HH:MM:SS.';
+$string['markers_help'] = 'Use the controls to add the marker time and label. Enable the jump option when students should be allowed to move directly from that marker to the next one. Time may be entered as seconds, MM:SS, or HH:MM:SS, and markers are ordered automatically.';
 $string['markers_jump'] = 'Jump to next marker';
 $string['maxwidth'] = 'Maximum Width for Video Player';
 $string['maxwidth_desc'] = 'Maximum width, in pixels, that the video player can expand to. Values below 500 pixels will be considered.<br>This value is completely ignored when the video is in "Distraction-Free Mode."';
@@ -233,3 +233,10 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Your View map:';
+
+$string['markers_add'] = 'Add marker';
+$string['markers_time'] = 'Time';
+$string['markers_label'] = 'Label';
+$string['markers_skip'] = 'Allow jump to next marker';
+$string['markers_remove'] = 'Remove';
+$string['sourceurl_invalid'] = 'The value does not match the selected video source.';

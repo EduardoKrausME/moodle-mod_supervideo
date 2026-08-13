@@ -115,8 +115,8 @@ $string['kapture_video_default_title'] = 'Título do vídeo';
 $string['kapture_video_title'] = 'Capturar';
 $string['kapture_video_title_desc'] = 'Escolha um nome que seja fácil de encontrar depois.';
 $string['markers'] = 'Marcadores de vídeo';
-$string['markers_error'] = 'Use um marcador por linha no formato time | etiqueta | skip. Os tempos devem ser únicos e podem usar segundos, MM:SS ou HH:MM:SS.';
-$string['markers_help'] = 'Adicione um marcador por linha usando <code>time | label</code>. Adicione <code>| skip</code> para mostrar um botão após esse marcador que salta para o próximo marcador.<br><br>Exemplo:<br><code>00:30 | Question | skip<br>01:30 | Answer<br>02:10 | Next activity</code><br><br>O tempo pode ser inserido como segundos, MM:SS ou HH:MM:SS. Os marcadores são ordenados automaticamente.';
+$string['markers_error'] = 'Confira os tempos e nomes dos marcadores. Os tempos devem ser únicos e podem usar segundos, MM:SS ou HH:MM:SS.';
+$string['markers_help'] = 'Use os controles para adicionar o tempo e o nome de cada marcador. Ative a opção de pular quando o aluno puder avançar diretamente daquele marcador para o próximo. O tempo pode ser informado em segundos, MM:SS ou HH:MM:SS, e os marcadores são ordenados automaticamente.';
 $string['markers_jump'] = 'Ir para o próximo marcador';
 $string['maxwidth'] = 'Largura Máxima para player de Vídeo';
 $string['maxwidth_desc'] = 'Largura máxima, em pixels, que o player de vídeo pode expandir. Valores inferiores a 500 pixels serão considerados.<br>Este valor é completamente ignorado quando o vídeo está no "Modo sem distrações".';
@@ -233,3 +233,10 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Seu mapa de visualização:';
+
+$string['markers_add'] = 'Adicionar marcador';
+$string['markers_time'] = 'Tempo';
+$string['markers_label'] = 'Nome do marcador';
+$string['markers_skip'] = 'Permitir pular para o próximo marcador';
+$string['markers_remove'] = 'Remover';
+$string['sourceurl_invalid'] = 'O valor informado não corresponde à origem de vídeo selecionada.';

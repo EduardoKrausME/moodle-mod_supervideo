@@ -31,14 +31,14 @@ use mod_supervideo\util\marker_util;
 /**
  * Tests for marker parsing.
  */
-class marker_util_test extends advanced_testcase {
+final class marker_util_test extends advanced_testcase {
 
     /**
      * Marker times are normalised and sorted.
      *
      * @covers \mod_supervideo\util\marker_util::parse
      */
-    public function test_parse_normalises_markers() {
+    public function test_parse_normalises_markers(): void {
         $value = "02:10 | Next activity\n30 | Question | skip\n01:30 | Answer";
 
         $this->assertSame([
@@ -53,7 +53,7 @@ class marker_util_test extends advanced_testcase {
      *
      * @covers \mod_supervideo\util\marker_util::parse
      */
-    public function test_parse_rejects_invalid_marker() {
+    public function test_parse_rejects_invalid_marker(): void {
         $this->expectException(InvalidArgumentException::class);
         marker_util::parse("00:75 | Invalid time", true);
     }
@@ -63,7 +63,7 @@ class marker_util_test extends advanced_testcase {
      *
      * @covers \mod_supervideo\util\marker_util::parse
      */
-    public function test_parse_rejects_duplicate_time() {
+    public function test_parse_rejects_duplicate_time(): void {
         $this->expectException(InvalidArgumentException::class);
         marker_util::parse("30 | Question\n00:30 | Answer", true);
     }
