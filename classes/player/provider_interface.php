@@ -24,7 +24,9 @@
 
 namespace mod_supervideo\player;
 
-/** Interface implemented by all source-specific players. */
+/**
+ * Interface implemented by all source-specific players.
+ */
 interface provider_interface {
     /**
      * Render the configured source.
