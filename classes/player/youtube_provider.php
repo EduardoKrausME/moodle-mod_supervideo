@@ -26,7 +26,9 @@ namespace mod_supervideo\player;
 
 use mod_supervideo\util\source_url_parser;
 
-/** YouTube player provider. */
+/**
+ * YouTube player provider.
+ */
 class youtube_provider extends base_provider {
     /**
      * Render this video source.
