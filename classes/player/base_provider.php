@@ -24,7 +24,9 @@
 
 namespace mod_supervideo\player;
 
-/** Shared helpers for player providers. */
+/**
+ * Shared helpers for player providers.
+ */
 abstract class base_provider implements provider_interface {
     /** @var player_context */
     protected $data;
