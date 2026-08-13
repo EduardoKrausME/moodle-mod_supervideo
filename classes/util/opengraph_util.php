@@ -27,7 +27,9 @@ namespace mod_supervideo\util;
 use curl;
 use DOMDocument;
 
-/** Secure Open Graph metadata reader. */
+/**
+ * Secure Open Graph metadata reader.
+ */
 class opengraph_util {
     /** @var array */
     private $values = [];
