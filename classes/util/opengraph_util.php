@@ -14,95 +14,97 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_supervideo\util;
-
 /**
- * Util opengraph_util for mod_supervideo.
+ * Secure Open Graph metadata reader.
  *
  * @package   mod_supervideo
- * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class opengraph_util {
 
-    /**
-     * Holds all the Open Graph values we've parsed from a page
-     *
-     * @var array
-     */
+namespace mod_supervideo\util;
+
+use curl;
+use DOMDocument;
+
+/** Secure Open Graph metadata reader. */
+class opengraph_util {
+    /** @var array */
     private $values = [];
 
     /**
-     * Fetches a URI and parses it for Open Graph data, returns
-     * false on error.
+     * Fetch metadata using Moodle's SSRF-aware curl wrapper.
      *
-     * @param String $uri URI to page to parse for Open Graph data
-     *
-     * @return opengraph_util
+     * @param string $uri Public HTTP(S) URL.
+     * @return opengraph_util|null
      */
     public static function fetch($uri) {
-        $ch = curl_init($uri);
+        global $CFG;
 
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['action: opengraph']);
-
-        $html = curl_exec($ch);
-
-        curl_close($ch);
-
-        if (!empty($html)) {
-            return self::parse($html);
-        } else {
+        if (!source_url_parser::is_http_url($uri)) {
             return null;
         }
+        require_once($CFG->libdir . "/filelib.php");
+
+        // Moodle's curl wrapper applies core\files\curl_security_helper to every
+        // request and redirect. Do not set ignoresecurity and do not disable TLS.
+        $curl = new curl();
+        $curl->setHeader([
+            "Accept: text/html,application/xhtml+xml",
+            "action: opengraph",
+        ]);
+        $curl->setopt([
+            "CURLOPT_TIMEOUT" => 15,
+            "CURLOPT_CONNECTTIMEOUT" => 5,
+            "CURLOPT_FOLLOWLOCATION" => true,
+            "CURLOPT_MAXREDIRS" => 5,
+            "CURLOPT_USERAGENT" => "Moodle mod_supervideo OpenGraph",
+        ]);
+        $html = $curl->get($uri);
+        if ($curl->errno || !is_string($html) || $html === "") {
+            return null;
+        }
+
+        // Avoid parsing unexpectedly large responses returned by a remote endpoint.
+        if (strlen($html) > 2 * 1024 * 1024) {
+            return null;
+        }
+        return self::parse($html);
     }
 
     /**
-     * Parses HTML and extracts Open Graph data, this assumes
-     * the document is at least well formed.
+     * Parse Open Graph meta tags independent of attribute order.
      *
-     * @param String $html HTML to parse
-     *
+     * @param string $html HTML.
      * @return opengraph_util
      */
     private static function parse($html) {
-
-        $opengraphutil = new opengraph_util();
-
-        preg_match_all('/property="og:(\w+|video:\w+)"\s+content="(.*?)"/', $html, $output);
-        foreach ($output[1] as $key => $value) {
-            $opengraphutil->values[$value] = $output[2][$key];
+        $result = new self();
+        $previous = libxml_use_internal_errors(true);
+        $document = new DOMDocument();
+        $document->loadHTML($html, LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NONET);
+        foreach ($document->getElementsByTagName("meta") as $meta) {
+            $property = strtolower(trim($meta->getAttribute("property")));
+            if (strpos($property, "og:") !== 0) {
+                continue;
+            }
+            $key = substr($property, 3);
+            if ($key !== "" && !array_key_exists($key, $result->values)) {
+                $result->values[$key] = trim($meta->getAttribute("content"));
+            }
         }
-
-        preg_match_all('/content="(.*?)"\s+property="og:(\w+|video:\w+)"/', $html, $output);
-        foreach ($output[1] as $key => $value) {
-            $opengraphutil->values[$value] = $output[2][$key];
-        }
-
-        return $opengraphutil;
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        return $result;
     }
 
     /**
-     * Helper method to access attributes directly
-     * Example:
-     * $graph->title
+     * Return one parsed Open Graph value.
      *
-     * @param String $key Key to fetch from the lookup
-     *
-     * @return int|mixed|string
+     * @param string $key Open Graph key without the og: prefix.
+     * @return mixed|null
      */
     public function get($key) {
-        if (array_key_exists($key, $this->values)) {
-            return $this->values[$key];
-        }
-
-        return null;
+        return array_key_exists($key, $this->values) ? $this->values[$key] : null;
     }
-
 }

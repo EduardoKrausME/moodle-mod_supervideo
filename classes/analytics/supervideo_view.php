@@ -83,7 +83,7 @@ class supervideo_view {
 
         try {
             $supervideoview->id = $DB->insert_record("supervideo_view", $supervideoview);
-        } catch (\dml_exception $e) {
+        } catch (dml_exception $e) {
             return (object)['id' => 0];
         }
 
