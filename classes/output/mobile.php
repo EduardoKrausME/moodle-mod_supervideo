@@ -26,7 +26,9 @@ namespace mod_supervideo\output;
 
 use context_module;
 
-/** Moodle App integration. */
+/**
+ * Moodle App integration.
+ */
 class mobile {
     /**
      * Render the activity using native App Web Services instead of a tokenised WebView.
