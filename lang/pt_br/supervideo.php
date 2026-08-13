@@ -115,9 +115,14 @@ $string['kapture_video_default_title'] = 'Título do vídeo';
 $string['kapture_video_title'] = 'Capturar';
 $string['kapture_video_title_desc'] = 'Escolha um nome que seja fácil de encontrar depois.';
 $string['markers'] = 'Marcadores de vídeo';
+$string['markers_add'] = 'Adicionar marcador';
 $string['markers_error'] = 'Confira os tempos e nomes dos marcadores. Os tempos devem ser únicos e podem usar segundos, MM:SS ou HH:MM:SS.';
 $string['markers_help'] = 'Use os controles para adicionar o tempo e o nome de cada marcador. Ative a opção de pular quando o aluno puder avançar diretamente daquele marcador para o próximo. O tempo pode ser informado em segundos, MM:SS ou HH:MM:SS, e os marcadores são ordenados automaticamente.';
 $string['markers_jump'] = 'Ir para o próximo marcador';
+$string['markers_label'] = 'Nome do marcador';
+$string['markers_remove'] = 'Remover';
+$string['markers_skip'] = 'Permitir pular para o próximo marcador';
+$string['markers_time'] = 'Tempo';
 $string['maxwidth'] = 'Largura Máxima para player de Vídeo';
 $string['maxwidth_desc'] = 'Largura máxima, em pixels, que o player de vídeo pode expandir. Valores inferiores a 500 pixels serão considerados.<br>Este valor é completamente ignorado quando o vídeo está no "Modo sem distrações".';
 $string['modulename'] = 'Super Vídeo';
@@ -203,6 +208,7 @@ $string['showcontrols'] = 'Exibir controles';
 $string['showcontrols_desc'] = 'Mostrar controles do player';
 $string['showmap'] = 'Mostrar mapa';
 $string['showmap_desc'] = 'Se marcado, mostrar o mapa após o player de vídeo!';
+$string['sourceurl_invalid'] = 'O valor informado não corresponde à origem de vídeo selecionada.';
 $string['speed'] = 'Controle de velocidade';
 $string['speed_0_5'] = 'Velocidade 0,5x';
 $string['speed_0_75'] = 'Velocidade 0,75x';
@@ -233,10 +239,3 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Seu mapa de visualização:';
-
-$string['markers_add'] = 'Adicionar marcador';
-$string['markers_time'] = 'Tempo';
-$string['markers_label'] = 'Nome do marcador';
-$string['markers_skip'] = 'Permitir pular para o próximo marcador';
-$string['markers_remove'] = 'Remover';
-$string['sourceurl_invalid'] = 'O valor informado não corresponde à origem de vídeo selecionada.';

@@ -115,9 +115,14 @@ $string['kapture_video_default_title'] = 'Vídeo title';
 $string['kapture_video_title'] = 'Capture ';
 $string['kapture_video_title_desc'] = 'Choose a name that\'s easy to find later.';
 $string['markers'] = 'Video markers';
+$string['markers_add'] = 'Add marker';
 $string['markers_error'] = 'Check the marker times and labels. Times must be unique and may use seconds, MM:SS, or HH:MM:SS.';
 $string['markers_help'] = 'Use the controls to add the marker time and label. Enable the jump option when students should be allowed to move directly from that marker to the next one. Time may be entered as seconds, MM:SS, or HH:MM:SS, and markers are ordered automatically.';
 $string['markers_jump'] = 'Jump to next marker';
+$string['markers_label'] = 'Label';
+$string['markers_remove'] = 'Remove';
+$string['markers_skip'] = 'Allow jump to next marker';
+$string['markers_time'] = 'Time';
 $string['maxwidth'] = 'Maximum Width for Video Player';
 $string['maxwidth_desc'] = 'Maximum width, in pixels, that the video player can expand to. Values below 500 pixels will be considered.<br>This value is completely ignored when the video is in "Distraction-Free Mode."';
 $string['modulename'] = 'Super Video';
@@ -203,6 +208,7 @@ $string['showcontrols'] = 'Display controls';
 $string['showcontrols_desc'] = 'Display player controls for YouTube and Vimeo.';
 $string['showmap'] = 'Show Map';
 $string['showmap_desc'] = 'If checked, show the map after the video player!';
+$string['sourceurl_invalid'] = 'The value does not match the selected video source.';
 $string['speed'] = 'Speed control';
 $string['speed_0_5'] = 'Speed 0.5x';
 $string['speed_0_75'] = 'Speed 0.75x';
@@ -233,10 +239,3 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Your View map:';
-
-$string['markers_add'] = 'Add marker';
-$string['markers_time'] = 'Time';
-$string['markers_label'] = 'Label';
-$string['markers_skip'] = 'Allow jump to next marker';
-$string['markers_remove'] = 'Remove';
-$string['sourceurl_invalid'] = 'The value does not match the selected video source.';
