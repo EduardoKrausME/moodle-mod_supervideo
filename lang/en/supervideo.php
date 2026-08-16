@@ -129,6 +129,7 @@ $string['modulename'] = 'Super Video';
 $string['modulename_help'] = 'This module adds a Super Video within Moodle.';
 $string['modulenameplural'] = 'Super Videos';
 $string['no_data'] = 'No records';
+$string['nosupervideos'] = 'There are no Super Videos in this course.';
 $string['origem_drive'] = 'Video from Google Drive';
 $string['origem_drive_help'] = 'Link to a video stored in your Google Drive. Make sure to adjust the sharing settings to allow access to the video.';
 $string['origem_embed'] = 'Custom Embed (iframe)';
