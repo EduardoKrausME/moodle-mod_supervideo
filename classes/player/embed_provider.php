@@ -38,6 +38,8 @@ class embed_provider extends base_provider {
      * @throws coding_exception
      */
     public function render() {
+        global $OUTPUT;
+
         $url = $this->data->supervideo->videourl;
         if (!source_url_parser::is_http_url($url)) {
             return $this->error(get_string("idnotfound", "mod_supervideo"));
@@ -54,7 +56,7 @@ class embed_provider extends base_provider {
         if ($currenttime > 0) {
             $url .= (strpos($url, "?") !== false ? "&" : "?") . "t=" . $currenttime;
         }
-        return new player_result($this->template("embed_iframe", [
+        return new player_result($OUTPUT->render_from_template("mod_supervideo/embed_iframe", [
             "elementid" => $this->data->elementid,
             "videourl" => $url,
         ]));

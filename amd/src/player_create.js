@@ -208,7 +208,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             function receiveMessage(event) {
                 if (!(event && event.data) || !allowedSources.has(event.source) ||
-                        !origins.has(event.origin)) {
+                    !origins.has(event.origin)) {
                     return;
                 }
 
@@ -711,17 +711,24 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             player_create._internal_resize__width = width;
             player_create._internal_resize__height = height;
 
-            $(window).resize(player_create._internal_max_height__resizePage);
+            $(window)
+                .off("resize.mod_supervideo_player")
+                .on("resize.mod_supervideo_player", player_create._internal_max_height__resizePage);
             player_create._internal_max_height__resizePage();
         },
 
         _internal_max_height__resizePage: function () {
+            var $supervideoArea = $("#supervideo_area_embed");
+            if (!$supervideoArea.length) {
+                return;
+            }
 
-            var windowHeight = $(window).height();
+            var windowHeight = window.innerHeight || $(window).height();
+
             if ($("body").hasClass("distraction-free-mode")) {
-                var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
+                var $media = $supervideoArea.find("video, iframe");
 
-                $supervideoArea.css({
+                $media.css({
                     "max-height": "inherit",
                     "height": "inherit",
                 });
@@ -737,42 +744,69 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     removeHeight += 12;
                 }
 
-                var playerMaxHeight = windowHeight - removeHeight;
-                $("#supervideo_area_embed").css({
-                    "max-height": playerMaxHeight,
-                });
+                var playerMaxHeight = Math.max(1, windowHeight - removeHeight);
                 $supervideoArea.css({
+                    "width": "100%",
+                    "height": "auto",
+                    "max-height": playerMaxHeight,
+                    "padding-bottom": 0,
+                    "margin-left": "auto",
+                    "margin-right": "auto",
+                });
+                $media.css({
                     "max-height": playerMaxHeight,
                     "height": playerMaxHeight,
                 });
+                return;
+            }
+
+            var mediaWidth = Number(player_create._internal_resize__width);
+            var mediaHeight = Number(player_create._internal_resize__height);
+            if (!mediaWidth || !mediaHeight || mediaWidth <= 0 || mediaHeight <= 0) {
+                return;
+            }
+
+            var headerHeight = $("#header").outerHeight() || 0;
+            var rect = $supervideoArea[0].getBoundingClientRect();
+            var visibleTop = Math.max(rect.top, headerHeight, 0);
+            var maxHeight = windowHeight - visibleTop - 10;
+
+            // If the player is still below the visible viewport, use the viewport itself as the limit.
+            if (maxHeight <= 0) {
+                maxHeight = windowHeight - headerHeight - 10;
+            }
+            maxHeight = Math.max(1, maxHeight);
+
+            var $parent = $supervideoArea.parent();
+            var availableWidth = $parent.width() || $supervideoArea.width();
+            if (!availableWidth || availableWidth <= 0) {
+                return;
+            }
+
+            var finalWidth = availableWidth;
+            var finalHeight;
+            var fixedHeightMode = mediaWidth === 100 && mediaHeight === 640;
+
+            if (fixedHeightMode) {
+                finalHeight = Math.min(mediaHeight, maxHeight);
             } else {
-                if (document.querySelector("#supervideo_area_embed iframe")) {
-                    var $supervideo_area_embed = $("#supervideo_area_embed");
+                finalHeight = finalWidth * mediaHeight / mediaWidth;
 
-                    var maxHeight = $(window).height() - $("#header").height();
-                    var width = $supervideo_area_embed.width();
-                    var height = (width * player_create._internal_resize__height) / player_create._internal_resize__width;
-
-                    if (height < maxHeight) {
-                        var ratio = (player_create._internal_resize__height / player_create._internal_resize__width) * 100;
-                        if (ratio > 10) {
-                            $supervideo_area_embed.css({
-                                paddingBottom: `${ratio}%`,
-                                width: "100%",
-                            });
-                        }
-                    } else {
-                        // var newWidth = (maxHeight * player_create._internal_resize__width) / player_create._internal_resize__height;
-                        $supervideo_area_embed.css({
-                            // width         : newWidth,
-                            // margin        : "0 auto",
-                            height: maxHeight,
-                            maxHeight: maxHeight,
-                            paddingBottom: "56.25%",
-                        });
-                    }
+                if (finalHeight > maxHeight) {
+                    finalHeight = maxHeight;
+                    finalWidth = finalHeight * mediaWidth / mediaHeight;
                 }
             }
+
+            $supervideoArea.css({
+                "width": finalWidth,
+                "height": finalHeight,
+                "max-height": finalHeight,
+                "padding-bottom": 0,
+                "margin-left": "auto",
+                "margin-right": "auto",
+                "aspect-ratio": fixedHeightMode ? "auto" : `${mediaWidth} / ${mediaHeight}`,
+            });
         },
 
         _internal_last_position_video: -1,

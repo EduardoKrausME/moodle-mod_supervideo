@@ -36,6 +36,8 @@ class drive_provider extends base_provider {
      * @return player_result
      */
     public function render() {
+        global $OUTPUT;
+
         $driveid = source_url_parser::drive_id($this->data->supervideo->videourl);
         if ($driveid === "") {
             return $this->error(get_string("idnotfound", "mod_supervideo"));
@@ -45,7 +47,7 @@ class drive_provider extends base_provider {
             !empty($this->data->supervideo->autoplay) ? "autoplay=1" : "autoplay=0",
         ]);
         $this->js("drive", [(int)$this->data->view->id, $this->data->elementid, $this->data->supervideo->playersize]);
-        return new player_result($this->template("embed_drive", [
+        return new player_result($OUTPUT->render_from_template("mod_supervideo/embed_drive", [
             "elementid" => $this->data->elementid,
             "driveid" => $driveid,
             "parametersdrive" => $parameters,

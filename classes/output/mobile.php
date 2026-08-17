@@ -51,9 +51,6 @@ class mobile {
             "courseid" => $course->id,
             "supervideoid" => $cm->instance,
         ];
-        if (right_to_left()) {
-            $data["direction"] = "ltr";
-        }
 
         return [
             "templates" => [[

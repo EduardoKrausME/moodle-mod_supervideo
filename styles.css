@@ -104,39 +104,6 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   }
 }
 
-#supervideo_area_embed[dir=ltr],
-.mod-supervideo-mobile[dir=ltr],
-body.body-df .app[dir=ltr] .video-wrap {
-  direction: ltr !important;
-  unicode-bidi: isolate;
-}
-
-#supervideo_area_embed[dir=ltr] .plyr,
-#supervideo_area_embed[dir=ltr] .plyr__controls,
-#supervideo_area_embed[dir=ltr] .plyr__controls *,
-#supervideo_area_embed[dir=ltr] .plyr__progress,
-#supervideo_area_embed[dir=ltr] .plyr__progress *,
-#supervideo_area_embed[dir=ltr] .plyr__volume,
-#supervideo_area_embed[dir=ltr] .plyr__volume *,
-#supervideo_area_embed[dir=ltr] .plyr__menu,
-#supervideo_area_embed[dir=ltr] .plyr__menu *,
-body.body-df .app[dir=ltr] .plyr,
-body.body-df .app[dir=ltr] .plyr__controls,
-body.body-df .app[dir=ltr] .plyr__controls *,
-body.body-df .app[dir=ltr] .plyr__progress,
-body.body-df .app[dir=ltr] .plyr__progress *,
-body.body-df .app[dir=ltr] .plyr__volume,
-body.body-df .app[dir=ltr] .plyr__volume *,
-body.body-df .app[dir=ltr] .plyr__menu,
-body.body-df .app[dir=ltr] .plyr__menu * {
-  direction: ltr !important;
-}
-
-#supervideo_area_embed[dir=ltr] .plyr__menu__container,
-body.body-df .app[dir=ltr] .plyr__menu__container {
-  text-align: left !important;
-}
-
 #page-mod-supervideo-report table.flexible .header .commands {
   display: none;
 }
@@ -263,7 +230,6 @@ body.body-df .app[dir=ltr] .plyr__menu__container {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   align-items: center;
-  direction: ltr;
   display: flex;
   flex-direction: column;
   font-family: inherit;
@@ -709,7 +675,6 @@ a.plyr__control {
   transition: box-shadow 0.3s ease;
   width: 100%;
 }
-
 .plyr--full-ui input[type=range]::-webkit-slider-runnable-track {
   background: rgba(0, 0, 0, 0);
   background-image: linear-gradient(90deg, currentColor 0, rgba(0, 0, 0, 0) 0);
@@ -724,7 +689,6 @@ a.plyr__control {
   -webkit-user-select: none;
   user-select: none;
 }
-
 .plyr--full-ui input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -744,7 +708,6 @@ a.plyr__control {
   width: 13px;
   width: var(--plyr-range-thumb-height, 13px);
 }
-
 .plyr--full-ui input[type=range]::-moz-range-track {
   background: rgba(0, 0, 0, 0);
   border: 0;
@@ -756,7 +719,6 @@ a.plyr__control {
   transition: box-shadow 0.3s ease;
   user-select: none;
 }
-
 .plyr--full-ui input[type=range]::-moz-range-thumb {
   background: #ffffff;
   background: var(--plyr-range-thumb-background, #ffffff);
@@ -772,7 +734,6 @@ a.plyr__control {
   width: 13px;
   width: var(--plyr-range-thumb-height, 13px);
 }
-
 .plyr--full-ui input[type=range]::-moz-range-progress {
   background: currentColor;
   border-radius: 2.5px;
@@ -780,11 +741,9 @@ a.plyr__control {
   height: 5px;
   height: var(--plyr-range-track-height, 5px);
 }
-
 .plyr--full-ui input[type=range]::-ms-track {
   color: rgba(0, 0, 0, 0);
 }
-
 .plyr--full-ui input[type=range]::-ms-fill-upper, .plyr--full-ui input[type=range]::-ms-track {
   background: rgba(0, 0, 0, 0);
   border: 0;
@@ -796,7 +755,6 @@ a.plyr__control {
   transition: box-shadow 0.3s ease;
   user-select: none;
 }
-
 .plyr--full-ui input[type=range]::-ms-fill-lower {
   background: rgba(0, 0, 0, 0);
   background: currentColor;
@@ -809,7 +767,6 @@ a.plyr__control {
   transition: box-shadow 0.3s ease;
   user-select: none;
 }
-
 .plyr--full-ui input[type=range]::-ms-thumb {
   background: #ffffff;
   background: var(--plyr-range-thumb-background, #ffffff);
@@ -826,35 +783,33 @@ a.plyr__control {
   width: 13px;
   width: var(--plyr-range-thumb-height, 13px);
 }
-
 .plyr--full-ui input[type=range]::-ms-tooltip {
   display: none;
 }
-
 .plyr--full-ui input[type=range]::-moz-focus-outer {
   border: 0;
 }
-
 .plyr--full-ui input[type=range]:focus {
   outline: 0;
 }
-
 .plyr--full-ui input[type=range]:focus-visible::-webkit-slider-runnable-track {
   outline: 2px dashed #00b2ff;
   outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
   outline-offset: 2px;
 }
-
 .plyr--full-ui input[type=range]:focus-visible::-moz-range-track {
   outline: 2px dashed #00b2ff;
   outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
   outline-offset: 2px;
 }
-
 .plyr--full-ui input[type=range]:focus-visible::-ms-track {
   outline: 2px dashed #00b2ff;
   outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
   outline-offset: 2px;
+}
+
+html:dir(rtl) .plyr--full-ui input[type=range]::-webkit-slider-runnable-track {
+  background-image: linear-gradient(to left, currentColor var(--value, 0), transparent var(--value, 0));
 }
 
 .plyr__poster {
@@ -991,7 +946,8 @@ a.plyr__control {
   position: relative;
 }
 
-.plyr__progress input[type=range], .plyr__progress__buffer {
+.plyr__progress input[type=range],
+.plyr__progress__buffer {
   margin-left: -6.5px;
   margin-left: calc(var(--plyr-range-thumb-height, 13px) * -0.5);
   margin-right: -6.5px;
@@ -1025,11 +981,9 @@ a.plyr__control {
   position: absolute;
   top: 50%;
 }
-
 .plyr__progress__buffer::-webkit-progress-bar {
   background: rgba(0, 0, 0, 0);
 }
-
 .plyr__progress__buffer::-webkit-progress-value {
   background: currentColor;
   border-radius: 100px;
@@ -1038,7 +992,6 @@ a.plyr__control {
   -webkit-transition: width 0.2s ease;
   transition: width 0.2s ease;
 }
-
 .plyr__progress__buffer::-moz-progress-bar {
   background: currentColor;
   border-radius: 100px;
@@ -1047,7 +1000,6 @@ a.plyr__control {
   -moz-transition: width 0.2s ease;
   transition: width 0.2s ease;
 }
-
 .plyr__progress__buffer::-ms-fill {
   border-radius: 100px;
   -ms-transition: width 0.2s ease;
@@ -1286,27 +1238,22 @@ a.plyr__control {
   background-color: rgba(255, 255, 255, 0.2509803922);
   background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, rgba(255, 255, 255, 0.2509803922)));
 }
-
 .plyr--full-ui.plyr--video input[type=range]::-moz-range-track {
   background-color: rgba(255, 255, 255, 0.2509803922);
   background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, rgba(255, 255, 255, 0.2509803922)));
 }
-
 .plyr--full-ui.plyr--video input[type=range]::-ms-track {
   background-color: rgba(255, 255, 255, 0.2509803922);
   background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, rgba(255, 255, 255, 0.2509803922)));
 }
-
 .plyr--full-ui.plyr--video input[type=range]:active::-webkit-slider-thumb {
   box-shadow: 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.5019607843);
   box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2)), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, rgba(255, 255, 255, 0.5019607843));
 }
-
 .plyr--full-ui.plyr--video input[type=range]:active::-moz-range-thumb {
   box-shadow: 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.5019607843);
   box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2)), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, rgba(255, 255, 255, 0.5019607843));
 }
-
 .plyr--full-ui.plyr--video input[type=range]:active::-ms-thumb {
   box-shadow: 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.5019607843);
   box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px rgba(35, 40, 47, 0.1490196078), 0 0 0 1px rgba(35, 40, 47, 0.2)), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, rgba(255, 255, 255, 0.5019607843));
@@ -1629,7 +1576,7 @@ body.body-df .app .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border: 1px solid FFFFFF14;
+  border: 1px solid rgba(255, 255, 255, 0.0784313725);
   color: #e8eef6;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.0392156863), rgba(255, 255, 255, 0.0196078431));
   padding: 0.45rem 0.7rem;
@@ -1766,7 +1713,7 @@ body.body-df [vw] {
 body.body-df .activity-header {
   padding: 0;
   margin: 0;
-  background: transparent;
+  background: transparent !important;
   border: none;
 }
 body.body-df .activity-header .activity-information .completion-info {

@@ -38,6 +38,8 @@ class pandavideo_provider extends base_provider {
      * @return player_result
      */
     public function render() {
+        global $OUTPUT;
+
         try {
             $panda = repository::oembed($this->data->supervideo->videourl);
             $playerurl = preg_replace('/.*src=["\'](.*?)["\'].*/s', '$1', $panda->html);
@@ -52,7 +54,7 @@ class pandavideo_provider extends base_provider {
                 $this->data->marker_config(),
                 source_url_parser::origin($playerurl),
             ]);
-            return new player_result($this->template("embed_pandavideo", [
+            return new player_result($OUTPUT->render_from_template("mod_supervideo/embed_pandavideo", [
                 "elementid" => $this->data->elementid,
                 "id" => $panda->id,
                 "video_player" => $playerurl,

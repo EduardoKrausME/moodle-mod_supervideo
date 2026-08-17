@@ -73,6 +73,6 @@ $data = [
     "page_title" => $view->supervideo->name,
     "url_back" => $CFG->wwwroot . "/course/view.php?id=" . $cm->course,
     "url_settings" => $CFG->wwwroot . "/course/modedit.php?update=" . $cm->id,
-] + $view->get_direction_data();
+];
 echo $OUTPUT->render_from_template("mod_supervideo/view-mobile", $data);
 echo $OUTPUT->footer();

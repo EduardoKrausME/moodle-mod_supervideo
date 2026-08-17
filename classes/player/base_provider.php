@@ -41,31 +41,6 @@ abstract class base_provider implements provider_interface {
     }
 
     /**
-     * Force player controls to LTR on RTL pages.
-     *
-     * @param array $data Template data.
-     * @return array
-     */
-    protected function direction(array $data) {
-        if (right_to_left()) {
-            $data["direction"] = "ltr";
-        }
-        return $data;
-    }
-
-    /**
-     * Render a player template.
-     *
-     * @param string $name Template name.
-     * @param array $data Template data.
-     * @return string
-     */
-    protected function template($name, array $data) {
-        global $OUTPUT;
-        return $OUTPUT->render_from_template("mod_supervideo/" . $name, $this->direction($data));
-    }
-
-    /**
      * Render a provider error.
      *
      * @param string $message Error message.

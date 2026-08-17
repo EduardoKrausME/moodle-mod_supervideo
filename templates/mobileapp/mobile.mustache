@@ -3,7 +3,7 @@
     Native Moodle App player. Moodle renders <% %>; Angular keeps {{ }} expressions.
 }}
 {{=<% %>=}}
-<div class="mod-supervideo-mobile" id="mod-supervideo-mobile-<%cmid%>"<%#direction%> dir="<%direction%>"<%/direction%>>
+<div class="mod-supervideo-mobile" id="mod-supervideo-mobile-<%cmid%>">
     <span core-site-plugins-call-ws-on-load
           name="mod_supervideo_get_playback_data"
           [params]="{cmid: <%cmid%>, supervideoid: <%supervideoid%>}"

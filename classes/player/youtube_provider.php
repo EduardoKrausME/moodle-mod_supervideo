@@ -36,6 +36,8 @@ class youtube_provider extends base_provider {
      * @return player_result
      */
     public function render() {
+        global $OUTPUT;
+
         $videoid = source_url_parser::youtube_id($this->data->supervideo->videourl);
         if ($videoid === "") {
             return $this->error(get_string("idnotfound", "mod_supervideo"));
@@ -53,6 +55,6 @@ class youtube_provider extends base_provider {
             !empty($this->data->supervideo->autoplay) ? 1 : 0,
             $this->data->marker_config(),
         ]);
-        return new player_result($this->template("embed_div", ["elementid" => $this->data->elementid]));
+        return new player_result($OUTPUT->render_from_template("mod_supervideo/embed_div", ["elementid" => $this->data->elementid]));
     }
 }

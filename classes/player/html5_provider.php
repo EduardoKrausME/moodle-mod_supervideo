@@ -37,8 +37,7 @@ class html5_provider extends base_provider {
      * @return player_result
      */
     public function render() {
-        $url = "";
-        $filename = "";
+        global $OUTPUT;
 
         if ($this->data->supervideo->origem === "upload") {
             $files = supervideo_get_area_files($this->data->context->id);
@@ -82,7 +81,7 @@ class html5_provider extends base_provider {
             $this->js("resource_video", $args);
         }
 
-        $html = $this->template("embed_div", [
+        $html = $OUTPUT->render_from_template("mod_supervideo/embed_div", [
             "elementid" => $this->data->elementid,
             "videourl" => $url,
             "autoplay" => !empty($this->data->supervideo->autoplay) ? "true" : "false",

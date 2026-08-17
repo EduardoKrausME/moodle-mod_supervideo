@@ -158,20 +158,6 @@ class view {
     }
 
     /**
-     * Get direction data for templates that wrap the player.
-     *
-     * @return array
-     */
-    public function get_direction_data() {
-        $direction = right_to_left() ? "ltr" : "";
-        if (!$direction) {
-            return [];
-        }
-
-        return ["direction" => $direction];
-    }
-
-    /**
      * create_errosmessages
      *
      * @return void

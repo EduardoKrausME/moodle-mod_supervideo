@@ -38,6 +38,8 @@ class vimeo_provider extends base_provider {
      * @throws coding_exception
      */
     public function render() {
+        global $OUTPUT;
+
         $vimeo = source_url_parser::vimeo($this->data->supervideo->videourl);
         if ($vimeo === null) {
             return $this->error(get_string("idnotfound", "mod_supervideo"));
@@ -62,7 +64,7 @@ class vimeo_provider extends base_provider {
             $this->data->elementid,
             $this->data->marker_config(),
         ]);
-        return new player_result($this->template("embed_vimeo", [
+        return new player_result($OUTPUT->render_from_template("mod_supervideo/embed_vimeo", [
             "elementid" => $this->data->elementid,
             "vimeo_id" => $vimeoid,
             "parametersvimeo" => $parameters,

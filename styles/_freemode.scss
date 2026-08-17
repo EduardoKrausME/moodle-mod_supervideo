@@ -21,7 +21,7 @@ body.body-df {
             display: inline-flex;
             align-items: center;
             gap: .45rem;
-            border: 1px solid FFFFFF14;
+            border: 1px solid #FFFFFF14;
             color: #e8eef6;
             background: linear-gradient(180deg, #ffffff0a, #ffffff05);
             padding: .45rem .7rem;
@@ -150,7 +150,7 @@ body.body-df {
     .activity-header {
         padding: 0;
         margin: 0;
-        background: transparent;
+        background: transparent !important;
         border: none;
         .activity-information {
             .completion-info {

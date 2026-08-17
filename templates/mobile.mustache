@@ -20,13 +20,12 @@
     Example context (json):
     {
         "cmid": 123,
-        "iframe_url": "https://example.com/video.mp4",
-        "direction": "ltr"
+        "iframe_url": "https://example.com/video.mp4"
     }
 }}
 
 {{=<% %>=}}
-<div class="mod-supervideo-mobile"<%#direction%> dir="<%direction%>"<%/direction%>>
+<div class="mod-supervideo-mobile">
     <iframe
             title="Super Video"
             src="{{{iframe_url}}}"
