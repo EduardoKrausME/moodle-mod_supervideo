@@ -74,7 +74,7 @@ $PAGE->requires->jquery();
 
 if ($view->freemode) {
     $PAGE->set_pagelayout("embedded");
-    $PAGE->add_body_class("body-df");
+    $PAGE->add_body_class("distraction-free-mode");
     echo $OUTPUT->header();
 
     $mustachedata = [

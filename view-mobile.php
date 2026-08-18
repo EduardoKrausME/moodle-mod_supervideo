@@ -50,8 +50,8 @@ $PAGE->set_cm($cm, $course);
 $PAGE->set_url("/mod/supervideo/view-mobile.php", ["id" => $cm->id]);
 $PAGE->set_title(format_string($supervideo->name));
 $PAGE->set_pagelayout("embedded");
-$PAGE->add_body_class("body-df");
-$PAGE->add_body_class("body-df-noheader");
+$PAGE->add_body_class("distraction-free-mode");
+$PAGE->add_body_class("distraction-free-mode-noheader");
 
 $event = course_module_viewed::create([
     "objectid" => $PAGE->cm->instance,

@@ -1549,20 +1549,20 @@ html:dir(rtl) .plyr--full-ui input[type=range]::-webkit-slider-runnable-track {
     display: none !important;
   }
 }
-body.body-df {
+body.distraction-free-mode {
   height: 100%;
   margin: 0;
-  background: linear-gradient(180deg, #0b0f14, #0e141c 40%, #0b0f14) !important;
-  color: #e8eef6 !important;
+  background: linear-gradient(180deg, #0B0F14, #0E141C 40%, #0B0F14) !important;
+  color: #E8EEF6 !important;
 }
-body.body-df #page {
+body.distraction-free-mode #page {
   background: transparent !important;
   height: 100%;
 }
-body.body-df {
+body.distraction-free-mode {
   /* Layout base */
 }
-body.body-df .app {
+body.distraction-free-mode .app {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1572,39 +1572,39 @@ body.body-df .app {
   height: 100%;
   /* Botões */
 }
-body.body-df .app .btn {
+body.distraction-free-mode .app .btn {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   border: 1px solid rgba(255, 255, 255, 0.0784313725);
-  color: #e8eef6;
+  color: #E8EEF6;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.0392156863), rgba(255, 255, 255, 0.0196078431));
   padding: 0.45rem 0.7rem;
   border-radius: 12px;
   cursor: pointer;
   transition: transform 0.08s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-body.body-df .app .btn:hover {
+body.distraction-free-mode .app .btn:hover {
   border-color: rgba(255, 255, 255, 0.1764705882);
   box-shadow: 0 0 0 3px rgba(58, 160, 255, 0.3490196078) inset;
 }
-body.body-df .app .btn:active {
+body.distraction-free-mode .app .btn:active {
   transform: translateY(1px);
 }
-body.body-df .app .btn svg {
+body.distraction-free-mode .app .btn svg {
   width: 18px;
   height: 18px;
   display: block;
 }
 @media (max-width: 680px) {
-  body.body-df .app .btn svg {
+  body.distraction-free-mode .app .btn svg {
     display: none;
   }
 }
-body.body-df .app {
+body.distraction-free-mode .app {
   /* Header */
 }
-body.body-df .app .header {
+body.distraction-free-mode .app .header {
   position: sticky;
   top: 0;
   z-index: 30;
@@ -1617,12 +1617,12 @@ body.body-df .app .header {
   backdrop-filter: saturate(150%) blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.0588235294);
 }
-body.body-df .app .header .left {
+body.distraction-free-mode .app .header .left {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
-body.body-df .app .header .title {
+body.distraction-free-mode .app .header .title {
   margin: 0 auto 0 0.5rem;
   font-weight: 600;
   letter-spacing: 0.2px;
@@ -1633,45 +1633,45 @@ body.body-df .app .header .title {
   font-size: 40px;
 }
 @media (max-width: 680px) {
-  body.body-df .app .header .title {
+  body.distraction-free-mode .app .header .title {
     font-size: 14px !important;
   }
 }
-body.body-df .app {
+body.distraction-free-mode .app {
   /* Área do vídeo */
 }
-body.body-df .app .stage {
+body.distraction-free-mode .app .stage {
   width: 100%;
   max-width: 1280px;
   margin: 12px auto 24px;
   padding: 0 12px;
   height: 100%;
 }
-body.body-df .app .stage .video-wrap {
+body.distraction-free-mode .app .stage .video-wrap {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3490196078), 0 1px 0 rgba(255, 255, 255, 0.0392156863) inset;
-  background: #000000;
+  background: #000;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-body.body-df .app .stage .video-wrap video,
-body.body-df .app .stage .video-wrap iframe {
+body.distraction-free-mode .app .stage .video-wrap video,
+body.distraction-free-mode .app .stage .video-wrap iframe {
   width: 100% !important;
   height: 100% !important;
   display: block;
-  background: #000000;
+  background: #000;
 }
-body.body-df .app .stage .video-wrap #h5p-container,
-body.body-df .app .stage .video-wrap #h5p-container .h5p-iframe-wrapper {
+body.distraction-free-mode .app .stage .video-wrap #h5p-container,
+body.distraction-free-mode .app .stage .video-wrap #h5p-container .h5p-iframe-wrapper {
   height: 100%;
 }
-body.body-df .app .stage {
+body.distraction-free-mode .app .stage {
   /* Controles flutuantes (opcionais) */
 }
-body.body-df .app .stage .pill {
+body.distraction-free-mode .app .stage .pill {
   position: absolute;
   right: 12px;
   top: 12px;
@@ -1680,53 +1680,58 @@ body.body-df .app .stage .pill {
   gap: 0.5rem;
   transition: opacity 0.3s ease;
 }
-body.body-df .app .stage .pill .btn {
+body.distraction-free-mode .app .stage .pill .btn {
   background: rgba(12, 15, 22, 0.7490196078);
 }
-body.body-df .app {
+body.distraction-free-mode .app {
   /* Focus Distraction‑free */
 }
-body.body-df .app.df-active .header {
+body.distraction-free-mode .app.df-active .header {
   display: none;
   pointer-events: none;
   transform: translateY(-8px);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
-body.body-df .app.df-active .stage {
+body.distraction-free-mode .app.df-active .stage {
   max-width: none;
   margin: 0;
   padding: 0;
 }
-body.body-df .app.df-active .video-wrap {
+body.distraction-free-mode .app.df-active .video-wrap {
   border-radius: 0;
   box-shadow: none;
   aspect-ratio: auto;
   height: 100vh;
 }
-body.body-df .app.df-active .drawer {
+body.distraction-free-mode .app.df-active .drawer {
   top: 0;
   height: 100%;
 }
-body.body-df [vw] {
+body.distraction-free-mode [vw] {
   display: none !important;
 }
-body.body-df .activity-header {
+body.distraction-free-mode .activity-header {
   padding: 0;
   margin: 0;
   background: transparent !important;
   border: none;
 }
-body.body-df .activity-header .activity-information .completion-info {
+body.distraction-free-mode .activity-header .activity-information .completion-info {
   padding: 0;
   margin: 0;
   border: none;
 }
-body.body-df .activity-header .activity-description {
+body.distraction-free-mode .activity-header .activity-description {
   display: none;
 }
-body.body-df.body-df-noheader .activity-header,
-body.body-df.body-df-noheader #header {
+body.distraction-free-mode.distraction-free-mode-noheader .activity-header,
+body.distraction-free-mode.distraction-free-mode-noheader #header {
   display: none;
+}
+body.distraction-free-mode .path-mod .activity-header:not(:empty) {
+  margin-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /*# sourceMappingURL=styles.css.map */

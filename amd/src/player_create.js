@@ -208,7 +208,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             function receiveMessage(event) {
                 if (!(event && event.data) || !allowedSources.has(event.source) ||
-                    !origins.has(event.origin)) {
+                        !origins.has(event.origin)) {
                     return;
                 }
 
@@ -711,9 +711,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             player_create._internal_resize__width = width;
             player_create._internal_resize__height = height;
 
-            $(window)
-                .off("resize.mod_supervideo_player")
-                .on("resize.mod_supervideo_player", player_create._internal_max_height__resizePage);
+            $(window).resize(player_create._internal_max_height__resizePage);
             player_create._internal_max_height__resizePage();
         },
 
@@ -723,68 +721,51 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 return;
             }
 
-            var windowHeight = window.innerHeight || $(window).height();
-
-            if ($("body").hasClass("distraction-free-mode")) {
-                var $media = $supervideoArea.find("video, iframe");
-
-                $media.css({
-                    "max-height": "inherit",
-                    "height": "inherit",
-                });
-
-                var removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
-                var $activity = $(".activity-navigation");
-                if ($activity.length && !$activity.is(":hidden")) {
-                    removeHeight += $activity.height();
-                }
-
-                var $map = $("#map-visualization");
-                if ($map.length && !$map.is(":hidden")) {
-                    removeHeight += 12;
-                }
-
-                var playerMaxHeight = Math.max(1, windowHeight - removeHeight);
-                $supervideoArea.css({
-                    "width": "100%",
-                    "height": "auto",
-                    "max-height": playerMaxHeight,
-                    "padding-bottom": 0,
-                    "margin-left": "auto",
-                    "margin-right": "auto",
-                });
-                $media.css({
-                    "max-height": playerMaxHeight,
-                    "height": playerMaxHeight,
-                });
-                return;
-            }
-
             var mediaWidth = Number(player_create._internal_resize__width);
             var mediaHeight = Number(player_create._internal_resize__height);
+
             if (!mediaWidth || !mediaHeight || mediaWidth <= 0 || mediaHeight <= 0) {
                 return;
             }
 
-            var headerHeight = $("#header").outerHeight() || 0;
-            var rect = $supervideoArea[0].getBoundingClientRect();
-            var visibleTop = Math.max(rect.top, headerHeight, 0);
-            var maxHeight = windowHeight - visibleTop - 10;
+            // visualViewport is more accurate on mobile when browser bars are visible.
+            var windowHeight = window.visualViewport ?
+                window.visualViewport.height :
+                (window.innerHeight || $(window).height());
 
-            // If the player is still below the visible viewport, use the viewport itself as the limit.
-            if (maxHeight <= 0) {
-                maxHeight = windowHeight - headerHeight - 10;
+            var maxHeight;
+
+            if ($("body").hasClass("distraction-free-mode")) {
+                var style = window.getComputedStyle($supervideoArea[0]);
+
+                var marginTop = parseFloat(style.marginTop) || 0;
+                var marginBottom = parseFloat(style.marginBottom) || 0;
+
+                maxHeight = windowHeight - marginTop - marginBottom -90; // 90 of the map.
+            } else {
+                // Moodle Boost and most Boost-based themes.
+                var headerHeight = $("nav.navbar.fixed-top:visible").outerHeight() || 0;
+
+                // Fallback for themes that use another header structure.
+                if (!headerHeight) {
+                    headerHeight = $("#header:visible").outerHeight() || 0;
+                }
+
+                maxHeight = windowHeight - headerHeight;
             }
             maxHeight = Math.max(1, maxHeight);
 
             var $parent = $supervideoArea.parent();
             var availableWidth = $parent.width() || $supervideoArea.width();
+
             if (!availableWidth || availableWidth <= 0) {
                 return;
             }
 
             var finalWidth = availableWidth;
             var finalHeight;
+
+            // Used by Drive when the requested size is a fixed 640px height.
             var fixedHeightMode = mediaWidth === 100 && mediaHeight === 640;
 
             if (fixedHeightMode) {
@@ -792,6 +773,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             } else {
                 finalHeight = finalWidth * mediaHeight / mediaWidth;
 
+                // The player can NEVER be taller than the visible area.
                 if (finalHeight > maxHeight) {
                     finalHeight = maxHeight;
                     finalWidth = finalHeight * mediaWidth / mediaHeight;
@@ -801,11 +783,15 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             $supervideoArea.css({
                 "width": finalWidth,
                 "height": finalHeight,
-                "max-height": finalHeight,
+                "max-height": maxHeight,
                 "padding-bottom": 0,
                 "margin-left": "auto",
                 "margin-right": "auto",
                 "aspect-ratio": fixedHeightMode ? "auto" : `${mediaWidth} / ${mediaHeight}`,
+            });
+
+            $supervideoArea.find("video, iframe").css({
+                "max-height": maxHeight,
             });
         },
 
