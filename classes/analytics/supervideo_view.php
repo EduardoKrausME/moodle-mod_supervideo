@@ -111,16 +111,24 @@ class supervideo_view {
 
         if ($supervideoview) {
             // Never lose watched segments when two tabs save progress at nearly
-            // the same time. The database map and the incoming map are merged.
+            // the same time. Only one new segment can be accepted per elapsed
+            // server second; the external service already reduces each request
+            // to the segment matching the reported playback position.
             $storedmap = json_decode($supervideoview->map, true);
             $incomingmap = json_decode($map, true);
             $mergedmap = is_array($storedmap) ? $storedmap : [];
+            $now = time();
+            $canacceptnew = $now > (int)$supervideoview->timemodified;
+            $acceptednew = false;
             if (is_array($incomingmap)) {
                 foreach ($incomingmap as $position => $watched) {
-                    if (!empty($watched)) {
-                        $mergedmap[(int)$position] = 1;
-                    } else if (!isset($mergedmap[(int)$position])) {
-                        $mergedmap[(int)$position] = 0;
+                    $position = (int)$position;
+                    if (empty($watched) || !empty($mergedmap[$position])) {
+                        continue;
+                    }
+                    if ($canacceptnew && !$acceptednew) {
+                        $mergedmap[$position] = 1;
+                        $acceptednew = true;
                     }
                 }
             }
@@ -134,7 +142,9 @@ class supervideo_view {
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
             $supervideoview->map = json_encode($mergedmap);
-            $supervideoview->timemodified = time();
+            if ($acceptednew) {
+                $supervideoview->timemodified = $now;
+            }
 
             $status = $DB->update_record("supervideo_view", $supervideoview);
 
