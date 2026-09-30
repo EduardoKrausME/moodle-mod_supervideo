@@ -112,18 +112,29 @@ class progress extends external_api {
         if (!is_array($decodedmap)) {
             throw new invalid_parameter_exception('The progress map is invalid.');
         }
+        // Never trust a cumulative watched map supplied by the browser. The service accepts
+        // only the segment that corresponds to the reported playback position. The analytics
+        // layer merges that single segment with previously accepted server-side progress.
         $normalisedmap = [];
-        foreach ($decodedmap as $position => $watched) {
-            $position = (int)$position;
-            if ($position < 0 || $position > 100) {
-                continue;
+        if ($duration > 0 && $currenttime > 0) {
+            $progresslength = min($duration, 100);
+            if ($progresslength > 0) {
+                if ($progresslength < 100) {
+                    $position = $currenttime;
+                } else {
+                    $position = (int)floor($currenttime / $duration * $progresslength);
+                }
+                $position = max(1, min($progresslength, $position));
+                if (!empty($decodedmap[$position])) {
+                    $normalisedmap[$position] = 1;
+                }
             }
-            $normalisedmap[$position] = empty($watched) ? 0 : 1;
         }
-        ksort($normalisedmap);
         $map = json_encode($normalisedmap);
 
-        supervideo_view::update($viewid, $currenttime, $duration, $percent, $map);
+        // The client percentage is informational only. Authoritative progress is
+        // recalculated from segments accepted by the server.
+        supervideo_view::update($viewid, $currenttime, $duration, 0, $map);
         return ['success' => true, 'exec' => "OK"];
     }
 
