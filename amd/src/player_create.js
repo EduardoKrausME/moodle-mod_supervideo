@@ -487,19 +487,33 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     // we will have one source on the Plyr player.
                     hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
 
-                        // Transform available levels into an array of integers (height values).
-                        const availableQualities = hls.levels.map((l) => l.height)
+                        // Keep Hls.js adaptive bitrate as the default and expose
+                        // the manifest levels as optional manual quality choices.
+                        const availableQualities = [...new Set(
+                            hls.levels.map((level) => level.height).filter(Boolean)
+                        )].sort((a, b) => b - a);
 
-                        // Add new qualities to option
-                        config.quality = {
-                            default: availableQualities[0],
-                            options: availableQualities,
-                            // this ensures Plyr to use Hls to update quality level
-                            forced: true,
-                            onChange: (e) => updateQuality(e),
+                        if (!config.settings.includes("quality")) {
+                            config.settings.unshift("quality");
                         }
+                        config.i18n = config.i18n || {};
+                        config.i18n.qualityLabel = Object.assign(
+                            {0: "Auto"},
+                            config.i18n.qualityLabel || {}
+                        );
+                        config.quality = {
+                            default: 0,
+                            options: [0].concat(availableQualities),
+                            forced: true,
+                            onChange: (quality) => updateQuality(quality),
+                        };
 
                         function updateQuality(newQuality) {
+                            newQuality = parseInt(newQuality);
+                            if (newQuality === 0) {
+                                window.hls.currentLevel = -1;
+                                return;
+                            }
                             window.hls.levels.forEach((level, levelIndex) => {
                                 if (level.height === newQuality) {
                                     window.hls.currentLevel = levelIndex;
@@ -572,7 +586,6 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             $("#map-visualization").hide();
 
             player_create._internal_view_id = view_id;
-            player_create._internal_saveprogress(1, 1);
 
             if (playersize == "4x3") {
                 player_create._internal_resize(4, 3);
