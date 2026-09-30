@@ -24,6 +24,7 @@
 
 namespace mod_supervideo\service;
 
+use context_system;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
@@ -61,6 +62,7 @@ class opengraph extends external_api {
         global $USER;
         $params = self::validate_parameters(self::getinfo_parameters(), ["url" => $url]);
         require_login();
+        self::validate_context(context_system::instance());
         if (isguestuser($USER) || !source_url_parser::is_http_url($params["url"])) {
             throw new invalid_parameter_exception("Invalid URL.");
         }
