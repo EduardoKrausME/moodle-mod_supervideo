@@ -55,22 +55,35 @@ class opengraph_util {
             "Accept: text/html,application/xhtml+xml",
             "action: opengraph",
         ]);
+        $maxbytes = 2 * 1024 * 1024;
+        $html = "";
+        $toolarge = false;
+
         $curl->setopt([
             "CURLOPT_TIMEOUT" => 15,
             "CURLOPT_CONNECTTIMEOUT" => 5,
             "CURLOPT_FOLLOWLOCATION" => true,
             "CURLOPT_MAXREDIRS" => 5,
             "CURLOPT_USERAGENT" => "Moodle mod_supervideo OpenGraph",
+            "CURLOPT_RETURNTRANSFER" => false,
+            "CURLOPT_WRITEFUNCTION" => static function($handle, $chunk) use (&$html, &$toolarge, $maxbytes) {
+                $chunksize = strlen($chunk);
+                if (strlen($html) + $chunksize > $maxbytes) {
+                    $toolarge = true;
+                    return 0;
+                }
+
+                $html .= $chunk;
+                return $chunksize;
+            },
         ]);
-        $html = $curl->get($uri);
-        if ($curl->errno || !is_string($html) || $html === "") {
+        $curl->get($uri);
+
+        // The write callback aborts the transfer as soon as the response exceeds the limit.
+        if ($toolarge || $curl->errno || $html === "") {
             return null;
         }
 
-        // Avoid parsing unexpectedly large responses returned by a remote endpoint.
-        if (strlen($html) > 2 * 1024 * 1024) {
-            return null;
-        }
         return self::parse($html);
     }
 
