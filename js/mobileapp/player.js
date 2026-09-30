@@ -108,7 +108,7 @@ function waitFor(selector, callback, attempts) {
     setTimeout(function() { waitFor(selector, callback, (attempts || 0) + 1); }, 100);
 }
 
-function loadScript(src, test, callback) {
+function loadScript(src, test, callback, integrity) {
     if (test()) {
         callback();
         return;
@@ -120,6 +120,10 @@ function loadScript(src, test, callback) {
     }
     var script = document.createElement('script');
     script.src = src;
+    if (integrity) {
+        script.integrity = integrity;
+        script.crossOrigin = 'anonymous';
+    }
     script.onload = callback;
     document.head.appendChild(script);
 }
@@ -143,14 +147,14 @@ function bindHtml5() {
 
         if (that.supervideoData.content.ishls && media.tagName === 'VIDEO' &&
                 !media.canPlayType('application/vnd.apple.mpegurl')) {
-            loadScript('https://cdn.jsdelivr.net/npm/hls.js', function() { return !!window.Hls; }, function() {
+            loadScript('https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js', function() { return !!window.Hls; }, function() {
                 if (window.Hls && window.Hls.isSupported()) {
                     var hls = new window.Hls();
                     hls.loadSource(that.supervideoData.content.fileurl);
                     hls.attachMedia(media);
                     supervideoCleanup.push(function() { hls.destroy(); });
                 }
-            });
+            }, 'sha256-oS5+4c1kpp3NsxQVfkXa/LpwW/sLFEC3k1yyZdN0Qj4=');
         }
     });
 }
