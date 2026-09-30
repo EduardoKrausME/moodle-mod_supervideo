@@ -150,6 +150,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
         }
 
         $origem = explode("/", $this->options["accepted_types"][0])[1];
+        $value = s((string)$this->getValue());
         $filerepository = "{$CFG->dirroot}/repository/{$origem}/lib.php";
         if (file_exists($filerepository)) {
             $fp = new file_picker((object)[
@@ -180,7 +181,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
                     <input type="text" class="form-control" size="48"
                            name="{$this->_attributes["name"]}"
                            id="{$fp->options->elementid}"
-                           value="{$this->getValue()}"/>
+                           value="{$value}"/>
                     <input type="button" class="btn btn-primary fp-btn-choose me-3 ms-3"
                            id="filepicker-button-{$fp->options->elementid}"
                            value="{$straddfile}" style="display:none"
@@ -205,7 +206,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
                     <input type="text" class="form-control" size="48"
                            name="{$this->_attributes["name"]}"
                            id="{$this->_attributes["id"]}"
-                           value="{$this->getValue()}"/>
+                           value="{$value}"/>
                 </div>
                 {$message}
             EOD;
