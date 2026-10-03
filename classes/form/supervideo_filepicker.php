@@ -24,7 +24,7 @@
 
 namespace mod_supervideo\form;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 
