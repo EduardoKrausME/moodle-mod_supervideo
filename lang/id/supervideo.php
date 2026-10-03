@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $string['autoplay'] = 'Putar otomatis';
 $string['autoplay_desc'] = 'Putar otomatis saat pemutar dimuat';
 $string['completiondetail:completionpercent'] = 'Anda harus menonton {$a}% dari video';

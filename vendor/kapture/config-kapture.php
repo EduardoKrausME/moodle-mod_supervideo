@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die;
+
 $strings = [
     "destination" => "ottflix", // "ottflix"   "supervideo"
     "app_title" => 'OTTFlix Kapture',

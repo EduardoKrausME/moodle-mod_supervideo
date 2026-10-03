@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 $string['autoplay'] = 'Воспроизводить автоматически';
 $string['autoplay_desc'] = 'Автоматически начинать загрузку и воспроизведение';
 $string['completiondetail:completionpercent'] = 'Вы должны просмотреть {$a}% этого видео';
