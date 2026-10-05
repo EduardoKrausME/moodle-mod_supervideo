@@ -41,11 +41,20 @@ class custom_completion extends activity_custom_completion {
     public function get_state(string $rule): int {
         global $DB;
 
-        $this->validate_rule($rule);
+        // The core resolves available rules before calling get_state(). Re-validating
+        // availability here can fail when cm_info is refreshed without customdata.
+        if (!$this->is_defined($rule)) {
+            throw new coding_exception("Undefined custom completion rule '{$rule}'");
+        }
 
         $params = ["cm_id" => $this->cm->id, "user_id" => $this->userid];
         $userentries = (int) ($DB->get_field("supervideo_view", "MAX(percent)", $params) ?? 0);
-        $completionpercent = $this->cm->customdata['customcompletionrules']['completionpercent'];
+        $completionpercent = (int) $DB->get_field(
+            "supervideo",
+            "completionpercent",
+            ["id" => $this->cm->instance],
+            MUST_EXIST
+        );
 
         return ($completionpercent <= $userentries) ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }
@@ -67,9 +76,21 @@ class custom_completion extends activity_custom_completion {
      * @throws coding_exception
      */
     public function get_custom_rule_descriptions(): array {
-        $entries = $this->cm->customdata['customcompletionrules']['completionpercent'] ?? 0;
+        global $DB;
+
+        $completionpercent = (int) $DB->get_field(
+            "supervideo",
+            "completionpercent",
+            ["id" => $this->cm->instance],
+            MUST_EXIST
+        );
+
         return [
-            'completionpercent' => get_string('completiondetail:completionpercent', 'mod_supervideo', $entries),
+            'completionpercent' => get_string(
+                'completiondetail:completionpercent',
+                'mod_supervideo',
+                $completionpercent
+            ),
         ];
     }
 

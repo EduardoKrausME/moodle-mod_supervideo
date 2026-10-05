@@ -25,6 +25,7 @@
 namespace mod_supervideo;
 
 use cache;
+use core\hook\output\before_footer_html_generation;
 use Exception;
 use mod_supervideo\ottflix\repository as ottflix_repository;
 
@@ -35,9 +36,10 @@ class core_hook_output {
     /**
      * Function before_footer_html_generation
      *
+     * @param before_footer_html_generation $hook Hook instance.
      * @throws Exception
      */
-    public static function before_footer_html_generation() {
+    public static function before_footer_html_generation(before_footer_html_generation $hook) {
         global $DB, $CFG, $COURSE, $SITE;
         $theme = $CFG->theme;
         if (isset($_SESSION["SESSION"]->theme)) {

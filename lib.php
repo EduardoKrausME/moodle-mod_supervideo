@@ -86,6 +86,17 @@ function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) 
 }
 
 /**
+ * Updates or creates the grade item for a Super Video instance.
+ *
+ * @param stdClass $supervideo Super Video instance.
+ * @param array|null|string $grades Grades to update, or 'reset'.
+ * @return int
+ */
+function supervideo_grade_item_update($supervideo, $grades = null) {
+    return grades_util::grade_item_update($supervideo, $grades);
+}
+
+/**
  * supervideo_get_user_grades file.
  *
  * @param stdClass $supervideo

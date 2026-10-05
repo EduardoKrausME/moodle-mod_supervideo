@@ -256,6 +256,18 @@ class mod_supervideo_mod_form extends moodleform_mod {
     }
 
     /**
+     * Returns the suffix used by completion forms.
+     *
+     * Moodle 4.3+ can suffix completion fields in bulk/default completion forms.
+     * Older supported Moodle versions do not provide get_suffix().
+     *
+     * @return string
+     */
+    private function get_completion_suffix(): string {
+        return method_exists($this, 'get_suffix') ? $this->get_suffix() : '';
+    }
+
+    /**
      * Set up the completion checkbox which is not part of standard data.
      *
      * @param array $defaultvalues
@@ -276,9 +288,13 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-        $defaultvalues["completionpercentenabled"] = !empty($defaultvalues["completionpercent"]) ? 1 : 0;
-        if (empty($defaultvalues["completionpercent"])) {
-            $defaultvalues["completionpercent"] = 1;
+        $suffix = $this->get_completion_suffix();
+        $completionpercent = "completionpercent{$suffix}";
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+
+        $defaultvalues[$completionpercentenabled] = !empty($defaultvalues[$completionpercent]) ? 1 : 0;
+        if (empty($defaultvalues[$completionpercent])) {
+            $defaultvalues[$completionpercent] = 1;
         }
     }
 
@@ -293,9 +309,15 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionpercentenabled) || !$autocompletion) {
-                $data->completionpercent = 0;
+            $suffix = $this->get_completion_suffix();
+            $completion = "completion{$suffix}";
+            $completionpercent = "completionpercent{$suffix}";
+            $completionpercentenabled = "completionpercentenabled{$suffix}";
+
+            $autocompletion = !empty($data->{$completion})
+                && $data->{$completion} == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{$completionpercentenabled}) || !$autocompletion) {
+                $data->{$completionpercent} = 0;
             }
         }
     }
@@ -325,16 +347,21 @@ class mod_supervideo_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = &$this->_form;
+        $suffix = $this->get_completion_suffix();
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+        $completionpercent = "completionpercent{$suffix}";
+        $completionpercentgroup = "completionpercentgroup{$suffix}";
+
         $group = [
             $mform->createElement(
                 "checkbox",
-                "completionpercentenabled",
+                $completionpercentenabled,
                 "",
                 get_string("completionpercent_label", "mod_supervideo")
             ),
             $mform->createElement(
                 "text",
-                "completionpercent",
+                $completionpercent,
                 get_string("completionpercent_label", "mod_supervideo"),
                 ["size" => "2"]
             ),
@@ -343,15 +370,16 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $mform->addGroup(
             $group,
-            "completionpercentgroup",
+            $completionpercentgroup,
             get_string("completionpercent", "mod_supervideo"),
             [" "],
             false
         );
-        $mform->disabledIf("completionpercent", "completionpercentenabled");
-        $mform->setDefault("completionpercent", 0);
-        $mform->setType("completionpercent", PARAM_INT);
-        return ["completionpercentgroup"];
+        $mform->disabledIf($completionpercent, $completionpercentenabled, "notchecked");
+        $mform->setDefault($completionpercent, 0);
+        $mform->setType($completionpercent, PARAM_INT);
+
+        return [$completionpercentgroup];
     }
 
     /**
@@ -361,7 +389,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        return ($data["completionpercent"] > 0);
+        $suffix = $this->get_completion_suffix();
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+        $completionpercent = "completionpercent{$suffix}";
+
+        return !empty($data[$completionpercentenabled]) && !empty($data[$completionpercent]);
     }
 
     /**
