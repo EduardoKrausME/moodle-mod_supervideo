@@ -50,6 +50,11 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
         export_for_template as export_for_template_base;
     }
 
+    /**
+     * Property _helpbutton.
+     *
+     * @var mixed
+     */
     public $_helpbutton; // phpcs:disable
 
     /**

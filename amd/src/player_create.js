@@ -13,6 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * player_create.js
+ *
+ * @package   mod_supervideo
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, Notification, PlayerRender) {
     var youtubeApiCallbacks = [];
     var youtubeApiHooked = false;
