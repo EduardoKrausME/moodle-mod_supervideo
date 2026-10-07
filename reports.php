@@ -38,20 +38,24 @@ echo $OUTPUT->header();
 $title = get_string("reports") . ": " . get_string("modulename", "mod_supervideo");
 echo $OUTPUT->heading($title, 2, "main", "supervideoheading");
 
-$sql = "SELECT cm.*, sv.name
-          FROM {course_modules} cm
-          JOIN {modules}        md ON md.id = cm.module
-          JOIN {supervideo}     sv ON sv.id = cm.instance
-         WHERE sv.course = :course
-           AND md.name   = 'supervideo'";
-$supervideos = $DB->get_records_sql($sql, ["course" => $courseid]);
+$modinfo = get_fast_modinfo($course);
+$supervideos = $modinfo->get_instances_of("supervideo");
+
 $reportnode = ["children" => []];
-foreach ($supervideos as $supervideo) {
-    $videoname = format_string($supervideo->name);
+foreach ($supervideos as $cm) {
+    if (!$cm->uservisible) {
+        continue;
+    }
+
+    $context = context_module::instance($cm->id);
+    if (!has_capability("mod/supervideo:view_report", $context)) {
+        continue;
+    }
+
     $reportnode["children"][] = [
         "display" => true,
-        "action" => "{$CFG->wwwroot}/mod/supervideo/report.php?id={$supervideo->id}",
-        "text" => "{$videoname}",
+        "action" => "{$CFG->wwwroot}/mod/supervideo/report.php?id={$cm->id}",
+        "text" => $cm->get_formatted_name(),
     ];
 }
 
