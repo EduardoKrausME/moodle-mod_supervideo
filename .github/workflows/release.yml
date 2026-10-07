@@ -23,14 +23,14 @@ jobs:
 
       - name: Extract version of the commit message.
         id: ver
+        env:
+          RELEASE_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
-          MSG="${{ github.event.head_commit.message }}"
-          # The house exactly "V N.N.N" (with a space and 3 numbers)
-          if echo "$MSG" | grep -Eq '^V [0-9]+\.[0-9]+\.[0-9]+$'; then
-            VERSION=$(echo "$MSG" | sed -nE 's/^V ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
+          if printf '%s' "$RELEASE_MESSAGE" | grep -Eq '^V [0-9]+\.[0-9]+\.[0-9]+$'; then
+            VERSION=$(printf '%s' "$RELEASE_MESSAGE" | sed -nE 's/^V ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           else
-            echo "No valid version in the message: '$MSG'."
+            echo "No valid version in the commit message."
           fi
 
       - name: Close if there is no version.
