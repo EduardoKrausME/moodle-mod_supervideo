@@ -41,7 +41,7 @@ jobs:
             moodle: 'MOODLE_405_STABLE'
 
           - php: '8.3'
-            moodle: 'MOODLE_502_STABLE'
+            moodle: 'MOODLE_503_STABLE'
 
     steps:
     - name: Check out repository code
