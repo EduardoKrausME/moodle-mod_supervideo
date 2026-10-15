@@ -1,5 +1,10 @@
 name: Auto-release via commit message
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+  queue: max
+
 on: [push]
 
 permissions:
