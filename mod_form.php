@@ -22,11 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . "/course/moodleform_mod.php");
+require_once("{$CFG->dirroot}/course/moodleform_mod.php");
 
 use mod_supervideo\form\supervideo_filepicker;
+use mod_supervideo\util\marker_util;
+use mod_supervideo\util\source_url_parser;
 
 /**
  * class mod_supervideo_mod_for
@@ -59,55 +61,37 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addRule("name", null, "required", null, "client");
         $mform->addRule("name", get_string("maximumchars", "", 255), "maxlength", 255, "client");
 
+        // Adding the standard "intro" and "introformat" fields.
+        $this->standard_intro_elements();
+
         // Origem.
-        $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link"];
-        if ($supervideo && in_array($supervideo->origem, $origems)) {
-            $mform->addElement("hidden", "origem", $supervideo->origem);
-            $mform->setType("origem", PARAM_TEXT);
+        $origems = ["upload", "ottflix", "pandavideo", "youtube", "vimeo", "drive", "link", "embed"];
 
-            if ($supervideo->origem == "upload") {
-                $mform->addElement("hidden", "videourl", $supervideo->videourl);
-                $mform->setType("videourl", PARAM_TEXT);
-            } else if ($supervideo->origem == "pandavideo" || $supervideo->origem == "ottflix") {
-                supervideo_filepicker::add_form($mform, $supervideo->origem, "videourl");
+        $origemselect = [];
+        foreach ($origems as $origem) {
+            $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
+        }
+
+        $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
+
+        foreach ($origems as $origem) {
+            if ($origem == "upload") {
+                continue;
+            }
+
+            if ($origem == "pandavideo" || $origem == "ottflix") {
+                supervideo_filepicker::add_form($mform, $origem, "videourl_{$origem}");
             } else {
-                $title = get_string("origem_{$supervideo->origem}", "mod_supervideo");
-                $mform->addElement("text", "videourl", $title, ["size" => "60"], []);
-                $mform->setType("videourl", PARAM_TEXT);
-                $mform->addHelpButton("videourl", "origem_{$supervideo->origem}", "mod_supervideo");
+                $mform->addElement(
+                    "text",
+                    "videourl_{$origem}",
+                    get_string("origem_{$origem}", "mod_supervideo"),
+                    ["size" => "60"], []
+                );
+                $mform->setType("videourl_{$origem}", PARAM_TEXT);
+                $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
             }
-        } else {
-            $origemselect = [];
-            foreach ($origems as $origem) {
-                $origemselect[$origem] = get_string("origem_{$origem}", "mod_supervideo");
-            }
-
-            $mform->addElement("select", "origem", get_string("origem_name", "mod_supervideo"), $origemselect);
-
-            foreach ($origems as $origem) {
-                if ($origem == "upload") {
-                    continue;
-                }
-                if ($supervideo && $origem != $supervideo->origem) {
-                    continue;
-                }
-
-                if ($origem == "pandavideo" || $origem == "ottflix") {
-                    supervideo_filepicker::add_form($mform, $origem, "videourl_{$origem}");
-                } else {
-                    $mform->addElement(
-                        "text",
-                        "videourl_{$origem}",
-                        get_string("origem_{$origem}", "mod_supervideo"),
-                        ["size" => "60"], []
-                    );
-                    $mform->setType("videourl_{$origem}", PARAM_TEXT);
-                    $mform->addHelpButton("videourl_{$origem}", "origem_{$origem}", "mod_supervideo");
-                }
-                if (!$supervideo) {
-                    $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
-                }
-            }
+            $mform->hideIf("videourl_{$origem}", "origem", "neq", $origem);
         }
 
         // Ottflix IA.
@@ -123,14 +107,15 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "drive");
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "pandavideo");
         $mform->hideIf("ottflix_ia_text", "origem", "eq", "link");
+        $mform->hideIf("ottflix_ia_text", "origem", "eq", "embed");
 
         $options = [
             "InteractiveVideo" => get_string("ottflix_ia_interactivevideo", "mod_supervideo"),
-            "AdvancedText"     => get_string("ottflix_ia_advancedtext", "mod_supervideo"),
-            "Accordion"        => get_string("ottflix_ia_accordion", "mod_supervideo"),
-            "Dialogcards"      => get_string("ottflix_ia_dialogcards", "mod_supervideo"),
-            "QuestionSet"      => get_string("ottflix_ia_questionset", "mod_supervideo"),
-            "DragText"         => get_string("ottflix_ia_dragtext", "mod_supervideo"),
+            "AdvancedText" => get_string("ottflix_ia_advancedtext", "mod_supervideo"),
+            "Accordion" => get_string("ottflix_ia_accordion", "mod_supervideo"),
+            "Dialogcards" => get_string("ottflix_ia_dialogcards", "mod_supervideo"),
+            "QuestionSet" => get_string("ottflix_ia_questionset", "mod_supervideo"),
+            "DragText" => get_string("ottflix_ia_dragtext", "mod_supervideo"),
         ];
         $attributes = ["multiple" => "multiple", "size" => 6];
         $mform->addElement("select", "ottflix_ia", "", $options, $attributes);
@@ -141,6 +126,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("ottflix_ia", "origem", "eq", "drive");
         $mform->hideIf("ottflix_ia", "origem", "eq", "pandavideo");
         $mform->hideIf("ottflix_ia", "origem", "eq", "link");
+        $mform->hideIf("ottflix_ia", "origem", "eq", "embed");
 
         // Upload.
         if (!$supervideo || $supervideo->origem == "upload" || !in_array($supervideo->origem, $origems)) {
@@ -180,25 +166,37 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $config = get_config("supervideo");
 
         if ($config->showcontrols <= 1) {
-            $mform->addElement("advcheckbox", "showcontrols", get_string("showcontrols_desc", "mod_supervideo"));
+            $mform->addElement("selectyesno", "showcontrols", get_string("showcontrols_desc", "mod_supervideo"));
             $mform->setDefault("showcontrols", $config->showcontrols);
             $mform->hideIf("showcontrols", "origem", "eq", "ottflix");
             $mform->hideIf("showcontrols", "origem", "eq", "pandavideo");
+            $mform->hideIf("showcontrols", "origem", "eq", "embed");
         }
 
         if ($config->autoplay <= 1) {
-            $mform->addElement("advcheckbox", "autoplay", get_string("autoplay_desc", "mod_supervideo"));
+            $mform->addElement("selectyesno", "autoplay", get_string("autoplay_desc", "mod_supervideo"));
             $mform->setDefault("autoplay", $config->autoplay);
             $mform->hideIf("autoplay", "origem", "eq", "ottflix");
             $mform->hideIf("autoplay", "origem", "eq", "pandavideo");
+            $mform->hideIf("autoplay", "origem", "eq", "embed");
         }
 
-        // Adding the standard "intro" and "introformat" fields.
-        if ($CFG->branch >= 29) {
-            $this->standard_intro_elements();
-        } else {
-            $this->add_intro_editor();
-        }
+        // Markers and optional jumps between them.
+        $mform->addElement(
+            "textarea",
+            "markers",
+            get_string("markers", "mod_supervideo"),
+            ["rows" => 6, "cols" => 60]
+        );
+        $mform->setType("markers", PARAM_RAW_TRIMMED);
+        $mform->addHelpButton("markers", "markers", "mod_supervideo");
+        $mform->hideIf("markers", "origem", "eq", "drive");
+        $mform->hideIf("markers", "origem", "eq", "ottflix");
+        $mform->hideIf("markers", "origem", "eq", "vimeo");
+        $mform->hideIf("markers", "origem", "eq", "youtube");
+        $mform->hideIf("markers", "origem", "eq", "ottflix");
+        $mform->hideIf("markers", "origem", "eq", "pandavideo");
+        $mform->hideIf("markers", "origem", "eq", "embed");
 
         // Grade Element.
         $mform->addElement("header", "modstandardgrade", get_string("modgrade", "grades"));
@@ -213,7 +211,7 @@ class mod_supervideo_mod_form extends moodleform_mod {
             "select",
             "gradecat",
             get_string("gradecategoryonmodform", "grades"),
-            grade_get_categories_menu($COURSE->id, false)
+            grade_get_categories_menu($COURSE->id)
         );
         $mform->addHelpButton("gradecat", "gradecategoryonmodform", "grades");
         $mform->hideIf("gradecat", "grade_approval", "eq", "0");
@@ -241,13 +239,32 @@ class mod_supervideo_mod_form extends moodleform_mod {
             }
         }
 
-        $config = get_config("supervideo");
-        $PAGE->requires->strings_for_js(["record_kapture"], "supervideo");
+        $PAGE->requires->strings_for_js([
+            "record_kapture",
+            "markers_add",
+            "markers_time",
+            "markers_label",
+            "markers_skip",
+            "markers_remove",
+        ], "supervideo");
+        $PAGE->requires->js_call_amd("mod_supervideo/markers_form", "init", ["markers"]);
         $PAGE->requires->js_call_amd(
             "mod_supervideo/mod_form",
             "init",
             [$USER->lang, $courseinfo]
         );
+    }
+
+    /**
+     * Returns the suffix used by completion forms.
+     *
+     * Moodle 4.3+ can suffix completion fields in bulk/default completion forms.
+     * Older supported Moodle versions do not provide get_suffix().
+     *
+     * @return string
+     */
+    private function get_completion_suffix(): string {
+        return method_exists($this, 'get_suffix') ? $this->get_suffix() : '';
     }
 
     /**
@@ -264,11 +281,20 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 file_prepare_draft_area($draftitemid, $this->context->id, "mod_supervideo", "content", $id, ["subdirs" => true]);
                 $defaultvalues["videofile"] = $draftitemid;
             }
+
+            // Populate the videourl_{origem} field with the existing videourl value.
+            if (!empty($defaultvalues["origem"]) && !empty($defaultvalues["videourl"])) {
+                $defaultvalues["videourl_{$defaultvalues['origem']}"] = $defaultvalues["videourl"];
+            }
         }
 
-        $defaultvalues["completionpercentenabled"] = !empty($defaultvalues["completionpercent"]) ? 1 : 0;
-        if (empty($defaultvalues["completionpercent"])) {
-            $defaultvalues["completionpercent"] = 1;
+        $suffix = $this->get_completion_suffix();
+        $completionpercent = "completionpercent{$suffix}";
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+
+        $defaultvalues[$completionpercentenabled] = !empty($defaultvalues[$completionpercent]) ? 1 : 0;
+        if (empty($defaultvalues[$completionpercent])) {
+            $defaultvalues[$completionpercent] = 1;
         }
     }
 
@@ -283,9 +309,15 @@ class mod_supervideo_mod_form extends moodleform_mod {
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionpercentenabled) || !$autocompletion) {
-                $data->completionpercent = 0;
+            $suffix = $this->get_completion_suffix();
+            $completion = "completion{$suffix}";
+            $completionpercent = "completionpercent{$suffix}";
+            $completionpercentenabled = "completionpercentenabled{$suffix}";
+
+            $autocompletion = !empty($data->{$completion})
+                && $data->{$completion} == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{$completionpercentenabled}) || !$autocompletion) {
+                $data->{$completionpercent} = 0;
             }
         }
     }
@@ -315,16 +347,21 @@ class mod_supervideo_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = &$this->_form;
+        $suffix = $this->get_completion_suffix();
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+        $completionpercent = "completionpercent{$suffix}";
+        $completionpercentgroup = "completionpercentgroup{$suffix}";
+
         $group = [
             $mform->createElement(
                 "checkbox",
-                "completionpercentenabled",
+                $completionpercentenabled,
                 "",
                 get_string("completionpercent_label", "mod_supervideo")
             ),
             $mform->createElement(
                 "text",
-                "completionpercent",
+                $completionpercent,
                 get_string("completionpercent_label", "mod_supervideo"),
                 ["size" => "2"]
             ),
@@ -333,15 +370,16 @@ class mod_supervideo_mod_form extends moodleform_mod {
 
         $mform->addGroup(
             $group,
-            "completionpercentgroup",
+            $completionpercentgroup,
             get_string("completionpercent", "mod_supervideo"),
             [" "],
             false
         );
-        $mform->disabledIf("completionpercent", "completionpercentenabled", "notchecked");
-        $mform->setDefault("completionpercent", 0);
-        $mform->setType("completionpercent", PARAM_INT);
-        return ["completionpercentgroup"];
+        $mform->disabledIf($completionpercent, $completionpercentenabled, "notchecked");
+        $mform->setDefault($completionpercent, 0);
+        $mform->setType($completionpercent, PARAM_INT);
+
+        return [$completionpercentgroup];
     }
 
     /**
@@ -351,7 +389,11 @@ class mod_supervideo_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        return ($data["completionpercent"] > 0);
+        $suffix = $this->get_completion_suffix();
+        $completionpercentenabled = "completionpercentenabled{$suffix}";
+        $completionpercent = "completionpercent{$suffix}";
+
+        return !empty($data[$completionpercentenabled]) && !empty($data[$completionpercent]);
     }
 
     /**
@@ -386,23 +428,26 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $errors["gradepass"] = get_string("completionpercent_error", "mod_supervideo");
             }
         }
+        if (!empty($data["markers"])) {
+            try {
+                marker_util::parse($data["markers"], true);
+            } catch (InvalidArgumentException $exception) {
+                $errors["markers"] = get_string("markers_error", "mod_supervideo");
+            }
+        }
         $origem = $data["origem"];
         if ($origem == "upload") {
             $usercontext = context_user::instance($USER->id);
             $fs = get_file_storage();
-            if (!$videofile = $fs->get_area_files($usercontext->id, "user", "draft", $data["videofile"], "sortorder, id", false)) {
+            if (!$fs->get_area_files($usercontext->id, "user", "draft", $data["videofile"], "sortorder, id", false)) {
                 $errors["videofile"] = get_string("required");
                 return $errors;
             }
         } else {
-            if ($data["instance"]) {
-                if (!isset($data["videourl"]) || empty($data["videourl"])) {
-                    $errors["videourl"] = get_string("required");
-                }
-            } else {
-                if (!isset($data["videourl_{$origem}"]) || empty($data["videourl_{$origem}"])) {
-                    $errors["videourl_{$origem}"] = get_string("required");
-                }
+            if (empty($data["videourl_{$origem}"])) {
+                $errors["videourl_{$origem}"] = get_string("required");
+            } else if (!source_url_parser::is_valid($origem, $data["videourl_{$origem}"])) {
+                $errors["videourl_{$origem}"] = get_string("sourceurl_invalid", "mod_supervideo");
             }
         }
         return $errors;

@@ -25,8 +25,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    require_once("$CFG->libdir/resourcelib.php");
+    require_once("{$CFG->libdir}/resourcelib.php");
 
+<<<<<<< HEAD
     $title = get_string("distractionfreemode", "mod_supervideo");
     $description = get_string("distractionfreemode_desc", "mod_supervideo");
     $setting = new admin_setting_configcheckbox(
@@ -55,6 +56,18 @@ if ($ADMIN->fulltree) {
         $description,
         1
     );
+=======
+    $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode",
+        get_string("distractionfreemode", "mod_supervideo"),
+        get_string("distractionfreemode_desc", "mod_supervideo"),
+        1);
+    $settings->add($setting);
+
+    $setting = new admin_setting_configcheckbox("supervideo/showmap",
+        get_string("showmap", "mod_supervideo"),
+        get_string("showmap_desc", "mod_supervideo"),
+        1);
+>>>>>>> 291bd7b3dc1b7219085a8fd8feab34bb41216ceb
     $settings->add($setting);
 
     $options = [
@@ -74,6 +87,7 @@ if ($ADMIN->fulltree) {
         "fullscreen" => get_string("controls_fullscreen", "mod_supervideo"),
     ];
     $optionsdefault = ["play", "pause", "progress", "current-time", "pip", "duration", "settings", "fullscreen"];
+<<<<<<< HEAD
     $title = get_string("controls", "mod_supervideo");
     $description = get_string("controls_desc", "mod_supervideo");
     $setting = new admin_setting_configmultiselect(
@@ -83,6 +97,12 @@ if ($ADMIN->fulltree) {
         $optionsdefault,
         $options
     );
+=======
+    $setting = new admin_setting_configmultiselect("supervideo/controls",
+        get_string("controls", "mod_supervideo"),
+        get_string("controls_desc", "mod_supervideo"),
+        $optionsdefault, $options);
+>>>>>>> 291bd7b3dc1b7219085a8fd8feab34bb41216ceb
     $settings->add($setting);
 
     $options = [
@@ -95,15 +115,10 @@ if ($ADMIN->fulltree) {
         "2" => get_string("speed_2", "mod_supervideo"),
         "4" => get_string("speed_4", "mod_supervideo"),
     ];
-    $title = get_string("speed", "mod_supervideo");
-    $description = get_string("speed_desc", "mod_supervideo");
-    $setting = new admin_setting_configmultiselect(
-        "supervideo/speed",
-        $title,
-        $description,
-        array_keys($options),
-        $options
-    );
+    $setting = new admin_setting_configmultiselect("supervideo/speed",
+        get_string("speed", "mod_supervideo"),
+        get_string("speed_desc", "mod_supervideo"),
+        array_keys($options), $options);
     $settings->add($setting);
 
     $options = [
@@ -112,37 +127,22 @@ if ($ADMIN->fulltree) {
         2 => get_string("settings_obrigatorio_desmarcado", "mod_supervideo"),
         3 => get_string("settings_obrigatorio_marcado", "mod_supervideo"),
     ];
-    $title = get_string("showcontrols", "mod_supervideo");
-    $description = get_string("showcontrols_desc", "mod_supervideo");
-    $setting = new admin_setting_configselect(
-        "supervideo/showcontrols",
-        $title,
-        $description,
-        1,
-        $options
-    );
+    $setting = new admin_setting_configselect("supervideo/showcontrols",
+        get_string("showcontrols", "mod_supervideo"),
+        get_string("showcontrols_desc", "mod_supervideo"),
+        1, $options);
     $settings->add($setting);
 
-    $title = get_string("autoplay", "mod_supervideo");
-    $description = get_string("autoplay_desc", "mod_supervideo");
-    $setting = new admin_setting_configselect(
-        "supervideo/autoplay",
-        $title,
-        $description,
-        0,
-        $options
-    );
+    $setting = new admin_setting_configselect("supervideo/autoplay",
+        get_string("autoplay", "mod_supervideo"),
+        get_string("autoplay_desc", "mod_supervideo"),
+        0, $options);
     $settings->add($setting);
 
-    $title = get_string("maxwidth", "mod_supervideo");
-    $description = get_string("maxwidth_desc", "mod_supervideo");
-    $setting = new admin_setting_configtext(
-        "supervideo/maxwidth",
-        $title,
-        $description,
-        0,
-        PARAM_INT
-    );
+    $setting = new admin_setting_configtext("supervideo/maxwidth",
+        get_string("maxwidth", "mod_supervideo"),
+        get_string("maxwidth_desc", "mod_supervideo"),
+        0, PARAM_INT);
     $settings->add($setting);
 
     // OttFlix.
@@ -150,26 +150,16 @@ if ($ADMIN->fulltree) {
     $setting = new admin_setting_heading("supervideo/ottflix", $title, "");
     $settings->add($setting);
 
-    $title = get_string("ottflix_url", "mod_supervideo");
-    $description = get_string("ottflix_url_desc", "mod_supervideo");
-    $setting = new admin_setting_configtext(
-        "supervideo/ottflix_url",
-        $title,
-        $description,
-        "https://app.ottflix.com.br/",
-        PARAM_URL
-    );
+    $setting = new admin_setting_configtext("supervideo/ottflix_url",
+        get_string("ottflix_url", "mod_supervideo"),
+        get_string("ottflix_url_desc", "mod_supervideo"),
+        "https://app.ottflix.com.br/", PARAM_URL);
     $settings->add($setting);
 
-    $title = get_string("ottflix_token", "mod_supervideo");
-    $description = get_string("ottflix_token_desc", "mod_supervideo");
-    $setting = new admin_setting_configtext(
-        "supervideo/ottflix_token",
-        $title,
-        $description,
-        "HMAC-SHA2048-xxxxxxxx",
-        PARAM_TEXT
-    );
+    $setting = new admin_setting_configpasswordunmask("supervideo/ottflix_token",
+        get_string("ottflix_token", "mod_supervideo"),
+        get_string("ottflix_token_desc", "mod_supervideo"),
+        "HMAC-SHA2048-xxxxxxxx");
     $settings->add($setting);
 
     $title = get_string("distractionfreemode_h5p", "mod_supervideo");
@@ -178,6 +168,15 @@ if ($ADMIN->fulltree) {
         "supervideo/distractionfreemode_h5p",
         $title,
         $description,
+        1
+    );
+    $settings->add($setting);
+
+    // YouTube Protection.
+    $setting = new admin_setting_configcheckbox(
+        "supervideo/youtube_protection",
+        get_string("youtube_protection", "mod_supervideo"),
+        get_string("youtube_protection_desc", "mod_supervideo"),
         1
     );
     $settings->add($setting);

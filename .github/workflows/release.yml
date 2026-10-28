@@ -1,14 +1,14 @@
 name: Auto-release via commit message
 
-on:
-  push:
-    branches: [ master ]
+on: [push]
 
 permissions:
   contents: write
 
 jobs:
   auto-release:
+    if: startsWith(github.event.head_commit.message, 'V ')
+
     runs-on:
       ubuntu-latest
 
@@ -23,14 +23,14 @@ jobs:
 
       - name: Extract version of the commit message.
         id: ver
+        env:
+          RELEASE_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
-          MSG="${{ github.event.head_commit.message }}"
-          # The house exactly "V N.N.N" (with a space and 3 numbers)
-          if echo "$MSG" | grep -Eq '^V [0-9]+\.[0-9]+\.[0-9]+$'; then
-            VERSION=$(echo "$MSG" | sed -nE 's/^V ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
+          if printf '%s' "$RELEASE_MESSAGE" | grep -Eq '^V [0-9]+\.[0-9]+\.[0-9]+$'; then
+            VERSION=$(printf '%s' "$RELEASE_MESSAGE" | sed -nE 's/^V ([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           else
-            echo "No valid version in the message: '$MSG'."
+            echo "No valid version in the commit message."
           fi
 
       - name: Close if there is no version.
@@ -59,55 +59,3 @@ jobs:
             ${{ github.event.head_commit.id }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
-
-  deploy-to-moodle:
-    needs:
-      auto-release
-
-    if:
-      needs.auto-release.outputs.tag != ''
-
-    runs-on:
-      ubuntu-latest
-
-    env:
-      PLUGIN: mod_supervideo
-      CURL: curl -s
-      ENDPOINT: https://moodle.org/webservice/rest/server.php
-      TOKEN: ${{ secrets.MOODLE_ORG_TOKEN }}
-      FUNCTION: local_plugins_add_version
-      TAGNAME: ${{ needs.auto-release.outputs.tag }}
-
-    steps:
-      - name: Call the service function
-        id: add-version
-        run: |
-          if [[ ! -z "${{ github.event.inputs.tag }}" ]]; then
-            TAGNAME="${{ github.event.inputs.tag }}"
-          elif [[ $GITHUB_REF = refs/tags/* ]]; then
-            TAGNAME="${GITHUB_REF##*/}"
-          fi
-          if [[ -z "${TAGNAME}" ]]; then
-            echo "No tag name has been provided!"
-            exit 1
-          fi
-          ZIPURL="https://api.github.com/repos/${{ github.repository }}/zipball/${TAGNAME}"
-          RESPONSE=$(${CURL} ${ENDPOINT} --data-urlencode "wstoken=${TOKEN}" \
-                                         --data-urlencode "wsfunction=${FUNCTION}" \
-                                         --data-urlencode "moodlewsrestformat=json" \
-                                         --data-urlencode "frankenstyle=${PLUGIN}" \
-                                         --data-urlencode "zipurl=${ZIPURL}" \
-                                         --data-urlencode "vcssystem=git" \
-                                         --data-urlencode "vcsrepositoryurl=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
-                                         --data-urlencode "vcstag=${TAGNAME}" \
-                                         --data-urlencode "changelogurl=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commits/${TAGNAME}" \
-                                         --data-urlencode "altdownloadurl=${ZIPURL}")
-          echo "response=${RESPONSE}" >> $GITHUB_OUTPUT
-
-      - name: Evaluate the response
-        id: evaluate-response
-        env:
-          RESPONSE: ${{ steps.add-version.outputs.response }}
-        run: |
-          jq <<< ${RESPONSE}
-          jq --exit-status ".id" <<< ${RESPONSE} > /dev/null

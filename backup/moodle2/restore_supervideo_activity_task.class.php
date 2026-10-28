@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/supervideo/backup/moodle2/restore_supervideo_stepslib.php');
+require_once("{$CFG->dirroot}/mod/supervideo/backup/moodle2/restore_supervideo_stepslib.php");
 
 /**
  * Restore task for the supervideo activity module

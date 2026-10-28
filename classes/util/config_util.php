@@ -17,6 +17,7 @@
 namespace mod_supervideo\util;
 
 use core\output\notification;
+use Exception;
 
 /**
  * Util config_util for mod_supervideo.
@@ -33,7 +34,7 @@ class config_util {
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function get_config($supervideo) {
         global $CFG;

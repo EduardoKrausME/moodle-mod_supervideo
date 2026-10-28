@@ -27,7 +27,6 @@
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     align-items: center;
-    direction: ltr;
     display: flex;
     flex-direction: column;
     font-family: inherit;
@@ -412,139 +411,151 @@ a.plyr__control {
     min-width: 0;
     padding: 0;
     transition: box-shadow .3s ease;
-    width: 100%
+    width: 100%;
+    &::-webkit-slider-runnable-track {
+        background: #00000000;
+        background-image: linear-gradient(90deg, currentColor 0, #00000000 0);
+        background-image: linear-gradient(to right, currentColor var(--value, 0), #00000000 var(--value, 0));
+        border: 0;
+        border-radius: 2.5px;
+        border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
+        height: 5px;
+        height: var(--plyr-range-track-height, 5px);
+        -webkit-transition: box-shadow .3s ease;
+        transition: box-shadow .3s ease;
+        -webkit-user-select: none;
+        user-select: none
+    }
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #ffffff;
+        background: var(--plyr-range-thumb-background, #ffffff);
+        border: 0;
+        border-radius: 100%;
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
+        height: 13px;
+        height: var(--plyr-range-thumb-height, 13px);
+        margin-top: -4px;
+        margin-top: calc((var(--plyr-range-thumb-height, 13px) - var(--plyr-range-track-height, 5px)) / 2 * -1);
+        position: relative;
+        -webkit-transition: all .2s ease;
+        transition: all .2s ease;
+        width: 13px;
+        width: var(--plyr-range-thumb-height, 13px)
+    }
+    &::-moz-range-track {
+        background: #00000000;
+        border: 0;
+        border-radius: 2.5px;
+        border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
+        height: 5px;
+        height: var(--plyr-range-track-height, 5px);
+        -moz-transition: box-shadow .3s ease;
+        transition: box-shadow .3s ease;
+        user-select: none
+    }
+    &::-moz-range-thumb {
+        background: #ffffff;
+        background: var(--plyr-range-thumb-background, #ffffff);
+        border: 0;
+        border-radius: 100%;
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
+        height: 13px;
+        height: var(--plyr-range-thumb-height, 13px);
+        position: relative;
+        -moz-transition: all .2s ease;
+        transition: all .2s ease;
+        width: 13px;
+        width: var(--plyr-range-thumb-height, 13px)
+    }
+    &::-moz-range-progress {
+        background: currentColor;
+        border-radius: 2.5px;
+        border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
+        height: 5px;
+        height: var(--plyr-range-track-height, 5px)
+    }
+    &::-ms-track {
+        color: #00000000;
+    }
+    &::-ms-fill-upper,
+    &::-ms-track {
+        background: #00000000;
+        border: 0;
+        border-radius: 2.5px;
+        border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
+        height: 5px;
+        height: var(--plyr-range-track-height, 5px);
+        -ms-transition: box-shadow .3s ease;
+        transition: box-shadow .3s ease;
+        user-select: none
+    }
+    &::-ms-fill-lower {
+        background: #00000000;
+        background: currentColor;
+        border: 0;
+        border-radius: 2.5px;
+        border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
+        height: 5px;
+        height: var(--plyr-range-track-height, 5px);
+        -ms-transition: box-shadow .3s ease;
+        transition: box-shadow .3s ease;
+        user-select: none
+    }
+    &::-ms-thumb {
+        background: #ffffff;
+        background: var(--plyr-range-thumb-background, #ffffff);
+        border: 0;
+        border-radius: 100%;
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
+        height: 13px;
+        height: var(--plyr-range-thumb-height, 13px);
+        margin-top: 0;
+        position: relative;
+        -ms-transition: all .2s ease;
+        transition: all .2s ease;
+        width: 13px;
+        width: var(--plyr-range-thumb-height, 13px)
+    }
+    &::-ms-tooltip {
+        display: none
+    }
+    &::-moz-focus-outer {
+        border: 0
+    }
+    &:focus {
+        outline: 0
+    }
+    &:focus-visible::-webkit-slider-runnable-track {
+        outline: 2px dashed #00b2ff;
+        outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
+        outline-offset: 2px
+    }
+    &:focus-visible::-moz-range-track {
+        outline: 2px dashed #00b2ff;
+        outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
+        outline-offset: 2px
+    }
+    &:focus-visible::-ms-track {
+        outline: 2px dashed #00b2ff;
+        outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
+        outline-offset: 2px
+    }
 }
-.plyr--full-ui input[type=range]::-webkit-slider-runnable-track {
-    background: #00000000;
-    background-image: linear-gradient(90deg, currentColor 0, #00000000 0);
-    background-image: linear-gradient(to right, currentColor var(--value, 0), #00000000 var(--value, 0));
-    border: 0;
-    border-radius: 2.5px;
-    border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
-    height: 5px;
-    height: var(--plyr-range-track-height, 5px);
-    -webkit-transition: box-shadow .3s ease;
-    transition: box-shadow .3s ease;
-    -webkit-user-select: none;
-    user-select: none
-}
-.plyr--full-ui input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    background: #ffffff;
-    background: var(--plyr-range-thumb-background, #ffffff);
-    border: 0;
-    border-radius: 100%;
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
-    height: 13px;
-    height: var(--plyr-range-thumb-height, 13px);
-    margin-top: -4px;
-    margin-top: calc((var(--plyr-range-thumb-height, 13px) - var(--plyr-range-track-height, 5px)) / 2 * -1);
-    position: relative;
-    -webkit-transition: all .2s ease;
-    transition: all .2s ease;
-    width: 13px;
-    width: var(--plyr-range-thumb-height, 13px)
-}
-.plyr--full-ui input[type=range]::-moz-range-track {
-    background: #00000000;
-    border: 0;
-    border-radius: 2.5px;
-    border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
-    height: 5px;
-    height: var(--plyr-range-track-height, 5px);
-    -moz-transition: box-shadow .3s ease;
-    transition: box-shadow .3s ease;
-    user-select: none
-}
-.plyr--full-ui input[type=range]::-moz-range-thumb {
-    background: #ffffff;
-    background: var(--plyr-range-thumb-background, #ffffff);
-    border: 0;
-    border-radius: 100%;
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
-    height: 13px;
-    height: var(--plyr-range-thumb-height, 13px);
-    position: relative;
-    -moz-transition: all .2s ease;
-    transition: all .2s ease;
-    width: 13px;
-    width: var(--plyr-range-thumb-height, 13px)
-}
-.plyr--full-ui input[type=range]::-moz-range-progress {
-    background: currentColor;
-    border-radius: 2.5px;
-    border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
-    height: 5px;
-    height: var(--plyr-range-track-height, 5px)
-}
-.plyr--full-ui input[type=range]::-ms-track {
-    color: #00000000;
-}
-.plyr--full-ui input[type=range]::-ms-fill-upper, .plyr--full-ui input[type=range]::-ms-track {
-    background: #00000000;
-    border: 0;
-    border-radius: 2.5px;
-    border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
-    height: 5px;
-    height: var(--plyr-range-track-height, 5px);
-    -ms-transition: box-shadow .3s ease;
-    transition: box-shadow .3s ease;
-    user-select: none
-}
-.plyr--full-ui input[type=range]::-ms-fill-lower {
-    background: #00000000;
-    background: currentColor;
-    border: 0;
-    border-radius: 2.5px;
-    border-radius: calc(var(--plyr-range-track-height, 5px) / 2);
-    height: 5px;
-    height: var(--plyr-range-track-height, 5px);
-    -ms-transition: box-shadow .3s ease;
-    transition: box-shadow .3s ease;
-    user-select: none
-}
-.plyr--full-ui input[type=range]::-ms-thumb {
-    background: #ffffff;
-    background: var(--plyr-range-thumb-background, #ffffff);
-    border: 0;
-    border-radius: 100%;
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33);
-    height: 13px;
-    height: var(--plyr-range-thumb-height, 13px);
-    margin-top: 0;
-    position: relative;
-    -ms-transition: all .2s ease;
-    transition: all .2s ease;
-    width: 13px;
-    width: var(--plyr-range-thumb-height, 13px)
-}
-.plyr--full-ui input[type=range]::-ms-tooltip {
-    display: none
-}
-.plyr--full-ui input[type=range]::-moz-focus-outer {
-    border: 0
-}
-.plyr--full-ui input[type=range]:focus {
-    outline: 0
-}
-.plyr--full-ui input[type=range]:focus-visible::-webkit-slider-runnable-track {
-    outline: 2px dashed #00b2ff;
-    outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
-    outline-offset: 2px
-}
-.plyr--full-ui input[type=range]:focus-visible::-moz-range-track {
-    outline: 2px dashed #00b2ff;
-    outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
-    outline-offset: 2px
-}
-.plyr--full-ui input[type=range]:focus-visible::-ms-track {
-    outline: 2px dashed #00b2ff;
-    outline: 2px dashed var(--plyr-focus-visible-color, var(--plyr-color-main, var(--plyr-color-main, #00b2ff)));
-    outline-offset: 2px
+html:dir(rtl) {
+    .plyr--full-ui input[type=range] {
+        &::-webkit-slider-runnable-track {
+            background-image: linear-gradient(
+                            to left,
+                            currentColor var(--value, 0),
+                            transparent var(--value, 0)
+            );
+        }
+    }
 }
 .plyr__poster {
     background-color: #000000;
@@ -665,7 +676,8 @@ a.plyr__control {
     margin-right: var(--plyr-range-thumb-height, 13px);
     position: relative
 }
-.plyr__progress input[type=range], .plyr__progress__buffer {
+.plyr__progress input[type=range],
+.plyr__progress__buffer {
     margin-left: -6.5px;
     margin-left: calc(var(--plyr-range-thumb-height, 13px) * -.5);
     margin-right: -6.5px;
@@ -694,31 +706,31 @@ a.plyr__control {
     margin-top: calc((var(--plyr-range-track-height, 5px) / 2) * -1);
     padding: 0;
     position: absolute;
-    top: 50%
-}
-.plyr__progress__buffer::-webkit-progress-bar {
-    background: #00000000;
-}
-.plyr__progress__buffer::-webkit-progress-value {
-    background: currentColor;
-    border-radius: 100px;
-    min-width: 5px;
-    min-width: var(--plyr-range-track-height, 5px);
-    -webkit-transition: width .2s ease;
-    transition: width .2s ease;
-}
-.plyr__progress__buffer::-moz-progress-bar {
-    background: currentColor;
-    border-radius: 100px;
-    min-width: 5px;
-    min-width: var(--plyr-range-track-height, 5px);
-    -moz-transition: width .2s ease;
-    transition: width .2s ease;
-}
-.plyr__progress__buffer::-ms-fill {
-    border-radius: 100px;
-    -ms-transition: width .2s ease;
-    transition: width .2s ease;
+    top: 50%;
+    &::-webkit-progress-bar {
+        background: #00000000;
+    }
+    &::-webkit-progress-value {
+        background: currentColor;
+        border-radius: 100px;
+        min-width: 5px;
+        min-width: var(--plyr-range-track-height, 5px);
+        -webkit-transition: width .2s ease;
+        transition: width .2s ease;
+    }
+    &::-moz-progress-bar {
+        background: currentColor;
+        border-radius: 100px;
+        min-width: 5px;
+        min-width: var(--plyr-range-track-height, 5px);
+        -moz-transition: width .2s ease;
+        transition: width .2s ease;
+    }
+    &::-ms-fill {
+        border-radius: 100px;
+        -ms-transition: width .2s ease;
+        transition: width .2s ease;
+    }
 }
 .plyr--loading .plyr__progress__buffer {
     animation: plyr-progress 1s linear infinite;
@@ -920,29 +932,31 @@ a.plyr__control {
 .plyr--full-ui.plyr--video .plyr__control--overlaid {
     display: block
 }
-.plyr--full-ui.plyr--video input[type=range]::-webkit-slider-runnable-track {
-    background-color: #ffffff40;
-    background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
-}
-.plyr--full-ui.plyr--video input[type=range]::-moz-range-track {
-    background-color: #ffffff40;
-    background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
-}
-.plyr--full-ui.plyr--video input[type=range]::-ms-track {
-    background-color: #ffffff40;
-    background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
-}
-.plyr--full-ui.plyr--video input[type=range]:active::-webkit-slider-thumb {
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
-}
-.plyr--full-ui.plyr--video input[type=range]:active::-moz-range-thumb {
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
-}
-.plyr--full-ui.plyr--video input[type=range]:active::-ms-thumb {
-    box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
-    box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
+.plyr--full-ui.plyr--video input[type=range] {
+    &::-webkit-slider-runnable-track {
+        background-color: #ffffff40;
+        background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
+    }
+    &::-moz-range-track {
+        background-color: #ffffff40;
+        background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
+    }
+    &::-ms-track {
+        background-color: #ffffff40;
+        background-color: var(--plyr-video-range-track-background, var(--plyr-video-progress-buffered-background, #ffffff40))
+    }
+    &:active::-webkit-slider-thumb {
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
+    }
+    &:active::-moz-range-thumb {
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
+    }
+    &:active::-ms-thumb {
+        box-shadow: 0 1px 1px #23282f26, 0 0 0 1px #23282f33, 0 0 0 3px #ffffff80;
+        box-shadow: var(--plyr-range-thumb-shadow, 0 1px 1px #23282f26, 0 0 0 1px #23282f33), 0 0 0 var(--plyr-range-thumb-active-shadow-width, 3px) var(--plyr-audio-range-thumb-active-shadow-color, #ffffff80)
+    }
 }
 .plyr--video .plyr__progress__buffer {
     color: #ffffff40;

@@ -24,7 +24,11 @@
 
 namespace mod_supervideo\ottflix;
 
+use coding_exception;
+use curl;
+use dml_exception;
 use Exception;
+use stdClass;
 
 /**
  * Class repository
@@ -40,9 +44,8 @@ class repository {
      * @param string $pathid
      * @param string $searchtitle
      * @param array $extensions
-     * @return \stdClass
-     * @throws \coding_exception
-     * @throws \dml_exception
+     * @return stdClass
+     * @throws Exception
      */
     public static function listing($page, $perpage, $pathid, $searchtitle, $extensions) {
         global $SESSION, $USER;
@@ -76,7 +79,6 @@ class repository {
         global $USER;
 
         $payload = [
-            "identifier" => $identifier,
             "enrollment" => $cmid,
             "student_name" => fullname($USER),
             "student_email" => $USER->email,
@@ -108,6 +110,8 @@ class repository {
      * @throws Exception
      */
     public static function load_ottfilx($metodth, $params = []) {
+        global $CFG;
+
         $config = get_config('supervideo');
         if (is_array($params)) {
             $params = http_build_query($params, '', '&');
@@ -116,11 +120,11 @@ class repository {
         }
 
         if (isset($config->ottflix_url[10]) && isset($config->ottflix_token[10])) {
-            $curl = new \curl();
+            $curl = new curl();
+            $version = moodle_major_version();
             $curl->setopt([
-                'CURLOPT_HTTPHEADER' => [
-                    "authorization:{$config->ottflix_token}",
-                ],
+                'CURLOPT_HTTPHEADER' => ["authorization:{$config->ottflix_token}"],
+                'CURLOPT_USERAGENT' => "Mozilla/5.0 (Moodle; {$version}) AppleWebKit/537.36 (KHTML, like Gecko) (+{$CFG->wwwroot})",
             ]);
 
             $result = $curl->get("{$config->ottflix_url}{$metodth}?{$params}");

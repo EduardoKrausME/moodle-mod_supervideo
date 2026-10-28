@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * services file
+ * External services file.
  *
  * @package   mod_supervideo
  * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
@@ -27,34 +27,49 @@ defined('MOODLE_INTERNAL') || die;
 $functions = [
     'mod_supervideo_progress_save' => [
         'classpath' => 'mod/supervideo/classes/service/progress.php',
-        'classname' => 'mod_supervideo\service\progress',
+        'classname' => 'mod_supervideo\\service\\progress',
         'methodname' => 'save',
         'description' => 'Save progress video.',
         'type' => 'write',
         'ajax' => true,
+        'loginrequired' => true,
     ],
+
     'mod_supervideo_progress_save_mobile' => [
         'classpath' => 'mod/supervideo/classes/service/progress.php',
-        'classname' => 'mod_supervideo\service\progress',
+        'classname' => 'mod_supervideo\\service\\progress',
         'methodname' => 'save',
         'description' => 'Save progress video.',
         'type' => 'write',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+
     'mod_supervideo_opengraph_getinfo' => [
         'classpath' => 'mod/supervideo/classes/service/opengraph.php',
-        'classname' => 'mod_supervideo\service\opengraph',
+        'classname' => 'mod_supervideo\\service\\opengraph',
         'methodname' => 'getinfo',
-        'description' => 'Save progress video.',
-        'type' => 'write',
+        'description' => 'Get OpenGraph information.',
+        'type' => 'read',
         'ajax' => true,
+        'loginrequired' => true,
     ],
+
     'mod_supervideo_view_supervideo' => [
         'classpath' => 'mod/supervideo/classes/service/view.php',
-        'classname' => 'mod_supervideo\service\view',
+        'classname' => 'mod_supervideo\\service\\view',
         'methodname' => 'view_supervideo',
         'description' => 'Trigger the course module viewed event and update the module completion status.',
         'type' => 'write',
+        'capabilities' => 'mod/supervideo:view',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+
+    'mod_supervideo_get_playback_data' => [
+        'classpath' => 'mod/supervideo/classes/service/playback.php',
+        'classname' => 'mod_supervideo\\service\\playback',
+        'methodname' => 'get_playback_data',
+        'description' => 'Return playback type and player data for the mobile app.',
+        'type' => 'read',
         'capabilities' => 'mod/supervideo:view',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],

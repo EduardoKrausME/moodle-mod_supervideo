@@ -1,0 +1,18 @@
+# (RFC §4.1). Authors update their listing with an ordinary commit; camp
+# ingests and hash-pins it at each tagged release. Listing for mod_supervideo.
+
+name: "Mod Super Video"
+summary: "Advanced video player with controls, integrations, and detailed reports."
+description: |
+  Advanced video player with controls, integrations, and detailed reports.
+
+  With the aim of providing a more dynamic and customizable teaching experience, I present the Super Video Module, a tool that enhances Moodle's capabilities by allowing easy addition of YouTube, Google Drive, or Vimeo videos.
+
+  Supported Moodle versions in the supplied plugin list: 3.8 - 5.0.
+
+labels:
+  - fully-free
+category: "video"
+links:
+  docs: https://github.com/EduardoKrausME/moodle-mod_supervideo#readme
+  issues: https://github.com/EduardoKrausME/moodle-mod_supervideo/issues

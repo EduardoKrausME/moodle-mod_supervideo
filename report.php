@@ -22,8 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_supervideo\report\supervideo_view;
+
 require_once("../../config.php");
-require_once($CFG->libdir . "/tablelib.php");
+require_once("{$CFG->libdir}/tablelib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
 $userid = optional_param("u", false, PARAM_INT);
@@ -39,7 +41,7 @@ if (!has_capability("mod/supervideo:addinstance", $context, $USER)) {
     $userid = $USER->id;
 }
 
-$table = new \mod_supervideo\report\supervideo_view("supervideo_report", $cm->id, $userid, $supervideo);
+$table = new supervideo_view("supervideo_report", $cm->id, $userid, $supervideo);
 
 if (!$table->is_downloading()) {
     $PAGE->set_url("/mod/supervideo/report.php", ["id" => $cm->id]);

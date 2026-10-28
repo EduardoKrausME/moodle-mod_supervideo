@@ -24,7 +24,7 @@
 
 namespace mod_supervideo\form;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 
@@ -50,6 +50,11 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
         export_for_template as export_for_template_base;
     }
 
+    /**
+     * Property _helpbutton.
+     *
+     * @var mixed
+     */
     public $_helpbutton; // phpcs:disable
 
     /**
@@ -150,6 +155,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
         }
 
         $origem = explode("/", $this->options["accepted_types"][0])[1];
+        $value = s((string)$this->getValue());
         $filerepository = "{$CFG->dirroot}/repository/{$origem}/lib.php";
         if (file_exists($filerepository)) {
             $fp = new file_picker((object)[
@@ -180,8 +186,8 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
                     <input type="text" class="form-control" size="48"
                            name="{$this->_attributes["name"]}"
                            id="{$fp->options->elementid}"
-                           value="{$this->getValue()}"/>
-                    <input type="button" class="btn btn-primary fp-btn-choose me-3 ml-3"
+                           value="{$value}"/>
+                    <input type="button" class="btn btn-primary fp-btn-choose me-3 ms-3"
                            id="filepicker-button-{$fp->options->elementid}"
                            value="{$straddfile}" style="display:none"
                            {$buttonname}/>
@@ -205,7 +211,7 @@ class supervideo_filepicker extends HTML_QuickForm_input implements templatable 
                     <input type="text" class="form-control" size="48"
                            name="{$this->_attributes["name"]}"
                            id="{$this->_attributes["id"]}"
-                           value="{$this->getValue()}"/>
+                           value="{$value}"/>
                 </div>
                 {$message}
             EOD;

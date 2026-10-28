@@ -27,10 +27,11 @@ use mod_supervideo\output\view;
 
 require_once("../../config.php");
 global $CFG, $PAGE, $OUTPUT, $DB, $USER;
-require_once($CFG->libdir . "/completionlib.php");
+require_once("{$CFG->libdir}/completionlib.php");
 
 $id = optional_param("id", 0, PARAM_INT);
 $n = optional_param("n", 0, PARAM_INT);
+$embed = optional_param("embed", 0, PARAM_BOOL);
 
 if ($id) {
     $cm = get_coursemodule_from_id("supervideo", $id, 0, false, MUST_EXIST);
@@ -53,7 +54,7 @@ $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
 $PAGE->set_cm($cm, $course);
-$PAGE->set_url("/mod/supervideo/view.php", ["n" => $n, "id" => $id]);
+$PAGE->set_url("/mod/supervideo/view.php", ["n" => $n, "id" => $id, "embed" => $embed]);
 $PAGE->set_title($supervideo->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context($context);
@@ -73,17 +74,19 @@ $PAGE->requires->jquery();
 
 if ($view->freemode) {
     $PAGE->set_pagelayout("embedded");
-    $PAGE->add_body_class("body-df");
+    $PAGE->add_body_class("distraction-free-mode");
     echo $OUTPUT->header();
 
     $mustachedata = [
-        "showmapa" => $view->config->showmapa,
-        "mapa" => $view->get_maps(),
+        "showmap" => $view->config->showmap,
+        "map" => $view->get_maps(),
         "errosmessages" => $view->errosmessages,
-        "video-player" => $videoplayer,
-        "page-title" => $view->supervideo->name,
-        "url-back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
-        "url-settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
+        "video_player" => $videoplayer,
+        "page_title" => $view->supervideo->name,
+        "showback" => !$embed,
+        "showsettings" => $view->caneditsettings,
+        "url_back" => "{$CFG->wwwroot}/course/view.php?id={$cm->course}",
+        "url_settings" => "{$CFG->wwwroot}/course/modedit.php?update={$cm->id}",
     ];
     echo $OUTPUT->render_from_template("mod_supervideo/view-freemode", $mustachedata);
 
@@ -92,8 +95,21 @@ if ($view->freemode) {
     echo $OUTPUT->header();
 
     echo $view->errosmessages;
+
+    $aspectstyle = '';
+    if (isset($supervideo->playersize)) {
+        if ($supervideo->playersize == '4x3') {
+            $aspectstyle = 'aspect-ratio: 4 / 3;';
+        } else if ($supervideo->playersize == '16x9') {
+            $aspectstyle = 'aspect-ratio: 16 / 9;';
+        } else {
+            $aspectstyle = 'aspect-ratio: 16 / 9;';
+        }
+    }
+    echo "<div id=\"supervideo_area_embed\" style=\"{$aspectstyle}\">";
     echo $videoplayer;
-    if ($view->config->showmapa) {
+    echo '</div>';
+    if ($view->config->showmap) {
         echo $view->get_maps();
     }
 

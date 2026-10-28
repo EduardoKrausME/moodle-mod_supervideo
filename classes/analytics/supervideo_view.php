@@ -14,16 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_supervideo\analytics;
-
-use mod_supervideo\grade\grades_util;
-
 /**
  * Supervideo View implementation for mod_supervideo.
  *
  * @package   mod_supervideo
  * @copyright 2024 Eduardo Kraus {@link https://eduardokraus.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace mod_supervideo\analytics;
+
+use coding_exception;
+use dml_exception;
+use mod_supervideo\grade\grades_util;
+use moodle_exception;
+
+/**
+ * Supervideo View implementation for mod_supervideo.
  */
 class supervideo_view {
     /**
@@ -33,7 +40,7 @@ class supervideo_view {
      *
      * @return object
      *
-     * @throws \dml_exception
+     * @throws dml_exception
      */
     public static function create($cmid) {
         global $USER, $DB;
@@ -69,14 +76,14 @@ class supervideo_view {
             "currenttime" => 0,
             "duration" => 0,
             "percent" => 0,
-            "mapa" => "{}",
+            "map" => "{}",
             "timecreated" => time(),
             "timemodified" => time(),
         ];
 
         try {
             $supervideoview->id = $DB->insert_record("supervideo_view", $supervideoview);
-        } catch (\dml_exception $e) {
+        } catch (dml_exception $e) {
             return (object)['id' => 0];
         }
 
@@ -90,24 +97,54 @@ class supervideo_view {
      * @param $currenttime
      * @param $duration
      * @param $percent
-     * @param $mapa
+     * @param $map
      *
      * @return bool
-     * @throws \coding_exception
-     * @throws \dml_exception
-     * @throws \moodle_exception
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws moodle_exception
      */
-    public static function update($viewid, $currenttime, $duration, $percent, $mapa) {
+    public static function update($viewid, $currenttime, $duration, $percent, $map) {
         global $DB, $USER, $CFG;
 
         $supervideoview = $DB->get_record('supervideo_view', ['id' => $viewid, "user_id" => $USER->id]);
 
         if ($supervideoview) {
+            // Never lose watched segments when two tabs save progress at nearly
+            // the same time. Only one new segment can be accepted per elapsed
+            // server second; the external service already reduces each request
+            // to the segment matching the reported playback position.
+            $storedmap = json_decode($supervideoview->map, true);
+            $incomingmap = json_decode($map, true);
+            $mergedmap = is_array($storedmap) ? $storedmap : [];
+            $now = time();
+            $canacceptnew = $now > (int)$supervideoview->timemodified;
+            $acceptednew = false;
+            if (is_array($incomingmap)) {
+                foreach ($incomingmap as $position => $watched) {
+                    $position = (int)$position;
+                    if (empty($watched) || !empty($mergedmap[$position])) {
+                        continue;
+                    }
+                    if ($canacceptnew && !$acceptednew) {
+                        $mergedmap[$position] = 1;
+                        $acceptednew = true;
+                    }
+                }
+            }
+            ksort($mergedmap);
+
+            $duration = max((int)$duration, (int)$supervideoview->duration);
+            $percent = self::calculate_percent_from_map(json_encode($mergedmap), $duration);
+            $percent = max((int)$supervideoview->percent, $percent);
+
             $supervideoview->currenttime = $currenttime;
             $supervideoview->duration = $duration;
             $supervideoview->percent = $percent;
-            $supervideoview->mapa = $mapa;
-            $supervideoview->timemodified = time();
+            $supervideoview->map = json_encode($mergedmap);
+            if ($acceptednew) {
+                $supervideoview->timemodified = $now;
+            }
 
             $status = $DB->update_record("supervideo_view", $supervideoview);
 
@@ -117,5 +154,39 @@ class supervideo_view {
             return $status;
         }
         return false;
+    }
+
+    /**
+     * Calculate the watched percentage using the saved view map.
+     *
+     * @param string $map
+     * @param int $duration
+     *
+     * @return int
+     */
+    private static function calculate_percent_from_map($map, $duration) {
+        $duration = (int)$duration;
+        if ($duration <= 0) {
+            return 0;
+        }
+
+        $viewmap = json_decode($map, true);
+        if (!is_array($viewmap)) {
+            return 0;
+        }
+
+        $progresslength = $duration <= 100 ? $duration : 100;
+        if ($progresslength <= 0) {
+            return 0;
+        }
+
+        $watched = 0;
+        for ($i = 1; $i <= $progresslength; $i++) {
+            if (!empty($viewmap[$i])) {
+                $watched++;
+            }
+        }
+
+        return min(100, (int)floor($watched / $progresslength * 100));
     }
 }

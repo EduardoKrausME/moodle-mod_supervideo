@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_supervideo\event\course_module_viewed;
+use mod_supervideo\grade\grades_util;
+
 /**
  * Supervideo_supports function.
  *
@@ -73,13 +76,24 @@ function supervideo_supports($feature) {
  */
 function supervideo_update_grades($supervideo, $userid = 0, $nullifnone = true) {
     global $CFG;
-    require_once($CFG->libdir . "/gradelib.php");
+    require_once("{$CFG->libdir}/gradelib.php");
 
     if ($supervideo->grade_approval) {
         if ($grades = supervideo_get_user_grades($supervideo, $userid)) {
-            \mod_supervideo\grade\grades_util::grade_item_update($supervideo, $grades);
+            grades_util::grade_item_update($supervideo, $grades);
         }
     }
+}
+
+/**
+ * Updates or creates the grade item for a Super Video instance.
+ *
+ * @param stdClass $supervideo Super Video instance.
+ * @param array|null|string $grades Grades to update, or 'reset'.
+ * @return int
+ */
+function supervideo_grade_item_update($supervideo, $grades = null) {
+    return grades_util::grade_item_update($supervideo, $grades);
 }
 
 /**
@@ -145,7 +159,7 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
 
     $supervideo->id = $DB->insert_record("supervideo", $supervideo);
 
-    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
+    grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $supervideo->id;
@@ -172,9 +186,15 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
         $supervideo->ottflix_ia = implode(",", $supervideo->ottflix_ia);
     }
 
+    if ($supervideo->origem == "upload") {
+        $supervideo->videourl = "file";
+    } else if ($videourl = optional_param("videourl_{$supervideo->origem}", false, PARAM_TEXT)) {
+        $supervideo->videourl = $videourl;
+    }
+
     $result = $DB->update_record("supervideo", $supervideo);
 
-    \mod_supervideo\grade\grades_util::grade_item_update($supervideo);
+    grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
     return $result;
@@ -196,11 +216,11 @@ function supervideo_youtube_size($supervideo, $save = false) {
     }
 
     $pattern = '/youtu(\.be|be\.com)\/(watch\?v=|embed\/|live\/|shorts\/)?([a-z0-9_\-]{11})/i';
-    if (preg_match($pattern, $supervideo->videourl_youtube, $output)) {
+    if (preg_match($pattern, $supervideo->videourl, $output)) {
 
         $urloembed = "https://youtube.com/oembed?url=http://www.youtube.com/watch?v={$output[3]}&format=json";
 
-        $curl = new \curl();
+        $curl = new curl();
         $result = $curl->get($urloembed);
         $info = json_decode($result);
         if ($info) {
@@ -262,16 +282,21 @@ function supervideo_delete_instance($id) {
         return false;
     }
 
-    $cm = get_coursemodule_from_id("supervideo", $supervideo->id);
+    if (!isset($supervideo->id)) {
+        return false;
+    }
+
+    $cm = get_coursemodule_from_instance("supervideo", $supervideo->id);
     if ($cm) {
         $files = supervideo_get_area_files(context_module::instance($cm->id)->id);
 
         foreach ($files as $file) {
             $file->delete();
         }
+
+        $DB->delete_records("supervideo_view", ["cm_id" => $cm->id]);
     }
     $DB->delete_records("supervideo", ["id" => $supervideo->id]);
-    $DB->delete_records("supervideo_view", ["cm_id" => $cm->id]);
 
     return true;
 }
@@ -306,7 +331,7 @@ function supervideo_user_outline($course, $user, $mod, $supervideo) {
 function supervideo_user_complete($course, $user, $mod, $supervideo) {
     global $DB;
 
-    $sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.mapa,
+    $sql = "SELECT sv.user_id, sv.currenttime, sv.duration, sv.percent, sv.timecreated, sv.timemodified, sv.map,
                    u.firstname, u.lastname, u.firstnamephonetic, u.lastnamephonetic, u.middlename, u.alternatename, u.email
               FROM {supervideo_view} sv
               JOIN {user} u ON u.id = sv.user_id
@@ -396,7 +421,7 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability("mod/supervideo:addinstance", $PAGE->cm->context)) {
+    if (has_capability("mod/supervideo:view_report", $PAGE->cm->context)) {
         $node = navigation_node::create(get_string("report", "mod_supervideo"),
             new moodle_url("/mod/supervideo/report.php", ["id" => $PAGE->cm->id]), navigation_node::TYPE_SETTING, null,
             "mod_supervideo_report", new pix_icon("i/report", ""));
@@ -407,9 +432,9 @@ function supervideo_extend_settings_navigation($settings, $supervideonode) {
 /**
  * supervideo_extend_navigation_course function
  *
- * @param \navigation_node $navigation
+ * @param navigation_node $navigation
  * @param stdClass $course
- * @param \context $context
+ * @param context $context
  *
  * @throws Exception
  */
@@ -590,16 +615,17 @@ function mod_supervideo_get_completion_active_rule_descriptions($cm) {
  * @throws Exception
  */
 function supervideo_update_completion_state($data, $course, $cm) {
+    global $USER;
 
-    // If completion option is enabled, evaluate it and return true/false.
     $completion = new completion_info($course);
-    if ($data->completionpercent && $completion->is_enabled($cm)) {
-        $numentries = data_numentries($data);
-        // Check the number of entries required against the number of entries already made.
-        if ($numentries >= $data->completionpercent) {
-            $completion->update_state($cm, COMPLETION_COMPLETE);
+
+    if (!empty($data->completionpercent) && $completion->is_enabled($cm)) {
+        $userpercent = supervideo_get_user_percent($cm->id, $USER->id);
+
+        if ($userpercent >= (int)$data->completionpercent) {
+            $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
         } else {
-            $completion->update_state($cm, COMPLETION_INCOMPLETE);
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $USER->id);
         }
     }
 }
@@ -621,27 +647,19 @@ function supervideo_update_completion_state($data, $course, $cm) {
 function supervideo_get_completion_state($course, $cm, $userid, $type) {
     global $DB, $PAGE;
 
-    // No need to call debugging here. Deprecation debugging notice already being called in \completion_info::internal_get_state().
+    $result = $type;
 
-    $result = $type; // Default return value
-    // Get data details.
     if (isset($PAGE->cm->id) && $PAGE->cm->id == $cm->id) {
         $data = $PAGE->activityrecord;
     } else {
-        $data = $DB->get_record("data", ["id" => $cm->instance], "*", MUST_EXIST);
+        $data = $DB->get_record("supervideo", ["id" => $cm->instance], "*", MUST_EXIST);
     }
-    // If completion option is enabled, evaluate it and return true/false.
-    if ($data->completionpercent) {
 
-        $numentries = 10;
-
-        // Check the number of entries required against the number of entries already made.
-        if ($numentries >= $data->completionpercent) {
-            $result = true;
-        } else {
-            $result = false;
-        }
+    if (!empty($data->completionpercent)) {
+        $userpercent = supervideo_get_user_percent($cm->id, $userid);
+        $result = ($userpercent >= (int)$data->completionpercent);
     }
+
     return $result;
 }
 
@@ -663,7 +681,7 @@ function supervideo_view($supervideo, $course, $cm, $context) {
         "objectid" => $supervideo->id,
     ];
 
-    $event = \mod_supervideo\event\course_module_viewed::create($params);
+    $event = course_module_viewed::create($params);
     $event->add_record_snapshot("course_modules", $cm);
     $event->add_record_snapshot("course", $course);
     $event->add_record_snapshot("supervideo", $supervideo);
@@ -690,7 +708,7 @@ function supervideo_get_coursemodule_info($coursemodule) {
     global $DB;
 
     if (!$supervideo = $DB->get_record("supervideo", ["id" => $coursemodule->instance],
-        "id, name, videourl, intro, introformat, completionpercent")) {
+        "id, name, origem, videourl, ottflix_ia, playersize, showcontrols, autoplay, intro, introformat, completionpercent")) {
         return null;
     }
 
@@ -706,16 +724,6 @@ function supervideo_get_coursemodule_info($coursemodule) {
 
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         $info->customdata["customcompletionrules"]["completionpercent"] = $supervideo->completionpercent;
-    }
-
-    if (isset($info->completionpassgrade)) {
-        $info->completionpassgrade = false;
-    }
-    if (isset($info->downloadcontent)) {
-        $info->downloadcontent = false;
-    }
-    if (isset($info->lang)) {
-        $info->lang = false;
     }
 
     return $info;
@@ -743,4 +751,30 @@ function supervideo_get_area_files($contextid) {
     }
 
     return $returnfiles;
+}
+
+/**
+ * Returns the highest watched percent for a user in this activity.
+ *
+ * @param int $cmid
+ * @param int $userid
+ *
+ * @return int
+ * @throws dml_exception
+ */
+function supervideo_get_user_percent($cmid, $userid) {
+    global $DB;
+
+    $percent = $DB->get_field_sql(
+        "SELECT MAX(percent)
+           FROM {supervideo_view}
+          WHERE cm_id = :cm_id
+            AND user_id = :user_id",
+        [
+            "cm_id" => $cmid,
+            "user_id" => $userid,
+        ]
+    );
+
+    return (int)($percent ?? 0);
 }

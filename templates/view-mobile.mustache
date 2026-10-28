@@ -15,14 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_supervideo/view-freemode
+    @template mod_supervideo/view-mobile
 
     Example context (json):
     {
-        "showmapa": true,
-        "mapa": "<div....",
+        "showmap": true,
+        "map": "<div....",
         "errosmessages": "<div...",
-        "video-player": "<video..."
+        "video_player": "<video..."
     }
 }}
 
@@ -30,10 +30,10 @@
     <main class="stage">
         <div class="video-wrap" id="videoWrap">
             {{{errosmessages}}}
-            {{{video-player}}}
-            {{#showmapa}}
-                {{{mapa}}}
-            {{/showmapa}}
+            {{{video_player}}}
+            {{#showmap}}
+                {{{map}}}
+            {{/showmap}}
         </div>
     </main>
 

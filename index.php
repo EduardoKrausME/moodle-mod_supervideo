@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_courseformat\activityoverviewbase;
+use mod_supervideo\event\course_module_instance_list_viewed;
+
 require_once(dirname(dirname(dirname(__FILE__))) . "/config.php");
 require_once(dirname(__FILE__) . "/lib.php");
 
@@ -31,10 +34,16 @@ $course = $DB->get_record("course", ["id" => $id], "*", MUST_EXIST);
 
 require_course_login($course);
 
+// Moodle 5.0+ provides a richer activities overview page. Keep the classic
+// list below as a backwards-compatible fallback for older Moodle versions.
+if (class_exists('\core_courseformat\activityoverviewbase')) {
+    activityoverviewbase::redirect_to_overview_page($course->id, 'supervideo');
+}
+
 $params = [
     "context" => context_course::instance($course->id),
 ];
-$event = \mod_supervideo\event\course_module_instance_list_viewed::create($params);
+$event = course_module_instance_list_viewed::create($params);
 $event->add_record_snapshot("course", $course);
 $event->trigger();
 

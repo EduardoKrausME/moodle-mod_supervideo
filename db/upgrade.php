@@ -247,6 +247,86 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2025080400, "supervideo");
     }
 
+    if ($oldversion < 2026051800) {
+
+        $table = new xmldb_table('supervideo_view');
+        $oldfield = new xmldb_field('mapa', XMLDB_TYPE_TEXT);
+        if ($dbman->field_exists($table, $oldfield)) {
+            $dbman->rename_field($table, $oldfield, 'map');
+        }
+
+        $showmap = get_config("supervideo", "showmapa");
+        if ($showmap === false) {
+            $showmap = get_config("supervideo", "showmap");
+        }
+        if ($showmap === false) {
+            $showmap = 1;
+        }
+        set_config("showmap", !empty($showmap) ? 1 : 0, "supervideo");
+
+        upgrade_mod_savepoint(true, 2026051800, "supervideo");
+    }
+
+    if ($oldversion < 2026061801) {
+
+        $legacyshowmap = get_config("supervideo", "showmapa");
+        $showmap = get_config("supervideo", "showmap");
+
+        if ($legacyshowmap !== false) {
+            set_config("showmap", !empty($legacyshowmap) ? 1 : 0, "supervideo");
+        } else if ($showmap === false || $showmap === "") {
+            set_config("showmap", 1, "supervideo");
+        }
+
+        upgrade_mod_savepoint(true, 2026061801, "supervideo");
+    }
+
+    if ($oldversion < 2026072200) {
+        $table = new xmldb_table('supervideo');
+
+        // Store long signed or parameterised video URLs without truncation.
+        $videourl = new xmldb_field('videourl', XMLDB_TYPE_TEXT, null, null, null, null, null, 'origem');
+        if ($dbman->field_exists($table, $videourl)) {
+            $dbman->change_field_type($table, $videourl);
+        }
+
+        // The supervideo_add_instance has populated this value for years, but the...
+        // field was missing from the install schema.
+        $timecreated = new xmldb_field(
+            'timecreated',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'completionpercent'
+        );
+        if (!$dbman->field_exists($table, $timecreated)) {
+            $dbman->add_field($table, $timecreated);
+            $DB->execute('UPDATE {supervideo} SET timecreated = timemodified WHERE timecreated = 0');
+        }
+
+        // Most progress and report lookups filter by activity and user.
+        $viewtable = new xmldb_table('supervideo_view');
+        $cmuserindex = new xmldb_index('cm_user', XMLDB_INDEX_NOTUNIQUE, ['cm_id', 'user_id']);
+        if (!$dbman->index_exists($viewtable, $cmuserindex)) {
+            $dbman->add_index($viewtable, $cmuserindex);
+        }
+
+        upgrade_mod_savepoint(true, 2026072200, 'supervideo');
+    }
+
+    if ($oldversion < 2026072201) {
+        $table = new xmldb_table('supervideo');
+        $markers = new xmldb_field('markers', XMLDB_TYPE_TEXT);
+        if (!$dbman->field_exists($table, $markers)) {
+            $dbman->add_field($table, $markers);
+        }
+
+        upgrade_mod_savepoint(true, 2026072201, 'supervideo');
+    }
+
     return true;
 }
 

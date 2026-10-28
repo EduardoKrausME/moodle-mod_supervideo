@@ -13,27 +13,210 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, PlayerRender) {
-    var player_create = {
+/**
+ * player_create.js
+ *
+ * @package   mod_supervideo
+ * @copyright 2026 Eduardo Kraus {@link https://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-        ottflix: function (view_id, start_currenttime, elementId, identifier) {
+define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, Notification, PlayerRender) {
+    var youtubeApiCallbacks = [];
+    var youtubeApiHooked = false;
+    var youtubeApiRequested = false;
+
+    var player_create = {
+        /**
+         * Create the optional button that jumps from a marker to the next one.
+         *
+         * @param {String} elementId Player element ID.
+         * @param {Object} markerConfig Normalised marker configuration.
+         * @param {Function} seekTo Player-specific seek callback.
+         * @param {HTMLElement} preferredHost Optional element which should own the button.
+         * @returns {Object} Marker controller.
+         */
+        _markers_create: function(elementId, markerConfig, seekTo, preferredHost) {
+            var points = markerConfig && Array.isArray(markerConfig.points) ? markerConfig.points : [];
+            var emptyController = {update: function() {}};
+
+            if (points.length < 2 || typeof seekTo !== "function") {
+                return emptyController;
+            }
+
+            var playerElement = document.getElementById(elementId);
+            var host = preferredHost || (playerElement ? playerElement.parentElement : null);
+            if (!host) {
+                return emptyController;
+            }
+
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "supervideo-marker-jump";
+            button.hidden = true;
+            host.appendChild(button);
+
+            var nextMarker = null;
+            var update = function(currentTime) {
+                currentTime = Number(currentTime);
+                if (!Number.isFinite(currentTime)) {
+                    button.hidden = true;
+                    nextMarker = null;
+                    return;
+                }
+
+                var currentIndex = -1;
+                points.forEach(function(point, index) {
+                    if (Number(point.time) <= currentTime) {
+                        currentIndex = index;
+                    }
+                });
+
+                var currentMarker = points[currentIndex];
+                var candidate = points[currentIndex + 1];
+                var show = currentMarker && currentMarker.skip && candidate &&
+                    currentTime < Number(candidate.time);
+
+                if (!show) {
+                    button.hidden = true;
+                    nextMarker = null;
+                    return;
+                }
+
+                nextMarker = candidate;
+                button.textContent = markerConfig.buttonlabel || "Jump to next marker";
+                if (candidate.label) {
+                    button.textContent += ": " + candidate.label;
+                    button.title = candidate.label;
+                } else {
+                    button.removeAttribute("title");
+                }
+                button.hidden = false;
+            };
+
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (nextMarker) {
+                    seekTo(Number(nextMarker.time));
+                    update(Number(nextMarker.time));
+                }
+            });
+
+            return {update: update};
+        },
+
+        /**
+         * Get marker points in the format expected by Plyr.
+         *
+         * @param {Object} markerConfig Normalised marker configuration.
+         * @returns {Array} Marker points.
+         */
+        _markers_points: function(markerConfig) {
+            if (!markerConfig || !Array.isArray(markerConfig.points)) {
+                return [];
+            }
+            return markerConfig.points.map(function(point) {
+                return {time: Number(point.time), label: point.label};
+            });
+        },
+
+        _throttle: function(callback, wait) {
+            var last = 0;
+            var timer = null;
+            return function() {
+                var args = arguments;
+                var context = this;
+                var now = Date.now();
+                var remaining = wait - (now - last);
+                if (remaining <= 0) {
+                    if (timer) {
+                        clearTimeout(timer);
+                        timer = null;
+                    }
+                    last = now;
+                    callback.apply(context, args);
+                } else if (!timer) {
+                    timer = setTimeout(function() {
+                        timer = null;
+                        last = Date.now();
+                        callback.apply(context, args);
+                    }, remaining);
+                }
+            };
+        },
+
+        _cleanup_when_removed: function(elementId, callback) {
+            var observer = new MutationObserver(function() {
+                var element = document.getElementById(elementId);
+                if (!element || !document.documentElement.contains(element)) {
+                    observer.disconnect();
+                    callback();
+                }
+            });
+            observer.observe(document.documentElement, {childList: true, subtree: true});
+            return observer;
+        },
+
+        _youtube_when_ready: function(callback) {
+            if (window.YT && window.YT.Player) {
+                callback();
+                return;
+            }
+
+            youtubeApiCallbacks.push(callback);
+
+            if (!youtubeApiHooked) {
+                youtubeApiHooked = true;
+
+                var previousReady = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = function() {
+                    if (typeof previousReady === "function") {
+                        previousReady();
+                    }
+
+                    var callbacks = youtubeApiCallbacks.slice(0);
+                    youtubeApiCallbacks = [];
+
+                    callbacks.forEach(function(cb) {
+                        cb();
+                    });
+                };
+            }
+
+            if (!youtubeApiRequested &&
+                !document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+                youtubeApiRequested = true;
+
+                var tag = document.createElement("script");
+                tag.src = "https://www.youtube.com/iframe_api";
+                document.head.appendChild(tag);
+            }
+        },
+
+        ottflix: function (view_id, start_currenttime, elementId, identifier, allowedOrigins) {
+            player_create._internal_view_id = view_id;
+
             let totalDuration = false;
             if (Array.isArray(identifier)) {
                 totalDuration = identifier.reduce((sum, item) => sum + (item.duration || 0), 0);
-            } else {
-                totalDuration = event.data.duration;
             }
-
 
             const identifiers = new Set(
                 (Array.isArray(identifier) ? identifier : [identifier])
                     .filter(Boolean)
-                    .map(i => (typeof i === 'string' ? i : i.identifier))
+                    .map(i => (typeof i === "string" ? i : i.identifier))
                     .filter(Boolean)
             );
 
+            const wrapper = document.getElementById(elementId);
+            const frames = wrapper ? Array.from(wrapper.querySelectorAll("iframe")) : [];
+            const allowedSources = new Set(frames.map(frame => frame.contentWindow).filter(Boolean));
+            const origins = new Set((Array.isArray(allowedOrigins) ? allowedOrigins : []).filter(Boolean));
+
             function receiveMessage(event) {
-                if (!(event && event.data)) {
+                if (!(event && event.data) || !allowedSources.has(event.source) ||
+                        !origins.has(event.origin)) {
                     return;
                 }
 
@@ -51,71 +234,160 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             window.addEventListener("message", receiveMessage);
+            player_create._cleanup_when_removed(elementId, function() {
+                window.removeEventListener("message", receiveMessage);
+            });
         },
 
-        youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay) {
+                youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay, markerConfig, protection) {
             player_create._internal_view_id = view_id;
 
-            // Get the container where we'll build our custom player
+            // Mode switch: if protection is explicitly disabled (false, 0, or "0"), run standard YouTube player
+            if (protection === false || protection === 0 || protection === "0") {
+                var stdPlayerVars = {
+                    rel: 0,
+                    controls: showcontrols,
+                    autoplay: autoplay,
+                    playsinline: 1,
+                    start: start_currenttime ? start_currenttime : 0,
+                };
+
+                var stdPlayer = null;
+                var stdProgressInterval = null;
+                var onStdYoutubeSeek = function(event) {
+                    if (stdPlayer && stdPlayer.seekTo) {
+                        stdPlayer.seekTo(event.detail.goCurrentTime);
+                    }
+                };
+                var stdMarkerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                    if (stdPlayer && stdPlayer.seekTo) {
+                        stdPlayer.seekTo(time, true);
+                    }
+                });
+
+                var showStdApiError = function() {
+                    var html =
+                        `<div class="alert alert-danger">
+                            Error loading the YouTube iframe API.
+                         </div>`;
+                    $("#supervideo_area_embed").html(html);
+                };
+
+                var initStdPlayer = function() {
+                    if (!(window.YT && window.YT.Player)) {
+                        showStdApiError();
+                        return;
+                    }
+
+                    stdPlayer = new window.YT.Player(elementId, {
+                        suggestedQuality: "large",
+                        videoId: videoid,
+                        width: "100%",
+                        playerVars: stdPlayerVars,
+                        events: {
+                            "onReady": function () {
+                                var sizes = playersize ? playersize.split("x") : [];
+                                if (sizes && sizes[1]) {
+                                    player_create._internal_resize(sizes[0], sizes[1]);
+                                } else {
+                                    player_create._internal_resize(16, 9);
+                                }
+                                document.addEventListener("setCurrentTime", onStdYoutubeSeek);
+                            },
+                            "onStateChange": function(event) {
+                                var playing = window.YT && event.data === window.YT.PlayerState.PLAYING;
+                                if (playing && !stdProgressInterval) {
+                                    stdProgressInterval = window.setInterval(function() {
+                                        stdMarkerController.update(stdPlayer.getCurrentTime());
+                                        player_create._internal_saveprogress(stdPlayer.getCurrentTime(), stdPlayer.getDuration());
+                                    }, 1000);
+                                } else if (!playing && stdProgressInterval) {
+                                    window.clearInterval(stdProgressInterval);
+                                    stdProgressInterval = null;
+                                    player_create._internal_saveprogress(stdPlayer.getCurrentTime(), stdPlayer.getDuration());
+                                }
+                                if (window.YT && event.data === window.YT.PlayerState.ENDED) {
+                                    player_create._internal_saveprogress(stdPlayer.getDuration(), stdPlayer.getDuration());
+                                }
+                            }
+                        }
+                    });
+                    player_create._cleanup_when_removed(elementId, function() {
+                        if (stdProgressInterval) {
+                            window.clearInterval(stdProgressInterval);
+                            stdProgressInterval = null;
+                        }
+                        document.removeEventListener("setCurrentTime", onStdYoutubeSeek);
+                        if (stdPlayer && stdPlayer.destroy) {
+                            stdPlayer.destroy();
+                        }
+                    });
+                };
+
+                player_create._youtube_when_ready(initStdPlayer);
+                window.setTimeout(function() {
+                    if (!stdPlayer && !(window.YT && window.YT.Player)) {
+                        showStdApiError();
+                    }
+                }, 8000);
+                return;
+            }
+
+            // --- Protected YouTube Player ---
             var container = document.getElementById(elementId);
             if (!container) {
                 console.error("Container not found:", elementId);
                 return;
             }
 
-            // Calculate aspect ratio for responsive sizing
-            var aspectRatio = 56.25; // Default 16:9
+            var resizeW = 16;
+            var resizeH = 9;
             if (playersize) {
                 var sizes = playersize.split("x");
-                if (sizes && sizes[1]) {
-                    aspectRatio = (parseInt(sizes[1]) / parseInt(sizes[0])) * 100;
+                if (sizes && sizes[0] && sizes[1]) {
+                    var parsedW = parseInt(sizes[0], 10);
+                    var parsedH = parseInt(sizes[1], 10);
+                    if (parsedW > 0 && parsedH > 0) {
+                        resizeW = parsedW;
+                        resizeH = parsedH;
+                    }
                 }
             }
+            player_create._internal_resize(resizeW, resizeH);
 
-            // Create player wrapper
-            var wrapper = document.createElement('div');
-            wrapper.className = 'supervideo-player-wrapper paused';
-            wrapper.setAttribute('dir', 'ltr'); // Force LTR for RTL languages (e.g. Arabic)
-            wrapper.style.direction = 'ltr'; // Inline style - highest CSS priority, cannot be overridden
-            wrapper.style.paddingBottom = aspectRatio + '%';
-            wrapper.id = elementId + '-wrapper';
+            var wrapper = document.createElement("div");
+            wrapper.className = "supervideo-player-wrapper paused";
+            wrapper.setAttribute("dir", "ltr");
+            wrapper.style.direction = "ltr";
+            wrapper.id = elementId + "-wrapper";
 
-
-            // Add loading spinner
-            var loading = document.createElement('div');
-            loading.className = 'supervideo-loading';
+            var loading = document.createElement("div");
+            loading.className = "supervideo-loading";
             wrapper.appendChild(loading);
 
-            // Create placeholder div for YouTube player
-            var playerDiv = document.createElement('div');
-            playerDiv.id = elementId + '-player';
+            var playerDiv = document.createElement("div");
+            playerDiv.id = elementId + "-player";
             wrapper.appendChild(playerDiv);
 
-            // Create poster overlay - covers YouTube's native UI with the video thumbnail
-            // This prevents seeing YouTube's title bar and logo before playing
-            var posterOverlay = document.createElement('div');
-            posterOverlay.className = 'supervideo-poster-overlay';
-            posterOverlay.style.backgroundImage = 'url(https://img.youtube.com/vi/' + videoid + '/maxresdefault.jpg)';
+            var posterOverlay = document.createElement("div");
+            posterOverlay.className = "supervideo-poster-overlay";
+            posterOverlay.style.backgroundImage = "url(https://img.youtube.com/vi/" + videoid + "/maxresdefault.jpg)";
             wrapper.appendChild(posterOverlay);
 
-            // Create permanent protection overlay - blocks the channel logo link in top left
-            // This stays visible even while playing to prevent URL appearing in browser status bar
-            var protectionOverlay = document.createElement('div');
-            protectionOverlay.className = 'supervideo-protection-overlay';
+            var protectionOverlay = document.createElement("div");
+            protectionOverlay.className = "supervideo-protection-overlay";
             wrapper.appendChild(protectionOverlay);
 
-            // Create big play button
-            var bigPlay = document.createElement('div');
-            bigPlay.className = 'supervideo-big-play';
+            var bigPlay = document.createElement("div");
+            bigPlay.className = "supervideo-big-play";
             bigPlay.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
             wrapper.appendChild(bigPlay);
 
-            // Create controls bar
-            var controls = document.createElement('div');
-            controls.className = 'supervideo-controls';
-            controls.style.direction = 'ltr'; // Force LTR on controls bar too
+            var controls = document.createElement("div");
+            controls.className = "supervideo-controls";
+            controls.style.direction = "ltr";
             controls.innerHTML = `
-                <button class="supervideo-btn supervideo-play-btn" title="Play">
+                <button class="supervideo-btn supervideo-play-btn" type="button" title="Play">
                     <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                     <svg class="pause-icon" style="display:none" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                 </button>
@@ -124,117 +396,157 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 </div>
                 <span class="supervideo-time">0:00 / 0:00</span>
                 <div class="supervideo-volume-container">
-                    <button class="supervideo-btn supervideo-volume-btn" title="Volume">
+                    <button class="supervideo-btn supervideo-volume-btn" type="button" title="Volume">
                         <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                     </button>
                     <div class="supervideo-volume-slider">
                         <div class="supervideo-volume-bar"></div>
                     </div>
                 </div>
-                <button class="supervideo-btn supervideo-fullscreen-btn" title="Fullscreen">
+                <button class="supervideo-btn supervideo-fullscreen-btn" type="button" title="Fullscreen">
                     <svg class="fs-enter" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
                     <svg class="fs-exit" style="display:none" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
                 </button>
             `;
             wrapper.appendChild(controls);
 
-            // Replace original container content with our wrapper
-            container.innerHTML = '';
+            container.innerHTML = "";
             container.appendChild(wrapper);
+            player_create._internal_resize(resizeW, resizeH);
 
-            // Block right-click on wrapper
-            wrapper.addEventListener('contextmenu', function (e) {
+            wrapper.addEventListener("contextmenu", function (e) {
                 e.preventDefault();
                 return false;
             });
 
-            // Initialize YouTube player with controls DISABLED
-            var player;
-            var playerVars = {
-                rel: 0,
-                controls: 0,          // HIDE YouTube controls
-                autoplay: autoplay ? 1 : 0,
-                playsinline: 1,
-                start: start_currenttime ? parseInt(start_currenttime) : 0,
-                modestbranding: 1,
-                iv_load_policy: 3,
-                showinfo: 0,
-                disablekb: 1,         // Disable keyboard shortcuts
-                fs: 0                 // Disable YouTube fullscreen button
+            var player = null;
+            var progressInterval = null;
+            var isDraggingProgress = false;
+            var isMuted = false;
+
+            var onYoutubeSeek = function(event) {
+                if (player && player.seekTo) {
+                    player.seekTo(event.detail.goCurrentTime, true);
+                }
             };
 
-            if (YT && YT.Player) {
-                player = new YT.Player(playerDiv.id, {
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                if (player && player.seekTo) {
+                    player.seekTo(time, true);
+                }
+            }, wrapper);
+
+            var showApiError = function() {
+                var html =
+                    `<div class="alert alert-danger">
+                        Error loading the YouTube iframe API.
+                     </div>`;
+                $("#supervideo_area_embed").html(html);
+            };
+
+            var initProtectedPlayer = function() {
+                if (!(window.YT && window.YT.Player)) {
+                    showApiError();
+                    return;
+                }
+
+                var playerVars = {
+                    rel: 0,
+                    controls: 0,
+                    autoplay: autoplay ? 1 : 0,
+                    playsinline: 1,
+                    start: start_currenttime ? parseInt(start_currenttime, 10) : 0,
+                    modestbranding: 1,
+                    iv_load_policy: 3,
+                    showinfo: 0,
+                    disablekb: 1,
+                    fs: 0
+                };
+
+                player = new window.YT.Player(elementId + "-player", {
+                    suggestedQuality: "large",
                     videoId: videoid,
-                    width: '100%',
-                    height: '100%',
+                    width: "100%",
+                    height: "100%",
                     playerVars: playerVars,
                     events: {
-                        'onReady': function (event) {
-                            wrapper.classList.add('ready');
-                            player_create._internal_resize(16, 9);
-
-                            // Handle initial autoplay state
+                        "onReady": function () {
+                            wrapper.classList.add("ready");
+                            player_create._internal_resize(resizeW, resizeH);
                             if (autoplay) {
-                                wrapper.classList.remove('paused');
-                                wrapper.classList.add('playing');
+                                wrapper.classList.remove("paused");
+                                wrapper.classList.add("playing");
                             }
+                            document.addEventListener("setCurrentTime", onYoutubeSeek);
                         },
-                        'onStateChange': function (event) {
-                            // Update UI based on player state
-                            var playIcon = controls.querySelector('.play-icon');
-                            var pauseIcon = controls.querySelector('.pause-icon');
+                        "onStateChange": function (event) {
+                            var playIcon = controls.querySelector(".play-icon");
+                            var pauseIcon = controls.querySelector(".pause-icon");
 
-                            if (event.data === YT.PlayerState.PLAYING) {
-                                wrapper.classList.remove('paused');
-                                wrapper.classList.add('playing');
-                                playIcon.style.display = 'none';
-                                pauseIcon.style.display = 'block';
-                                
-                                // Permanently hide the poster overlay once the video has started playing
-                                posterOverlay.style.display = 'none';
-                            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-                                wrapper.classList.remove('playing');
-                                wrapper.classList.add('paused');
-                                playIcon.style.display = 'block';
-                                pauseIcon.style.display = 'none';
+                            if (window.YT && event.data === window.YT.PlayerState.PLAYING) {
+                                wrapper.classList.remove("paused");
+                                wrapper.classList.add("playing");
+                                if (playIcon) playIcon.style.display = "none";
+                                if (pauseIcon) pauseIcon.style.display = "block";
+                                posterOverlay.style.display = "none";
+                            } else if (window.YT && (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED)) {
+                                wrapper.classList.remove("playing");
+                                wrapper.classList.add("paused");
+                                if (playIcon) playIcon.style.display = "block";
+                                if (pauseIcon) pauseIcon.style.display = "none";
+                                if (player && player.getCurrentTime && player.getDuration) {
+                                    player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
+                                }
+                            }
+                            if (window.YT && event.data === window.YT.PlayerState.ENDED) {
+                                if (player && player.getDuration) {
+                                    player_create._internal_saveprogress(player.getDuration(), player.getDuration());
+                                }
                             }
                         }
                     }
                 });
-            } else {
-                wrapper.innerHTML = '<div class="alert alert-danger">Error loading YouTube API. Please check for Security Policy restrictions.</div>';
-                return;
-            }
+            };
 
-            // Wire up custom controls
-            var playBtn = controls.querySelector('.supervideo-play-btn');
-            var progressContainer = controls.querySelector('.supervideo-progress-container');
-            var progressBar = controls.querySelector('.supervideo-progress-bar');
-            var timeDisplay = controls.querySelector('.supervideo-time');
-            var volumeBtn = controls.querySelector('.supervideo-volume-btn');
-            var volumeSlider = controls.querySelector('.supervideo-volume-slider');
-            var volumeBar = controls.querySelector('.supervideo-volume-bar');
-            var fullscreenBtn = controls.querySelector('.supervideo-fullscreen-btn');
+            player_create._youtube_when_ready(initProtectedPlayer);
 
-            // Play/Pause button
+            window.setTimeout(function() {
+                if (!player && !(window.YT && window.YT.Player)) {
+                    showApiError();
+                }
+            }, 8000);
+
+            var playBtn = controls.querySelector(".supervideo-play-btn");
+            var progressContainer = controls.querySelector(".supervideo-progress-container");
+            var progressBar = controls.querySelector(".supervideo-progress-bar");
+            var timeDisplay = controls.querySelector(".supervideo-time");
+            var volumeBtn = controls.querySelector(".supervideo-volume-btn");
+            var volumeSlider = controls.querySelector(".supervideo-volume-slider");
+            var volumeBar = controls.querySelector(".supervideo-volume-bar");
+            var fullscreenBtn = controls.querySelector(".supervideo-fullscreen-btn");
+
             function togglePlay() {
                 if (player && player.getPlayerState) {
                     var state = player.getPlayerState();
-                    if (state === YT.PlayerState.PLAYING) {
+                    if (window.YT && state === window.YT.PlayerState.PLAYING) {
                         player.pauseVideo();
                     } else {
                         player.playVideo();
                     }
                 }
             }
-            playBtn.addEventListener('click', togglePlay);
-            bigPlay.addEventListener('click', togglePlay);
-            posterOverlay.addEventListener('click', togglePlay);
-            protectionOverlay.addEventListener('click', togglePlay);
 
-            // Progress bar drag and seek
-            var isDraggingProgress = false;
+            playBtn.addEventListener("click", togglePlay);
+            bigPlay.addEventListener("click", togglePlay);
+            posterOverlay.addEventListener("click", togglePlay);
+            protectionOverlay.addEventListener("click", togglePlay);
+
+            function formatTime(seconds) {
+                if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+                var mins = Math.floor(seconds / 60);
+                var secs = Math.floor(seconds % 60);
+                return mins + ":" + (secs < 10 ? "0" : "") + secs;
+            }
 
             function getClientX(e) {
                 if (e.touches && e.touches.length > 0) {
@@ -250,14 +562,15 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 var rect = progressContainer.getBoundingClientRect();
                 var percent = (getClientX(e) - rect.left) / rect.width;
                 percent = Math.max(0, Math.min(1, percent));
-                progressBar.style.width = (percent * 100) + '%';
-                timeDisplay.textContent = formatTime(percent * player.getDuration()) + ' / ' + formatTime(player.getDuration());
+                progressBar.style.width = (percent * 100) + "%";
+                var duration = player.getDuration();
+                timeDisplay.textContent = formatTime(percent * duration) + " / " + formatTime(duration);
                 return percent;
             }
 
             function startDrag(e) {
                 isDraggingProgress = true;
-                progressContainer.classList.add('dragging');
+                progressContainer.classList.add("dragging");
                 updateProgressUI(e);
             }
 
@@ -271,7 +584,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             function endDrag(e) {
                 if (isDraggingProgress) {
                     isDraggingProgress = false;
-                    progressContainer.classList.remove('dragging');
+                    progressContainer.classList.remove("dragging");
                     var percent = updateProgressUI(e);
                     if (percent !== null && player && player.seekTo) {
                         player.seekTo(percent * player.getDuration(), true);
@@ -279,125 +592,149 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             }
 
-            progressContainer.addEventListener('mousedown', startDrag);
-            progressContainer.addEventListener('touchstart', startDrag, { passive: true });
-            
-            // Mouse events on window so dragging outside still works, but bounded to this player instance
-            window.addEventListener('mousemove', function(e) {
-                if (isDraggingProgress) moveDrag(e);
-            }, { passive: false });
-            window.addEventListener('mouseup', function(e) {
-                if (isDraggingProgress) endDrag(e);
-            });
-            
-            // Touch events on progress container (touches are naturally captured)
-            progressContainer.addEventListener('touchmove', moveDrag, { passive: false });
-            progressContainer.addEventListener('touchend', endDrag);
-            progressContainer.addEventListener('touchcancel', endDrag);
+            progressContainer.addEventListener("mousedown", startDrag);
+            progressContainer.addEventListener("touchstart", startDrag, { passive: true });
 
-            // Volume button
-            var isMuted = false;
-            volumeBtn.addEventListener('click', function () {
+            var onMouseMove = function(e) { if (isDraggingProgress) moveDrag(e); };
+            var onMouseUp = function(e) { if (isDraggingProgress) endDrag(e); };
+
+            window.addEventListener("mousemove", onMouseMove, { passive: false });
+            window.addEventListener("mouseup", onMouseUp);
+
+            progressContainer.addEventListener("touchmove", moveDrag, { passive: false });
+            progressContainer.addEventListener("touchend", endDrag);
+            progressContainer.addEventListener("touchcancel", endDrag);
+
+            volumeBtn.addEventListener("click", function () {
                 if (player) {
                     if (isMuted) {
-                        player.unMute();
-                        player.setVolume(100);
-                        volumeBar.style.width = '100%';
+                        if (player.unMute) player.unMute();
+                        if (player.setVolume) player.setVolume(100);
+                        volumeBar.style.width = "100%";
                     } else {
-                        player.mute();
-                        volumeBar.style.width = '0%';
+                        if (player.mute) player.mute();
+                        volumeBar.style.width = "0%";
                     }
                     isMuted = !isMuted;
                 }
             });
 
-            // Volume slider touch and click
             function handleVolumeSeek(e) {
                 if (player) {
                     var rect = volumeSlider.getBoundingClientRect();
-                    var clientX;
-                    if (e.touches && e.touches.length > 0) {
-                        clientX = e.touches[0].clientX;
-                    } else if (e.changedTouches && e.changedTouches.length > 0) {
-                        clientX = e.changedTouches[0].clientX;
-                    } else {
-                        clientX = e.clientX;
-                    }
+                    var clientX = getClientX(e);
                     var percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-                    player.setVolume(percent * 100);
-                    volumeBar.style.width = (percent * 100) + '%';
+                    if (player.setVolume) player.setVolume(percent * 100);
+                    volumeBar.style.width = (percent * 100) + "%";
                     if (percent > 0 && isMuted) {
-                        player.unMute();
+                        if (player.unMute) player.unMute();
                         isMuted = false;
                     }
                 }
             }
-            volumeSlider.addEventListener('click', handleVolumeSeek);
-            volumeSlider.addEventListener('touchstart', handleVolumeSeek, { passive: true });
-            volumeSlider.addEventListener('touchmove', handleVolumeSeek, { passive: true });
+            volumeSlider.addEventListener("click", handleVolumeSeek);
+            volumeSlider.addEventListener("touchstart", handleVolumeSeek, { passive: true });
+            volumeSlider.addEventListener("touchmove", handleVolumeSeek, { passive: true });
 
-            // Fullscreen button
-            fullscreenBtn.addEventListener('click', function () {
-                var fsEnter = fullscreenBtn.querySelector('.fs-enter');
-                var fsExit = fullscreenBtn.querySelector('.fs-exit');
+            var fsEnter = fullscreenBtn.querySelector(".fs-enter");
+            var fsExit = fullscreenBtn.querySelector(".fs-exit");
 
-                if (wrapper.classList.contains('fullscreen')) {
-                    wrapper.classList.remove('fullscreen');
-                    document.body.style.overflow = '';
-                    fsEnter.style.display = 'block';
-                    fsExit.style.display = 'none';
+            function syncFullscreenUI() {
+                var isFs = document.fullscreenElement || document.webkitFullscreenElement || wrapper.classList.contains("fullscreen");
+                var area = document.getElementById("supervideo_area_embed");
+                if (isFs) {
+                    if (area) area.classList.add("supervideo-has-fullscreen");
+                    if (fsEnter) fsEnter.style.display = "none";
+                    if (fsExit) fsExit.style.display = "block";
                 } else {
-                    wrapper.classList.add('fullscreen');
-                    document.body.style.overflow = 'hidden';
-                    fsEnter.style.display = 'none';
-                    fsExit.style.display = 'block';
+                    if (area) area.classList.remove("supervideo-has-fullscreen");
+                    wrapper.classList.remove("fullscreen");
+                    document.body.style.overflow = "";
+                    if (fsEnter) fsEnter.style.display = "block";
+                    if (fsExit) fsExit.style.display = "none";
                 }
-            });
-
-            // ESC key to exit fullscreen
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && wrapper.classList.contains('fullscreen')) {
-                    wrapper.classList.remove('fullscreen');
-                    document.body.style.overflow = '';
-                    fullscreenBtn.querySelector('.fs-enter').style.display = 'block';
-                    fullscreenBtn.querySelector('.fs-exit').style.display = 'none';
-                }
-            });
-
-            // Format time helper
-            function formatTime(seconds) {
-                if (isNaN(seconds) || !isFinite(seconds)) return '0:00';
-                var mins = Math.floor(seconds / 60);
-                var secs = Math.floor(seconds % 60);
-                return mins + ':' + (secs < 10 ? '0' : '') + secs;
             }
 
-            // Update progress bar and time
-            setInterval(function () {
+            function toggleFullscreen() {
+                var isFs = document.fullscreenElement || document.webkitFullscreenElement || wrapper.classList.contains("fullscreen");
+                if (!isFs) {
+                    if (wrapper.requestFullscreen) {
+                        wrapper.requestFullscreen().catch(function() {
+                            wrapper.classList.add("fullscreen");
+                            syncFullscreenUI();
+                        });
+                    } else if (wrapper.webkitRequestFullscreen) {
+                        wrapper.webkitRequestFullscreen();
+                    } else {
+                        wrapper.classList.add("fullscreen");
+                        document.body.style.overflow = "hidden";
+                        syncFullscreenUI();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().catch(function() {
+                            wrapper.classList.remove("fullscreen");
+                            syncFullscreenUI();
+                        });
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else {
+                        wrapper.classList.remove("fullscreen");
+                        document.body.style.overflow = "";
+                        syncFullscreenUI();
+                    }
+                }
+            }
+
+            fullscreenBtn.addEventListener("click", toggleFullscreen);
+            document.addEventListener("fullscreenchange", syncFullscreenUI);
+            document.addEventListener("webkitfullscreenchange", syncFullscreenUI);
+
+            var onKeyDown = function (e) {
+                if (e.key === "Escape") {
+                    var isFs = document.fullscreenElement || document.webkitFullscreenElement || wrapper.classList.contains("fullscreen");
+                    if (isFs) {
+                        wrapper.classList.remove("fullscreen");
+                        syncFullscreenUI();
+                    }
+                }
+            };
+            document.addEventListener("keydown", onKeyDown);
+
+            progressInterval = window.setInterval(function () {
                 if (!isDraggingProgress && player && player.getCurrentTime && player.getDuration) {
                     var currentTime = player.getCurrentTime();
                     var duration = player.getDuration();
-
                     if (duration > 0) {
                         var percent = (currentTime / duration) * 100;
-                        progressBar.style.width = percent + '%';
-                        timeDisplay.textContent = formatTime(currentTime) + ' / ' + formatTime(duration);
-
-                        // Save progress
-                        player_create._internal_saveprogress(currentTime, duration - 1);
+                        progressBar.style.width = percent + "%";
+                        timeDisplay.textContent = formatTime(currentTime) + " / " + formatTime(duration);
+                        markerController.update(currentTime);
+                        player_create._internal_saveprogress(currentTime, duration);
                     }
                 }
             }, 250);
 
-            // Handle setCurrentTime event
-            document.addEventListener("setCurrentTime", function (event) {
-                if (player && player.seekTo) {
-                    player.seekTo(event.detail.goCurrentTime, true);
+            player_create._cleanup_when_removed(elementId, function () {
+                if (progressInterval) {
+                    window.clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
+                document.removeEventListener("keydown", onKeyDown);
+                document.removeEventListener("fullscreenchange", syncFullscreenUI);
+                document.removeEventListener("webkitfullscreenchange", syncFullscreenUI);
+                document.removeEventListener("setCurrentTime", onYoutubeSeek);
+                var area = document.getElementById("supervideo_area_embed");
+                if (area) area.classList.remove("supervideo-has-fullscreen");
+                if (player && player.destroy) {
+                    player.destroy();
                 }
             });
         },
 
-        resource_audio: function (view_id, start_currenttime, elementId) {
+        resource_audio: function (view_id, start_currenttime, elementId, markerConfig) {
             player_create._internal_view_id = view_id;
 
             var $element = $(`#${elementId}`);
@@ -422,14 +759,21 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
 
             var config = {
                 controls: controls.split(","),
-                tooltips: { controls: showcontrols, seek: showcontrols },
+                tooltips: {controls: showcontrols, seek: showcontrols},
                 settings: ["speed", "loop"],
                 autoplay: !!autoplay,
-                storage: { enabled: true, key: "id-" + view_id },
-                speed: { selected: speed.length > 3, options: speed.split(",") },
+                storage: {enabled: true, key: "id-" + view_id},
+                speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                markers: {
+                    enabled: player_create._markers_points(markerConfig).length > 0,
+                    points: player_create._markers_points(markerConfig),
+                },
             };
             var player = new PlayerRender(`#${elementId} audio`, config);
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                player.currentTime = time;
+            }, player.elements.container);
             player.on("ready", function () {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
@@ -443,16 +787,26 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 }
             });
 
-            document.addEventListener("setCurrentTime", function (event) {
+            var onAudioSeek = function(event) {
                 player.currentTime = event.detail.goCurrentTime;
-            });
+            };
+            document.addEventListener("setCurrentTime", onAudioSeek);
 
-            setInterval(function () {
+            var onAudioProgress = player_create._throttle(function() {
+                markerController.update(player.currentTime);
                 player_create._internal_saveprogress(player.currentTime, player.duration);
-            }, 200);
+            }, 750);
+            player.on("timeupdate", onAudioProgress);
+            player.on("ended", function() {
+                player_create._internal_saveprogress(player.duration, player.duration);
+            });
+            player_create._cleanup_when_removed(elementId, function() {
+                document.removeEventListener("setCurrentTime", onAudioSeek);
+                player.off("timeupdate", onAudioProgress);
+            });
         },
 
-        resource_video: function (view_id, start_currenttime, elementId, isHls) {
+        resource_video: function (view_id, start_currenttime, elementId, isHls, markerConfig) {
             player_create._internal_view_id = view_id;
 
             const $element = $(`#${elementId}`);
@@ -477,14 +831,21 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             const config = {
                 controls: controls.split(","),
                 autoplay: !!autoplay,
-                tooltips: { controls: showcontrols, seek: showcontrols },
+                tooltips: {controls: showcontrols, seek: showcontrols},
                 settings: ["speed", "loop"],
-                storage: { enabled: true, key: "id-" + view_id },
-                speed: { selected: speed.length > 3, options: speed.split(",") },
+                storage: {enabled: true, key: "id-" + view_id},
+                speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
+                markers: {
+                    enabled: player_create._markers_points(markerConfig).length > 0,
+                    points: player_create._markers_points(markerConfig),
+                },
             };
 
             function playerReady(player) {
+                var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                    player.currentTime = time;
+                }, player.elements.container);
                 player.on("ready", function () {
                     if (start_currenttime) {
                         player.currentTime = parseInt(start_currenttime);
@@ -499,13 +860,23 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     player_create._internal_resize(16, 9);
                 });
 
-                document.addEventListener("setCurrentTime", function (event) {
+                var onVideoSeek = function(event) {
                     player.currentTime = event.detail.goCurrentTime;
-                });
+                };
+                document.addEventListener("setCurrentTime", onVideoSeek);
 
-                setInterval(function () {
+                var onVideoProgress = player_create._throttle(function() {
+                    markerController.update(player.currentTime);
                     player_create._internal_saveprogress(player.currentTime, player.duration);
-                }, 200);
+                }, 750);
+                player.on("timeupdate", onVideoProgress);
+                player.on("ended", function() {
+                    player_create._internal_saveprogress(player.duration, player.duration);
+                });
+                player_create._cleanup_when_removed(elementId, function() {
+                    document.removeEventListener("setCurrentTime", onVideoSeek);
+                    player.off("timeupdate", onVideoProgress);
+                });
             }
 
             const video = document.querySelector(`#${elementId} video`);
@@ -524,22 +895,35 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                     // we will have one source on the Plyr player.
                     hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
 
-                        // Transform available levels into an array of integers (height values).
-                        const availableQualities = hls.levels.map((l) => l.height)
+                        // Keep Hls.js adaptive bitrate as the default and expose
+                        // the manifest levels as optional manual quality choices.
+                        const availableQualities = [...new Set(
+                            hls.levels.map((level) => level.height).filter(Boolean)
+                        )].sort((a, b) => b - a);
 
-                        // Add new qualities to option
-                        config.quality = {
-                            default: availableQualities[0],
-                            options: availableQualities,
-                            // this ensures Plyr to use Hls to update quality level
-                            forced: true,
-                            onChange: (e) => updateQuality(e),
+                        if (!config.settings.includes("quality")) {
+                            config.settings.unshift("quality");
                         }
+                        config.i18n = config.i18n || {};
+                        config.i18n.qualityLabel = Object.assign(
+                            {0: "Auto"},
+                            config.i18n.qualityLabel || {}
+                        );
+                        config.quality = {
+                            default: 0,
+                            options: [0].concat(availableQualities),
+                            forced: true,
+                            onChange: (quality) => updateQuality(quality),
+                        };
 
                         function updateQuality(newQuality) {
+                            newQuality = parseInt(newQuality);
+                            if (newQuality === 0) {
+                                window.hls.currentLevel = -1;
+                                return;
+                            }
                             window.hls.levels.forEach((level, levelIndex) => {
                                 if (level.height === newQuality) {
-                                    console.log("Found quality match with " + newQuality);
                                     window.hls.currentLevel = levelIndex;
                                 }
                             });
@@ -565,19 +949,23 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             });
         },
 
-        vimeo: function (view_id, start_currenttime, vimeoid, elementId) {
+        vimeo: function (view_id, start_currenttime, vimeoid, elementId, markerConfig) {
             player_create._internal_view_id = view_id;
 
             const iframe = document.getElementById(elementId);
             const player = new Vimeo.Player(iframe);
+            const markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                player.setCurrentTime(time);
+            });
 
             if (start_currenttime) {
                 player.setCurrentTime(start_currenttime);
             }
 
-            document.addEventListener("setCurrentTime", function (event) {
+            var onVimeoSeek = function(event) {
                 player.setCurrentTime(event.detail.goCurrentTime);
-            });
+            };
+            document.addEventListener("setCurrentTime", onVimeoSeek);
 
             Promise.all([player.getVideoWidth(), player.getVideoHeight()]).then(function (dimensions) {
                 const width = dimensions[0];
@@ -586,26 +974,26 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 player_create._internal_resize(width, height);
             });
 
-            var duration = 0;
-            setInterval(function () {
-                if (duration > 1) {
-                    player.getCurrentTime().then(function (_currenttime) {
-                        _currenttime = parseInt(_currenttime);
-                        player_create._internal_saveprogress(_currenttime, duration);
-                    });
-                } else {
-                    player.getDuration().then(function (_duration) {
-                        duration = _duration;
-                    });
-                }
-            }, 300);
+            var onVimeoProgress = player_create._throttle(function(data) {
+                markerController.update(data.seconds);
+                player_create._internal_saveprogress(data.seconds, data.duration);
+            }, 750);
+            var onVimeoEnded = function(data) {
+                player_create._internal_saveprogress(data.duration, data.duration);
+            };
+            player.on("timeupdate", onVimeoProgress);
+            player.on("ended", onVimeoEnded);
+            player_create._cleanup_when_removed(elementId, function() {
+                document.removeEventListener("setCurrentTime", onVimeoSeek);
+                player.off("timeupdate", onVimeoProgress);
+                player.off("ended", onVimeoEnded);
+            });
         },
 
         drive: function (view_id, elementId, playersize) {
-            $("#mapa-visualizacao").hide();
+            $("#map-visualization").hide();
 
             player_create._internal_view_id = view_id;
-            player_create._internal_saveprogress(1, 1);
 
             if (playersize == "4x3") {
                 player_create._internal_resize(4, 3);
@@ -618,31 +1006,101 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
         },
 
-        pandavideo: function (view_id, currenttime, elementId, size) {
+        embed: function (view_id, start_currenttime, elementId, playersize, markerConfig, trustedOrigin) {
+            player_create._internal_view_id = view_id;
+
+            if (playersize == "4x3") {
+                player_create._internal_resize(4, 3);
+            } else if (playersize == "16x9") {
+                player_create._internal_resize(16, 9);
+            } else {
+                player_create._internal_resize(16, 9);
+            }
+
+            var iframe = document.getElementById(elementId);
+            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({
+                        type: "player:seekTo",
+                        currentTime: time
+                    }, trustedOrigin);
+                }
+            });
+
+            // Allow the progress map to seek inside the embedded player.
+            var onEmbedSeek = function(event) {
+                if (iframe && iframe.contentWindow && trustedOrigin) {
+                    iframe.contentWindow.postMessage({
+                        type: "player:seekTo",
+                        currentTime: event.detail.goCurrentTime
+                    }, trustedOrigin);
+                }
+            };
+            document.addEventListener("setCurrentTime", onEmbedSeek);
+
+            // Listen for progress and dimension messages from embedded player iframe.
+            var receiveEmbedMessage = function(event) {
+                if (!trustedOrigin || event.source !== iframe.contentWindow || event.origin !== trustedOrigin) {
+                    return;
+                }
+                if (event.data && event.data.origem === "supervideo-embed") {
+                    if (event.data.name === "dimensions" && event.data.width && event.data.height) {
+                        player_create._internal_resize(event.data.width, event.data.height);
+                    }
+                    if (event.data.name === "progress") {
+                        var ct = event.data.currentTime;
+                        var dur = event.data.duration;
+
+                        if (dur > 0) {
+                            markerController.update(ct);
+                            player_create._internal_saveprogress(ct, dur);
+                        }
+                    }
+                }
+            };
+            window.addEventListener("message", receiveEmbedMessage);
+            player_create._cleanup_when_removed(elementId, function() {
+                document.removeEventListener("setCurrentTime", onEmbedSeek);
+                window.removeEventListener("message", receiveEmbedMessage);
+            });
+        },
+
+        pandavideo: function (view_id, currenttime, elementId, size, markerConfig, trustedOrigin) {
             player_create._internal_resize(size.width, size.height);
 
             player_create._internal_view_id = view_id;
 
             var duration = false;
-            window.addEventListener("message", (event) => {
-                const { data } = event;
+            const iframe = document.getElementById(elementId).contentWindow;
+            const markerController = player_create._markers_create(elementId, markerConfig, function(time) {
+                iframe.postMessage({type: 'currentTime', parameter: time}, trustedOrigin);
+            });
+            const receivePandaMessage = (event) => {
+                if (!trustedOrigin || event.source !== iframe || event.origin !== trustedOrigin) {
+                    return;
+                }
+                const {data} = event;
 
                 if (data.message === 'panda_allData') {
                     duration = data.playerData.duration
                 } else if (data.message === 'panda_timeupdate') {
                     if (duration) {
+                        markerController.update(data.currentTime);
                         player_create._internal_saveprogress(data.currentTime, duration);
                     }
                 }
-            }, false);
+            };
+            window.addEventListener("message", receivePandaMessage, false);
+            player_create._cleanup_when_removed(elementId, function() {
+                window.removeEventListener("message", receivePandaMessage, false);
+            });
 
-            const iframe = document.getElementById(elementId).contentWindow;
-            iframe.postMessage({ type: 'currentTime', parameter: currenttime });
+            iframe.postMessage({type: 'currentTime', parameter: currenttime}, trustedOrigin);
         },
 
         _error_load: function (elementId) {
             function errorF(e) {
-                $(`#${elementId}, #mapa-visualizacao`).hide();
+                $(`#${elementId}, #map-visualization`).hide();
                 //$("body").removeClass("distraction-free-mode");
 
                 switch (e.target.error.code) {
@@ -671,7 +1129,6 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         _internal_resize__width: 0,
         _internal_resize__height: 0,
         _internal_resize: function (width, height) {
-            console.log([width, height]);
             player_create._internal_resize__width = width;
             player_create._internal_resize__height = height;
 
@@ -680,68 +1137,88 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
         },
 
         _internal_max_height__resizePage: function () {
+            var $supervideoArea = $("#supervideo_area_embed");
+            if (!$supervideoArea.length) {
+                return;
+            }
 
-            var windowHeight = $(window).height();
+            var mediaWidth = Number(player_create._internal_resize__width);
+            var mediaHeight = Number(player_create._internal_resize__height);
+
+            if (!mediaWidth || !mediaHeight || mediaWidth <= 0 || mediaHeight <= 0) {
+                return;
+            }
+
+            // visualViewport is more accurate on mobile when browser bars are visible.
+            var windowHeight = window.visualViewport ?
+                window.visualViewport.height :
+                (window.innerHeight || $(window).height());
+
+            var maxHeight;
+
             if ($("body").hasClass("distraction-free-mode")) {
-                var $supervideoArea = $("#supervideo_area_embed video,#supervideo_area_embed iframe");
+                var style = window.getComputedStyle($supervideoArea[0]);
 
-                $supervideoArea.css({
-                    "max-height": "inherit",
-                    "height": "inherit",
-                });
+                var marginTop = parseFloat(style.marginTop) || 0;
+                var marginBottom = parseFloat(style.marginBottom) || 0;
 
-                var removeHeight = 54 + 10; // $("#distraction-free-mode-header").height() + padding;
-                var $activity = $(".activity-navigation");
-                if ($activity.length && !$activity.is(":hidden")) {
-                    removeHeight += $activity.height();
-                }
-
-                var $mapa = $("#mapa-visualizacao");
-                if ($mapa.length && !$mapa.is(":hidden")) {
-                    removeHeight += 12;
-                }
-
-                var playerMaxHeight = windowHeight - removeHeight;
-                $("#supervideo_area_embed").css({
-                    "max-height": playerMaxHeight,
-                });
-                $supervideoArea.css({
-                    "max-height": playerMaxHeight,
-                    "height": playerMaxHeight,
-                });
+                maxHeight = windowHeight - marginTop - marginBottom -90; // 90 of the map.
             } else {
-                if (document.querySelector("#supervideo_area_embed iframe")) {
-                    var $supervideo_area_embed = $("#supervideo_area_embed");
+                // Moodle Boost and most Boost-based themes.
+                var headerHeight = $("nav.navbar.fixed-top:visible").outerHeight() || 0;
 
-                    var maxHeight = $(window).height() - $("#header").height();
-                    var width = $supervideo_area_embed.width();
-                    var height = (width * player_create._internal_resize__height) / player_create._internal_resize__width;
+                // Fallback for themes that use another header structure.
+                if (!headerHeight) {
+                    headerHeight = $("#header:visible").outerHeight() || 0;
+                }
 
-                    if (height < maxHeight) {
-                        var ratio = (player_create._internal_resize__height / player_create._internal_resize__width) * 100;
-                        if (ratio > 10) {
-                            $supervideo_area_embed.css({
-                                paddingBottom: `${ratio}%`,
-                                width: "100%",
-                            });
-                        }
-                    } else {
-                        // var newWidth = (maxHeight * player_create._internal_resize__width) / player_create._internal_resize__height;
-                        $supervideo_area_embed.css({
-                            // width         : newWidth,
-                            // margin        : "0 auto",
-                            height: maxHeight,
-                            maxHeight: maxHeight,
-                            paddingBottom: "56.25%",
-                        });
-                    }
+                maxHeight = windowHeight - headerHeight;
+            }
+            maxHeight = Math.max(1, maxHeight);
+
+            var $parent = $supervideoArea.parent();
+            var availableWidth = $parent.width() || $supervideoArea.width();
+
+            if (!availableWidth || availableWidth <= 0) {
+                return;
+            }
+
+            var finalWidth = availableWidth;
+            var finalHeight;
+
+            // Used by Drive when the requested size is a fixed 640px height.
+            var fixedHeightMode = mediaWidth === 100 && mediaHeight === 640;
+
+            if (fixedHeightMode) {
+                finalHeight = Math.min(mediaHeight, maxHeight);
+            } else {
+                finalHeight = finalWidth * mediaHeight / mediaWidth;
+
+                // The player can NEVER be taller than the visible area.
+                if (finalHeight > maxHeight) {
+                    finalHeight = maxHeight;
+                    finalWidth = finalHeight * mediaWidth / mediaHeight;
                 }
             }
+
+            $supervideoArea.css({
+                "width": finalWidth,
+                "height": finalHeight,
+                "max-height": maxHeight,
+                "padding-bottom": 0,
+                "margin-left": "auto",
+                "margin-right": "auto",
+                "aspect-ratio": fixedHeightMode ? "auto" : `${mediaWidth} / ${mediaHeight}`,
+            });
+
+            $supervideoArea.find("video, iframe").css({
+                "max-height": maxHeight,
+            });
         },
 
-        _internal_last_posicao_video: -1,
+        _internal_last_position_video: -1,
         _internal_last_percent: -1,
-        _internal_assistido: [],
+        _internal_assisted: [],
         _internal_view_id: 0,
         _internal_progress_length: 100,
         _internal_sizenum: -1,
@@ -754,31 +1231,45 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 return 0;
             }
 
-            if (duration && player_create._internal_assistido.length == 0) {
+            // When near the end (within 1 second), treat as complete
+            if (duration - currenttime <= 1 && currenttime > 0) {
+                currenttime = duration;
+            }
+
+            if (duration && player_create._internal_assisted.length == 0) {
                 player_create._internal_progress_create(duration);
             }
 
-            var posicao_video;
+            var video_position;
             if (player_create._internal_progress_length < 100) {
-                posicao_video = currenttime;
+                video_position = currenttime;
             } else {
-                posicao_video = parseInt(currenttime / duration * player_create._internal_progress_length);
+                video_position = parseInt(currenttime / duration * player_create._internal_progress_length);
             }
 
-            if (player_create._internal_last_posicao_video == posicao_video) {
+            if (video_position > player_create._internal_progress_length) {
+                video_position = player_create._internal_progress_length;
+            }
+            if (video_position < 0) {
+                video_position = 0;
+            }
+
+            if (player_create._internal_last_position_video == video_position) {
                 return;
             }
-            player_create._internal_last_posicao_video = posicao_video;
 
-            if (posicao_video) {
-                player_create._internal_assistido[posicao_video] = 1;
+            // Do not fill skipped segments. A jump in currentTime can happen after seeking,
+            // so only the segment reached by this progress event is marked as watched.
+            if (video_position > 0 && video_position <= player_create._internal_progress_length) {
+                player_create._internal_assisted[video_position] = 1;
             }
+            player_create._internal_last_position_video = video_position;
 
             var percent = 0;
             for (let j = 1; j <= player_create._internal_progress_length; j++) {
-                if (player_create._internal_assistido[j]) {
+                if (player_create._internal_assisted[j]) {
                     percent++;
-                    $(`#mapa-visualizacao-${j}`).css({ opacity: 1 });
+                    $(`#map-visualization-${j}`).css({opacity: 1});
                 }
             }
 
@@ -792,19 +1283,19 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             player_create._internal_last_percent = percent;
 
             if ($("body").hasClass("distraction-free-mode")) {
-                var $mapa = $("#mapa-visualizacao");
-                if ($mapa.length && !$mapa.is(":hidden")) {
+                var $map = $("#map-visualization");
+                if ($map.length && !$map.is(":hidden")) {
                     if (currenttime > (duration * .90)) {
                         if (player_create._internal_sizenum != 1) {
                             $(".activity-navigation").hide();
-                            $mapa.addClass("fixed-booton");
+                            $map.addClass("fixed-booton");
                             player_create._internal_max_height__resizePage();
                             player_create._internal_sizenum = 1;
                         }
                     } else {
                         if (player_create._internal_sizenum != 2) {
                             $(".activity-navigation").show();
-                            $mapa.removeClass("fixed-booton");
+                            $map.removeClass("fixed-booton");
                             player_create._internal_max_height__resizePage();
                             player_create._internal_sizenum = 2;
                         }
@@ -812,7 +1303,7 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
                 } else {
                     if (player_create._internal_sizenum != 3) {
                         $(".activity-navigation").show();
-                        $mapa.removeClass("fixed-booton");
+                        $map.removeClass("fixed-booton");
                         player_create._internal_max_height__resizePage();
                         player_create._internal_sizenum = 3;
                     }
@@ -820,91 +1311,111 @@ define(["jquery", "core/ajax", "mod_supervideo/player_render", "jqueryui"], func
             }
 
             if (currenttime) {
-                Ajax.call([{
-                    methodname: "mod_supervideo_progress_save",
-                    args: {
-                        view_id: player_create._internal_view_id,
-                        currenttime: parseInt(currenttime),
-                        duration: parseInt(duration),
-                        percent: parseInt(percent),
-                        mapa: JSON.stringify(player_create._internal_assistido)
-                    }
-                }]);
+                player_create._internal_queue_save({
+                    view_id: player_create._internal_view_id,
+                    currenttime: parseInt(currenttime),
+                    duration: parseInt(duration),
+                    percent: parseInt(percent),
+                    map: JSON.stringify(player_create._internal_assisted)
+                });
             }
 
             if (percent >= 0) {
-                $("#seu-mapa-view span").html(`${percent}%`);
+                $("#your-map-view span").html(`${percent}%`);
             }
+        },
+
+        _internal_save_timer: null,
+        _internal_pending_payload: null,
+        _internal_last_saved_at: 0,
+        _internal_queue_save: function(payload) {
+            player_create._internal_pending_payload = payload;
+            var elapsed = Date.now() - player_create._internal_last_saved_at;
+            var delay = Math.max(0, 1500 - elapsed);
+            if (player_create._internal_save_timer) {
+                return;
+            }
+            player_create._internal_save_timer = window.setTimeout(function() {
+                player_create._internal_save_timer = null;
+                var latest = player_create._internal_pending_payload;
+                player_create._internal_pending_payload = null;
+                if (!latest) {
+                    return;
+                }
+                player_create._internal_last_saved_at = Date.now();
+                Ajax.call([{
+                    methodname: "mod_supervideo_progress_save",
+                    args: latest
+                }])[0].fail(Notification.exception);
+            }, delay);
         },
 
         _internal_progress_create: function (duration) {
 
-            var $mapa = $("#mapa-visualizacao .mapa");
-            if (!$mapa.length) {
+                        // Force LTR on the map container and its flex children for RTL languages
+            var mapContainer = document.getElementById("map-visualization") || document.getElementById("mapa-visualizacao");
+            if (mapContainer) {
+                mapContainer.style.setProperty("direction", "ltr", "important");
+                mapContainer.setAttribute("dir", "ltr");
+                var flexChildren = mapContainer.querySelectorAll(".map, .mapa, .clique");
+                for (var fc = 0; fc < flexChildren.length; fc++) {
+                    flexChildren[fc].style.setProperty("direction", "ltr", "important");
+                    flexChildren[fc].style.setProperty("left", "0", "important");
+                    flexChildren[fc].style.setProperty("right", "0", "important");
+                }
+            }
+
+            var $map = $("#map-visualization .map");
+            if (!$map.length) {
                 return;
             }
 
-            // Force LTR on the mapa container and its flex children for RTL languages
-            // Using setProperty with 'important' flag = inline !important = highest CSS priority
-            var mapaContainer = document.getElementById('mapa-visualizacao');
-            if (mapaContainer) {
-                mapaContainer.style.setProperty('direction', 'ltr', 'important');
-                mapaContainer.setAttribute('dir', 'ltr');
-                // Also force LTR on the .mapa and .clique flex containers
-                var flexChildren = mapaContainer.querySelectorAll('.mapa, .clique');
-                for (var fc = 0; fc < flexChildren.length; fc++) {
-                    flexChildren[fc].style.setProperty('direction', 'ltr', 'important');
-                    flexChildren[fc].style.setProperty('left', '0', 'important');
-                    flexChildren[fc].style.setProperty('right', '0', 'important');
-                }
-            }
-
-            var supervideo_view_mapa = [];
+            var supervideo_view_map = [];
             try {
-                var mapa_json_base64 = $mapa.attr("data-mapa");
-                if (mapa_json_base64) {
-                    supervideo_view_mapa = JSON.parse(atob(mapa_json_base64));
+                var map_json_base64 = $map.attr("data-map");
+                if (map_json_base64) {
+                    supervideo_view_map = JSON.parse(atob(map_json_base64));
                 }
             } catch (e) {
-                supervideo_view_mapa = [];
+                supervideo_view_map = [];
             }
 
             if (Math.floor(duration) <= 100) {
                 player_create._internal_progress_length = Math.floor(duration);
             }
             for (let i = 1; i <= player_create._internal_progress_length; i++) {
-                if (typeof supervideo_view_mapa[i] != "undefined") {
-                    player_create._internal_assistido[i] = supervideo_view_mapa[i];
+                if (typeof supervideo_view_map[i] != "undefined") {
+                    player_create._internal_assisted[i] = supervideo_view_map[i];
                 } else {
-                    player_create._internal_assistido[i] = 0;
+                    player_create._internal_assisted[i] = 0;
                 }
-                var $mapa_item = $(`<div id="mapa-visualizacao-${i}">`);
-                $mapa.append($mapa_item);
+                var $map_item = $(`<div id="map-visualization-${i}">`);
+                $map.append($map_item);
 
-                // Mapa Clique
-                var mapaTitle = Math.floor(duration / player_create._internal_progress_length * i);
+                // Map Clik
+                var mapTitle = Math.floor(duration / player_create._internal_progress_length * i);
 
-                var hours = Math.floor(mapaTitle / 3600);
-                var minutes = (Math.floor(mapaTitle / 60)) % 60;
-                var seconds = mapaTitle % 60;
+                var hours = Math.floor(mapTitle / 3600);
+                var minutes = (Math.floor(mapTitle / 60)) % 60;
+                var seconds = mapTitle % 60;
 
                 var tempo = minutes + ":" + seconds;
                 if (hours) {
                     tempo = hours + ":" + minutes + ":" + seconds;
                 }
-                var $mapa_clique =
+                var $map_clique =
                     $("<div></div>")
                         .attr("title", tempo)
-                        .attr("data-currenttime", mapaTitle)
-                        .on('click touchstart', function (e) {
+                        .attr("data-currenttime", mapTitle)
+                        .on("click touchstart", function (e) {
                             var _setCurrentTime = $(this).attr("data-currenttime");
                             _setCurrentTime = parseInt(_setCurrentTime);
 
                             var event = document.createEvent("CustomEvent");
-                            event.initCustomEvent("setCurrentTime", true, true, { goCurrentTime: _setCurrentTime });
+                            event.initCustomEvent("setCurrentTime", true, true, {goCurrentTime: _setCurrentTime});
                             document.dispatchEvent(event);
                         });
-                $("#mapa-visualizacao .clique").append($mapa_clique);
+                $("#map-visualization .clique").append($map_clique);
             }
         }
     };

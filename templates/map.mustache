@@ -1,0 +1,32 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_supervideo/map
+
+    Example context (json):
+    {
+      "style": "style='width: 100%; height: 400px; background-color: #f0f0f0;'",
+      "data_map": "{...}",
+      "text": "<p>Video map view</p>"
+    }
+}}
+
+<div id="map-visualization" dir="ltr" style="direction:ltr !important;" {{{style}}}>
+    <div class="map" style="direction:ltr !important; left:0; right:0;" data-map="{{{data_map}}}"></div>
+    {{{text}}}
+    <div class="clique" style="direction:ltr !important; left:0; right:0;"></div>
+</div>

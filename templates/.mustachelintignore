@@ -1,5 +1,6 @@
-embed_pandavideo.mustache
 embed_drive.mustache
+embed_iframe.mustache
+embed_pandavideo.mustache
 embed_vimeo.mustache
 mobile.mustache
 view-freemode.mustache
