@@ -219,9 +219,18 @@
   touch-action: none;
 }
 
-.supervideo-volume-container:hover .supervideo-volume-slider {
+.supervideo-volume-container:hover .supervideo-volume-slider,
+.supervideo-volume-container:focus-within .supervideo-volume-slider {
   width: 60px;
   margin-left: 4px;
+}
+
+.supervideo-btn:focus-visible,
+.supervideo-progress-container:focus-visible,
+.supervideo-volume-slider:focus-visible,
+.supervideo-big-play:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .supervideo-volume-bar {

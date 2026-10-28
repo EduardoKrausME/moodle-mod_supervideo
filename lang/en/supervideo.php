@@ -249,3 +249,7 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Your View map:';
+
+$string['youtube_api_error'] = 'Error loading the YouTube iframe API.';
+$string['youtube_unmute'] = 'Unmute';
+$string['youtube_exit_fullscreen'] = 'Exit fullscreen';

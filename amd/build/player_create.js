@@ -239,8 +239,14 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
         },
 
-                youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay, markerConfig, protection) {
+                youtube: function (view_id, start_currenttime, elementId, videoid, playersize, showcontrols, autoplay, markerConfig, protection, labels) {
             player_create._internal_view_id = view_id;
+
+            labels = Object.assign({
+                play: "Play", pause: "Pause", mute: "Mute", unmute: "Unmute",
+                volume: "Volume", fullscreen: "Fullscreen", exitfullscreen: "Exit fullscreen",
+                progress: "Progress", error: "Error loading the YouTube iframe API."
+            }, labels || {});
 
             // Mode switch: if protection is explicitly disabled (false, 0, or "0"), run standard YouTube player
             if (protection === false || protection === 0 || protection === "0") {
@@ -266,11 +272,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 });
 
                 var showStdApiError = function() {
-                    var html =
-                        `<div class="alert alert-danger">
-                            Error loading the YouTube iframe API.
-                         </div>`;
-                    $("#supervideo_area_embed").html(html);
+                    var errorElement = document.createElement("div");
+                    errorElement.className = "alert alert-danger";
+                    errorElement.textContent = labels.error;
+                    $("#supervideo_area_embed").empty().append(errorElement);
                 };
 
                 var initStdPlayer = function() {
@@ -408,6 +413,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     <svg class="fs-exit" style="display:none" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
                 </button>
             `;
+            controls.style.display = showcontrols ? "flex" : "none";
             wrapper.appendChild(controls);
 
             container.innerHTML = "";
@@ -437,11 +443,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             }, wrapper);
 
             var showApiError = function() {
-                var html =
-                    `<div class="alert alert-danger">
-                        Error loading the YouTube iframe API.
-                     </div>`;
-                $("#supervideo_area_embed").html(html);
+                var errorElement = document.createElement("div");
+                    errorElement.className = "alert alert-danger";
+                    errorElement.textContent = labels.error;
+                    $("#supervideo_area_embed").empty().append(errorElement);
             };
 
             var initProtectedPlayer = function() {
@@ -478,6 +483,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                                 wrapper.classList.add("playing");
                             }
                             document.addEventListener("setCurrentTime", onYoutubeSeek);
+                            setPlayAccessibility(player.getPlayerState && window.YT &&
+                                player.getPlayerState() === window.YT.PlayerState.PLAYING);
+                            updateVolumeAccessibility();
+                            updateProgress(false);
                         },
                         "onStateChange": function (event) {
                             var playIcon = controls.querySelector(".play-icon");
@@ -488,12 +497,17 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                                 wrapper.classList.add("playing");
                                 if (playIcon) playIcon.style.display = "none";
                                 if (pauseIcon) pauseIcon.style.display = "block";
+                                setPlayAccessibility(true);
+                                startProgressInterval();
                                 posterOverlay.style.display = "none";
                             } else if (window.YT && (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED)) {
                                 wrapper.classList.remove("playing");
                                 wrapper.classList.add("paused");
                                 if (playIcon) playIcon.style.display = "block";
                                 if (pauseIcon) pauseIcon.style.display = "none";
+                                setPlayAccessibility(false);
+                                stopProgressInterval();
+                                updateProgress(false);
                                 if (player && player.getCurrentTime && player.getDuration) {
                                     player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
                                 }
@@ -525,6 +539,57 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             var volumeBar = controls.querySelector(".supervideo-volume-bar");
             var fullscreenBtn = controls.querySelector(".supervideo-fullscreen-btn");
 
+            function setPlayAccessibility(isPlaying) {
+                var action = isPlaying ? labels.pause : labels.play;
+                playBtn.title = action;
+                playBtn.setAttribute("aria-label", action);
+                playBtn.setAttribute("aria-pressed", isPlaying ? "true" : "false");
+                bigPlay.setAttribute("aria-label", action);
+                bigPlay.tabIndex = isPlaying ? -1 : 0;
+            }
+
+            function updateVolumeAccessibility() {
+                if (player && player.isMuted) {
+                    isMuted = player.isMuted();
+                }
+                var action = isMuted ? labels.unmute : labels.mute;
+                volumeBtn.title = action;
+                volumeBtn.setAttribute("aria-label", action);
+                volumeBtn.setAttribute("aria-pressed", isMuted ? "true" : "false");
+                var level = isMuted ? 0 : player && player.getVolume ? player.getVolume() : 100;
+                volumeSlider.setAttribute("aria-valuenow", String(Math.round(level)));
+            }
+
+            function renderProgress(currentTime, duration) {
+                if (!Number.isFinite(duration) || duration <= 0) {
+                    return;
+                }
+                currentTime = Math.max(0, Math.min(duration, currentTime));
+                progressBar.style.width = (currentTime / duration * 100) + "%";
+                timeDisplay.textContent = formatTime(currentTime) + " / " + formatTime(duration);
+                progressContainer.setAttribute("aria-valuemax", String(Math.floor(duration)));
+                progressContainer.setAttribute("aria-valuenow", String(Math.floor(currentTime)));
+                progressContainer.setAttribute("aria-valuetext", timeDisplay.textContent);
+            }
+
+            bigPlay.setAttribute("role", "button");
+            volumeSlider.setAttribute("role", "slider");
+            volumeSlider.tabIndex = 0;
+            volumeSlider.setAttribute("aria-label", labels.volume);
+            volumeSlider.setAttribute("aria-valuemin", "0");
+            volumeSlider.setAttribute("aria-valuemax", "100");
+            volumeSlider.setAttribute("aria-valuenow", "100");
+            progressContainer.setAttribute("role", "slider");
+            progressContainer.tabIndex = 0;
+            progressContainer.setAttribute("aria-label", labels.progress);
+            progressContainer.setAttribute("aria-valuemin", "0");
+            progressContainer.setAttribute("aria-valuemax", "0");
+            progressContainer.setAttribute("aria-valuenow", "0");
+            fullscreenBtn.title = labels.fullscreen;
+            fullscreenBtn.setAttribute("aria-label", labels.fullscreen);
+            setPlayAccessibility(false);
+            updateVolumeAccessibility();
+
             function togglePlay() {
                 if (player && player.getPlayerState) {
                     var state = player.getPlayerState();
@@ -540,6 +605,12 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             bigPlay.addEventListener("click", togglePlay);
             posterOverlay.addEventListener("click", togglePlay);
             protectionOverlay.addEventListener("click", togglePlay);
+            bigPlay.addEventListener("keydown", function(event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    togglePlay();
+                }
+            });
 
             function formatTime(seconds) {
                 if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
@@ -562,9 +633,9 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 var rect = progressContainer.getBoundingClientRect();
                 var percent = (getClientX(e) - rect.left) / rect.width;
                 percent = Math.max(0, Math.min(1, percent));
-                progressBar.style.width = (percent * 100) + "%";
                 var duration = player.getDuration();
-                timeDisplay.textContent = formatTime(percent * duration) + " / " + formatTime(duration);
+                if (!Number.isFinite(duration) || duration <= 0) return null;
+                renderProgress(percent * duration, duration);
                 return percent;
             }
 
@@ -604,6 +675,25 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             progressContainer.addEventListener("touchmove", moveDrag, { passive: false });
             progressContainer.addEventListener("touchend", endDrag);
             progressContainer.addEventListener("touchcancel", endDrag);
+            progressContainer.addEventListener("keydown", function(event) {
+                if (!player || !player.getDuration || !player.seekTo) return;
+                var duration = player.getDuration();
+                if (!Number.isFinite(duration) || duration <= 0) return;
+                var target = player.getCurrentTime();
+                switch (event.key) {
+                    case "ArrowLeft": target -= 5; break;
+                    case "ArrowRight": target += 5; break;
+                    case "PageDown": target -= 10; break;
+                    case "PageUp": target += 10; break;
+                    case "Home": target = 0; break;
+                    case "End": target = duration; break;
+                    default: return;
+                }
+                event.preventDefault();
+                target = Math.max(0, Math.min(duration, target));
+                player.seekTo(target, true);
+                renderProgress(target, duration);
+            });
 
             volumeBtn.addEventListener("click", function () {
                 if (player) {
@@ -616,6 +706,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         volumeBar.style.width = "0%";
                     }
                     isMuted = !isMuted;
+                    updateVolumeAccessibility();
                 }
             });
 
@@ -630,8 +721,29 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         if (player.unMute) player.unMute();
                         isMuted = false;
                     }
+                    updateVolumeAccessibility();
                 }
             }
+            volumeSlider.addEventListener("keydown", function(event) {
+                if (!player || !player.setVolume) return;
+                var value = player.getVolume ? player.getVolume() : 100;
+                switch (event.key) {
+                    case "ArrowLeft":
+                    case "ArrowDown": value -= 5; break;
+                    case "ArrowRight":
+                    case "ArrowUp": value += 5; break;
+                    case "Home": value = 0; break;
+                    case "End": value = 100; break;
+                    default: return;
+                }
+                event.preventDefault();
+                value = Math.max(0, Math.min(100, value));
+                player.setVolume(value);
+                if (value > 0 && player.unMute) player.unMute();
+                if (value === 0 && player.mute) player.mute();
+                volumeBar.style.width = value + "%";
+                updateVolumeAccessibility();
+            });
             volumeSlider.addEventListener("click", handleVolumeSeek);
             volumeSlider.addEventListener("touchstart", handleVolumeSeek, { passive: true });
             volumeSlider.addEventListener("touchmove", handleVolumeSeek, { passive: true });
@@ -646,12 +758,16 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     if (area) area.classList.add("supervideo-has-fullscreen");
                     if (fsEnter) fsEnter.style.display = "none";
                     if (fsExit) fsExit.style.display = "block";
+                    fullscreenBtn.title = labels.exitfullscreen;
+                    fullscreenBtn.setAttribute("aria-label", labels.exitfullscreen);
                 } else {
                     if (area) area.classList.remove("supervideo-has-fullscreen");
                     wrapper.classList.remove("fullscreen");
                     document.body.style.overflow = "";
                     if (fsEnter) fsEnter.style.display = "block";
                     if (fsExit) fsExit.style.display = "none";
+                    fullscreenBtn.title = labels.fullscreen;
+                    fullscreenBtn.setAttribute("aria-label", labels.fullscreen);
                 }
             }
 
@@ -701,25 +817,37 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             };
             document.addEventListener("keydown", onKeyDown);
 
-            progressInterval = window.setInterval(function () {
-                if (!isDraggingProgress && player && player.getCurrentTime && player.getDuration) {
-                    var currentTime = player.getCurrentTime();
-                    var duration = player.getDuration();
-                    if (duration > 0) {
-                        var percent = (currentTime / duration) * 100;
-                        progressBar.style.width = percent + "%";
-                        timeDisplay.textContent = formatTime(currentTime) + " / " + formatTime(duration);
-                        markerController.update(currentTime);
-                        player_create._internal_saveprogress(currentTime, duration);
-                    }
+            function updateProgress(save) {
+                if (isDraggingProgress || !player || !player.getCurrentTime || !player.getDuration) {
+                    return;
                 }
-            }, 250);
+                var currentTime = player.getCurrentTime();
+                var duration = player.getDuration();
+                if (duration > 0) {
+                    renderProgress(currentTime, duration);
+                    markerController.update(currentTime);
+                    if (save) player_create._internal_saveprogress(currentTime, duration);
+                }
+            }
 
-            player_create._cleanup_when_removed(elementId, function () {
+            function startProgressInterval() {
+                if (!progressInterval) {
+                    updateProgress(true);
+                    progressInterval = window.setInterval(function() {
+                        updateProgress(true);
+                    }, 1000);
+                }
+            }
+
+            function stopProgressInterval() {
                 if (progressInterval) {
                     window.clearInterval(progressInterval);
                     progressInterval = null;
                 }
+            }
+
+            player_create._cleanup_when_removed(elementId, function () {
+                stopProgressInterval();
                 window.removeEventListener("mousemove", onMouseMove);
                 window.removeEventListener("mouseup", onMouseUp);
                 document.removeEventListener("keydown", onKeyDown);

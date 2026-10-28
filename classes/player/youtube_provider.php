@@ -45,7 +45,7 @@ class youtube_provider extends base_provider {
         if (!isset($this->data->supervideo->playersize[3])) {
             $this->data->supervideo->playersize = supervideo_youtube_size($this->data->supervideo, true);
         }
-        $protection = get_config("mod_supervideo", "youtube_protection");
+        $protection = get_config("supervideo", "youtube_protection");
         if ($protection === false) {
             $protection = 1;
         }
@@ -59,6 +59,17 @@ class youtube_provider extends base_provider {
             !empty($this->data->supervideo->autoplay) ? 1 : 0,
             $this->data->marker_config(),
             !empty($protection) ? 1 : 0,
+            [
+                "play" => get_string("controls_play", "mod_supervideo"),
+                "pause" => get_string("controls_pause", "mod_supervideo"),
+                "mute" => get_string("controls_mute", "mod_supervideo"),
+                "unmute" => get_string("youtube_unmute", "mod_supervideo"),
+                "volume" => get_string("controls_volume", "mod_supervideo"),
+                "fullscreen" => get_string("controls_fullscreen", "mod_supervideo"),
+                "exitfullscreen" => get_string("youtube_exit_fullscreen", "mod_supervideo"),
+                "progress" => get_string("controls_progress", "mod_supervideo"),
+                "error" => get_string("youtube_api_error", "mod_supervideo"),
+            ],
         ]);
         $mustachedata = [
             "elementid" => $this->data->elementid,

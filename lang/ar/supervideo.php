@@ -237,3 +237,7 @@ $string['videourl_help'] = '<h4>يوتيوب</h4>
 $string['your_map_view'] = 'خريطة العرض الخاصة بك:';
 $string['youtube_protection'] = 'وضع حماية يوتيوب';
 $string['youtube_protection_desc'] = 'عند التفعيل، يُطبّق حماية إضافية على فيديوهات يوتيوب (يمنع نقر الروابط، ويخفي عناصر تحكم يوتيوب، ويمنع النقر بزر الفأرة الأيمن).';
+
+$string['youtube_api_error'] = 'حدث خطأ أثناء تحميل واجهة مشغّل يوتيوب.';
+$string['youtube_unmute'] = 'إلغاء كتم الصوت';
+$string['youtube_exit_fullscreen'] = 'الخروج من وضع ملء الشاشة';
