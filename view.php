@@ -102,6 +102,8 @@ if ($view->freemode) {
             $aspectstyle = 'aspect-ratio: 4 / 3;';
         } else if ($supervideo->playersize == '16x9') {
             $aspectstyle = 'aspect-ratio: 16 / 9;';
+        } else if (preg_match('/^(\d+)x(\d+)$/', $supervideo->playersize, $matches) && (int)$matches[2] > 0) {
+            $aspectstyle = "aspect-ratio: {$matches[1]} / {$matches[2]};";
         } else {
             $aspectstyle = 'aspect-ratio: 16 / 9;';
         }
