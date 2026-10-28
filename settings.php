@@ -27,36 +27,6 @@ defined('MOODLE_INTERNAL') || die;
 if ($ADMIN->fulltree) {
     require_once("{$CFG->libdir}/resourcelib.php");
 
-<<<<<<< HEAD
-    $title = get_string("distractionfreemode", "mod_supervideo");
-    $description = get_string("distractionfreemode_desc", "mod_supervideo");
-    $setting = new admin_setting_configcheckbox(
-        "supervideo/distractionfreemode",
-        $title,
-        $description,
-        1
-    );
-    $settings->add($setting);
-
-    $title = get_string("showmapa", "mod_supervideo");
-    $description = get_string("showmapa_desc", "mod_supervideo");
-    $setting = new admin_setting_configcheckbox(
-        "supervideo/showmapa",
-        $title,
-        $description,
-        1
-    );
-    $settings->add($setting);
-
-    $title = get_string("youtube_protection", "mod_supervideo");
-    $description = get_string("youtube_protection_desc", "mod_supervideo");
-    $setting = new admin_setting_configcheckbox(
-        "supervideo/youtube_protection",
-        $title,
-        $description,
-        1
-    );
-=======
     $setting = new admin_setting_configcheckbox("supervideo/distractionfreemode",
         get_string("distractionfreemode", "mod_supervideo"),
         get_string("distractionfreemode_desc", "mod_supervideo"),
@@ -67,7 +37,6 @@ if ($ADMIN->fulltree) {
         get_string("showmap", "mod_supervideo"),
         get_string("showmap_desc", "mod_supervideo"),
         1);
->>>>>>> 291bd7b3dc1b7219085a8fd8feab34bb41216ceb
     $settings->add($setting);
 
     $options = [
@@ -87,22 +56,10 @@ if ($ADMIN->fulltree) {
         "fullscreen" => get_string("controls_fullscreen", "mod_supervideo"),
     ];
     $optionsdefault = ["play", "pause", "progress", "current-time", "pip", "duration", "settings", "fullscreen"];
-<<<<<<< HEAD
-    $title = get_string("controls", "mod_supervideo");
-    $description = get_string("controls_desc", "mod_supervideo");
-    $setting = new admin_setting_configmultiselect(
-        "supervideo/controls",
-        $title,
-        $description,
-        $optionsdefault,
-        $options
-    );
-=======
     $setting = new admin_setting_configmultiselect("supervideo/controls",
         get_string("controls", "mod_supervideo"),
         get_string("controls_desc", "mod_supervideo"),
         $optionsdefault, $options);
->>>>>>> 291bd7b3dc1b7219085a8fd8feab34bb41216ceb
     $settings->add($setting);
 
     $options = [
