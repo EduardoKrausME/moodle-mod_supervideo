@@ -229,8 +229,6 @@ $string['tamanho_camera'] = 'Camera Size';
 $string['tela_inteira'] = 'Fullscreen';
 $string['title_captura'] = 'Capture ';
 $string['titulo_muito_curto'] = 'Title too short!';
-$string['youtube_protection'] = 'YouTube protection mode';
-$string['youtube_protection_desc'] = 'When enabled, adds extra protection to YouTube videos (reduces branding, hides annotations, blocks right-click). Note: Complete prevention is not possible with YouTube embeds.';
 $string['upload_concluido'] = 'Upload completed. Waiting for processing!';
 $string['videofile'] = 'Or select an MP3, MP4 or WebM file';
 $string['videofile_help'] = 'You can upload an MP3 or MP4 file, host it on MoodleData and show it in the Super Video player';
@@ -249,7 +247,8 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Your View map:';
-
 $string['youtube_api_error'] = 'Error loading the YouTube iframe API.';
-$string['youtube_unmute'] = 'Unmute';
 $string['youtube_exit_fullscreen'] = 'Exit fullscreen';
+$string['youtube_protection'] = 'YouTube protection mode';
+$string['youtube_protection_desc'] = 'When enabled, adds extra protection to YouTube videos (reduces branding, hides annotations, blocks right-click). Note: Complete prevention is not possible with YouTube embeds.';
+$string['youtube_unmute'] = 'Unmute';
