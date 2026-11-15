@@ -183,6 +183,7 @@ $string['privacy:metadata:supervideo_view:timemodified'] = 'The timestamp when t
 $string['privacy:metadata:supervideo_view:user_id'] = 'The ID of the user who interacted with the video.';
 $string['privacy:progress'] = 'Video viewing progress';
 $string['record_kapture'] = 'Record your video with Kapture';
+$string['resetviews'] = 'Delete all Super Video viewing history';
 $string['report'] = 'Report';
 $string['report_all'] = 'All views for this student';
 $string['report_assistiu'] = 'Watched when';

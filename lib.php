@@ -286,7 +286,7 @@ function supervideo_delete_instance($id) {
         return false;
     }
 
-    $cm = get_coursemodule_from_instance("supervideo", $supervideo->id);
+    $cm = get_coursemodule_from_instance("supervideo", $supervideo->id, $supervideo->course);
     if ($cm) {
         $files = supervideo_get_area_files(context_module::instance($cm->id)->id);
 
@@ -294,6 +294,7 @@ function supervideo_delete_instance($id) {
             $file->delete();
         }
 
+        // These records belong to the course module, not the activity instance.
         $DB->delete_records("supervideo_view", ["cm_id" => $cm->id]);
     }
     $DB->delete_records("supervideo", ["id" => $supervideo->id]);
@@ -777,4 +778,65 @@ function supervideo_get_user_percent($cmid, $userid) {
     );
 
     return (int)($percent ?? 0);
+}
+
+/**
+ * Adds Super Video viewing history to the standard course reset form.
+ *
+ * @param MoodleQuickForm $mform The course reset form.
+ */
+function supervideo_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'supervideoheader', get_string('modulenameplural', 'mod_supervideo'));
+    $mform->addElement('advcheckbox', 'reset_supervideo_views', get_string('resetviews', 'mod_supervideo'));
+}
+
+/**
+ * Default course reset options.
+ *
+ * @param stdClass $course Course being reset.
+ * @return array
+ */
+function supervideo_reset_course_form_defaults($course) {
+    return ['reset_supervideo_views' => 1];
+}
+
+/**
+ * Deletes viewing history for Super Video activities in a course when requested.
+ *
+ * @param stdClass $data Course reset settings.
+ * @return array Reset status entries.
+ */
+function supervideo_reset_userdata($data) {
+    global $DB;
+
+    if (empty($data->reset_supervideo_views)) {
+        return [];
+    }
+
+    // Viewing records use the course module ID, not the activity instance ID.
+    $select = "cm_id IN (
+        SELECT cm.id
+          FROM {course_modules} cm
+          JOIN {modules} m ON m.id = cm.module
+         WHERE m.name = :modname AND cm.course = :courseid)";
+    $DB->delete_records_select('supervideo_view', $select, [
+        'modname' => 'supervideo',
+        'courseid' => $data->courseid,
+    ]);
+
+    // Keep the gradebook consistent even if its general reset option was not selected.
+    if (empty($data->reset_gradebook_grades)) {
+        $supervideos = $DB->get_records('supervideo', ['course' => $data->courseid]);
+        foreach ($supervideos as $supervideo) {
+            if (!empty($supervideo->grade_approval)) {
+                supervideo_grade_item_update($supervideo, 'reset');
+            }
+        }
+    }
+
+    return [[
+        'component' => get_string('modulenameplural', 'mod_supervideo'),
+        'item' => get_string('resetviews', 'mod_supervideo'),
+        'error' => false,
+    ]];
 }

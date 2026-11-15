@@ -190,10 +190,8 @@ class provider implements
         if (!$context instanceof context_module) {
             return;
         }
-        $cm = get_coursemodule_from_id('supervideo', $context->instanceid);
-        if ($cm) {
-            $DB->delete_records('supervideo_view', ['cm_id' => $cm->id]);
-        }
+        // The context may still exist after the course module record was removed.
+        $DB->delete_records('supervideo_view', ['cm_id' => $context->instanceid]);
     }
 
     /**
@@ -239,13 +237,8 @@ class provider implements
             return;
         }
 
-        $cm = get_coursemodule_from_id('supervideo', $context->instanceid);
-        if (!$cm) {
-            return;
-        }
-
         [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $params = ['cmid' => $cm->id] + $userparams;
+        $params = ['cmid' => $context->instanceid] + $userparams;
         $DB->delete_records_select(
             'supervideo_view',
             "cm_id = :cmid AND user_id {$usersql}",
