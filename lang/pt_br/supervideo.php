@@ -182,7 +182,6 @@ $string['privacy:metadata:supervideo_view:timemodified'] = 'Data e hora em que o
 $string['privacy:metadata:supervideo_view:user_id'] = 'O ID do usuário que interagiu com o vídeo.';
 $string['privacy:progress'] = 'Progresso da visualização do vídeo';
 $string['record_kapture'] = 'Grave seu vídeo com Kapture';
-$string['resetviews'] = 'Excluir todo o histórico de visualização do Super Vídeo';
 $string['report'] = 'Relatório';
 $string['report_all'] = 'Todos as visualizações deste aluno';
 $string['report_assistiu'] = 'Assistiu quando';
@@ -199,6 +198,7 @@ $string['report_terminou'] = 'Terminou de assistir quando';
 $string['report_title'] = 'Relatório';
 $string['report_userid'] = 'User ID';
 $string['report_visualizacoes'] = 'Visualizações';
+$string['resetviews'] = 'Excluir todo o histórico de visualização do Super Vídeo';
 $string['repository_ottflix_disable'] = 'O repositório OttFlix está instalado, mas não habilitado. <a href="{$a}/admin/repository.php">Clique aqui para habilitá-lo</a> e facilitar a organização de seus vídeos e arquivos.';
 $string['repository_ottflix_notinstall'] = 'O repositório OttFlix não está instalado. Recomendamos <a href="https://moodle.org/plugins/repository_ottflix">clicar aqui</a> para instalá-lo e simplificar o acesso e a organização de seus vídeos e arquivos.';
 $string['repository_pandavideo_disable'] = 'O repositório Panda Video está instalado, mas não habilitado. <a href="{$a}/admin/repository.php">Clique aqui para habilitá-lo</a> e otimizar o uso de seus vídeos.';
