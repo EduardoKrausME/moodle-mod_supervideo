@@ -4,7 +4,7 @@ A module designed to simplify embedding YouTube, Vimeo, and Google Drive videos 
 
 To provide a more dynamic and customizable teaching experience, I present the Super Video Module, an innovative tool that extends Moodle's capabilities by allowing videos from YouTube, Google Drive, or Vimeo to be added easily.
 
-One of Super Video's notable features is its ability to adapt to Moodle. The video player automatically adjusts its width to avoid display issues, ensuring that the content is shown optimally—neither too small nor excessively large.
+One of Super Video's notable features is its ability to adapt to Moodle. The video player automatically adjusts its width to avoid display issues, ensuring that the content is shown optimally-neither too small nor excessively large.
 
 In addition, Super Video prioritizes continuity in student progress. The system automatically saves the point where the student stopped, providing a continuous and personalized learning experience. When the student returns to the video, the player automatically positions them at the exact point where they left off, eliminating the need to search manually.
 
