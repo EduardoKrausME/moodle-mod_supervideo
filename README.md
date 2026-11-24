@@ -31,4 +31,12 @@ If the app still displays "Template has some errors and cannot be displayed" or 
 3. Reopen the activity in the Moodle App and pull down to refresh it. If necessary, sign out and sign back in to refresh the site's plugin data.
 4. If stale content persists, first synchronise any pending offline changes and check for downloaded content. Only then consider clearing the site's stored data in the app, as this can remove local downloads and unsynchronised changes. Reconnect to the site and reopen the activity.
 
-These steps help eliminate outdated site plugin templates; they do not resolve every playback or authentication error. YouTube playback error 153 on iOS is tracked separately in [issue #92](https://github.com/EduardoKrausME/moodle-mod_supervideo/issues/92).
+These steps help eliminate outdated site plugin templates; they do not resolve every playback or authentication error. YouTube playback error 153 on iOS is tracked in [issue #92](https://github.com/EduardoKrausME/moodle-mod_supervideo/issues/92).
+
+### YouTube playback in the Moodle App
+
+Error 153 means that YouTube did not receive an acceptable Referer or equivalent client identity. Super Video keeps the existing IFrame API player and offers retry or opening the same Moodle activity in the system browser when the embedded player cannot load. The Moodle App handles auto-login when available; otherwise, sign in to the same Moodle account in the browser. If the web player can play the video, it records progress under the existing Moodle viewing and completion rules. Merely opening the browser does not award watched progress. Previously completed viewing sessions and resume positions follow the existing server rules.
+
+Moodle LMS 5.2 and Moodle App 5.2 introduced [native site Referer support](https://moodledev.io/general/app/development/plugins-development-guide/troubleshooting#i-want-to-display-embedded-content-that-requires-the-moodle-site-as-referer) for core-iframe. This is not the same as supplying an origin or widget_referrer parameter to the YouTube API. The YouTube-specific integration is not switched to this route without real-device validation of playback and progress events. No proxy, custom authentication token or fabricated Referer is used.
+
+Run the offline JavaScript regression tests with `node --test tests/js/mobile_youtube_test.js`. Real iOS playback and browser auto-login still require device testing.

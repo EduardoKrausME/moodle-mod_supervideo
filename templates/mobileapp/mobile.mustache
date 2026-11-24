@@ -62,7 +62,25 @@
                [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></audio>
 
         <div id="mod-supervideo-api-player-<%cmid%>"
-             *ngIf="supervideoData.content.type === 'youtube'"></div>
+             *ngIf="supervideoData.content.type === 'youtube'"
+             [hidden]="supervideoYoutubeError"></div>
+
+        <ion-card *ngIf="supervideoData.content.type === 'youtube' && supervideoYoutubeError">
+            <ion-card-content>
+                <p role="alert">{{ supervideoYoutubeError | translate }}</p>
+                <p *ngIf="supervideoYoutubeBrowser">
+                    {{ 'plugin.mod_supervideo.mobile_youtubebrowserhelp' | translate }}
+                </p>
+                <a *ngIf="supervideoYoutubeBrowser" core-link
+                   href="<%activityurl%>" [capture]="false" [inApp]="false" autoLogin="check">
+                    {{ 'plugin.mod_supervideo.mobile_openbrowser' | translate }}
+                </a>
+                <ion-button *ngIf="supervideoYoutubeRetry" expand="block" fill="clear"
+                            (click)="supervideoRetryYoutube()">
+                    {{ 'plugin.mod_supervideo.mobile_retry' | translate }}
+                </ion-button>
+            </ion-card-content>
+        </ion-card>
 
         <core-iframe id="mod-supervideo-frame-<%cmid%>"
                      *ngIf="supervideoData.content.type !== 'file' && supervideoData.content.type !== 'link' && supervideoData.content.type !== 'youtube'"

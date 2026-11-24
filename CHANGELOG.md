@@ -10,6 +10,9 @@ This changelog records verified changes between consecutive published GitHub rel
 - Fixed a Mustache comment that leaked closing braces into the Moodle App's Angular template and prevented activity rendering (#107).
 - Made native video and audio players responsive in the Moodle App (#92), added regression tests for the rendered mobile template, and documented mobile cache troubleshooting.
 
+- Added translated YouTube mobile playback errors, a retry action and a native Moodle App browser fallback to the same activity for error 153 and recoverable player failures. The fallback does not grant viewing credit or change completion rules (#92).
+- Added regression coverage for the fallback and YouTube player lifecycle, including stale callbacks, load failures and observed progress.
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

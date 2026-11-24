@@ -249,3 +249,13 @@ $string['videourl_help'] = '<h4>Youtube</h4>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp4</div>
 <div><strong>Ex:</strong> https://host.com.br/file/video.mp3</div>';
 $string['your_map_view'] = 'Seu mapa de visualização:';
+
+$string['mobile_youtubeerror153'] = 'O YouTube não conseguiu reproduzir este vídeo no aplicativo.';
+$string['mobile_youtubebrowserhelp'] = 'Se a reprodução funcionar no navegador, o Moodle continuará registrando seu progresso de visualização.';
+$string['mobile_openbrowser'] = 'Abrir atividade no navegador';
+$string['mobile_retry'] = 'Tentar novamente';
+$string['mobile_youtubeunavailable'] = 'Este vídeo está indisponível.';
+$string['mobile_youtubeloaderror'] = 'Não foi possível carregar o player do YouTube.';
+$string['mobile_youtubeinvalid'] = 'O vídeo ou os parâmetros do player do YouTube são inválidos.';
+$string['mobile_youtubeembedding'] = 'O proprietário do vídeo não permite a reprodução incorporada.';
+$string['mobile_youtubeplaybackerror'] = 'O YouTube encontrou um erro de reprodução.';

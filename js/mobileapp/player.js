@@ -28,13 +28,26 @@ var supervideoMap = [];
 var supervideoLastBucket = -1;
 var supervideoLastPercent = -1;
 var supervideoDuration = 0;
+var youtubeStop = null;
+var youtubeDispatchTimer = null;
+var youtubeResume = 0;
 
 this.supervideoLoading = true;
 this.supervideoError = '';
 this.supervideoData = null;
 this.supervideoPercent = null;
+this.supervideoYoutubeError = "";
+this.supervideoYoutubeBrowser = false;
+this.supervideoYoutubeRetry = false;
 
 function cleanup() {
+    if (youtubeDispatchTimer !== null) {
+        clearTimeout(youtubeDispatchTimer);
+        youtubeDispatchTimer = null;
+    }
+    if (youtubeStop) {
+        youtubeStop();
+    }
     supervideoCleanup.forEach(function(fn) {
         try { fn(); } catch (e) { /* Ignore stale player cleanup. */ }
     });
@@ -95,14 +108,16 @@ function saveProgress(currentTime, duration, force) {
 
     var send = function() {
         supervideoSaveTimer = null;
+        // Snapshot the payload before asynchronous site resolution or navigation.
+        var payload = {
+            view_id: that.supervideoData.config.viewid,
+            currenttime: currentTime,
+            duration: duration,
+            percent: percent,
+            map: JSON.stringify(supervideoMap)
+        };
         currentSite().then(function(site) {
-            return site.write('mod_supervideo_progress_save_mobile', {
-                view_id: that.supervideoData.config.viewid,
-                currenttime: currentTime,
-                duration: duration,
-                percent: percent,
-                map: JSON.stringify(supervideoMap)
-            });
+            return site.write("mod_supervideo_progress_save_mobile", payload);
         }).catch(function(error) {
             console.warn('mod_supervideo progress could not be saved', error);
         });
@@ -182,49 +197,223 @@ function bindHtml5() {
     });
 }
 
+/**
+ * Bind one YouTube player attempt. Never change the WebView identity or manufacture progress.
+ */
 function bindYoutube() {
-    var previous = window.onYouTubeIframeAPIReady;
-    var initialise = function() {
-        if (!window.YT || !window.YT.Player) { return; }
-        var interval = null;
-        var player = new window.YT.Player('mod-supervideo-api-player-' + that.supervideoCmid, {
-            videoId: that.supervideoData.content.providerid,
-            playerVars: {
-                rel: 0,
-                playsinline: 1,
-                controls: that.supervideoData.config.showcontrols,
-                autoplay: that.supervideoData.config.autoplay,
-                start: that.supervideoData.config.currenttime || 0
-            },
-            events: {
-                onStateChange: function(event) {
-                    if (event.data === window.YT.PlayerState.PLAYING && !interval) {
-                        interval = setInterval(function() {
-                            saveProgress(player.getCurrentTime(), player.getDuration(), false);
-                        }, 1000);
-                    }
-                    if (event.data !== window.YT.PlayerState.PLAYING && interval) {
-                        clearInterval(interval);
-                        interval = null;
-                        saveProgress(player.getCurrentTime(), player.getDuration(), true);
-                    }
-                    if (event.data === window.YT.PlayerState.ENDED) {
-                        saveProgress(player.getDuration(), player.getDuration(), true);
+    if (youtubeStop || !that.supervideoData || that.supervideoData.content.type !== "youtube") {
+        return;
+    }
+
+    var data = that.supervideoData;
+    var active = true;
+    var player = null;
+    var mount = null;
+    var script = null;
+    var ownScript = false;
+    var poll = null;
+    var deadline = null;
+    var interval = null;
+    var last = null;
+    var played = false;
+
+    function valid() {
+        return active && that.supervideoData === data;
+    }
+
+    function stopPolling() {
+        if (poll !== null) {
+            clearTimeout(poll);
+            poll = null;
+        }
+        if (deadline !== null) {
+            clearTimeout(deadline);
+            deadline = null;
+        }
+        if (script) {
+            script.removeEventListener("error", loadFailed);
+        }
+    }
+
+    function flushObserved() {
+        if (last && that.supervideoData === data) {
+            saveProgress(last.time, last.duration, true);
+            last = null;
+        }
+    }
+
+    function stop() {
+        if (!active) {
+            return;
+        }
+        active = false;
+        stopPolling();
+        if (interval !== null) {
+            clearInterval(interval);
+            interval = null;
+        }
+        flushObserved();
+        if (player && player.destroy) {
+            try {
+                player.destroy();
+            } catch (error) {
+                // The iframe may already have been removed by Angular.
+            }
+        }
+        if (mount && mount.parentNode) {
+            mount.parentNode.removeChild(mount);
+        }
+        if (ownScript && script && script.parentNode && !(window.YT && window.YT.Player)) {
+            script.parentNode.removeChild(script);
+        }
+        if (youtubeStop === stop) {
+            youtubeStop = null;
+        }
+    }
+
+    function fail(key, browser, retry) {
+        if (!valid()) {
+            return;
+        }
+        stop();
+        that.supervideoYoutubeError = "plugin.mod_supervideo." + key;
+        that.supervideoYoutubeBrowser = browser;
+        that.supervideoYoutubeRetry = retry;
+    }
+
+    function loadFailed() {
+        fail("mobile_youtubeloaderror", true, true);
+    }
+
+    function observe(force) {
+        if (!valid() || !played || !player) {
+            return;
+        }
+        var time = Number(player.getCurrentTime());
+        var duration = Number(player.getDuration());
+        if (!Number.isFinite(time) || !Number.isFinite(duration) || duration <= 0 || time <= 0) {
+            return;
+        }
+        youtubeResume = Math.min(time, duration);
+        last = {time: youtubeResume, duration: duration};
+        saveProgress(last.time, last.duration, force);
+        if (force) {
+            last = null;
+        }
+    }
+
+    function initialise(host) {
+        stopPolling();
+        // Keep Angular's host intact: the IFrame API replaces only this child.
+        mount = document.createElement("div");
+        host.appendChild(mount);
+        deadline = setTimeout(loadFailed, 15000);
+        try {
+            player = new window.YT.Player(mount, {
+                videoId: data.content.providerid,
+                playerVars: {
+                    rel: 0,
+                    playsinline: 1,
+                    controls: data.config.showcontrols,
+                    autoplay: data.config.autoplay,
+                    start: Math.floor(youtubeResume)
+                },
+                events: {
+                    onReady: function() {
+                        if (valid()) {
+                            stopPolling();
+                        }
+                    },
+                    onError: function(event) {
+                        switch (Number(event.data)) {
+                            case 153:
+                                fail("mobile_youtubeerror153", true, true);
+                                break;
+                            case 2:
+                                fail("mobile_youtubeinvalid", false, false);
+                                break;
+                            case 100:
+                                fail("mobile_youtubeunavailable", false, false);
+                                break;
+                            case 101:
+                            case 150:
+                                fail("mobile_youtubeembedding", false, false);
+                                break;
+                            case 5:
+                                fail("mobile_youtubeplaybackerror", true, true);
+                                break;
+                            default:
+                                loadFailed();
+                        }
+                    },
+                    onStateChange: function(event) {
+                        if (!valid()) {
+                            return;
+                        }
+                        if (event.data === window.YT.PlayerState.PLAYING) {
+                            played = true;
+                            if (interval === null) {
+                                interval = setInterval(function() {
+                                    observe(false);
+                                }, 1000);
+                            }
+                        } else if (interval !== null) {
+                            clearInterval(interval);
+                            interval = null;
+                            observe(true);
+                        } else if (event.data === window.YT.PlayerState.ENDED && played) {
+                            observe(true);
+                        }
                     }
                 }
+            });
+            // A synchronous error callback can dispose the attempt before construction returns.
+            if (!valid() && player && player.destroy) {
+                player.destroy();
             }
-        });
-        supervideoCleanup.push(function() {
-            if (interval) { clearInterval(interval); }
-            if (player && player.destroy) { player.destroy(); }
-        });
-    };
-    window.onYouTubeIframeAPIReady = function() {
-        if (typeof previous === 'function') { previous(); }
-        initialise();
-    };
-    loadScript('https://www.youtube.com/iframe_api', function() { return !!(window.YT && window.YT.Player); }, initialise);
+        } catch (error) {
+            loadFailed();
+        }
+    }
+
+    function waitForApi() {
+        if (!valid()) {
+            return;
+        }
+        var host = document.getElementById("mod-supervideo-api-player-" + that.supervideoCmid);
+        if (host && window.YT && typeof window.YT.Player === "function") {
+            initialise(host);
+            return;
+        }
+        poll = setTimeout(waitForApi, 100);
+    }
+
+    youtubeStop = stop;
+    that.supervideoYoutubeError = "";
+    that.supervideoYoutubeBrowser = false;
+    that.supervideoYoutubeRetry = false;
+    if (!(window.YT && typeof window.YT.Player === "function")) {
+        script = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+        if (!script) {
+            script = document.createElement("script");
+            script.src = "https://www.youtube.com/iframe_api";
+            ownScript = true;
+        }
+        script.addEventListener("error", loadFailed);
+        if (ownScript) {
+            document.head.appendChild(script);
+        }
+    }
+    deadline = setTimeout(loadFailed, 15000);
+    waitForApi();
 }
+
+this.supervideoRetryYoutube = function() {
+    if (this.supervideoYoutubeRetry && !youtubeStop && this.supervideoData &&
+            this.supervideoData.content.type === "youtube") {
+        bindYoutube();
+    }
+};
 
 function getCoreIframe(callback) {
     waitFor('#mod-supervideo-frame-' + that.supervideoCmid, function(component) {
@@ -303,14 +492,25 @@ this.supervideoPlaybackLoaded = function(result) {
     this.supervideoCmid = Number((this.CONTENT_OTHERDATA && this.CONTENT_OTHERDATA.cmid) || this.supervideoCmid || 0);
     supervideoMap = decodeMap(result.config.datamap);
     this.supervideoPercent = null;
+    this.supervideoYoutubeError = "";
+    this.supervideoYoutubeBrowser = false;
+    this.supervideoYoutubeRetry = false;
+    youtubeResume = Math.max(0, Number(result.config.currenttime) || 0);
 
     // cmid is injected below by the PHP template before this code is evaluated.
     var type = result.content.type;
+    if (type === "youtube") {
+        youtubeDispatchTimer = setTimeout(function() {
+            youtubeDispatchTimer = null;
+            if (that.supervideoData === result) {
+                bindYoutube();
+            }
+        }, 0);
+        return;
+    }
     setTimeout(function() {
         if (type === 'file' || type === 'link') {
             bindHtml5();
-        } else if (type === 'youtube') {
-            bindYoutube();
         } else if (type === 'vimeo') {
             bindVimeo();
         } else if (type === 'drive') {
@@ -325,6 +525,9 @@ this.supervideoPlaybackError = function(error) {
     cleanup();
     this.supervideoLoading = false;
     this.supervideoData = null;
+    this.supervideoYoutubeError = "";
+    this.supervideoYoutubeBrowser = false;
+    this.supervideoYoutubeRetry = false;
     this.supervideoError = error && error.message ? error.message : 'Unable to load Super Video.';
 };
 

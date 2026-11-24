@@ -50,6 +50,7 @@ class mobile {
             "cmid" => $cm->id,
             "courseid" => $course->id,
             "supervideoid" => $cm->instance,
+            "activityurl" => (new \moodle_url("/mod/supervideo/view.php", ["id" => $cm->id]))->out(false),
         ];
 
         return [

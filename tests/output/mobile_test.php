@@ -80,6 +80,23 @@ final class mobile_test extends advanced_testcase {
     }
 
     /**
+     * Browser fallback points to the same Moodle activity without plugin-generated credentials.
+     */
+    public function test_youtube_browser_fallback(): void {
+        [$result, $cm] = $this->render_mobile_activity();
+        $html = $result["templates"][0]["html"];
+        $url = new \moodle_url("/mod/supervideo/view.php", ["id" => $cm->id]);
+        $this->assertStringContainsString("href=\"" . $url->out() . "\"", $html);
+        $this->assertStringContainsString("core-link", $html);
+        $this->assertStringContainsString("[capture]=\"false\"", $html);
+        $this->assertStringContainsString("[inApp]=\"false\"", $html);
+        $this->assertStringContainsString("autoLogin=\"check\"", $html);
+        $this->assertStringContainsString("supervideoYoutubeError | translate", $html);
+        $this->assertStringContainsString("supervideoRetryYoutube()", $html);
+        $this->assertStringNotContainsString("token=", $html);
+    }
+
+    /**
      * Native video and audio remain within the available player width.
      */
     public function test_native_media_is_responsive(): void {

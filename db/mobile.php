@@ -38,6 +38,15 @@ $addons = [
         ],
         "lang" => [
             ["pluginname", "mod_supervideo"],
+            ["mobile_youtubeerror153", "mod_supervideo"],
+            ["mobile_youtubebrowserhelp", "mod_supervideo"],
+            ["mobile_openbrowser", "mod_supervideo"],
+            ["mobile_retry", "mod_supervideo"],
+            ["mobile_youtubeunavailable", "mod_supervideo"],
+            ["mobile_youtubeloaderror", "mod_supervideo"],
+            ["mobile_youtubeinvalid", "mod_supervideo"],
+            ["mobile_youtubeembedding", "mod_supervideo"],
+            ["mobile_youtubeplaybackerror", "mod_supervideo"],
         ],
     ],
 ];
