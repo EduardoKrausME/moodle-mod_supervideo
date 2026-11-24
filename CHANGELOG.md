@@ -13,6 +13,8 @@ This changelog records verified changes between consecutive published GitHub rel
 - Added translated YouTube mobile playback errors, a retry action and a native Moodle App browser fallback to the same activity for error 153 and recoverable player failures. The fallback does not grant viewing credit or change completion rules (#92).
 - Added regression coverage for the fallback and YouTube player lifecycle, including stale callbacks, load failures and observed progress.
 
+- Added regression coverage for creating and editing Vimeo activities without a local upload, conditional file validation, and supported Vimeo URL formats (#49). Removed an obsolete filemanager comment without changing the form behaviour or upload limits.
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

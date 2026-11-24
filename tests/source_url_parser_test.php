@@ -69,6 +69,29 @@ final class source_url_parser_test extends advanced_testcase {
     }
 
     /**
+     * Public, embedded and unlisted Vimeo URLs are accepted by the source validator.
+     *
+     * @covers \mod_supervideo\util\source_url_parser::vimeo
+     * @covers \mod_supervideo\util\source_url_parser::is_valid
+     */
+    public function test_vimeo_source_validation(): void {
+        $urls = [
+            "https://vimeo.com/123456789" => "",
+            "https://www.vimeo.com/123456789" => "",
+            "https://player.vimeo.com/video/123456789" => "",
+            "https://vimeo.com/123456789/abcdef" => "abcdef",
+            "https://player.vimeo.com/video/123456789?h=abcdef" => "abcdef",
+        ];
+        foreach ($urls as $url => $hash) {
+            $this->assertTrue(source_url_parser::is_valid("vimeo", $url), $url);
+            $this->assertSame(["id" => "123456789", "hash" => $hash], source_url_parser::vimeo($url));
+        }
+        foreach (["", "https://vimeo.com/", "https://vimeo.com/notanid", "https://example.com/123456789"] as $url) {
+            $this->assertFalse(source_url_parser::is_valid("vimeo", $url), $url);
+        }
+    }
+
+    /**
      * HTTP source validation rejects unsupported schemes and detects HLS.
      *
      * @covers \mod_supervideo\util\source_url_parser::is_http_url
