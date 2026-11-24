@@ -16,7 +16,8 @@
 }}
 {{!
     @template mod_supervideo/mobileapp/mobile
-    Native Moodle App player. Moodle renders <% %>; Angular keeps {{ }} expressions.
+    Native Moodle App player. Moodle renders alternate delimiters;
+    Angular keeps its double-brace expressions.
 }}
 {{=<% %>=}}
 <div class="mod-supervideo-mobile" id="mod-supervideo-mobile-<%cmid%>">
@@ -41,16 +42,19 @@
         <ion-card-content>{{ supervideoError }}</ion-card-content>
     </ion-card>
 
-    <div class="mod-supervideo-mobile-player" *ngIf="supervideoData">
+    <div class="mod-supervideo-mobile-player" *ngIf="supervideoData"
+         style="width:100%; min-width:0; max-width:100%;">
         <video id="mod-supervideo-media-<%cmid%>"
                *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && !supervideoData.content.isaudio"
                [src]="supervideoData.content.fileurl"
                core-external-content
                playsinline
+               style="display:block; width:100%; max-width:100%; height:auto;"
                [attr.controls]="supervideoData.config.showcontrols ? '' : null"
                [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></video>
 
         <audio id="mod-supervideo-media-<%cmid%>"
+               style="display:block; width:100%; max-width:100%;"
                *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && supervideoData.content.isaudio"
                [src]="supervideoData.content.fileurl"
                core-external-content

@@ -7,6 +7,9 @@ This changelog records verified changes between consecutive published GitHub rel
 - Declared personal data sent to the configured OttFlix service during standard video playback in the Moodle Privacy API, and clarified the administrator-facing privacy notice and English, Portuguese and Spanish translations (#103).
 - Added regression tests for the local viewing metadata and the external OttFlix metadata without changing playback or the existing data transfer.
 
+- Fixed a Mustache comment that leaked closing braces into the Moodle App's Angular template and prevented activity rendering (#107).
+- Made native video and audio players responsive in the Moodle App (#92), added regression tests for the rendered mobile template, and documented mobile cache troubleshooting.
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

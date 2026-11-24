@@ -19,3 +19,16 @@ In addition, Super Video generates comprehensive reports, providing instructors 
 For administrators, the global settings feature offers comprehensive customization. Default fields can be defined for all videos, ensuring consistency throughout the learning environment. However, flexibility is not compromised, as instructors are free to modify this data in specific videos without affecting the global settings.
 
 To access these settings, simply navigate to the Site Administration section, select "Plugins", then "Activity Modules", and finally choose "Super Video." Here, the customization options are readily available, allowing refined adaptation according to the specific needs of each course.
+
+## Moodle App: updating the plugin and clearing stale templates
+
+Super Video uses a remote site plugin to provide the Moodle App with an Angular template and JavaScript. Moodle's server-side template cache, the app's cached site plugin content, and cached web service responses are separate.
+
+If the app still displays "Template has some errors and cannot be displayed" or an old "Invalid Login Token" message after updating Super Video:
+
+1. Install the updated plugin and complete the Moodle upgrade.
+2. Purge Moodle caches in Site administration > Development > Purge caches.
+3. Reopen the activity in the Moodle App and pull down to refresh it. If necessary, sign out and sign back in to refresh the site's plugin data.
+4. If stale content persists, first synchronise any pending offline changes and check for downloaded content. Only then consider clearing the site's stored data in the app, as this can remove local downloads and unsynchronised changes. Reconnect to the site and reopen the activity.
+
+These steps help eliminate outdated site plugin templates; they do not resolve every playback or authentication error. YouTube playback error 153 on iOS is tracked separately in [issue #92](https://github.com/EduardoKrausME/moodle-mod_supervideo/issues/92).
