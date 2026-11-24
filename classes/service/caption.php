@@ -21,19 +21,27 @@
  * @copyright 2026 Eduardo Kraus
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_supervideo\service;
 
 use context_module;
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use mod_supervideo\caption\repository;
 use moodle_exception;
 
-defined("MOODLE_INTERNAL") || die();
-global $CFG;
-require_once($CFG->libdir . "/externallib.php");
+defined('MOODLE_INTERNAL') || die;
+
+// Moodle 4.2+ autoloads these classes. Older supported versions provide the global API.
+if (!class_exists(external_api::class)) {
+    require_once($CFG->libdir . "/externallib.php");
+    class_alias(\external_api::class, external_api::class);
+    class_alias(\external_function_parameters::class, external_function_parameters::class);
+    class_alias(\external_single_structure::class, external_single_structure::class);
+    class_alias(\external_value::class, external_value::class);
+}
 
 /**
  * Read local captions using Moodle's existing web service authentication.

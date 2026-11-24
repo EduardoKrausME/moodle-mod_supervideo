@@ -60,7 +60,9 @@ final class caption_fields {
             ]);
             $form->addElement("text", "captionlabel[$index]", get_string("captionlabel", "mod_supervideo"), ["maxlength" => 255]);
             $form->setType("captionlabel[$index]", PARAM_TEXT);
-            $form->addElement("text", "captionlanguage[$index]", get_string("captionlanguage", "mod_supervideo"), ["maxlength" => 63]);
+            $form->addElement(
+                "text", "captionlanguage[$index]", get_string("captionlanguage", "mod_supervideo"), ["maxlength" => 63]
+            );
             $form->setType("captionlanguage[$index]", PARAM_TEXT);
             $form->addElement("select", "captionkind[$index]", get_string("captionkind", "mod_supervideo"), [
                 "subtitles" => get_string("captionsubtitles", "mod_supervideo"),
