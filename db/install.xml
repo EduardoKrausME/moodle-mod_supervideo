@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/supervideo/db" VERSION="20260722" COMMENT="XMLDB file for supervideo module."
+<XMLDB PATH="mod/supervideo/db" VERSION="20261124" COMMENT="XMLDB file for supervideo module."
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
     <TABLES>
@@ -17,6 +17,8 @@
                 <FIELD NAME="showcontrols" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="autoplay" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="markers" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="transcriptenabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="transcriptdownload" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="grade_approval" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="completionpercent" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -51,6 +53,28 @@
                 <INDEX NAME="cm_id" UNIQUE="false" FIELDS="cm_id"/>
                 <INDEX NAME="user_id" UNIQUE="false" FIELDS="user_id"/>
                 <INDEX NAME="cm_user" UNIQUE="false" FIELDS="cm_id, user_id"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="supervideo_caption" COMMENT="Caption tracks configured for an activity.">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="supervideoid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="language" TYPE="char" LENGTH="63" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="kind" TYPE="char" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="source" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="isdefault" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="supervideo" TYPE="foreign" FIELDS="supervideoid" REFTABLE="supervideo" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="activityorder" UNIQUE="false" FIELDS="supervideoid, sortorder"/>
             </INDEXES>
         </TABLE>
     </TABLES>

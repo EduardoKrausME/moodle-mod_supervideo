@@ -55,6 +55,8 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
                 "showcontrols",
                 "autoplay",
                 "markers",
+                "transcriptenabled",
+                "transcriptdownload",
                 "grade_approval",
                 "completionpercent",
                 "timecreated",
@@ -63,6 +65,15 @@ class backup_supervideo_activity_structure_step extends backup_activity_structur
 
         // Define data sources.
         $supervideo->set_source_table("supervideo", ["id" => backup::VAR_ACTIVITYID]);
+
+        $captions = new backup_nested_element("captions");
+        $caption = new backup_nested_element("caption", ["id"], [
+            "label", "language", "kind", "source", "url", "isdefault", "sortorder", "timecreated", "timemodified",
+        ]);
+        $supervideo->add_child($captions);
+        $captions->add_child($caption);
+        $caption->set_source_table("supervideo_caption", ["supervideoid" => backup::VAR_PARENTID]);
+        $caption->annotate_files("mod_supervideo", "captions", "id");
 
         // Define file annotations.
         $supervideo->annotate_files("mod_supervideo", "intro", null);

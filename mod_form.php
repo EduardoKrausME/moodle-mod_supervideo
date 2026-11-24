@@ -197,6 +197,14 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->hideIf("markers", "origem", "eq", "pandavideo");
         $mform->hideIf("markers", "origem", "eq", "embed");
 
+        // Caption settings use bounded native form rows, not a remote upload endpoint.
+        $initial = $supervideo ? count(\mod_supervideo\caption\repository::all((int)$supervideo->id)) : 0;
+        $count = max(1, min(20, $this->optional_param("captioncount", $initial + 1, PARAM_INT)));
+        if ($this->optional_param("captionadd", "", PARAM_TEXT) !== "") {
+            $count = min(20, $count + 1);
+        }
+        \mod_supervideo\form\caption_fields::add($mform, $count);
+
         // Grade Element.
         $mform->addElement("header", "modstandardgrade", get_string("modgrade", "grades"));
 
@@ -285,6 +293,16 @@ class mod_supervideo_mod_form extends moodleform_mod {
             if (!empty($defaultvalues["origem"]) && !empty($defaultvalues["videourl"])) {
                 $defaultvalues["videourl_{$defaultvalues['origem']}"] = $defaultvalues["videourl"];
             }
+        }
+
+        if ($this->current->instance) {
+            $drafts = [];
+            for ($index = 0; $index < 20; $index++) {
+                $drafts[$index] = $this->optional_param("captiondraft[$index]", 0, PARAM_INT);
+            }
+            \mod_supervideo\form\caption_fields::prepare(
+                $defaultvalues, (int)$this->current->instance, $this->context->id, $drafts
+            );
         }
 
         $suffix = $this->get_completion_suffix();
@@ -434,6 +452,8 @@ class mod_supervideo_mod_form extends moodleform_mod {
                 $errors["markers"] = get_string("markers_error", "mod_supervideo");
             }
         }
+        [, $captionerrors] = \mod_supervideo\caption\manager::inspect($data, (int)($this->current->instance ?? 0));
+        $errors += $captionerrors;
         $origem = $data["origem"];
         if ($origem == "upload") {
             $usercontext = context_user::instance($USER->id);

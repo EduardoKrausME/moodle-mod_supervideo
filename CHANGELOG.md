@@ -17,6 +17,8 @@ This changelog records verified changes between consecutive published GitHub rel
 
 - Stabilised HLS playback on web and mobile with isolated player instances, native playback detection, bounded recovery, embedded caption tracks and adaptive quality (#53). Only confirmed on-demand playlists with finite duration report percentage progress; live and unclassified streams do not.
 
+- Added activity-owned WebVTT caption configuration, local draft-file validation, HTTPS URL tracks, transcript settings, and mapped backup/restore support (#53).
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

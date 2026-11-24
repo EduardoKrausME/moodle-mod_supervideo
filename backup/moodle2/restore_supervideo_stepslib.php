@@ -36,7 +36,8 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
     protected function define_structure() {
 
         $paths = [];
-        $paths[] = new restore_path_element('supervideo', '/activity/supervideo');
+        $paths[] = new restore_path_element("supervideo", "/activity/supervideo");
+        $paths[] = new restore_path_element("supervideo_caption", "/activity/supervideo/captions/caption");
 
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
@@ -79,6 +80,23 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
     }
 
     /**
+     * Restore each caption and retain the old-to-new file mapping.
+     *
+     * @param array $data Caption data.
+     */
+    protected function process_supervideo_caption($data) {
+        global $DB;
+        $record = (object)$data;
+        $oldid = $record->id;
+        unset($record->id);
+        $record->supervideoid = $this->get_new_parentid("supervideo");
+        $record->timecreated = $this->apply_date_offset($record->timecreated);
+        $record->timemodified = $this->apply_date_offset($record->timemodified);
+        $newid = $DB->insert_record("supervideo_caption", $record);
+        $this->set_mapping("supervideo_caption", $oldid, $newid, true);
+    }
+
+    /**
      * Post-execution actions
      */
     protected function after_execute() {
@@ -86,13 +104,19 @@ class restore_supervideo_activity_structure_step extends restore_activity_struct
 
         // Add supervideo related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_supervideo', 'intro', null);
-        $this->add_related_files('mod_supervideo', 'content', null);
+        $this->add_related_files("mod_supervideo", "content", null);
+        $this->add_related_files("mod_supervideo", "captions", "supervideo_caption");
 
         $fs = get_file_storage();
         $contextid = $this->task->get_contextid();
         $activityid = $this->task->get_activityid();
-        $files = $DB->get_records("files", ["contextid" => $contextid]);
+        $files = $DB->get_records("files", [
+            "contextid" => $contextid, "component" => "mod_supervideo", "filearea" => "content",
+        ]);
         foreach ($files as $file) {
+            if ((int)$file->itemid === (int)$activityid) {
+                continue;
+            }
             $file->itemid = $activityid;
             $file->pathnamehash = $fs->get_pathname_hash(
                 $contextid, $file->component, $file->filearea, $file->itemid, $file->filepath, $file->filename);

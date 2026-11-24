@@ -327,6 +327,35 @@ function xmldb_supervideo_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026072201, 'supervideo');
     }
 
+    if ($oldversion < 2026112404) {
+        $table = new xmldb_table("supervideo");
+        foreach (["transcriptenabled", "transcriptdownload"] as $name) {
+            $field = new xmldb_field($name, XMLDB_TYPE_INTEGER, "1", null, XMLDB_NOTNULL, null, "0");
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+        $table = new xmldb_table("supervideo_caption");
+        $table->add_field("id", XMLDB_TYPE_INTEGER, "10", null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field("supervideoid", XMLDB_TYPE_INTEGER, "10", null, XMLDB_NOTNULL, null);
+        $table->add_field("label", XMLDB_TYPE_CHAR, "255", null, XMLDB_NOTNULL, null);
+        $table->add_field("language", XMLDB_TYPE_CHAR, "63", null, XMLDB_NOTNULL, null);
+        $table->add_field("kind", XMLDB_TYPE_CHAR, "15", null, XMLDB_NOTNULL, null);
+        $table->add_field("source", XMLDB_TYPE_CHAR, "10", null, XMLDB_NOTNULL, null);
+        $table->add_field("url", XMLDB_TYPE_TEXT, null, null, null, null);
+        $table->add_field("isdefault", XMLDB_TYPE_INTEGER, "1", null, XMLDB_NOTNULL, null, "0");
+        $table->add_field("sortorder", XMLDB_TYPE_INTEGER, "10", null, XMLDB_NOTNULL, null, "0");
+        $table->add_field("timecreated", XMLDB_TYPE_INTEGER, "10", null, XMLDB_NOTNULL, null, "0");
+        $table->add_field("timemodified", XMLDB_TYPE_INTEGER, "10", null, XMLDB_NOTNULL, null, "0");
+        $table->add_key("primary", XMLDB_KEY_PRIMARY, ["id"]);
+        $table->add_key("supervideo", XMLDB_KEY_FOREIGN, ["supervideoid"], "supervideo", ["id"]);
+        $table->add_index("activityorder", XMLDB_INDEX_NOTUNIQUE, ["supervideoid", "sortorder"]);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_mod_savepoint(true, 2026112404, "supervideo");
+    }
+
     return true;
 }
 
