@@ -36,6 +36,7 @@ defined('MOODLE_INTERNAL') || die;
 
 // Moodle 4.2+ autoloads these classes. Older supported versions provide the global API.
 if (!class_exists(external_api::class)) {
+    global $CFG;
     require_once($CFG->libdir . "/externallib.php");
     class_alias(\external_api::class, external_api::class);
     class_alias(\external_function_parameters::class, external_function_parameters::class);
