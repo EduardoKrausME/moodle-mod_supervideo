@@ -71,7 +71,7 @@ final class manager {
             if ($source === "" && !$id) {
                 continue;
             }
-            $label = trim((string)($data["captionlabel"][$index] ?? ""));
+            $label = trim(clean_param((string)($data["captionlabel"][$index] ?? ""), PARAM_TEXT));
             $language = trim((string)($data["captionlanguage"][$index] ?? ""));
             $kind = (string)($data["captionkind"][$index] ?? "");
             $url = trim((string)($data["captionurl"][$index] ?? ""));
@@ -98,7 +98,7 @@ final class manager {
             }
             $rows[] = ["id" => $id, "label" => $label, "language" => $language, "kind" => $kind,
                 "source" => $source, "url" => $source === "url" ? $url : null, "draft" => $draft,
-                "isdefault" => (int)$default, "sortorder" => $index];
+                "isdefault" => (int)$default, "sortorder" => max(0, min(999, (int)($data["captionorder"][$index] ?? $index)))];
         }
         // A truncated or tampered form must not silently delete or duplicate existing records.
         if (array_diff_key($existing, $seen)) {
@@ -118,11 +118,34 @@ final class manager {
             return;
         }
         $context = context_module::instance($activity->coursemodule);
-        $cm = get_coursemodule_from_id("supervideo", $context->instanceid, 0, false, MUST_EXIST);
-        if ((int)$cm->instance !== 0 && (int)$cm->instance !== (int)$activity->id) {
+        // During add_instance, the core course module exists but its instance is still zero.
+        $cm = $DB->get_record("course_modules", ["id" => $context->instanceid], "*", MUST_EXIST);
+        $modname = $DB->get_field("modules", "name", ["id" => $cm->module], MUST_EXIST);
+        if ($modname !== "supervideo" || (int)$cm->course !== (int)$activity->course ||
+                ((int)$cm->instance !== 0 && (int)$cm->instance !== (int)$activity->id)) {
             throw new moodle_exception("caption_invalid", "mod_supervideo");
         }
         require_capability("moodle/course:manageactivities", $context);
+        $factory = \core\lock\lock_config::get_lock_factory("mod_supervideo_caption");
+        $lock = $factory->get_lock("activity-" . $activity->id, 10);
+        if (!$lock) {
+            throw new moodle_exception("caption_invalid", "mod_supervideo");
+        }
+        try {
+            self::save_locked($activity, $context);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Revalidate and persist the submitted tracks while holding the activity lock.
+     *
+     * @param object $activity Activity.
+     * @param context_module $context Module context.
+     */
+    private static function save_locked($activity, context_module $context): void {
+        global $DB;
         [$rows, $errors] = self::inspect((array)$activity, (int)$activity->id);
         if ($errors) {
             throw new moodle_exception("caption_invalid", "mod_supervideo");

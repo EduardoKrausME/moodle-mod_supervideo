@@ -293,3 +293,5 @@ $string['caption_download'] = 'Baixar transcrição';
 $string['caption_more'] = 'Mostrar mais';
 $string['privacy:metadata:externalcaptions'] = 'URLs externas de legendas configuradas pelo professor podem ser acessadas diretamente pelo navegador do usuário. O controlador não envia identificadores de usuários do Moodle.';
 $string['privacy:metadata:externalcaptions:connection'] = 'Metadados normais da conexão, como endereço IP e informações do cliente, podem ficar visíveis para o servidor externo de legendas.';
+$string['captionorder'] = 'Ordem de apresentação';
+$string['caption_previous'] = 'Trechos anteriores';

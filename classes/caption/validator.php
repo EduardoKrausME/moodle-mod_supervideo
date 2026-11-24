@@ -133,7 +133,8 @@ final class validator {
             throw new InvalidArgumentException("caption_invalidfile");
         }
         $file = reset($files);
-        if ($file->get_filesize() > self::MAX_BYTES || strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION)) !== "vtt") {
+        if ($file->get_filesize() > self::MAX_BYTES || $file->get_filepath() !== "/" ||
+                strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION)) !== "vtt") {
             throw new InvalidArgumentException("caption_invalidfile");
         }
         self::webvtt($file->get_content());

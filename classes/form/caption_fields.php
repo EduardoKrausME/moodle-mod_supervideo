@@ -72,15 +72,18 @@ final class caption_fields {
                 ["accepted_types" => [".vtt"], "maxbytes" => validator::MAX_BYTES]);
             $form->hideIf("captiondraft[$index]", "captionsource[$index]", "neq", "file");
             $form->hideIf("captionurl[$index]", "captionsource[$index]", "neq", "url");
+            $form->addElement("text", "captionorder[$index]", get_string("captionorder", "mod_supervideo"), ["size" => 4]);
+            $form->setType("captionorder[$index]", PARAM_INT);
+            $form->setDefault("captionorder[$index]", $index);
             $form->addElement("selectyesno", "captiondefault[$index]", get_string("captiondefault", "mod_supervideo"));
             $form->addElement("selectyesno", "captiondelete[$index]", get_string("captiondelete", "mod_supervideo"));
-            foreach (["captionlabel", "captionlanguage", "captionkind", "captiondefault"] as $field) {
+            foreach (["captionlabel", "captionlanguage", "captionkind", "captionorder", "captiondefault"] as $field) {
                 $form->hideIf("$field" . "[$index]", "captionsource[$index]", "eq", "");
                 $form->disabledIf("$field" . "[$index]", "captiondelete[$index]", "eq", 1);
             }
             foreach (["ottflix", "pandavideo", "youtube", "vimeo", "drive", "embed"] as $source) {
                 foreach (["captionheading", "captionsource", "captionlabel", "captionlanguage", "captionkind",
-                    "captionurl", "captiondraft", "captiondefault", "captiondelete"] as $field) {
+                    "captionurl", "captiondraft", "captionorder", "captiondefault", "captiondelete"] as $field) {
                     $form->hideIf("$field" . "[$index]", "origem", "eq", $source);
                 }
             }
@@ -115,6 +118,7 @@ final class caption_fields {
                 $defaults["caption$field"][$index] = $record->$field;
             }
             $defaults["captiondefault"][$index] = $record->isdefault;
+            $defaults["captionorder"][$index] = $record->sortorder;
             $draft = (int)($drafts[$index] ?? 0);
             if ($record->source === "file") {
                 file_prepare_draft_area($draft, $contextid, "mod_supervideo", "captions", $record->id,

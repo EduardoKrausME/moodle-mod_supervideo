@@ -121,6 +121,10 @@ final class mobile_test extends advanced_testcase {
         $this->assertStringContainsString("mod-supervideo-hls-" . $cm->id, $html);
         $this->assertStringContainsString("supervideoHlsMode", $html);
         $this->assertStringContainsString("supervideoHlsError | translate", $html);
+        $this->assertStringContainsString("mod-supervideo-mobile-" . $cm->id . "-captions", $html);
+        $this->assertStringContainsString("data-caption-select", $html);
+        $this->assertStringContainsString("data-caption-search", $html);
+        $this->assertStringContainsString("var supervideoCaptions", $result["javascript"]);
         $this->assertStringContainsString("[attr.controls]", $html);
         $this->assertStringContainsString("[attr.autoplay]", $html);
     }

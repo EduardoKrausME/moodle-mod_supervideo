@@ -293,3 +293,5 @@ $string['caption_download'] = 'Descargar transcripción';
 $string['caption_more'] = 'Mostrar más';
 $string['privacy:metadata:externalcaptions'] = 'El navegador puede solicitar directamente las URL externas de subtítulos configuradas por el profesor. El controlador no envía identificadores de usuarios de Moodle.';
 $string['privacy:metadata:externalcaptions:connection'] = 'El servidor externo puede recibir metadatos habituales de conexión, como la dirección IP y la información del cliente.';
+$string['captionorder'] = 'Orden de visualización';
+$string['caption_previous'] = 'Fragmentos anteriores';

@@ -301,3 +301,5 @@ $string['caption_download'] = 'Download transcript';
 $string['caption_more'] = 'Show more';
 $string['privacy:metadata:externalcaptions'] = 'External caption URLs configured by the teacher may be requested directly by the viewer browser. No Moodle user identifier is sent by the caption controller.';
 $string['privacy:metadata:externalcaptions:connection'] = 'Ordinary connection metadata, such as IP address and client information, may be visible to the external caption host.';
+$string['captionorder'] = 'Display order';
+$string['caption_previous'] = 'Previous entries';

@@ -174,6 +174,7 @@ define([], function() {
         const follow = field("follow");
         const list = field("list");
         const more = field("more");
+        const previous = field("previous");
         const download = field("download");
         const status = field("status");
         const audio = field("audio");
@@ -187,7 +188,7 @@ define([], function() {
         let timeout = null;
         let cues = [];
         let matches = [];
-        let limit = PAGE;
+        let offset = 0;
         let active = [];
         let lastUpdate = 0;
         const records = config.tracks.slice(0, 20);
@@ -229,6 +230,7 @@ define([], function() {
             list.replaceChildren();
             audio.textContent = "";
             more.hidden = true;
+            previous.hidden = true;
             download.disabled = true;
         }
 
@@ -294,6 +296,15 @@ define([], function() {
                     row.style.borderInlineStart = "";
                 }
             });
+            if (follow.checked && active.length && !first && !transcript.hidden && transcript.open &&
+                    !search.value && !list.contains(document.activeElement) && document.activeElement !== search) {
+                const index = matches.findIndex(cue => active.includes(cue.index));
+                if (index >= 0 && (index < offset || index >= offset + PAGE)) {
+                    offset = Math.floor(index / PAGE) * PAGE;
+                    render();
+                    return;
+                }
+            }
             if (follow.checked && first && !transcript.hidden && transcript.open &&
                     !list.contains(document.activeElement) && document.activeElement !== search) {
                 const top = first.offsetTop - list.offsetTop;
@@ -308,7 +319,7 @@ define([], function() {
             matches = cues.filter(cue => !query || cue.normalized.includes(query));
             list.replaceChildren();
             const fragment = document.createDocumentFragment();
-            matches.slice(0, limit).forEach(cue => {
+            matches.slice(offset, offset + PAGE).forEach(cue => {
                 const item = document.createElement("li");
                 item.dataset.cueIndex = String(cue.index);
                 const button = document.createElement("button");
@@ -323,7 +334,8 @@ define([], function() {
                 fragment.appendChild(item);
             });
             list.appendChild(fragment);
-            more.hidden = matches.length <= limit;
+            more.hidden = matches.length <= offset + PAGE;
+            previous.hidden = offset === 0;
             download.disabled = !cues.length;
             status.textContent = cues.length && !matches.length ? panel.dataset.empty : "";
             updateActive(true);
@@ -379,7 +391,7 @@ define([], function() {
                             const text = cue.getCueAsHTML().textContent || "";
                             return {index: index, start: cue.startTime, end: cue.endTime, text: text, normalized: normalize(text)};
                         });
-                        limit = PAGE;
+                        offset = 0;
                         render();
                         updateVisibility();
                     } catch (error) {
@@ -420,11 +432,17 @@ define([], function() {
         listen(select, "change", load);
         listen(visible, "change", updateVisibility);
         listen(search, "input", function() {
-            limit = PAGE;
+            offset = 0;
             render();
         });
         listen(more, "click", function() {
-            limit += PAGE;
+            follow.checked = false;
+            offset += PAGE;
+            render();
+        });
+        listen(previous, "click", function() {
+            follow.checked = false;
+            offset = Math.max(0, offset - PAGE);
             render();
         });
         listen(list, "click", function(event) {
@@ -434,7 +452,12 @@ define([], function() {
             }
         });
         listen(media, "timeupdate", () => updateActive(false));
-        listen(media, "seeked", () => updateActive(true));
+        listen(media, "seeked", function() {
+            if (suppressed.has(media)) {
+                suppressed.set(media, {target: media.currentTime});
+            }
+            updateActive(true);
+        });
         listen(download, "click", function() {
             if (!config.download || !cues.length) {
                 return;
