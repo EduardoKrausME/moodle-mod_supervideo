@@ -58,6 +58,14 @@ class provider implements
             'timemodified' => 'privacy:metadata:supervideo_view:timemodified',
         ], 'privacy:metadata:supervideo_view');
 
+        $collection->add_external_location_link("ottflix", [
+            "enrollment" => "privacy:metadata:ottflix:enrollment",
+            "student_name" => "privacy:metadata:ottflix:student_name",
+            "student_email" => "privacy:metadata:ottflix:student_email",
+            "safetyplayer" => "privacy:metadata:ottflix:safetyplayer",
+            "identifier" => "privacy:metadata:ottflix:identifier",
+        ], "privacy:metadata:ottflix");
+
         return $collection;
     }
 

@@ -104,7 +104,8 @@ if ($ADMIN->fulltree) {
 
     // OttFlix.
     $title = get_string("ottflix_title", "mod_supervideo");
-    $setting = new admin_setting_heading("supervideo/ottflix", $title, "");
+    $setting = new admin_setting_heading("supervideo/ottflix", $title,
+        get_string("ottflix_privacy_desc", "mod_supervideo"));
     $settings->add($setting);
 
     $setting = new admin_setting_configtext("supervideo/ottflix_url",

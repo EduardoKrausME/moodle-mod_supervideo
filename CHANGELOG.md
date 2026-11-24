@@ -2,6 +2,11 @@
 
 This changelog records verified changes between consecutive published GitHub release tags. Earlier releases remain available in the GitHub release history.
 
+## Unreleased (3.4.1)
+
+- Declared personal data sent to the configured OttFlix service during standard video playback in the Moodle Privacy API, and clarified the administrator-facing privacy notice and English, Portuguese and Spanish translations (#103).
+- Added regression tests for the local viewing metadata and the external OttFlix metadata without changing playback or the existing data transfer.
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.
