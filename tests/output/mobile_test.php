@@ -118,6 +118,9 @@ final class mobile_test extends advanced_testcase {
         $this->assertSame(2, substr_count($html, 'id="mod-supervideo-media-' . $cm->id . '"'));
         $this->assertSame(3, substr_count($html, '[src]="supervideoData.content.fileurl"'));
         $this->assertStringContainsString("playsinline", $html);
+        $this->assertStringContainsString("mod-supervideo-hls-" . $cm->id, $html);
+        $this->assertStringContainsString("supervideoHlsMode", $html);
+        $this->assertStringContainsString("supervideoHlsError | translate", $html);
         $this->assertStringContainsString("[attr.controls]", $html);
         $this->assertStringContainsString("[attr.autoplay]", $html);
     }

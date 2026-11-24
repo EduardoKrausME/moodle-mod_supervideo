@@ -47,6 +47,12 @@ $addons = [
             ["mobile_youtubeinvalid", "mod_supervideo"],
             ["mobile_youtubeembedding", "mod_supervideo"],
             ["mobile_youtubeplaybackerror", "mod_supervideo"],
+            ["hls_live", "mod_supervideo"],
+            ["hls_unknown", "mod_supervideo"],
+            ["hls_error", "mod_supervideo"],
+            ["hls_libraryerror", "mod_supervideo"],
+            ["hls_unsupported", "mod_supervideo"],
+            ["hls_auto", "mod_supervideo"],
         ],
     ],
 ];

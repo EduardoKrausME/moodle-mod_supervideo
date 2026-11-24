@@ -40,3 +40,13 @@ Error 153 means that YouTube did not receive an acceptable Referer or equivalent
 Moodle LMS 5.2 and Moodle App 5.2 introduced [native site Referer support](https://moodledev.io/general/app/development/plugins-development-guide/troubleshooting#i-want-to-display-embedded-content-that-requires-the-moodle-site-as-referer) for core-iframe. This is not the same as supplying an origin or widget_referrer parameter to the YouTube API. The YouTube-specific integration is not switched to this route without real-device validation of playback and progress events. No proxy, custom authentication token or fabricated Referer is used.
 
 Run the offline JavaScript regression tests with `node --test tests/js/mobile_youtube_test.js`. Real iOS playback and browser auto-login still require device testing.
+
+## HLS streaming (.m3u8)
+
+Select the external video link source and enter the complete HTTP(S) .m3u8 URL, including any signed query parameters. Native HLS is preferred when supported; otherwise the pinned HLS.js library is loaded with integrity protection. Web HLS.js playback retains adaptive and manual quality selection. Embedded subtitle tracks depend on the manifest and browser; external WebVTT configuration and transcription are not included.
+
+All playlists, media segments, subtitles and encryption keys must be accessible to the client. For HLS.js configure CORS on the streaming origin for all required resources and use HTTPS. Signed parameters are not automatically copied to child URLs. Moodle permissions protect the activity, not the external CDN. No proxy or additional credentials are sent.
+
+Percentage progress and resume are available only for confirmed VOD with finite media duration. HLS.js reports live status in level details; native playback checks the media playlist for ENDLIST (one master-to-media lookup, subject to CORS). If inspection is blocked or inconclusive, playback remains available but percentage progress is not recorded. A live session never becomes eligible for percentage tracking merely because a DVR window is finite or the event ends. Use a separate VOD activity for the recording. Existing viewing-based completion is unchanged; live attendance and server-side enforcement of a live-specific academic policy are outside this change. Do not configure percentage-based completion or grades for live-only streams.
+
+The plugin does not upload HLS packages or bypass DRM, authentication, CORS or provider restrictions. Run the offline controller tests with `node --test tests/js/hls_player_test.js` and verify actual playback on your browsers and Moodle App devices.

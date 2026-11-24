@@ -252,3 +252,10 @@ $string['mobile_youtubeloaderror'] = 'No se pudo cargar el reproductor de YouTub
 $string['mobile_youtubeinvalid'] = 'El vídeo o los parámetros del reproductor de YouTube no son válidos.';
 $string['mobile_youtubeembedding'] = 'El propietario del vídeo no permite la reproducción insertada.';
 $string['mobile_youtubeplaybackerror'] = 'YouTube encontró un error de reproducción.';
+
+$string['hls_live'] = 'Transmisión en directo: el progreso porcentual no está disponible.';
+$string['hls_unknown'] = 'Comprobando si la transmisión tiene duración fija. El progreso porcentual requiere esta confirmación.';
+$string['hls_error'] = 'No se pudo reproducir la transmisión. Comprueba el acceso, la conexión y la configuración del servidor de streaming.';
+$string['hls_libraryerror'] = 'No se pudo cargar el reproductor. Comprueba la conexión y vuelve a cargar la actividad.';
+$string['hls_unsupported'] = 'Este dispositivo no admite reproducción HLS.';
+$string['hls_auto'] = 'Automático';

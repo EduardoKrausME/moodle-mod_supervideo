@@ -28,15 +28,19 @@
     }
 }}
 
-{{#hls}}
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js"
-            integrity="sha256-oS5+4c1kpp3NsxQVfkXa/LpwW/sLFEC3k1yyZdN0Qj4="
-            crossorigin="anonymous"></script>
-{{/hls}}
-
 <div id="{{elementid}}"
      data-videourl="{{videourl}}"
      data-autoplay="{{autoplay}}"
      data-showcontrols="{{showcontrols}}"
      data-controls="{{controls}}"
-     data-speed="{{speed}}"></div>
+     data-speed="{{speed}}"
+     {{#hls}}
+     data-hls-live="{{#str}} hls_live, mod_supervideo {{/str}}"
+     data-hls-unknown="{{#str}} hls_unknown, mod_supervideo {{/str}}"
+     data-hls-error="{{#str}} hls_error, mod_supervideo {{/str}}"
+     data-hls-libraryerror="{{#str}} hls_libraryerror, mod_supervideo {{/str}}"
+     data-hls-unsupported="{{#str}} hls_unsupported, mod_supervideo {{/str}}"
+     data-hls-auto="{{#str}} hls_auto, mod_supervideo {{/str}}"
+     {{/hls}}>
+    {{#hls}}<p data-hls-status role="status" aria-live="polite" hidden></p>{{/hls}}
+</div>

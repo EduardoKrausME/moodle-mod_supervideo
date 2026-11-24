@@ -101,5 +101,7 @@ final class source_url_parser_test extends advanced_testcase {
         $this->assertTrue(source_url_parser::is_valid("embed", "https://example.com/player"));
         $this->assertFalse(source_url_parser::is_valid("embed", "javascript:alert(1)"));
         $this->assertTrue(source_url_parser::is_hls("https://cdn.example.com/video/playlist.m3u8?token=abc"));
+        $this->assertTrue(source_url_parser::is_hls("https://cdn.example.com/stream/PLAYLIST.M3U8?token=abc&expires=123"));
+        $this->assertFalse(source_url_parser::is_hls("https://cdn.example.com/video.mp4?format=m3u8"));
     }
 }

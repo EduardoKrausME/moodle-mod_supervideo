@@ -15,6 +15,8 @@ This changelog records verified changes between consecutive published GitHub rel
 
 - Added regression coverage for creating and editing Vimeo activities without a local upload, conditional file validation, and supported Vimeo URL formats (#49). Removed an obsolete filemanager comment without changing the form behaviour or upload limits.
 
+- Stabilised HLS playback on web and mobile with isolated player instances, native playback detection, bounded recovery, embedded caption tracks and adaptive quality (#53). Only confirmed on-demand playlists with finite duration report percentage progress; live and unclassified streams do not.
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

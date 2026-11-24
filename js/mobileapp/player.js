@@ -31,6 +31,10 @@ var supervideoDuration = 0;
 var youtubeStop = null;
 var youtubeDispatchTimer = null;
 var youtubeResume = 0;
+var hlsDispatchTimer = null;
+var hlsStop = null;
+this.supervideoHlsError = "";
+this.supervideoHlsMode = "";
 
 this.supervideoLoading = true;
 this.supervideoError = '';
@@ -41,6 +45,13 @@ this.supervideoYoutubeBrowser = false;
 this.supervideoYoutubeRetry = false;
 
 function cleanup() {
+    if (hlsDispatchTimer !== null) {
+        clearTimeout(hlsDispatchTimer);
+        hlsDispatchTimer = null;
+    }
+    if (hlsStop) {
+        hlsStop();
+    }
     if (youtubeDispatchTimer !== null) {
         clearTimeout(youtubeDispatchTimer);
         youtubeDispatchTimer = null;
@@ -166,6 +177,327 @@ function loadScript(src, test, callback, integrity) {
     document.head.appendChild(script);
 }
 
+/**
+ * Own one HLS playback lifecycle. Only confirmed VOD may report watched segments.
+ * @param {HTMLVideoElement} media Video element.
+ * @param {String} url Original playlist URL.
+ * @param {Object} callbacks Player hooks.
+ * @returns {Object} Controller.
+ */
+function createHlsController(media, url, callbacks) {
+    var active = true;
+    var hls = null;
+    var mode = "unknown";
+    var timer = null;
+    var poll = null;
+    var abort = null;
+    var inspectionTimer = null;
+    var script = null;
+    var ready = false;
+    var restored = false;
+    var networkRecovery = false;
+    var mediaRecovery = false;
+    var native = false;
+    var scriptUrl = "https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js";
+
+    function setMode(value) {
+        if (!active || mode === "live" || mode === value) {
+            return;
+        }
+        mode = value;
+        callbacks.mode(mode);
+        restore();
+    }
+
+    function validPosition(time, duration) {
+        return active && mode === "vod" && Number.isFinite(time) && Number.isFinite(duration) &&
+            time >= 0 && duration >= 1 && time <= duration + 1 && duration < 4294967296;
+    }
+
+    function restore() {
+        if (!restored && validPosition(0, media.duration) && media.readyState >= 1) {
+            restored = true;
+            var time = Number(callbacks.resume);
+            if (Number.isFinite(time) && time > 0 && time < media.duration) {
+                try {
+                    media.currentTime = time;
+                } catch (error) {
+                    // Seeking is optional when the media does not expose a seekable range yet.
+                }
+            }
+        }
+    }
+
+    function onMetadata() {
+        restore();
+        if (native) {
+            loaded();
+        }
+    }
+
+    function clearLoading() {
+        if (timer !== null) {
+            clearTimeout(timer);
+            timer = null;
+        }
+        if (poll !== null) {
+            clearTimeout(poll);
+            poll = null;
+        }
+    }
+
+    function loaded() {
+        if (!active || ready) {
+            return;
+        }
+        ready = true;
+        clearLoading();
+        callbacks.ready(hls);
+    }
+
+    function stop() {
+        if (!active) {
+            return;
+        }
+        active = false;
+        clearLoading();
+        if (abort) {
+            abort.abort();
+        }
+        if (inspectionTimer !== null) {
+            clearTimeout(inspectionTimer);
+        }
+        if (script) {
+            script.removeEventListener("error", libraryFailed);
+        }
+        media.removeEventListener("loadedmetadata", onMetadata);
+        media.removeEventListener("durationchange", restore);
+        media.removeEventListener("error", nativeError);
+        if (hls) {
+            hls.destroy();
+            hls = null;
+        }
+        media.pause();
+        media.removeAttribute("src");
+        media.load();
+    }
+
+    function fail(key) {
+        if (active) {
+            stop();
+            callbacks.error(key);
+        }
+    }
+
+    function nativeError() {
+        if (native) {
+            fail("hls_error");
+        }
+    }
+
+    function libraryFailed() {
+        if (script && script.parentNode && !window.Hls) {
+            script.parentNode.removeChild(script);
+        }
+        fail("hls_libraryerror");
+    }
+
+    // Native media APIs do not reliably distinguish a finite live DVR window from VOD.
+    // Only an ended media playlist is sufficient evidence; failure to inspect it is not a playback error.
+    async function inspectNativePlaylist(address, depth) {
+        if (!active || !abort) {
+            return;
+        }
+        var response = await fetch(address, {signal: abort.signal, credentials: "same-origin"});
+        if (!response.ok) {
+            return;
+        }
+        var text = await response.text();
+        if (!active || text.length > 2097152 || !text.trimStart().startsWith("#EXTM3U")) {
+            return;
+        }
+        if (/^#EXTINF:/m.test(text)) {
+            setMode(/^#EXT-X-ENDLIST\s*$/m.test(text) ? "vod" : "live");
+            return;
+        }
+        if (depth === 0) {
+            var lines = text.split(/\r?\n/);
+            for (var index = 0; index < lines.length - 1; index++) {
+                if (lines[index].startsWith("#EXT-X-STREAM-INF:")) {
+                    var next = new URL(lines[index + 1].trim(), response.url || address);
+                    if (next.protocol === "https:" || next.protocol === "http:") {
+                        await inspectNativePlaylist(next.href, 1);
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    function initialise() {
+        if (!active) {
+            return;
+        }
+        if (window.Hls && typeof window.Hls.isSupported === "function") {
+            if (!window.Hls.isSupported()) {
+                fail("hls_unsupported");
+                return;
+            }
+            var Hls = window.Hls;
+            hls = new Hls({enableWebVTT: true, renderTextTracksNatively: true});
+            hls.on(Hls.Events.LEVEL_LOADED, function(event, data) {
+                if (data.details && typeof data.details.live === "boolean") {
+                    setMode(data.details.live ? "live" : "vod");
+                }
+            });
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                loaded();
+            });
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                if (!active || !data.fatal) {
+                    return;
+                }
+                if (data.type === Hls.ErrorTypes.MEDIA_ERROR && !mediaRecovery) {
+                    mediaRecovery = true;
+                    hls.recoverMediaError();
+                } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR && !networkRecovery &&
+                        !(data.response && [401, 403].includes(data.response.code))) {
+                    networkRecovery = true;
+                    hls.startLoad();
+                } else {
+                    fail("hls_error");
+                }
+            });
+            hls.loadSource(url);
+            hls.attachMedia(media);
+        } else {
+            poll = setTimeout(initialise, 100);
+        }
+    }
+
+    function start() {
+        callbacks.mode("unknown");
+        media.addEventListener("loadedmetadata", onMetadata);
+        media.addEventListener("durationchange", restore);
+        media.addEventListener("error", nativeError);
+        timer = setTimeout(function() {
+            fail(native || hls ? "hls_error" : "hls_libraryerror");
+        }, 20000);
+        native = Boolean(media.canPlayType("application/vnd.apple.mpegurl") ||
+            media.canPlayType("application/x-mpegURL"));
+        if (native) {
+            if (typeof fetch === "function" && typeof AbortController === "function") {
+                abort = new AbortController();
+                inspectionTimer = setTimeout(function() { abort.abort(); }, 10000);
+                inspectNativePlaylist(url, 0).catch(function() {
+                    // Playback can succeed even when the manifest cannot be inspected through CORS.
+                }).finally(function() {
+                    clearTimeout(inspectionTimer);
+                    inspectionTimer = null;
+                });
+            }
+            media.src = url;
+            return;
+        }
+        if (!window.Hls) {
+            script = document.querySelector('script[src="' + scriptUrl + '"]');
+            if (!script) {
+                script = document.createElement("script");
+                script.src = scriptUrl;
+                script.integrity = "sha256-oS5+4c1kpp3NsxQVfkXa/LpwW/sLFEC3k1yyZdN0Qj4=";
+                script.crossOrigin = "anonymous";
+                script.addEventListener("error", libraryFailed);
+                document.head.appendChild(script);
+            } else {
+                script.addEventListener("error", libraryFailed);
+            }
+        }
+        initialise();
+    }
+
+    return {start: start, stop: stop, validPosition: validPosition};
+}
+
+function bindHls(data) {
+    var active = true;
+    var controller = null;
+    var timer = null;
+    var media = null;
+    var attempts = 0;
+    var played = false;
+    var cleanupMedia = function() {};
+
+    function stop() {
+        active = false;
+        if (timer !== null) {
+            clearTimeout(timer);
+        }
+        cleanupMedia();
+        if (controller) {
+            controller.stop();
+        }
+        if (hlsStop === stop) {
+            hlsStop = null;
+        }
+    }
+
+    function findMedia() {
+        if (!active || that.supervideoData !== data) {
+            return;
+        }
+        media = document.querySelector("#mod-supervideo-hls-" + that.supervideoCmid);
+        if (!media) {
+            if (++attempts < 50) {
+                timer = setTimeout(findMedia, 100);
+            } else {
+                that.supervideoHlsError = "plugin.mod_supervideo.hls_error";
+                stop();
+            }
+            return;
+        }
+        controller = createHlsController(media, data.content.fileurl, {
+            resume: data.config.currenttime,
+            ready: function() {},
+            mode: function(value) {
+                that.supervideoHlsMode = value;
+                if (value !== "vod") {
+                    that.supervideoPercent = null;
+                    if (supervideoSaveTimer) {
+                        clearTimeout(supervideoSaveTimer);
+                        supervideoSaveTimer = null;
+                    }
+                }
+            },
+            error: function(key) {
+                that.supervideoHlsError = "plugin.mod_supervideo." + key;
+                stop();
+            }
+        });
+        var onPlaying = function() { played = true; };
+        var onProgress = function(event) {
+            if (active && played && !media.seeking && that.supervideoData === data &&
+                    (event.type !== "timeupdate" || !media.paused) &&
+                    controller.validPosition(media.currentTime, media.duration)) {
+                saveProgress(media.currentTime, media.duration, event.type !== "timeupdate");
+            }
+        };
+        media.addEventListener("playing", onPlaying);
+        ["timeupdate", "pause", "ended"].forEach(function(event) {
+            media.addEventListener(event, onProgress);
+        });
+        cleanupMedia = function() {
+            media.removeEventListener("playing", onPlaying);
+            ["timeupdate", "pause", "ended"].forEach(function(event) {
+                media.removeEventListener(event, onProgress);
+            });
+        };
+        controller.start();
+    }
+
+    hlsStop = stop;
+    findMedia();
+}
+
 function bindHtml5() {
     waitFor('#mod-supervideo-media-' + that.supervideoCmid, function(media) {
         if (that.supervideoData.config.currenttime > 0) {
@@ -183,17 +515,7 @@ function bindHtml5() {
             media.removeEventListener('ended', onEnded);
         });
 
-        if (that.supervideoData.content.ishls && media.tagName === 'VIDEO' &&
-                !media.canPlayType('application/vnd.apple.mpegurl')) {
-            loadScript('https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js', function() { return !!window.Hls; }, function() {
-                if (window.Hls && window.Hls.isSupported()) {
-                    var hls = new window.Hls();
-                    hls.loadSource(that.supervideoData.content.fileurl);
-                    hls.attachMedia(media);
-                    supervideoCleanup.push(function() { hls.destroy(); });
-                }
-            }, 'sha256-oS5+4c1kpp3NsxQVfkXa/LpwW/sLFEC3k1yyZdN0Qj4=');
-        }
+
     });
 }
 
@@ -499,6 +821,19 @@ this.supervideoPlaybackLoaded = function(result) {
 
     // cmid is injected below by the PHP template before this code is evaluated.
     var type = result.content.type;
+    this.supervideoHlsError = "";
+    this.supervideoHlsMode = "";
+    if ((type === "file" || type === "link") && result.content.ishls) {
+        supervideoLastBucket = -1;
+        supervideoLastPercent = -1;
+        hlsDispatchTimer = setTimeout(function() {
+            hlsDispatchTimer = null;
+            if (that.supervideoData === result) {
+                bindHls(result);
+            }
+        }, 0);
+        return;
+    }
     if (type === "youtube") {
         youtubeDispatchTimer = setTimeout(function() {
             youtubeDispatchTimer = null;

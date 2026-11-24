@@ -252,3 +252,10 @@ $string['mobile_youtubeloaderror'] = 'Não foi possível carregar o leitor do Yo
 $string['mobile_youtubeinvalid'] = 'O vídeo ou os parâmetros do leitor do YouTube são inválidos.';
 $string['mobile_youtubeembedding'] = 'O proprietário do vídeo não permite a reprodução incorporada.';
 $string['mobile_youtubeplaybackerror'] = 'O YouTube encontrou um erro de reprodução.';
+
+$string['hls_live'] = 'Transmissão em direto: o progresso percentual não está disponível.';
+$string['hls_unknown'] = 'A verificar se a transmissão tem duração fixa. O progresso percentual depende dessa confirmação.';
+$string['hls_error'] = 'Não foi possível reproduzir a transmissão. Verifique o acesso, a ligação e a configuração do servidor de streaming.';
+$string['hls_libraryerror'] = 'Não foi possível carregar o leitor de streaming. Verifique a ligação e recarregue a atividade.';
+$string['hls_unsupported'] = 'Este dispositivo não suporta reprodução HLS.';
+$string['hls_auto'] = 'Automático';

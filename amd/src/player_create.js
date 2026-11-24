@@ -26,6 +26,247 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
     var youtubeApiHooked = false;
     var youtubeApiRequested = false;
 
+    /**
+     * Own one HLS playback lifecycle. Only confirmed VOD may report watched segments.
+     * @param {HTMLVideoElement} media Video element.
+     * @param {String} url Original playlist URL.
+     * @param {Object} callbacks Player hooks.
+     * @returns {Object} Controller.
+     */
+    function createHlsController(media, url, callbacks) {
+        var active = true;
+        var hls = null;
+        var mode = "unknown";
+        var timer = null;
+        var poll = null;
+        var abort = null;
+        var inspectionTimer = null;
+        var script = null;
+        var ready = false;
+        var restored = false;
+        var networkRecovery = false;
+        var mediaRecovery = false;
+        var native = false;
+        var scriptUrl = "https://cdn.jsdelivr.net/npm/hls.js@1.7.3/dist/hls.min.js";
+
+        function setMode(value) {
+            if (!active || mode === "live" || mode === value) {
+                return;
+            }
+            mode = value;
+            callbacks.mode(mode);
+            restore();
+        }
+
+        function validPosition(time, duration) {
+            return active && mode === "vod" && Number.isFinite(time) && Number.isFinite(duration) &&
+                time >= 0 && duration >= 1 && time <= duration + 1 && duration < 4294967296;
+        }
+
+        function restore() {
+            if (!restored && validPosition(0, media.duration) && media.readyState >= 1) {
+                restored = true;
+                var time = Number(callbacks.resume);
+                if (Number.isFinite(time) && time > 0 && time < media.duration) {
+                    try {
+                        media.currentTime = time;
+                    } catch (error) {
+                        // Seeking is optional when the media does not expose a seekable range yet.
+                    }
+                }
+            }
+        }
+
+        function onMetadata() {
+            restore();
+            if (native) {
+                loaded();
+            }
+        }
+
+        function clearLoading() {
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            if (poll !== null) {
+                clearTimeout(poll);
+                poll = null;
+            }
+        }
+
+        function loaded() {
+            if (!active || ready) {
+                return;
+            }
+            ready = true;
+            clearLoading();
+            callbacks.ready(hls);
+        }
+
+        function stop() {
+            if (!active) {
+                return;
+            }
+            active = false;
+            clearLoading();
+            if (abort) {
+                abort.abort();
+            }
+            if (inspectionTimer !== null) {
+                clearTimeout(inspectionTimer);
+            }
+            if (script) {
+                script.removeEventListener("error", libraryFailed);
+            }
+            media.removeEventListener("loadedmetadata", onMetadata);
+            media.removeEventListener("durationchange", restore);
+            media.removeEventListener("error", nativeError);
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+            media.pause();
+            media.removeAttribute("src");
+            media.load();
+        }
+
+        function fail(key) {
+            if (active) {
+                stop();
+                callbacks.error(key);
+            }
+        }
+
+        function nativeError() {
+            if (native) {
+                fail("hls_error");
+            }
+        }
+
+        function libraryFailed() {
+            if (script && script.parentNode && !window.Hls) {
+                script.parentNode.removeChild(script);
+            }
+            fail("hls_libraryerror");
+        }
+
+        // Native media APIs do not reliably distinguish a finite live DVR window from VOD.
+        // Only an ended media playlist is sufficient evidence; failure to inspect it is not a playback error.
+        async function inspectNativePlaylist(address, depth) {
+            if (!active || !abort) {
+                return;
+            }
+            var response = await fetch(address, {signal: abort.signal, credentials: "same-origin"});
+            if (!response.ok) {
+                return;
+            }
+            var text = await response.text();
+            if (!active || text.length > 2097152 || !text.trimStart().startsWith("#EXTM3U")) {
+                return;
+            }
+            if (/^#EXTINF:/m.test(text)) {
+                setMode(/^#EXT-X-ENDLIST\s*$/m.test(text) ? "vod" : "live");
+                return;
+            }
+            if (depth === 0) {
+                var lines = text.split(/\r?\n/);
+                for (var index = 0; index < lines.length - 1; index++) {
+                    if (lines[index].startsWith("#EXT-X-STREAM-INF:")) {
+                        var next = new URL(lines[index + 1].trim(), response.url || address);
+                        if (next.protocol === "https:" || next.protocol === "http:") {
+                            await inspectNativePlaylist(next.href, 1);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        function initialise() {
+            if (!active) {
+                return;
+            }
+            if (window.Hls && typeof window.Hls.isSupported === "function") {
+                if (!window.Hls.isSupported()) {
+                    fail("hls_unsupported");
+                    return;
+                }
+                var Hls = window.Hls;
+                hls = new Hls({enableWebVTT: true, renderTextTracksNatively: true});
+                hls.on(Hls.Events.LEVEL_LOADED, function(event, data) {
+                    if (data.details && typeof data.details.live === "boolean") {
+                        setMode(data.details.live ? "live" : "vod");
+                    }
+                });
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    loaded();
+                });
+                hls.on(Hls.Events.ERROR, function(event, data) {
+                    if (!active || !data.fatal) {
+                        return;
+                    }
+                    if (data.type === Hls.ErrorTypes.MEDIA_ERROR && !mediaRecovery) {
+                        mediaRecovery = true;
+                        hls.recoverMediaError();
+                    } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR && !networkRecovery &&
+                            !(data.response && [401, 403].includes(data.response.code))) {
+                        networkRecovery = true;
+                        hls.startLoad();
+                    } else {
+                        fail("hls_error");
+                    }
+                });
+                hls.loadSource(url);
+                hls.attachMedia(media);
+            } else {
+                poll = setTimeout(initialise, 100);
+            }
+        }
+
+        function start() {
+            callbacks.mode("unknown");
+            media.addEventListener("loadedmetadata", onMetadata);
+            media.addEventListener("durationchange", restore);
+            media.addEventListener("error", nativeError);
+            timer = setTimeout(function() {
+                fail(native || hls ? "hls_error" : "hls_libraryerror");
+            }, 20000);
+            native = Boolean(media.canPlayType("application/vnd.apple.mpegurl") ||
+                media.canPlayType("application/x-mpegURL"));
+            if (native) {
+                if (typeof fetch === "function" && typeof AbortController === "function") {
+                    abort = new AbortController();
+                    inspectionTimer = setTimeout(function() { abort.abort(); }, 10000);
+                    inspectNativePlaylist(url, 0).catch(function() {
+                        // Playback can succeed even when the manifest cannot be inspected through CORS.
+                    }).finally(function() {
+                        clearTimeout(inspectionTimer);
+                        inspectionTimer = null;
+                    });
+                }
+                media.src = url;
+                return;
+            }
+            if (!window.Hls) {
+                script = document.querySelector('script[src="' + scriptUrl + '"]');
+                if (!script) {
+                    script = document.createElement("script");
+                    script.src = scriptUrl;
+                    script.integrity = "sha256-oS5+4c1kpp3NsxQVfkXa/LpwW/sLFEC3k1yyZdN0Qj4=";
+                    script.crossOrigin = "anonymous";
+                    script.addEventListener("error", libraryFailed);
+                    document.head.appendChild(script);
+                } else {
+                    script.addEventListener("error", libraryFailed);
+                }
+            }
+            initialise();
+        }
+
+        return {start: start, stop: stop, validPosition: validPosition};
+    }
+
     var player_create = {
         /**
          * Create the optional button that jumps from a marker to the next one.
@@ -406,8 +647,142 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
         },
 
+        resource_hls: function(viewId, resume, elementId, markerConfig) {
+            const host = document.getElementById(elementId);
+            if (!host) {
+                return;
+            }
+            const video = document.createElement("video");
+            video.crossOrigin = "anonymous";
+            video.playsInline = true;
+            video.controls = host.dataset.showcontrols === "1";
+            video.autoplay = host.dataset.autoplay === "true";
+            host.prepend(video);
+            const status = host.querySelector("[data-hls-status]");
+            let player = null;
+            let mode = "unknown";
+            let disposed = false;
+            let played = false;
+            let marker = null;
+            const map = document.getElementById("map-visualization");
+            const initialMapHidden = map ? map.hidden : false;
+
+            const updateMode = function(value) {
+                mode = value;
+                if (map && player_create._internal_view_id === viewId) {
+                    map.hidden = value !== "vod" || initialMapHidden;
+                }
+                if (status) {
+                    status.textContent = value === "vod" ? "" : host.dataset[value === "live" ? "hlsLive" : "hlsUnknown"];
+                    status.hidden = value === "vod";
+                }
+            };
+
+            const controller = createHlsController(video, host.dataset.videourl, {
+                resume: resume,
+                mode: updateMode,
+                error: function(key) {
+                    if (status) {
+                        status.textContent = host.dataset[key === "hls_unsupported" ? "hlsUnsupported" :
+                            key === "hls_libraryerror" ? "hlsLibraryerror" : "hlsError"];
+                        status.hidden = false;
+                    }
+                },
+                ready: function(hls) {
+                    if (disposed || player) {
+                        return;
+                    }
+                    const config = {
+                        controls: host.dataset.controls.split(","),
+                        autoplay: video.autoplay,
+                        settings: ["captions", "speed", "loop"],
+                        captions: {update: true},
+                        storage: {enabled: true, key: "id-" + viewId},
+                        speed: {selected: host.dataset.speed.length > 3, options: host.dataset.speed.split(",")},
+                        markers: {
+                            enabled: player_create._markers_points(markerConfig).length > 0,
+                            points: player_create._markers_points(markerConfig)
+                        }
+                    };
+                    if (hls) {
+                        const qualities = [...new Set(hls.levels.map(level => level.height).filter(Boolean))].sort((a, b) => b - a);
+                        if (qualities.length) {
+                            config.settings.unshift("quality");
+                            config.i18n = {qualityLabel: {0: host.dataset.hlsAuto}};
+                            config.quality = {
+                                default: 0,
+                                options: [0].concat(qualities),
+                                forced: true,
+                                onChange: function(quality) {
+                                    const level = Number(quality) === 0 ? -1 :
+                                        hls.levels.findIndex(item => item.height === Number(quality));
+                                    if (Number(quality) === 0 || level >= 0) {
+                                        hls.currentLevel = level;
+                                    }
+                                }
+                            };
+                        }
+                    }
+                    player = new PlayerRender(video, config);
+                    marker = player_create._markers_create(elementId, markerConfig, function(time) {
+                        if (mode === "vod") {
+                            video.currentTime = time;
+                        }
+                    }, player.elements.container);
+                }
+            });
+
+            const onPlaying = function() {
+                played = true;
+            };
+            const progress = function(event) {
+                if (!disposed && played && !video.seeking &&
+                        (event.type === "ended" || !video.paused) &&
+                        player_create._internal_view_id === viewId &&
+                        controller.validPosition(video.currentTime, video.duration)) {
+                    if (marker) {
+                        marker.update(video.currentTime);
+                    }
+                    player_create._internal_saveprogress(video.currentTime, video.duration);
+                }
+            };
+            const seek = function(event) {
+                if (mode === "vod" && player_create._internal_view_id === viewId &&
+                        Number.isFinite(event.detail.goCurrentTime)) {
+                    video.currentTime = event.detail.goCurrentTime;
+                }
+            };
+            const resize = function() {
+                if (video.videoWidth && video.videoHeight) {
+                    player_create._internal_resize(video.videoWidth, video.videoHeight);
+                }
+            };
+            video.addEventListener("playing", onPlaying);
+            video.addEventListener("timeupdate", progress);
+            video.addEventListener("ended", progress);
+            video.addEventListener("loadedmetadata", resize);
+            document.addEventListener("setCurrentTime", seek);
+            player_create._cleanup_when_removed(elementId, function() {
+                disposed = true;
+                document.removeEventListener("setCurrentTime", seek);
+                video.removeEventListener("playing", onPlaying);
+                video.removeEventListener("timeupdate", progress);
+                video.removeEventListener("ended", progress);
+                video.removeEventListener("loadedmetadata", resize);
+                controller.stop();
+                if (player) {
+                    player.destroy();
+                }
+            });
+            controller.start();
+        },
+
         resource_video: function (view_id, start_currenttime, elementId, isHls, markerConfig) {
             player_create._internal_view_id = view_id;
+            if (isHls) {
+                player_create.resource_hls(view_id, start_currenttime, elementId, markerConfig);
+                return;
+            }
 
             const $element = $(`#${elementId}`);
             const fullurl = $element.attr("data-videourl");
@@ -481,68 +856,8 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             const video = document.querySelector(`#${elementId} video`);
 
-            if (isHls) {
-                if (Hls.isSupported()) {
-
-                    var source = $(`#${elementId}`).attr("data-videourl");
-
-                    // For more Hls.js options, see https://github.com/dailymotion/hls.js
-                    const hls = new Hls();
-                    hls.loadSource(source);
-
-                    // From the m3u8 playlist, hls parses the manifest and returns
-                    // all available video qualities. This is important, in this approach,
-                    // we will have one source on the Plyr player.
-                    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-
-                        // Keep Hls.js adaptive bitrate as the default and expose
-                        // the manifest levels as optional manual quality choices.
-                        const availableQualities = [...new Set(
-                            hls.levels.map((level) => level.height).filter(Boolean)
-                        )].sort((a, b) => b - a);
-
-                        if (!config.settings.includes("quality")) {
-                            config.settings.unshift("quality");
-                        }
-                        config.i18n = config.i18n || {};
-                        config.i18n.qualityLabel = Object.assign(
-                            {0: "Auto"},
-                            config.i18n.qualityLabel || {}
-                        );
-                        config.quality = {
-                            default: 0,
-                            options: [0].concat(availableQualities),
-                            forced: true,
-                            onChange: (quality) => updateQuality(quality),
-                        };
-
-                        function updateQuality(newQuality) {
-                            newQuality = parseInt(newQuality);
-                            if (newQuality === 0) {
-                                window.hls.currentLevel = -1;
-                                return;
-                            }
-                            window.hls.levels.forEach((level, levelIndex) => {
-                                if (level.height === newQuality) {
-                                    window.hls.currentLevel = levelIndex;
-                                }
-                            });
-                        }
-
-                        // Initialize here
-                        const player = new PlayerRender(video, config);
-                        playerReady(player)
-                    });
-                    hls.attachMedia(video);
-                    window.hls = hls;
-                } else {
-                    const player = new PlayerRender(video, config);
-                    playerReady(player);
-                }
-            } else {
-                const player = new PlayerRender(video, config);
-                playerReady(player);
-            }
+            const player = new PlayerRender(video, config);
+            playerReady(player);
 
             video.addEventListener("loadedmetadata", function (event) {
                 player_create._internal_resize(video.videoWidth, video.videoHeight);

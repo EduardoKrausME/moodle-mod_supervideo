@@ -45,13 +45,32 @@
     <div class="mod-supervideo-mobile-player" *ngIf="supervideoData"
          style="width:100%; min-width:0; max-width:100%;">
         <video id="mod-supervideo-media-<%cmid%>"
-               *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && !supervideoData.content.isaudio"
+               *ngIf="(supervideoData.content.type === 'file' || supervideoData.content.type === 'link') && !supervideoData.content.isaudio && !supervideoData.content.ishls"
                [src]="supervideoData.content.fileurl"
                core-external-content
                playsinline
                style="display:block; width:100%; max-width:100%; height:auto;"
                [attr.controls]="supervideoData.config.showcontrols ? '' : null"
                [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></video>
+
+        <video id="mod-supervideo-hls-<%cmid%>"
+               *ngIf="supervideoData.content.ishls"
+               playsinline
+               style="display:block; width:100%; max-width:100%; height:auto;"
+               [attr.controls]="supervideoData.config.showcontrols ? '' : null"
+               [attr.autoplay]="supervideoData.config.autoplay ? '' : null"></video>
+
+        <ion-card *ngIf="supervideoData.content.ishls && (supervideoHlsMode === 'live' || supervideoHlsMode === 'unknown')">
+            <ion-card-content *ngIf="supervideoHlsMode === 'live'">
+                {{ 'plugin.mod_supervideo.hls_live' | translate }}
+            </ion-card-content>
+            <ion-card-content *ngIf="supervideoHlsMode === 'unknown'">
+                {{ 'plugin.mod_supervideo.hls_unknown' | translate }}
+            </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="supervideoHlsError">
+            <ion-card-content role="alert">{{ supervideoHlsError | translate }}</ion-card-content>
+        </ion-card>
 
         <audio id="mod-supervideo-media-<%cmid%>"
                style="display:block; width:100%; max-width:100%;"

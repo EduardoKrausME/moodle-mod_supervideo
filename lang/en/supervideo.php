@@ -260,3 +260,10 @@ $string['mobile_youtubeloaderror'] = 'The YouTube player could not be loaded.';
 $string['mobile_youtubeinvalid'] = 'The YouTube video or player parameters are invalid.';
 $string['mobile_youtubeembedding'] = 'The video owner does not allow embedded playback.';
 $string['mobile_youtubeplaybackerror'] = 'YouTube encountered a playback error.';
+
+$string['hls_live'] = 'Live stream: percentage progress is unavailable.';
+$string['hls_unknown'] = 'Checking whether this stream has a fixed duration. Percentage progress is unavailable until confirmed.';
+$string['hls_error'] = 'Unable to play the stream. Check access, network and the streaming server configuration.';
+$string['hls_libraryerror'] = 'Unable to load the streaming player. Check your connection and reload the activity.';
+$string['hls_unsupported'] = 'This device does not support HLS playback.';
+$string['hls_auto'] = 'Auto';
