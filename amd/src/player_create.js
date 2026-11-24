@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui"], function ($, Ajax, Notification, PlayerRender) {
+define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui", "mod_supervideo/caption_controller"], function ($, Ajax, Notification, PlayerRender, jqueryui, Captions) {
     var youtubeApiCallbacks = [];
     var youtubeApiHooked = false;
     var youtubeApiRequested = false;
@@ -575,7 +575,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
         },
 
-        resource_audio: function (view_id, start_currenttime, elementId, markerConfig) {
+        resource_audio: function (view_id, start_currenttime, elementId, markerConfig, captionConfig) {
             player_create._internal_view_id = view_id;
 
             var $element = $(`#${elementId}`);
@@ -612,6 +612,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 },
             };
             var player = new PlayerRender(`#${elementId} audio`, config);
+            const media = document.getElementById(elementId + "_audio");
+            const captionController = Captions.attach(media, document.getElementById(elementId + "-captions"), captionConfig, {
+                player: player, canSeek: showcontrols === "1" && config.controls.includes("progress")
+            });
             var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
                 player.currentTime = time;
             }, player.elements.container);
@@ -634,20 +638,26 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             document.addEventListener("setCurrentTime", onAudioSeek);
 
             var onAudioProgress = player_create._throttle(function() {
+                if (!Captions.mayReport(media)) {
+                    return;
+                }
                 markerController.update(player.currentTime);
                 player_create._internal_saveprogress(player.currentTime, player.duration);
             }, 750);
             player.on("timeupdate", onAudioProgress);
             player.on("ended", function() {
-                player_create._internal_saveprogress(player.duration, player.duration);
+                if (Captions.mayReport(media)) {
+                    player_create._internal_saveprogress(player.duration, player.duration);
+                }
             });
             player_create._cleanup_when_removed(elementId, function() {
                 document.removeEventListener("setCurrentTime", onAudioSeek);
                 player.off("timeupdate", onAudioProgress);
+                captionController.stop();
             });
         },
 
-        resource_hls: function(viewId, resume, elementId, markerConfig) {
+        resource_hls: function(viewId, resume, elementId, markerConfig, captionConfig) {
             const host = document.getElementById(elementId);
             if (!host) {
                 return;
@@ -664,11 +674,15 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             let disposed = false;
             let played = false;
             let marker = null;
+            let captionController = null;
             const map = document.getElementById("map-visualization");
             const initialMapHidden = map ? map.hidden : false;
 
             const updateMode = function(value) {
                 mode = value;
+                if (captionController) {
+                    captionController.setAvailable(value === "vod");
+                }
                 if (map && player_create._internal_view_id === viewId) {
                     map.hidden = value !== "vod" || initialMapHidden;
                 }
@@ -682,6 +696,9 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 resume: resume,
                 mode: updateMode,
                 error: function(key) {
+                    if (captionController) {
+                        captionController.stop();
+                    }
                     if (status) {
                         status.textContent = host.dataset[key === "hls_unsupported" ? "hlsUnsupported" :
                             key === "hls_libraryerror" ? "hlsLibraryerror" : "hlsError"];
@@ -724,6 +741,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         }
                     }
                     player = new PlayerRender(video, config);
+                    captionController = Captions.attach(video, document.getElementById(elementId + "-captions"), captionConfig, {
+                        player: player, available: mode === "vod",
+                        canSeek: host.dataset.showcontrols === "1" && config.controls.includes("progress")
+                    });
                     marker = player_create._markers_create(elementId, markerConfig, function(time) {
                         if (mode === "vod") {
                             video.currentTime = time;
@@ -739,7 +760,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 if (!disposed && played && !video.seeking &&
                         (event.type === "ended" || !video.paused) &&
                         player_create._internal_view_id === viewId &&
-                        controller.validPosition(video.currentTime, video.duration)) {
+                        controller.validPosition(video.currentTime, video.duration) && Captions.mayReport(video)) {
                     if (marker) {
                         marker.update(video.currentTime);
                     }
@@ -769,6 +790,9 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 video.removeEventListener("timeupdate", progress);
                 video.removeEventListener("ended", progress);
                 video.removeEventListener("loadedmetadata", resize);
+                if (captionController) {
+                    captionController.stop();
+                }
                 controller.stop();
                 if (player) {
                     player.destroy();
@@ -777,10 +801,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             controller.start();
         },
 
-        resource_video: function (view_id, start_currenttime, elementId, isHls, markerConfig) {
+        resource_video: function (view_id, start_currenttime, elementId, isHls, markerConfig, captionConfig) {
             player_create._internal_view_id = view_id;
             if (isHls) {
-                player_create.resource_hls(view_id, start_currenttime, elementId, markerConfig);
+                player_create.resource_hls(view_id, start_currenttime, elementId, markerConfig, captionConfig);
                 return;
             }
 
@@ -807,7 +831,8 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 controls: controls.split(","),
                 autoplay: !!autoplay,
                 tooltips: {controls: showcontrols, seek: showcontrols},
-                settings: ["speed", "loop"],
+                settings: ["captions", "speed", "loop"],
+                captions: {update: true},
                 storage: {enabled: true, key: "id-" + view_id},
                 speed: {selected: speed.length > 3, options: speed.split(",")},
                 seekTime: parseInt(start_currenttime) ? parseInt(start_currenttime) : 0,
@@ -817,6 +842,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 },
             };
 
+            let captionController = null;
             function playerReady(player) {
                 var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
                     player.currentTime = time;
@@ -841,22 +867,33 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 document.addEventListener("setCurrentTime", onVideoSeek);
 
                 var onVideoProgress = player_create._throttle(function() {
+                    if (!Captions.mayReport(video)) {
+                        return;
+                    }
                     markerController.update(player.currentTime);
                     player_create._internal_saveprogress(player.currentTime, player.duration);
                 }, 750);
                 player.on("timeupdate", onVideoProgress);
                 player.on("ended", function() {
-                    player_create._internal_saveprogress(player.duration, player.duration);
+                    if (Captions.mayReport(video)) {
+                        player_create._internal_saveprogress(player.duration, player.duration);
+                    }
                 });
                 player_create._cleanup_when_removed(elementId, function() {
                     document.removeEventListener("setCurrentTime", onVideoSeek);
                     player.off("timeupdate", onVideoProgress);
+                    if (captionController) {
+                        captionController.stop();
+                    }
                 });
             }
 
             const video = document.querySelector(`#${elementId} video`);
 
             const player = new PlayerRender(video, config);
+            captionController = Captions.attach(video, document.getElementById(elementId + "-captions"), captionConfig, {
+                player: player, canSeek: showcontrols === "1" && config.controls.includes("progress")
+            });
             playerReady(player);
 
             video.addEventListener("loadedmetadata", function (event) {

@@ -19,6 +19,8 @@ This changelog records verified changes between consecutive published GitHub rel
 
 - Added activity-owned WebVTT caption configuration, local draft-file validation, HTTPS URL tracks, transcript settings, and mapped backup/restore support (#53).
 
+- Integrated configured WebVTT tracks and searchable, synchronized text transcripts in HTML5/HLS Web and Moodle App players. Added authenticated local-track reads, conditional export, seek guards and external caption privacy disclosure (#53).
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

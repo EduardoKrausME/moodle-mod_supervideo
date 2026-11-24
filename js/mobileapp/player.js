@@ -418,6 +418,31 @@ function createHlsController(media, url, callbacks) {
     return {start: start, stop: stop, validPosition: validPosition};
 }
 
+/**
+ * Bind the shared caption controller using the authenticated mobile site service.
+ */
+function bindMobileCaptions(media, data, available) {
+    if (typeof supervideoCaptions === "undefined") {
+        return {stop: function() {}, setAvailable: function() {}};
+    }
+    const cmid = that.supervideoCmid;
+    const panel = document.getElementById("mod-supervideo-mobile-" + cmid + "-captions");
+    return supervideoCaptions.attach(media, panel, data.captions, {
+        available: available,
+        canSeek: Boolean(data.config.showcontrols),
+        read: async function(track) {
+            const site = await currentSite();
+            const result = await site.read("mod_supervideo_get_caption", {cmid: cmid, captionid: track.id},
+                {getFromCache: false, saveToCache: false});
+            return result.text;
+        }
+    });
+}
+
+function captionMayReport(media) {
+    return typeof supervideoCaptions === "undefined" || supervideoCaptions.mayReport(media);
+}
+
 function bindHls(data) {
     var active = true;
     var controller = null;
@@ -426,6 +451,7 @@ function bindHls(data) {
     var attempts = 0;
     var played = false;
     var cleanupMedia = function() {};
+    var captionController = null;
 
     function stop() {
         active = false;
@@ -433,6 +459,9 @@ function bindHls(data) {
             clearTimeout(timer);
         }
         cleanupMedia();
+        if (captionController) {
+            captionController.stop();
+        }
         if (controller) {
             controller.stop();
         }
@@ -455,11 +484,13 @@ function bindHls(data) {
             }
             return;
         }
+        captionController = bindMobileCaptions(media, data, false);
         controller = createHlsController(media, data.content.fileurl, {
             resume: data.config.currenttime,
             ready: function() {},
             mode: function(value) {
                 that.supervideoHlsMode = value;
+                captionController.setAvailable(value === "vod");
                 if (value !== "vod") {
                     that.supervideoPercent = null;
                     if (supervideoSaveTimer) {
@@ -477,7 +508,7 @@ function bindHls(data) {
         var onProgress = function(event) {
             if (active && played && !media.seeking && that.supervideoData === data &&
                     (event.type !== "timeupdate" || !media.paused) &&
-                    controller.validPosition(media.currentTime, media.duration)) {
+                    controller.validPosition(media.currentTime, media.duration) && captionMayReport(media)) {
                 saveProgress(media.currentTime, media.duration, event.type !== "timeupdate");
             }
         };
@@ -503,9 +534,22 @@ function bindHtml5() {
         if (that.supervideoData.config.currenttime > 0) {
             media.currentTime = that.supervideoData.config.currenttime;
         }
-        var onTime = function() { saveProgress(media.currentTime, media.duration, false); };
-        var onPause = function() { saveProgress(media.currentTime, media.duration, true); };
-        var onEnded = function() { saveProgress(media.duration, media.duration, true); };
+        const captionController = bindMobileCaptions(media, that.supervideoData, true);
+        var onTime = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.currentTime, media.duration, false);
+            }
+        };
+        var onPause = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.currentTime, media.duration, true);
+            }
+        };
+        var onEnded = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.duration, media.duration, true);
+            }
+        };
         media.addEventListener('timeupdate', onTime);
         media.addEventListener('pause', onPause);
         media.addEventListener('ended', onEnded);
@@ -513,6 +557,7 @@ function bindHtml5() {
             media.removeEventListener('timeupdate', onTime);
             media.removeEventListener('pause', onPause);
             media.removeEventListener('ended', onEnded);
+            captionController.stop();
         });
 
 

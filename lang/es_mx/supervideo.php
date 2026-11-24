@@ -281,3 +281,15 @@ $string['caption_invalidfile'] = 'Selecciona un archivo WebVTT UTF-8 válido (m�
 $string['caption_singledefault'] = 'Solo una pista puede ser predeterminada.';
 $string['transcriptenabled'] = 'Habilitar transcripción interactiva';
 $string['transcriptdownload'] = 'Ofrecer descarga de transcripción';
+
+$string['caption_loading'] = 'Cargando subtítulos…';
+$string['caption_loaderror'] = 'No se pudo cargar esta pista. Comprueba el archivo o el acceso al servidor externo.';
+$string['caption_noresults'] = 'No se encontraron fragmentos.';
+$string['caption_show'] = 'Mostrar subtítulos';
+$string['caption_transcript'] = 'Transcripción';
+$string['caption_search'] = 'Buscar en la transcripción';
+$string['caption_follow'] = 'Seguir reproducción';
+$string['caption_download'] = 'Descargar transcripción';
+$string['caption_more'] = 'Mostrar más';
+$string['privacy:metadata:externalcaptions'] = 'El navegador puede solicitar directamente las URL externas de subtítulos configuradas por el profesor. El controlador no envía identificadores de usuarios de Moodle.';
+$string['privacy:metadata:externalcaptions:connection'] = 'El servidor externo puede recibir metadatos habituales de conexión, como la dirección IP y la información del cliente.';

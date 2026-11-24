@@ -289,3 +289,15 @@ $string['caption_invalidfile'] = 'Select one valid UTF-8 WebVTT file (maximum 5 
 $string['caption_singledefault'] = 'Only one track may be the default.';
 $string['transcriptenabled'] = 'Enable interactive transcript';
 $string['transcriptdownload'] = 'Offer transcript download';
+
+$string['caption_loading'] = 'Loading captions…';
+$string['caption_loaderror'] = 'Unable to load this caption track. Check the file or remote server access.';
+$string['caption_noresults'] = 'No matching transcript entries.';
+$string['caption_show'] = 'Show captions';
+$string['caption_transcript'] = 'Transcript';
+$string['caption_search'] = 'Search transcript';
+$string['caption_follow'] = 'Follow playback';
+$string['caption_download'] = 'Download transcript';
+$string['caption_more'] = 'Show more';
+$string['privacy:metadata:externalcaptions'] = 'External caption URLs configured by the teacher may be requested directly by the viewer browser. No Moodle user identifier is sent by the caption controller.';
+$string['privacy:metadata:externalcaptions:connection'] = 'Ordinary connection metadata, such as IP address and client information, may be visible to the external caption host.';

@@ -50,6 +50,9 @@ class mobile {
             "cmid" => $cm->id,
             "courseid" => $course->id,
             "supervideoid" => $cm->instance,
+            "captionpanel" => $OUTPUT->render_from_template("mod_supervideo/transcript", [
+                "elementid" => "mod-supervideo-mobile-" . $cm->id,
+            ]),
             "activityurl" => (new \moodle_url("/mod/supervideo/view.php", ["id" => $cm->id]))->out(false),
         ];
 
@@ -58,7 +61,11 @@ class mobile {
                 "id" => "main",
                 "html" => $OUTPUT->render_from_template("mod_supervideo/mobileapp/mobile", $data),
             ]],
-            "javascript" => file_get_contents($CFG->dirroot . "/mod/supervideo/js/mobileapp/player.js"),
+            "javascript" => "var supervideoCaptions = (function() { var exported; " .
+                "function define(dependencies, factory) { exported = factory(); }\n" .
+                file_get_contents($CFG->dirroot . "/mod/supervideo/amd/src/caption_controller.js") .
+                "\nreturn exported; })();\n" .
+                file_get_contents($CFG->dirroot . "/mod/supervideo/js/mobileapp/player.js"),
             "otherdata" => ["cmid" => $cm->id],
             "files" => [],
         ];

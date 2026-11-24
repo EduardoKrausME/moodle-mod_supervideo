@@ -28,6 +28,7 @@ use context_module;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
+use external_multiple_structure;
 use external_value;
 use external_warnings;
 use invalid_parameter_exception;
@@ -91,6 +92,7 @@ class playback extends external_api {
             "status" => true,
             "name" => format_string($supervideo->name, true, ["context" => $context]),
             "content" => self::get_content($cm, $context, $supervideo),
+            "captions" => \mod_supervideo\caption\repository::playback($supervideo, $context),
             "config" => [
                 "showmap" => self::config_bool($config, "showmap", self::config_bool($config, "showmapa", false)),
                 "showmapa" => self::config_bool($config, "showmapa", self::config_bool($config, "showmap", false)),
@@ -365,6 +367,19 @@ class playback extends external_api {
                 "showcontrols" => new external_value(PARAM_INT, "Controls flag"),
                 "autoplay" => new external_value(PARAM_INT, "Autoplay flag"),
                 "playersize" => new external_value(PARAM_RAW, "Player size"),
+            ]),
+            "captions" => new external_single_structure([
+                "tracks" => new external_multiple_structure(new external_single_structure([
+                    "id" => new external_value(PARAM_INT, "Caption id"),
+                    "label" => new external_value(PARAM_TEXT, "Label"),
+                    "language" => new external_value(PARAM_TEXT, "Language"),
+                    "kind" => new external_value(PARAM_ALPHA, "Track kind"),
+                    "source" => new external_value(PARAM_ALPHA, "Track source"),
+                    "url" => new external_value(PARAM_RAW, "Caption URL without Moodle credentials"),
+                    "isdefault" => new external_value(PARAM_BOOL, "Default track"),
+                ])),
+                "enabled" => new external_value(PARAM_BOOL, "Transcript enabled"),
+                "download" => new external_value(PARAM_BOOL, "Transcript download"),
             ]),
             "warnings" => new external_warnings(),
         ]);

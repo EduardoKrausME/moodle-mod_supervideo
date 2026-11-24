@@ -281,3 +281,15 @@ $string['caption_invalidfile'] = 'Selecione um arquivo WebVTT UTF-8 válido (má
 $string['caption_singledefault'] = 'Apenas uma faixa pode ser padrão.';
 $string['transcriptenabled'] = 'Habilitar transcrição interativa';
 $string['transcriptdownload'] = 'Oferecer download da transcrição';
+
+$string['caption_loading'] = 'Carregando legendas…';
+$string['caption_loaderror'] = 'Não foi possível carregar esta faixa. Confira o arquivo ou o acesso ao servidor externo.';
+$string['caption_noresults'] = 'Nenhum trecho encontrado.';
+$string['caption_show'] = 'Exibir legendas';
+$string['caption_transcript'] = 'Transcrição';
+$string['caption_search'] = 'Pesquisar na transcrição';
+$string['caption_follow'] = 'Acompanhar reprodução';
+$string['caption_download'] = 'Baixar transcrição';
+$string['caption_more'] = 'Mostrar mais';
+$string['privacy:metadata:externalcaptions'] = 'URLs externas de legendas configuradas pelo professor podem ser acessadas diretamente pelo navegador do usuário. O controlador não envia identificadores de usuários do Moodle.';
+$string['privacy:metadata:externalcaptions:connection'] = 'Metadados normais da conexão, como endereço IP e informações do cliente, podem ficar visíveis para o servidor externo de legendas.';
