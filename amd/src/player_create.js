@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui", "mod_supervideo/caption_controller"], function ($, Ajax, Notification, PlayerRender, jqueryui, Captions) {
+define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_render", "jqueryui", "mod_supervideo/caption_controller", "mod_supervideo/marker_controller"], function ($, Ajax, Notification, PlayerRender, jqueryui, Captions, Markers) {
     var youtubeApiCallbacks = [];
     var youtubeApiHooked = false;
     var youtubeApiRequested = false;
@@ -277,74 +277,12 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
          * @param {HTMLElement} preferredHost Optional element which should own the button.
          * @returns {Object} Marker controller.
          */
-        _markers_create: function(elementId, markerConfig, seekTo, preferredHost) {
-            var points = markerConfig && Array.isArray(markerConfig.points) ? markerConfig.points : [];
-            var emptyController = {update: function() {}};
-
-            if (points.length < 2 || typeof seekTo !== "function") {
-                return emptyController;
-            }
-
-            var playerElement = document.getElementById(elementId);
-            var host = preferredHost || (playerElement ? playerElement.parentElement : null);
-            if (!host) {
-                return emptyController;
-            }
-
-            var button = document.createElement("button");
-            button.type = "button";
-            button.className = "supervideo-marker-jump";
-            button.hidden = true;
-            host.appendChild(button);
-
-            var nextMarker = null;
-            var update = function(currentTime) {
-                currentTime = Number(currentTime);
-                if (!Number.isFinite(currentTime)) {
-                    button.hidden = true;
-                    nextMarker = null;
-                    return;
-                }
-
-                var currentIndex = -1;
-                points.forEach(function(point, index) {
-                    if (Number(point.time) <= currentTime) {
-                        currentIndex = index;
-                    }
-                });
-
-                var currentMarker = points[currentIndex];
-                var candidate = points[currentIndex + 1];
-                var show = currentMarker && currentMarker.skip && candidate &&
-                    currentTime < Number(candidate.time);
-
-                if (!show) {
-                    button.hidden = true;
-                    nextMarker = null;
-                    return;
-                }
-
-                nextMarker = candidate;
-                button.textContent = markerConfig.buttonlabel || "Jump to next marker";
-                if (candidate.label) {
-                    button.textContent += ": " + candidate.label;
-                    button.title = candidate.label;
-                } else {
-                    button.removeAttribute("title");
-                }
-                button.hidden = false;
-            };
-
-            button.addEventListener("click", function(event) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (nextMarker) {
-                    seekTo(Number(nextMarker.time));
-                    update(Number(nextMarker.time));
-                }
+        _markers_create: function(elementId, markerConfig, seekTo, preferredHost, position) {
+            var element = document.getElementById(elementId);
+            return Markers.attach(preferredHost || (element && element.parentElement), markerConfig, {
+                seek: seekTo,
+                position: position
             });
-
-            return {update: update};
         },
 
         /**
@@ -493,6 +431,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             var player = null;
             var progressInterval = null;
+            var markerInterval = null;
             var onYoutubeSeek = function(event) {
                 if (player && player.seekTo) {
                     player.seekTo(event.detail.goCurrentTime);
@@ -501,7 +440,11 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
                 if (player && player.seekTo) {
                     player.seekTo(time, true);
+                    return true;
                 }
+                return false;
+            }, null, function() {
+                return {time: player ? player.getCurrentTime() : NaN, duration: player ? player.getDuration() : NaN};
             });
 
             var showApiError = function() {
@@ -534,20 +477,29 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                             }
 
                             document.addEventListener("setCurrentTime", onYoutubeSeek);
+                            if (markerConfig && markerConfig.allowed && markerConfig.points.length) {
+                                markerInterval = window.setInterval(function() {
+                                    markerController.update(player.getCurrentTime(), player.getDuration());
+                                }, 250);
+                            }
                         },
                         "onStateChange": function(event) {
                             var playing = window.YT && event.data === window.YT.PlayerState.PLAYING;
                             if (playing && !progressInterval) {
                                 progressInterval = window.setInterval(function() {
-                                    markerController.update(player.getCurrentTime());
-                                    player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
+                                    if (markerController.mayReport(player.getCurrentTime(), true)) {
+                                        player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
+                                    }
                                 }, 1000);
                             } else if (!playing && progressInterval) {
                                 window.clearInterval(progressInterval);
                                 progressInterval = null;
-                                player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
+                                if (markerController.mayReport(player.getCurrentTime(), false)) {
+                                    player_create._internal_saveprogress(player.getCurrentTime(), player.getDuration());
+                                }
                             }
-                            if (window.YT && event.data === window.YT.PlayerState.ENDED) {
+                            if (window.YT && event.data === window.YT.PlayerState.ENDED &&
+                                    markerController.mayReport(player.getDuration(), false)) {
                                 player_create._internal_saveprogress(player.getDuration(), player.getDuration());
                             }
                         }
@@ -559,6 +511,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         progressInterval = null;
                     }
                     document.removeEventListener("setCurrentTime", onYoutubeSeek);
+                    if (markerInterval !== null) {
+                        window.clearInterval(markerInterval);
+                    }
+                    markerController.stop();
                     if (player && player.destroy) {
                         player.destroy();
                     }
@@ -616,9 +572,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             const captionController = Captions.attach(media, document.getElementById(elementId + "-captions"), captionConfig, {
                 player: player, canSeek: showcontrols === "1" && config.controls.includes("progress")
             });
-            var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
-                player.currentTime = time;
-            }, player.elements.container);
+            var markerController = Markers.native(media, player.elements.container, markerConfig, {
+                canSeek: showcontrols === "1" && config.controls.includes("progress"),
+                seek: Captions.seek, settle: Captions.settleSeek
+            });
             player.on("ready", function () {
                 if (start_currenttime) {
                     player.currentTime = parseInt(start_currenttime);
@@ -641,7 +598,6 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 if (!Captions.mayReport(media)) {
                     return;
                 }
-                markerController.update(player.currentTime);
                 player_create._internal_saveprogress(player.currentTime, player.duration);
             }, 750);
             player.on("timeupdate", onAudioProgress);
@@ -654,6 +610,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 document.removeEventListener("setCurrentTime", onAudioSeek);
                 player.off("timeupdate", onAudioProgress);
                 captionController.stop();
+                markerController.stop();
             });
         },
 
@@ -680,6 +637,9 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             const updateMode = function(value) {
                 mode = value;
+                if (marker) {
+                    marker.setAvailable(value === "vod");
+                }
                 if (captionController) {
                     captionController.setAvailable(value === "vod");
                 }
@@ -696,6 +656,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 resume: resume,
                 mode: updateMode,
                 error: function(key) {
+                    if (marker) {
+                        marker.stop();
+                        marker = null;
+                    }
                     if (captionController) {
                         captionController.stop();
                     }
@@ -745,11 +709,11 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         player: player, available: mode === "vod",
                         canSeek: host.dataset.showcontrols === "1" && config.controls.includes("progress")
                     });
-                    marker = player_create._markers_create(elementId, markerConfig, function(time) {
-                        if (mode === "vod") {
-                            video.currentTime = time;
-                        }
-                    }, player.elements.container);
+                    marker = Markers.native(video, player.elements.container, markerConfig, {
+                        available: mode === "vod",
+                        canSeek: host.dataset.showcontrols === "1" && config.controls.includes("progress"),
+                        seek: Captions.seek, settle: Captions.settleSeek
+                    });
                 }
             });
 
@@ -761,9 +725,6 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         (event.type === "ended" || !video.paused) &&
                         player_create._internal_view_id === viewId &&
                         controller.validPosition(video.currentTime, video.duration) && Captions.mayReport(video)) {
-                    if (marker) {
-                        marker.update(video.currentTime);
-                    }
                     player_create._internal_saveprogress(video.currentTime, video.duration);
                 }
             };
@@ -792,6 +753,9 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 video.removeEventListener("loadedmetadata", resize);
                 if (captionController) {
                     captionController.stop();
+                }
+                if (marker) {
+                    marker.stop();
                 }
                 controller.stop();
                 if (player) {
@@ -844,9 +808,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             let captionController = null;
             function playerReady(player) {
-                var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
-                    player.currentTime = time;
-                }, player.elements.container);
+                var markerController = Markers.native(video, player.elements.container, markerConfig, {
+                    canSeek: showcontrols === "1" && config.controls.includes("progress"),
+                    seek: Captions.seek, settle: Captions.settleSeek
+                });
                 player.on("ready", function () {
                     if (start_currenttime) {
                         player.currentTime = parseInt(start_currenttime);
@@ -870,7 +835,6 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     if (!Captions.mayReport(video)) {
                         return;
                     }
-                    markerController.update(player.currentTime);
                     player_create._internal_saveprogress(player.currentTime, player.duration);
                 }, 750);
                 player.on("timeupdate", onVideoProgress);
@@ -882,6 +846,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 player_create._cleanup_when_removed(elementId, function() {
                     document.removeEventListener("setCurrentTime", onVideoSeek);
                     player.off("timeupdate", onVideoProgress);
+                    markerController.stop();
                     if (captionController) {
                         captionController.stop();
                     }
@@ -907,8 +872,19 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             const iframe = document.getElementById(elementId);
             const player = new Vimeo.Player(iframe);
             const markerController = player_create._markers_create(elementId, markerConfig, function(time) {
-                player.setCurrentTime(time);
+                return player.setCurrentTime(time);
             });
+            let markerPlaying = false;
+            const markerPlay = () => { markerPlaying = true; };
+            const markerPause = () => { markerPlaying = false; };
+            const markerUpdate = data => markerController.update(data.seconds, data.duration);
+            player.on("play", markerPlay);
+            player.on("pause", markerPause);
+            player.on("seeked", markerUpdate);
+            player.on("timeupdate", markerUpdate);
+            Promise.all([player.getCurrentTime(), player.getDuration()]).then(values => {
+                markerController.update(values[0], values[1]);
+            }).catch(function() {});
 
             if (start_currenttime) {
                 player.setCurrentTime(start_currenttime);
@@ -927,11 +903,15 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             });
 
             var onVimeoProgress = player_create._throttle(function(data) {
-                markerController.update(data.seconds);
-                player_create._internal_saveprogress(data.seconds, data.duration);
+                if (markerController.mayReport(data.seconds, markerPlaying)) {
+                    player_create._internal_saveprogress(data.seconds, data.duration);
+                }
             }, 750);
             var onVimeoEnded = function(data) {
-                player_create._internal_saveprogress(data.duration, data.duration);
+                markerPlaying = false;
+                if (markerController.mayReport(data.duration, false)) {
+                    player_create._internal_saveprogress(data.duration, data.duration);
+                }
             };
             player.on("timeupdate", onVimeoProgress);
             player.on("ended", onVimeoEnded);
@@ -939,6 +919,11 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                 document.removeEventListener("setCurrentTime", onVimeoSeek);
                 player.off("timeupdate", onVimeoProgress);
                 player.off("ended", onVimeoEnded);
+                player.off("play", markerPlay);
+                player.off("pause", markerPause);
+                player.off("seeked", markerUpdate);
+                player.off("timeupdate", markerUpdate);
+                markerController.stop();
             });
         },
 
@@ -971,7 +956,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
 
             var iframe = document.getElementById(elementId);
             var markerController = player_create._markers_create(elementId, markerConfig, function(time) {
-                if (iframe && iframe.contentWindow) {
+                if (iframe && iframe.contentWindow && trustedOrigin) {
                     iframe.contentWindow.postMessage({
                         type: "player:seekTo",
                         currentTime: time
@@ -1004,8 +989,10 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                         var dur = event.data.duration;
 
                         if (dur > 0) {
-                            markerController.update(ct);
-                            player_create._internal_saveprogress(ct, dur);
+                            markerController.update(ct, dur);
+                            if (markerController.mayReport(Number(ct), true)) {
+                                player_create._internal_saveprogress(ct, dur);
+                            }
                         }
                     }
                 }
@@ -1014,6 +1001,7 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
             player_create._cleanup_when_removed(elementId, function() {
                 document.removeEventListener("setCurrentTime", onEmbedSeek);
                 window.removeEventListener("message", receiveEmbedMessage);
+                markerController.stop();
             });
         },
 
@@ -1037,14 +1025,17 @@ define(["jquery", "core/ajax", "core/notification", "mod_supervideo/player_rende
                     duration = data.playerData.duration
                 } else if (data.message === 'panda_timeupdate') {
                     if (duration) {
-                        markerController.update(data.currentTime);
-                        player_create._internal_saveprogress(data.currentTime, duration);
+                        markerController.update(data.currentTime, duration);
+                        if (markerController.mayReport(Number(data.currentTime), true)) {
+                            player_create._internal_saveprogress(data.currentTime, duration);
+                        }
                     }
                 }
             };
             window.addEventListener("message", receivePandaMessage, false);
             player_create._cleanup_when_removed(elementId, function() {
                 window.removeEventListener("message", receivePandaMessage, false);
+                markerController.stop();
             });
 
             iframe.postMessage({type: 'currentTime', parameter: currenttime}, trustedOrigin);

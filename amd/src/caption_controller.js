@@ -78,6 +78,17 @@ define([], function() {
     }
 
     /**
+     * Keep the actual landing position as the baseline after a requested seek.
+     *
+     * @param {HTMLMediaElement} media Media.
+     */
+    function settleSeek(media) {
+        if (suppressed.has(media)) {
+            suppressed.set(media, {target: media.currentTime});
+        }
+    }
+
+    /**
      * Fetch only the selected track with no cross-origin credentials or referrer.
      *
      * @param {object} track Track.
@@ -453,9 +464,7 @@ define([], function() {
         });
         listen(media, "timeupdate", () => updateActive(false));
         listen(media, "seeked", function() {
-            if (suppressed.has(media)) {
-                suppressed.set(media, {target: media.currentTime});
-            }
+            settleSeek(media);
             updateActive(true);
         });
         listen(download, "click", function() {
@@ -485,5 +494,5 @@ define([], function() {
         };
     }
 
-    return {attach: attach, mayReport: mayReport, seek: seek, validateText: validateText, normalize: normalize};
+    return {attach: attach, mayReport: mayReport, seek: seek, settleSeek: settleSeek, validateText: validateText, normalize: normalize};
 });

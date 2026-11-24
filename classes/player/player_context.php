@@ -71,9 +71,6 @@ class player_context {
      * @return array
      */
     public function marker_config() {
-        return [
-            "points" => marker_util::parse(isset($this->supervideo->markers) ? $this->supervideo->markers : ""),
-            "buttonlabel" => get_string("markers_jump", "mod_supervideo"),
-        ];
+        return marker_util::configuration($this->supervideo, $this->config);
     }
 }

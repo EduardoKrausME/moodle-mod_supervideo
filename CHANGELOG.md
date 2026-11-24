@@ -21,6 +21,8 @@ This changelog records verified changes between consecutive published GitHub rel
 
 - Integrated configured WebVTT tracks and searchable, synchronized text transcripts in HTML5/HLS Web and Moodle App players. Added authenticated local-track reads, conditional export, seek guards and external caption privacy disclosure (#53).
 
+- Refined optional marker jumps with reachable destinations, accessible controls, position confirmation, shared Web/App lifecycle, YouTube and Vimeo adapters and seek progress guards (#89).
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

@@ -125,6 +125,8 @@ final class mobile_test extends advanced_testcase {
         $this->assertStringContainsString("data-caption-select", $html);
         $this->assertStringContainsString("data-caption-search", $html);
         $this->assertStringContainsString("var supervideoCaptions", $result["javascript"]);
+        $this->assertStringContainsString("var supervideoMarkers", $result["javascript"]);
+        $this->assertStringContainsString("mod-supervideo-markers-" . $cm->id, $html);
         $this->assertStringContainsString("[attr.controls]", $html);
         $this->assertStringContainsString("[attr.autoplay]", $html);
     }

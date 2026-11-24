@@ -65,6 +65,10 @@ class mobile {
                 "function define(dependencies, factory) { exported = factory(); }\n" .
                 file_get_contents($CFG->dirroot . "/mod/supervideo/amd/src/caption_controller.js") .
                 "\nreturn exported; })();\n" .
+                "var supervideoMarkers = (function() { var exported; " .
+                "function define(dependencies, factory) { exported = factory(); }\n" .
+                file_get_contents($CFG->dirroot . "/mod/supervideo/amd/src/marker_controller.js") .
+                "\nreturn exported; })();\n" .
                 file_get_contents($CFG->dirroot . "/mod/supervideo/js/mobileapp/player.js"),
             "otherdata" => ["cmid" => $cm->id],
             "files" => [],

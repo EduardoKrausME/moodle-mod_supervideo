@@ -1,0 +1,271 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Shared optional marker jumps for Web and Moodle App.
+ *
+ * @package mod_supervideo
+ * @copyright 2026 Eduardo Kraus
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+define([], function() {
+    const noop = {update: function() {}, stop: function() {}, setAvailable: function() {}, mayReport: () => true};
+
+    /**
+     * Find the next marker during an explicitly enabled interval.
+     *
+     * @param {Array} points Sorted points.
+     * @param {number} time Position.
+     * @param {number} duration Duration.
+     * @returns {object|null}
+     */
+    function target(points, time, duration) {
+        if (!Number.isFinite(time) || !Number.isFinite(duration) || time < 0 || time >= duration) {
+            return null;
+        }
+        let index = points.length - 1;
+        while (index >= 0 && points[index].time > time) {
+            index--;
+        }
+        const next = points[index + 1];
+        return index >= 0 && points[index].skip && next && next.time > time && next.time < duration ? next : null;
+    }
+
+    /**
+     * Attach one controller, independent of the progress reporting timer.
+     *
+     * @param {HTMLElement} host Button container.
+     * @param {object} config Configuration.
+     * @param {object} adapter Provider callbacks.
+     * @returns {object}
+     */
+    function attach(host, config, adapter) {
+        if (!host || !config || config.allowed === false || !Array.isArray(config.points) ||
+                typeof adapter.seek !== "function") {
+            return noop;
+        }
+        const points = config.points.filter(p => Number.isFinite(p.time) && p.time >= 0)
+            .slice().sort((a, b) => a.time - b.time);
+        if (points.length < 2 || !points.some((p, i) => p.skip && i < points.length - 1)) {
+            return noop;
+        }
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = adapter.mobile ? "btn btn-secondary supervideo-marker-mobile" : "supervideo-marker-jump";
+        button.hidden = true;
+        const status = document.createElement("span");
+        status.setAttribute("role", "status");
+        status.className = "supervideo-marker-status";
+        status.hidden = true;
+        host.appendChild(button);
+        host.appendChild(status);
+
+        let available = adapter.available !== false;
+        let stopped = false;
+        let candidate = null;
+        let pending = null;
+        let suppressed = null;
+        let timer = null;
+        let revision = 0;
+        let position = NaN;
+        let duration = NaN;
+
+        function finish() {
+            pending = null;
+            clearTimeout(timer);
+            timer = null;
+            button.disabled = false;
+        }
+
+        function update(time, length) {
+            if (stopped) {
+                return;
+            }
+            position = Number(time);
+            duration = Number(length);
+            if (pending !== null && Number.isFinite(position) && position >= pending - 0.35 &&
+                    position <= pending + 2 && (!adapter.settled || adapter.settled())) {
+                finish();
+            }
+            candidate = available ? target(points, position, duration) : null;
+            if (candidate && adapter.canSeek && !adapter.canSeek(candidate.time)) {
+                candidate = null;
+            }
+            button.hidden = !candidate || !available;
+            button.disabled = pending !== null;
+            if (candidate) {
+                button.textContent = (config.buttonlabel || "Jump to next marker") + ": " + candidate.label;
+            }
+        }
+
+        function failure(id) {
+            if (stopped || id !== revision || pending === null) {
+                return;
+            }
+            finish();
+            if (suppressed) {
+                // Resume only after further real playback samples, even after a failed request.
+                suppressed.target = null;
+                suppressed.observed = null;
+            }
+            status.textContent = config.errorlabel || "Unable to jump to the marker.";
+            status.hidden = false;
+            update(position, duration);
+        }
+
+        function click(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (stopped || pending !== null || !available) {
+                return;
+            }
+            if (adapter.position) {
+                const state = adapter.position();
+                update(state.time, state.duration);
+            }
+            if (!candidate) {
+                return;
+            }
+            const destination = candidate.time;
+            const id = ++revision;
+            status.hidden = true;
+            pending = destination;
+            suppressed = adapter.native ? null : {target: destination, observed: null};
+            button.disabled = true;
+            timer = setTimeout(() => failure(id), 8000);
+            try {
+                const result = adapter.seek(destination);
+                if (result === false) {
+                    failure(id);
+                } else if (result && typeof result.then === "function") {
+                    result.catch(() => failure(id));
+                }
+            } catch (error) {
+                failure(id);
+            }
+        }
+
+        /**
+         * Suppress progress from external provider jumps until consecutive playback samples.
+         *
+         * @param {number} time Position.
+         * @param {boolean} playing Actual playback observation, not a pause or ended event.
+         * @returns {boolean}
+         */
+        function mayReport(time, playing) {
+            if (!suppressed) {
+                return true;
+            }
+            if (!playing || pending !== null || !Number.isFinite(time)) {
+                suppressed.observed = null;
+                return false;
+            }
+            const previous = suppressed.observed;
+            suppressed.observed = time;
+            if (previous === null || time <= previous || time - previous > 3 ||
+                    (suppressed.target !== null && time < suppressed.target + 0.5)) {
+                return false;
+            }
+            suppressed = null;
+            return true;
+        }
+
+        button.addEventListener("click", click);
+        return {
+            update: update,
+            mayReport: mayReport,
+            setAvailable: function(value) {
+                available = Boolean(value);
+                if (!available) {
+                    revision++;
+                    finish();
+                    status.hidden = true;
+                }
+                update(position, duration);
+            },
+            stop: function() {
+                if (stopped) {
+                    return;
+                }
+                stopped = true;
+                revision++;
+                finish();
+                button.removeEventListener("click", click);
+                button.remove();
+                status.remove();
+            }
+        };
+    }
+
+    /**
+     * Native media adapter; share the existing caption navigation guard.
+     *
+     * @param {HTMLMediaElement} media Media.
+     * @param {HTMLElement} host Button host.
+     * @param {object} config Marker data.
+     * @param {object} options Native options.
+     * @returns {object}
+     */
+    function native(media, host, config, options) {
+        if (!options.canSeek || !config || !config.points || !config.points.length || config.allowed === false) {
+            return noop;
+        }
+        const controller = attach(host, config, {
+            native: true,
+            mobile: options.mobile,
+            available: options.available,
+            position: () => ({time: media.currentTime, duration: media.duration}),
+            settled: () => !media.seeking,
+            canSeek: time => {
+                if (media.seeking || !media.seekable) {
+                    return false;
+                }
+                for (let i = 0; i < media.seekable.length; i++) {
+                    if (time >= media.seekable.start(i) && time < media.seekable.end(i)) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            seek: time => options.seek(media, time)
+        });
+        if (controller === noop) {
+            return noop;
+        }
+        const refresh = () => controller.update(media.currentTime, media.duration);
+        const seeked = function() {
+            if (options.settle) {
+                options.settle(media);
+            }
+            refresh();
+        };
+        const events = ["loadedmetadata", "durationchange", "timeupdate", "seeking", "pause", "playing", "ended", "progress"];
+        events.forEach(event => media.addEventListener(event, refresh));
+        media.addEventListener("seeked", seeked);
+        refresh();
+        return {
+            update: refresh,
+            mayReport: controller.mayReport,
+            setAvailable: controller.setAvailable,
+            stop: function() {
+                events.forEach(event => media.removeEventListener(event, refresh));
+                media.removeEventListener("seeked", seeked);
+                controller.stop();
+            }
+        };
+    }
+
+    return {attach: attach, native: native, target: target};
+});

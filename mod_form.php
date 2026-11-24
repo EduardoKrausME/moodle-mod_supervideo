@@ -191,9 +191,6 @@ class mod_supervideo_mod_form extends moodleform_mod {
         $mform->addHelpButton("markers", "markers", "mod_supervideo");
         $mform->hideIf("markers", "origem", "eq", "drive");
         $mform->hideIf("markers", "origem", "eq", "ottflix");
-        $mform->hideIf("markers", "origem", "eq", "vimeo");
-        $mform->hideIf("markers", "origem", "eq", "youtube");
-        $mform->hideIf("markers", "origem", "eq", "ottflix");
         $mform->hideIf("markers", "origem", "eq", "pandavideo");
         $mform->hideIf("markers", "origem", "eq", "embed");
 
@@ -253,6 +250,10 @@ class mod_supervideo_mod_form extends moodleform_mod {
             "markers_label",
             "markers_skip",
             "markers_remove",
+            "markers_error",
+            "markers_destination",
+            "markers_nodestination",
+            "markers_duplicate",
         ], "supervideo");
         $PAGE->requires->js_call_amd("mod_supervideo/markers_form", "init", ["markers"]);
         $PAGE->requires->js_call_amd(

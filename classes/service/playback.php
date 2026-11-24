@@ -93,6 +93,7 @@ class playback extends external_api {
             "name" => format_string($supervideo->name, true, ["context" => $context]),
             "content" => self::get_content($cm, $context, $supervideo),
             "captions" => \mod_supervideo\caption\repository::playback($supervideo, $context),
+            "markers" => \mod_supervideo\util\marker_util::configuration($supervideo, $config),
             "config" => [
                 "showmap" => self::config_bool($config, "showmap", self::config_bool($config, "showmapa", false)),
                 "showmapa" => self::config_bool($config, "showmapa", self::config_bool($config, "showmap", false)),
@@ -367,6 +368,16 @@ class playback extends external_api {
                 "showcontrols" => new external_value(PARAM_INT, "Controls flag"),
                 "autoplay" => new external_value(PARAM_INT, "Autoplay flag"),
                 "playersize" => new external_value(PARAM_RAW, "Player size"),
+            ]),
+            "markers" => new external_single_structure([
+                "points" => new external_multiple_structure(new external_single_structure([
+                    "time" => new external_value(PARAM_INT, "Marker time"),
+                    "label" => new external_value(PARAM_TEXT, "Marker label"),
+                    "skip" => new external_value(PARAM_BOOL, "Jump allowed"),
+                ])),
+                "allowed" => new external_value(PARAM_BOOL, "Navigation controls enabled"),
+                "buttonlabel" => new external_value(PARAM_TEXT, "Jump button label"),
+                "errorlabel" => new external_value(PARAM_TEXT, "Jump error message"),
             ]),
             "captions" => new external_single_structure([
                 "tracks" => new external_multiple_structure(new external_single_structure([

@@ -74,7 +74,8 @@ body {
 .supervideo-marker-jump {
     position: absolute;
     left: 50%;
-    bottom: 64px;
+    top: 12px;
+    bottom: auto;
     z-index: 10001;
     transform: translateX(-50%);
     max-width: calc(100% - 32px);
@@ -88,7 +89,8 @@ body {
     font-weight: 600;
     line-height: 1.2;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
     cursor: pointer;
     transition: background .2s ease, transform .2s ease;
     &:hover,
@@ -100,11 +102,17 @@ body {
     &[hidden] {
         display: none !important;
     }
-    @media (max-width: 600px) {
-        bottom: 54px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    &:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: 3px;
     }
+}
+.supervideo-marker-status {
+    display: block;
+    color: inherit;
+}
+.supervideo-marker-status[hidden], .supervideo-marker-mobile[hidden] {
+    display: none !important;
 }
 #page-mod-supervideo-report table.flexible .header .commands {
     display: none;
