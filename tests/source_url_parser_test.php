@@ -103,4 +103,45 @@ final class source_url_parser_test extends advanced_testcase {
         $this->assertTrue(source_url_parser::is_hls("https://cdn.example.com/stream/PLAYLIST.M3U8?token=abc&expires=123"));
         $this->assertFalse(source_url_parser::is_hls("https://cdn.example.com/video.mp4?format=m3u8"));
     }
+
+    /**
+     * Preserve valid URL query octets and reject ambiguous markup delimiters.
+     *
+     * @covers \mod_supervideo\util\source_url_parser::is_http_url
+     */
+    public function test_http_url_boundaries(): void {
+        foreach ([
+            "https://cdn.example.com/v.mp4?signature=a%2Fb%3D&expires=123",
+            "https://example.com/player?name=O'Reilly&value=%22%3C%3E",
+            "http://example.com:8080/player#section",
+            "https://[2001:db8::1]/video.mp4",
+        ] as $url) {
+            $this->assertTrue(source_url_parser::is_http_url($url), $url);
+        }
+        foreach ([
+            "https://example.com/video\" data-test=\"bad",
+            "https://example.com/<video>",
+            "https://example.com\\player",
+            "https://example.com/video\nnext",
+            "//example.com/video",
+            "javascript:alert(1)",
+        ] as $url) {
+            $this->assertFalse(source_url_parser::is_http_url($url), $url);
+        }
+    }
+
+    /**
+     * Provider HTML is decoded exactly once and only iframe sources are accepted.
+     *
+     * @covers \mod_supervideo\util\source_url_parser::iframe_url
+     */
+    public function test_iframe_url(): void {
+        $url = "https://example.com/player?signature=a%2Fb%3D&name=O'Reilly&literal=&amp;&title=vídeo";
+        $html = "<iframe src=\"" . htmlspecialchars($url, ENT_QUOTES, "UTF-8") . "\"></iframe>" .
+            "<script src=\"https://example.com/loader.js\"></script>";
+        $this->assertSame($url, source_url_parser::iframe_url($html));
+        $this->assertSame("", source_url_parser::iframe_url("<img src=\"https://example.com/image.png\">"));
+        $this->assertSame("", source_url_parser::iframe_url("<iframe src=\"javascript:alert(1)\"></iframe>"));
+        $this->assertSame("", source_url_parser::iframe_url(""));
+    }
 }

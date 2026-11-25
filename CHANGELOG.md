@@ -23,6 +23,8 @@ This changelog records verified changes between consecutive published GitHub rel
 
 - Refined optional marker jumps with reachable destinations, accessible controls, position confirmation, shared Web/App lifecycle, YouTube and Vimeo adapters and seek progress guards (#89).
 
+- Escaped iframe URL attributes and distraction-free navigation output, retained raw query strings until rendering, validated URL syntax and extracted Panda Video iframe URLs from provider markup without double-escaping query parameters (#93, #96, #104).
+
 ## 3.4.0 - 2026-11-21
 
 - Added an orphaned viewing-record detector and a CLI utility that reports invalid Super Video viewing records without deleting them by default, with an explicit batched deletion option.

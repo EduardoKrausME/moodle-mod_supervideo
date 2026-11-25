@@ -203,7 +203,7 @@ class playback extends external_api {
 
         if ($source === "pandavideo") {
             $panda = panda_repository::oembed($url);
-            $playerurl = preg_replace('/.*src=["\'](.*?)["\'].*/s', '$1', $panda->html);
+            $playerurl = source_url_parser::iframe_url((string)($panda->html ?? ""));
             if (!source_url_parser::is_http_url($playerurl)) {
                 throw new moodle_exception("idnotfound", "mod_supervideo");
             }
@@ -244,7 +244,10 @@ class playback extends external_api {
             }
             $playerurl = "";
             if (preg_match('/src=["\'](https?:\/\/[^"\']+)["\']/i', $html, $urlmatch)) {
-                $playerurl = html_entity_decode($urlmatch[1]);
+                $candidate = html_entity_decode($urlmatch[1], ENT_QUOTES | ENT_HTML5, "UTF-8");
+                if (source_url_parser::is_http_url($candidate)) {
+                    $playerurl = $candidate;
+                }
             }
             return self::content([
                 "type" => "ottflix",

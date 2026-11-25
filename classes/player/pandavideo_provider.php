@@ -42,7 +42,7 @@ class pandavideo_provider extends base_provider {
 
         try {
             $panda = repository::oembed($this->data->supervideo->videourl);
-            $playerurl = preg_replace('/.*src=["\'](.*?)["\'].*/s', '$1', $panda->html);
+            $playerurl = source_url_parser::iframe_url((string)($panda->html ?? ""));
             if (!source_url_parser::is_http_url($playerurl)) {
                 return $this->error(get_string("idnotfound", "mod_supervideo"));
             }

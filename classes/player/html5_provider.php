@@ -52,7 +52,7 @@ class html5_provider extends base_provider {
                 $file->get_id(),
                 $file->get_itemid() . $file->get_filepath() . $file->get_filename(),
             ]);
-            $url = moodle_url::make_file_url("/pluginfile.php", $path, false)->out();
+            $url = moodle_url::make_file_url("/pluginfile.php", $path, false)->out(false);
             $filename = $file->get_filename();
         } else {
             $url = $this->data->supervideo->videourl;

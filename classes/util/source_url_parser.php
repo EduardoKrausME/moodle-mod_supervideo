@@ -69,11 +69,41 @@ class source_url_parser {
      * @return bool
      */
     public static function is_http_url($url) {
-        $parts = parse_url(trim((string)$url));
+        $url = trim((string)$url, " ");
+        // Require URL syntax, not HTML markup. Encoded characters and raw query separators remain intact.
+        if ($url === "" || preg_match('/[\x00-\x20\x7f"<>\\\\]/', $url)) {
+            return false;
+        }
+        $parts = parse_url($url);
         if (!is_array($parts) || empty($parts["scheme"]) || empty($parts["host"])) {
             return false;
         }
         return in_array(strtolower($parts["scheme"]), ["http", "https"], true);
+    }
+
+    /**
+     * Read an iframe source from provider-supplied HTML without executing or fetching it.
+     *
+     * DOM parsing decodes attribute entities exactly once. A stored URL must not
+     * be passed through this method because it is already a URL, not HTML.
+     *
+     * @param string $html Provider markup.
+     * @return string Absolute HTTP(S) URL or an empty string.
+     */
+    public static function iframe_url(string $html): string {
+        if (trim($html) === "") {
+            return "";
+        }
+        $document = new \DOMDocument();
+        if (!$document->loadHTML("<meta charset=\"UTF-8\">" . $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING)) {
+            return "";
+        }
+        $iframe = $document->getElementsByTagName("iframe")->item(0);
+        if (!$iframe) {
+            return "";
+        }
+        $url = $iframe->getAttribute("src");
+        return self::is_http_url($url) ? $url : "";
     }
 
     /**
