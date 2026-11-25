@@ -70,7 +70,8 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
 .supervideo-marker-jump {
   position: absolute;
   left: 50%;
-  bottom: 64px;
+  top: 12px;
+  bottom: auto;
   z-index: 10001;
   transform: translateX(-50%);
   max-width: calc(100% - 32px);
@@ -84,7 +85,8 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
 }
@@ -96,12 +98,16 @@ body #supervideo_area_embed iframe:not(.h5p-iframe) {
 .supervideo-marker-jump[hidden] {
   display: none !important;
 }
-@media (max-width: 600px) {
-  .supervideo-marker-jump {
-    bottom: 54px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.supervideo-marker-jump:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.supervideo-marker-status {
+  display: block;
+  color: inherit;
+}
+.supervideo-marker-status[hidden], .supervideo-marker-mobile[hidden] {
+  display: none !important;
 }
 
 #page-mod-supervideo-report table.flexible .header .commands {

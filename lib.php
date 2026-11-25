@@ -157,11 +157,14 @@ function supervideo_add_instance(stdClass $supervideo, $mform = null) {
         $supervideo->videourl = $videourl;
     }
 
-    $supervideo->id = $DB->insert_record("supervideo", $supervideo);
+    $record = clone $supervideo;
+    unset($record->transcriptenabled, $record->transcriptdownload);
+    $supervideo->id = $DB->insert_record("supervideo", $record);
 
     grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
+    \mod_supervideo\caption\manager::save($supervideo);
     return $supervideo->id;
 }
 
@@ -192,11 +195,14 @@ function supervideo_update_instance(stdClass $supervideo, $mform = null) {
         $supervideo->videourl = $videourl;
     }
 
-    $result = $DB->update_record("supervideo", $supervideo);
+    $record = clone $supervideo;
+    unset($record->transcriptenabled, $record->transcriptdownload);
+    $result = $DB->update_record("supervideo", $record);
 
     grades_util::grade_item_update($supervideo);
     supervideo_set_mainfile($supervideo);
 
+    \mod_supervideo\caption\manager::save($supervideo);
     return $result;
 }
 
@@ -297,6 +303,7 @@ function supervideo_delete_instance($id) {
         // These records belong to the course module, not the activity instance.
         $DB->delete_records("supervideo_view", ["cm_id" => $cm->id]);
     }
+    \mod_supervideo\caption\repository::delete_all((int)$supervideo->id, $cm ? context_module::instance($cm->id)->id : 0);
     $DB->delete_records("supervideo", ["id" => $supervideo->id]);
 
     return true;
@@ -469,6 +476,20 @@ function supervideo_pluginfile($course, $cm, context $context, $filearea, $args,
 
     if (!has_capability("mod/supervideo:view", $context)) {
         return false;
+    }
+
+    if ($filearea === "captions") {
+        if (!$context instanceof context_module || count($args) !== 2 || !ctype_digit((string)$args[0])) {
+            return false;
+        }
+        $cm = get_coursemodule_from_id("supervideo", $cm->id, $course->id, false, MUST_EXIST);
+        $file = \mod_supervideo\caption\repository::file($cm, $context, (int)$args[0]);
+        if (!$file || $file->get_filename() !== $args[1]) {
+            return false;
+        }
+        // Serve VTT as plain timed text, never filter or render it as HTML.
+        send_file($file->get_content(), $file->get_filename(), 0, 0, true, $forcedownload, "text/vtt");
+        return true;
     }
 
     array_shift($args); // Remove File ID for cache.

@@ -418,6 +418,60 @@ function createHlsController(media, url, callbacks) {
     return {start: start, stop: stop, validPosition: validPosition};
 }
 
+/**
+ * Bind the shared caption controller using the authenticated mobile site service.
+ */
+function bindMobileCaptions(media, data, available) {
+    if (typeof supervideoCaptions === "undefined") {
+        return {stop: function() {}, setAvailable: function() {}};
+    }
+    const cmid = that.supervideoCmid;
+    const panel = document.getElementById("mod-supervideo-mobile-" + cmid + "-captions");
+    return supervideoCaptions.attach(media, panel, data.captions, {
+        available: available,
+        canSeek: Boolean(data.config.showcontrols),
+        read: async function(track) {
+            const site = await currentSite();
+            const result = await site.read("mod_supervideo_get_caption", {cmid: cmid, captionid: track.id},
+                {getFromCache: false, saveToCache: false});
+            return result.text;
+        }
+    });
+}
+
+function captionMayReport(media) {
+    return typeof supervideoCaptions === "undefined" || supervideoCaptions.mayReport(media);
+}
+
+/**
+ * Find the marker controls belonging to this activity.
+ *
+ * @returns {HTMLElement} Host.
+ */
+function markerHost() {
+    return document.getElementById("mod-supervideo-markers-" + that.supervideoCmid);
+}
+
+/**
+ * Attach shared native-media navigation without modifying caption tracks.
+ */
+function bindNativeMarkers(media, data, available) {
+    if (typeof supervideoMarkers === "undefined" || typeof supervideoCaptions === "undefined") {
+        return {stop: function() {}, setAvailable: function() {}};
+    }
+    return supervideoMarkers.native(media, markerHost(), data.markers, {
+        mobile: true, available: available, canSeek: Boolean(data.config.showcontrols),
+        seek: supervideoCaptions.seek, settle: supervideoCaptions.settleSeek
+    });
+}
+
+function bindExternalMarkers(data, seek, position) {
+    if (typeof supervideoMarkers === "undefined" || !data.markers || !data.markers.allowed) {
+        return {update: function() {}, stop: function() {}, mayReport: function() { return true; }};
+    }
+    return supervideoMarkers.attach(markerHost(), data.markers, {mobile: true, seek: seek, position: position});
+}
+
 function bindHls(data) {
     var active = true;
     var controller = null;
@@ -426,6 +480,8 @@ function bindHls(data) {
     var attempts = 0;
     var played = false;
     var cleanupMedia = function() {};
+    var captionController = null;
+    var markers = null;
 
     function stop() {
         active = false;
@@ -433,6 +489,12 @@ function bindHls(data) {
             clearTimeout(timer);
         }
         cleanupMedia();
+        if (markers) {
+            markers.stop();
+        }
+        if (captionController) {
+            captionController.stop();
+        }
         if (controller) {
             controller.stop();
         }
@@ -455,11 +517,15 @@ function bindHls(data) {
             }
             return;
         }
+        captionController = bindMobileCaptions(media, data, false);
+        markers = bindNativeMarkers(media, data, false);
         controller = createHlsController(media, data.content.fileurl, {
             resume: data.config.currenttime,
             ready: function() {},
             mode: function(value) {
                 that.supervideoHlsMode = value;
+                captionController.setAvailable(value === "vod");
+                markers.setAvailable(value === "vod");
                 if (value !== "vod") {
                     that.supervideoPercent = null;
                     if (supervideoSaveTimer) {
@@ -477,7 +543,7 @@ function bindHls(data) {
         var onProgress = function(event) {
             if (active && played && !media.seeking && that.supervideoData === data &&
                     (event.type !== "timeupdate" || !media.paused) &&
-                    controller.validPosition(media.currentTime, media.duration)) {
+                    controller.validPosition(media.currentTime, media.duration) && captionMayReport(media)) {
                 saveProgress(media.currentTime, media.duration, event.type !== "timeupdate");
             }
         };
@@ -499,13 +565,33 @@ function bindHls(data) {
 }
 
 function bindHtml5() {
+    const data = that.supervideoData;
+    let active = true;
+    supervideoCleanup.push(function() { active = false; });
     waitFor('#mod-supervideo-media-' + that.supervideoCmid, function(media) {
+        if (!active || that.supervideoData !== data) {
+            return;
+        }
         if (that.supervideoData.config.currenttime > 0) {
             media.currentTime = that.supervideoData.config.currenttime;
         }
-        var onTime = function() { saveProgress(media.currentTime, media.duration, false); };
-        var onPause = function() { saveProgress(media.currentTime, media.duration, true); };
-        var onEnded = function() { saveProgress(media.duration, media.duration, true); };
+        const captionController = bindMobileCaptions(media, data, true);
+        const markers = bindNativeMarkers(media, data, true);
+        var onTime = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.currentTime, media.duration, false);
+            }
+        };
+        var onPause = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.currentTime, media.duration, true);
+            }
+        };
+        var onEnded = function() {
+            if (captionMayReport(media)) {
+                saveProgress(media.duration, media.duration, true);
+            }
+        };
         media.addEventListener('timeupdate', onTime);
         media.addEventListener('pause', onPause);
         media.addEventListener('ended', onEnded);
@@ -513,6 +599,8 @@ function bindHtml5() {
             media.removeEventListener('timeupdate', onTime);
             media.removeEventListener('pause', onPause);
             media.removeEventListener('ended', onEnded);
+            captionController.stop();
+            markers.stop();
         });
 
 
@@ -538,6 +626,18 @@ function bindYoutube() {
     var interval = null;
     var last = null;
     var played = false;
+    var markerTimer = null;
+    var markerPlaying = false;
+    var markers = bindExternalMarkers(data, function(time) {
+        if (!valid() || !player) {
+            return false;
+        }
+        flushObserved();
+        player.seekTo(time, true);
+        return true;
+    }, function() {
+        return {time: player ? player.getCurrentTime() : NaN, duration: player ? player.getDuration() : NaN};
+    });
 
     function valid() {
         return active && that.supervideoData === data;
@@ -575,6 +675,10 @@ function bindYoutube() {
             interval = null;
         }
         flushObserved();
+        if (markerTimer !== null) {
+            clearInterval(markerTimer);
+        }
+        markers.stop();
         if (player && player.destroy) {
             try {
                 player.destroy();
@@ -616,6 +720,9 @@ function bindYoutube() {
         if (!Number.isFinite(time) || !Number.isFinite(duration) || duration <= 0 || time <= 0) {
             return;
         }
+        if (!markers.mayReport(time, markerPlaying && !force)) {
+            return;
+        }
         youtubeResume = Math.min(time, duration);
         last = {time: youtubeResume, duration: duration};
         saveProgress(last.time, last.duration, force);
@@ -644,6 +751,13 @@ function bindYoutube() {
                     onReady: function() {
                         if (valid()) {
                             stopPolling();
+                            if (data.markers && data.markers.allowed && data.markers.points.length) {
+                                markerTimer = setInterval(function() {
+                                    if (valid() && player) {
+                                        markers.update(player.getCurrentTime(), player.getDuration());
+                                    }
+                                }, 250);
+                            }
                         }
                     },
                     onError: function(event) {
@@ -672,7 +786,8 @@ function bindYoutube() {
                         if (!valid()) {
                             return;
                         }
-                        if (event.data === window.YT.PlayerState.PLAYING) {
+                        markerPlaying = event.data === window.YT.PlayerState.PLAYING;
+                        if (markerPlaying) {
                             played = true;
                             if (interval === null) {
                                 interval = setInterval(function() {
@@ -749,17 +864,50 @@ function getCoreIframe(callback) {
 }
 
 function bindVimeo() {
+    const data = that.supervideoData;
+    let active = true;
+    supervideoCleanup.push(function() { active = false; });
     getCoreIframe(function(iframe) {
         loadScript('https://player.vimeo.com/api/player.js', function() { return !!(window.Vimeo && window.Vimeo.Player); }, function() {
-            var player = new window.Vimeo.Player(iframe);
-            if (that.supervideoData.config.currenttime > 0) {
-                player.setCurrentTime(that.supervideoData.config.currenttime).catch(function() {});
+            if (!active || that.supervideoData !== data) {
+                return;
             }
-            var onTime = function(data) { saveProgress(data.seconds, data.duration, false); };
-            var onEnded = function(data) { saveProgress(data.duration, data.duration, true); };
+            var player = new window.Vimeo.Player(iframe);
+            var markers = bindExternalMarkers(data, time => player.setCurrentTime(time));
+            var playing = false;
+            var onPlay = function() { playing = true; };
+            var onPause = function() { playing = false; };
+            var onMarker = function(position) { markers.update(position.seconds, position.duration); };
+            if (data.config.currenttime > 0) {
+                player.setCurrentTime(data.config.currenttime).catch(function() {});
+            }
+            var onTime = function(position) {
+                onMarker(position);
+                if (active && that.supervideoData === data && markers.mayReport(position.seconds, playing)) {
+                    saveProgress(position.seconds, position.duration, false);
+                }
+            };
+            var onEnded = function(position) {
+                playing = false;
+                if (active && that.supervideoData === data && markers.mayReport(position.duration, false)) {
+                    saveProgress(position.duration, position.duration, true);
+                }
+            };
+            player.on("play", onPlay);
+            player.on("pause", onPause);
+            player.on("seeked", onMarker);
             player.on('timeupdate', onTime);
             player.on('ended', onEnded);
+            Promise.all([player.getCurrentTime(), player.getDuration()]).then(values => {
+                if (active) {
+                    markers.update(values[0], values[1]);
+                }
+            }).catch(function() {});
             supervideoCleanup.push(function() {
+                markers.stop();
+                player.off("play", onPlay);
+                player.off("pause", onPause);
+                player.off("seeked", onMarker);
                 player.off('timeupdate', onTime);
                 player.off('ended', onEnded);
             });

@@ -28,6 +28,7 @@ use context_module;
 use external_api;
 use external_function_parameters;
 use external_single_structure;
+use external_multiple_structure;
 use external_value;
 use external_warnings;
 use invalid_parameter_exception;
@@ -91,6 +92,8 @@ class playback extends external_api {
             "status" => true,
             "name" => format_string($supervideo->name, true, ["context" => $context]),
             "content" => self::get_content($cm, $context, $supervideo),
+            "captions" => \mod_supervideo\caption\repository::playback($supervideo, $context),
+            "markers" => \mod_supervideo\util\marker_util::configuration($supervideo, $config),
             "config" => [
                 "showmap" => self::config_bool($config, "showmap", self::config_bool($config, "showmapa", false)),
                 "showmapa" => self::config_bool($config, "showmapa", self::config_bool($config, "showmap", false)),
@@ -200,7 +203,7 @@ class playback extends external_api {
 
         if ($source === "pandavideo") {
             $panda = panda_repository::oembed($url);
-            $playerurl = preg_replace('/.*src=["\'](.*?)["\'].*/s', '$1', $panda->html);
+            $playerurl = source_url_parser::iframe_url((string)($panda->html ?? ""));
             if (!source_url_parser::is_http_url($playerurl)) {
                 throw new moodle_exception("idnotfound", "mod_supervideo");
             }
@@ -241,7 +244,10 @@ class playback extends external_api {
             }
             $playerurl = "";
             if (preg_match('/src=["\'](https?:\/\/[^"\']+)["\']/i', $html, $urlmatch)) {
-                $playerurl = html_entity_decode($urlmatch[1]);
+                $candidate = html_entity_decode($urlmatch[1], ENT_QUOTES | ENT_HTML5, "UTF-8");
+                if (source_url_parser::is_http_url($candidate)) {
+                    $playerurl = $candidate;
+                }
             }
             return self::content([
                 "type" => "ottflix",
@@ -365,6 +371,29 @@ class playback extends external_api {
                 "showcontrols" => new external_value(PARAM_INT, "Controls flag"),
                 "autoplay" => new external_value(PARAM_INT, "Autoplay flag"),
                 "playersize" => new external_value(PARAM_RAW, "Player size"),
+            ]),
+            "markers" => new external_single_structure([
+                "points" => new external_multiple_structure(new external_single_structure([
+                    "time" => new external_value(PARAM_INT, "Marker time"),
+                    "label" => new external_value(PARAM_TEXT, "Marker label"),
+                    "skip" => new external_value(PARAM_BOOL, "Jump allowed"),
+                ])),
+                "allowed" => new external_value(PARAM_BOOL, "Navigation controls enabled"),
+                "buttonlabel" => new external_value(PARAM_TEXT, "Jump button label"),
+                "errorlabel" => new external_value(PARAM_TEXT, "Jump error message"),
+            ]),
+            "captions" => new external_single_structure([
+                "tracks" => new external_multiple_structure(new external_single_structure([
+                    "id" => new external_value(PARAM_INT, "Caption id"),
+                    "label" => new external_value(PARAM_TEXT, "Label"),
+                    "language" => new external_value(PARAM_TEXT, "Language"),
+                    "kind" => new external_value(PARAM_ALPHA, "Track kind"),
+                    "source" => new external_value(PARAM_ALPHA, "Track source"),
+                    "url" => new external_value(PARAM_RAW, "Caption URL without Moodle credentials"),
+                    "isdefault" => new external_value(PARAM_BOOL, "Default track"),
+                ])),
+                "enabled" => new external_value(PARAM_BOOL, "Transcript enabled"),
+                "download" => new external_value(PARAM_BOOL, "Transcript download"),
             ]),
             "warnings" => new external_warnings(),
         ]);

@@ -42,7 +42,7 @@ class drive_provider extends base_provider {
         if ($driveid === "") {
             return $this->error(get_string("idnotfound", "mod_supervideo"));
         }
-        $parameters = implode("&amp;", [
+        $parameters = implode("&", [
             !empty($this->data->supervideo->showcontrols) ? "controls=1" : "controls=0",
             !empty($this->data->supervideo->autoplay) ? "autoplay=1" : "autoplay=0",
         ]);

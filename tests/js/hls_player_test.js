@@ -33,8 +33,9 @@ function source(file) {
 function extract(file) {
     const content = source(file);
     const start = content.indexOf("function createHlsController(");
-    const end = content.indexOf(file.includes("mobileapp") ? "function bindHls(" : "var player_create = {", start);
-    return content.slice(start, end).trim();
+    const marker = "return {start: start, stop: stop, validPosition: validPosition};";
+    const end = content.indexOf("}", content.indexOf(marker, start) + marker.length);
+    return content.slice(start, end + 1).trim();
 }
 
 function setup(native = false, playlist = null) {

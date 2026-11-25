@@ -49,6 +49,28 @@ final class marker_util_test extends advanced_testcase {
     }
 
     /**
+     * Shared marker configuration respects effective controls.
+     *
+     * @covers \mod_supervideo\util\marker_util::configuration
+     */
+    public function test_configuration(): void {
+        $activity = (object)["markers" => "30 | Question | skip\n90 | Answer", "showcontrols" => 1];
+        $config = marker_util::configuration($activity);
+        $this->assertTrue($config["allowed"]);
+        $this->assertSame(90, $config["points"][1]["time"]);
+        $this->assertTrue($config["points"][0]["skip"]);
+        $activity->showcontrols = 0;
+        $this->assertFalse(marker_util::configuration($activity)["allowed"]);
+        $this->assertSame($config["points"], marker_util::configuration($activity)["points"]);
+        $activity->showcontrols = 1;
+        $activity->origem = "link";
+        $this->assertFalse(marker_util::configuration($activity, (object)["controls" => "play"])["allowed"]);
+        $this->assertTrue(marker_util::configuration($activity, (object)["controls" => "play,progress"])["allowed"]);
+        $activity->origem = "vimeo";
+        $this->assertTrue(marker_util::configuration($activity, (object)["controls" => "play"])["allowed"]);
+    }
+
+    /**
      * Invalid marker lines fail strict parsing.
      *
      * @covers \mod_supervideo\util\marker_util::parse

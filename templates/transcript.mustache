@@ -1,0 +1,39 @@
+{{!
+    @template mod_supervideo/transcript
+    Example context (json):
+    {"elementid": "video1"}
+}}
+<section id="{{elementid}}-captions" class="supervideo-caption-panel my-3" hidden
+         data-loading="{{#str}} caption_loading, mod_supervideo {{/str}}"
+         data-error="{{#str}} caption_loaderror, mod_supervideo {{/str}}"
+         data-empty="{{#str}} caption_noresults, mod_supervideo {{/str}}">
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <label for="{{elementid}}-caption-select">{{#str}} captionheader, mod_supervideo {{/str}}</label>
+        <select id="{{elementid}}-caption-select" class="custom-select form-select" data-caption-select></select>
+        <label class="ms-2">
+            <input type="checkbox" data-caption-visible>
+            {{#str}} caption_show, mod_supervideo {{/str}}
+        </label>
+    </div>
+    <p data-caption-audio></p>
+    <p role="status" aria-live="polite" data-caption-status></p>
+    <details data-caption-transcript hidden>
+        <summary>{{#str}} caption_transcript, mod_supervideo {{/str}}</summary>
+        <label for="{{elementid}}-caption-search">{{#str}} caption_search, mod_supervideo {{/str}}</label>
+        <input id="{{elementid}}-caption-search" type="search" class="form-control" data-caption-search>
+        <label>
+            <input type="checkbox" data-caption-follow checked>
+            {{#str}} caption_follow, mod_supervideo {{/str}}
+        </label>
+        <button type="button" class="btn btn-secondary btn-sm" data-caption-download hidden disabled>
+            {{#str}} caption_download, mod_supervideo {{/str}}
+        </button>
+        <ol data-caption-list style="max-height:22rem;overflow:auto;position:relative;white-space:pre-wrap;"></ol>
+        <button type="button" class="btn btn-secondary btn-sm" data-caption-previous hidden>
+            {{#str}} caption_previous, mod_supervideo {{/str}}
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-caption-more hidden>
+            {{#str}} caption_more, mod_supervideo {{/str}}
+        </button>
+    </details>
+</section>

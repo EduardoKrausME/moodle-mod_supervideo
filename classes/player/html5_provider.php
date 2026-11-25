@@ -52,7 +52,7 @@ class html5_provider extends base_provider {
                 $file->get_id(),
                 $file->get_itemid() . $file->get_filepath() . $file->get_filename(),
             ]);
-            $url = moodle_url::make_file_url("/pluginfile.php", $path, false)->out();
+            $url = moodle_url::make_file_url("/pluginfile.php", $path, false)->out(false);
             $filename = $file->get_filename();
         } else {
             $url = $this->data->supervideo->videourl;
@@ -66,6 +66,7 @@ class html5_provider extends base_provider {
         $isaudio = in_array($extension, ["mp3", "aac", "m4a"], true);
         $ishls = $extension === "m3u8";
         $markerconfig = $this->data->marker_config();
+        $captions = \mod_supervideo\caption\repository::playback($this->data->supervideo, $this->data->context);
 
         $args = [
             (int)$this->data->view->id,
@@ -74,10 +75,12 @@ class html5_provider extends base_provider {
         ];
         if ($isaudio) {
             $args[] = $markerconfig;
+            $args[] = $captions;
             $this->js("resource_audio", $args);
         } else {
             $args[] = $ishls;
             $args[] = $markerconfig;
+            $args[] = $captions;
             $this->js("resource_video", $args);
         }
 
@@ -90,6 +93,7 @@ class html5_provider extends base_provider {
             "speed" => $this->data->config->speed,
             "hls" => $ishls,
             "has_audio" => $isaudio,
+            "hascaptions" => !empty($captions["tracks"]),
         ]);
         return new player_result($html, $this->data->supervideo->origem === "link" ? false : null, null, true);
     }

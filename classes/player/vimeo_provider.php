@@ -55,7 +55,7 @@ class vimeo_provider extends base_provider {
         if ($vimeo["hash"] !== "") {
             $query["h"] = $vimeo["hash"];
         }
-        $parameters = http_build_query($query, "", "&amp;", PHP_QUERY_RFC3986);
+        $parameters = http_build_query($query, "", "&", PHP_QUERY_RFC3986);
         $vimeoid = $vimeo["id"] . "?" . $parameters;
         $this->js("vimeo", [
             (int)$this->data->view->id,

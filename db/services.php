@@ -64,6 +64,15 @@ $functions = [
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
+    "mod_supervideo_get_caption" => [
+        "classpath" => "mod/supervideo/classes/service/caption.php",
+        "classname" => "mod_supervideo\\service\\caption",
+        "methodname" => "get",
+        "description" => "Read an authorised local WebVTT track.",
+        "type" => "read",
+        "capabilities" => "mod/supervideo:view",
+        "services" => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'mod_supervideo_get_playback_data' => [
         'classpath' => 'mod/supervideo/classes/service/playback.php',
         'classname' => 'mod_supervideo\\service\\playback',

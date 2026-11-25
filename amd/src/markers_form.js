@@ -32,6 +32,18 @@ define(["jquery"], function($) {
         }).filter(Boolean);
     };
 
+    var seconds = function(value) {
+        if (!/^\d+(?::\d{1,2}){0,2}$/.test(value)) {
+            return NaN;
+        }
+        var parts = value.split(":").map(Number);
+        if (parts.slice(1).some(part => part > 59)) {
+            return NaN;
+        }
+        var time = parts.reduce((total, part) => total * 60 + part, 0);
+        return time <= 2147483647 ? time : NaN;
+    };
+
     var init = function(fieldName) {
         var $textarea = $("#id_" + fieldName);
         if (!$textarea.length || $textarea.data("markers-builder")) {
@@ -49,6 +61,29 @@ define(["jquery"], function($) {
         $builder.append($rows, $add);
         $textarea.after($builder);
 
+        var refresh = function() {
+            var entries = $rows.find(".supervideo-marker-row").map(function() {
+                var row = $(this);
+                return {row: row, time: seconds(row.find("[data-marker-time]").val().trim()),
+                    label: row.find("[data-marker-label]").val().trim()};
+            }).get();
+            var valid = entries.filter(entry => Number.isFinite(entry.time)).sort((a, b) => a.time - b.time);
+            entries.forEach(entry => {
+                var note = entry.row.find("[data-marker-destination]");
+                var checked = entry.row.find("[data-marker-skip]").is(":checked");
+                var same = valid.filter(item => item.time === entry.time).length > 1;
+                var invalid = entry.row.find("[data-marker-time]").val().trim() !== "" && !Number.isFinite(entry.time);
+                var next = valid.find(item => item.time > entry.time);
+                var value = invalid ? M.util.get_string("markers_error", "supervideo") :
+                    same ? M.util.get_string("markers_duplicate", "supervideo") :
+                    checked ? (next ? M.util.get_string("markers_destination", "supervideo") + " " +
+                        next.row.find("[data-marker-time]").val() + " - " + next.label :
+                        M.util.get_string("markers_nodestination", "supervideo")) : "";
+                note.text(value).toggleClass("text-danger", invalid || same || (checked && !next));
+                entry.row.find("[data-marker-time]").attr("aria-invalid", invalid || same ? "true" : "false");
+            });
+        };
+
         var serialize = function() {
             var lines = [];
             $rows.find(".supervideo-marker-row").each(function() {
@@ -61,6 +96,7 @@ define(["jquery"], function($) {
                 lines.push(time + " | " + label + ($row.find("[data-marker-skip]").is(":checked") ? " | skip" : ""));
             });
             $textarea.val(lines.join("\n")).trigger("change");
+            refresh();
         };
 
         var addRow = function(marker) {
@@ -71,7 +107,9 @@ define(["jquery"], function($) {
             var $removeCol = $("<div>", {class: "col-4 col-md-2 text-end"});
             var $skipCol = $("<div>", {class: "col-12"});
 
+            var rowId = "supervideo-marker-" + Math.random().toString(36).slice(2);
             var $timeLabel = $("<label>", {
+                for: rowId + "-time",
                 class: "form-label",
                 text: M.util.get_string("markers_time", "supervideo")
             });
@@ -80,11 +118,14 @@ define(["jquery"], function($) {
                 class: "form-control",
                 value: marker.time,
                 placeholder: "00:30",
+                id: rowId + "-time",
+                "aria-describedby": rowId + "-destination",
                 "data-marker-time": "1",
                 style: "width: auto; max-width: stretch;",
             });
 
             var $labelLabel = $("<label>", {
+                for: rowId + "-label",
                 class: "form-label",
                 text: M.util.get_string("markers_label", "supervideo")
             });
@@ -92,6 +133,7 @@ define(["jquery"], function($) {
                 type: "text",
                 class: "form-control",
                 value: marker.label,
+                id: rowId + "-label",
                 "data-marker-label": "1",
                 style: "width: 100%;",
             });
@@ -120,7 +162,8 @@ define(["jquery"], function($) {
             $labelCol.append($labelLabel, $label);
             $checkWrap.append($skip, $skipLabel);
             $removeCol.append($remove);
-            $skipCol.append($checkWrap);
+            $skipCol.append($checkWrap, $("<div>", {id: rowId + "-destination",
+                class: "small text-muted", "data-marker-destination": "1"}));
             $row.append($timeCol, $labelCol, $removeCol, $skipCol);
             $rows.append($row);
 
@@ -135,7 +178,8 @@ define(["jquery"], function($) {
         if (!$rows.children().length) {
             addRow();
         }
-        $add.on("click", function() { addRow(); });
+        $add.on("click", function() { addRow(); refresh(); });
+        refresh();
     };
 
     return {init: init};

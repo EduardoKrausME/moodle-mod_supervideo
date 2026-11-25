@@ -62,6 +62,10 @@ final class provider_test extends advanced_testcase {
         ];
         $this->assertEqualsCanonicalizing($localfields, array_keys($items["supervideo_view"]->get_privacy_fields()));
 
+        $this->assertArrayHasKey("externalcaptions", $items);
+        $this->assertInstanceOf(external_location::class, $items["externalcaptions"]);
+        $this->assertSame(["connection" => "privacy:metadata:externalcaptions:connection"],
+            $items["externalcaptions"]->get_privacy_fields());
         $this->assertArrayHasKey("ottflix", $items);
         $external = $items["ottflix"];
         $this->assertInstanceOf(external_location::class, $external);

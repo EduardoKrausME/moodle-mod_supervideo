@@ -30,7 +30,7 @@ use context_user;
 use mod_supervideo_mod_form;
 use stdClass;
 
-defined("MOODLE_INTERNAL") || die();
+defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 require_once($CFG->dirroot . "/course/modlib.php");
@@ -87,6 +87,7 @@ final class mod_form_test extends advanced_testcase {
             "grade_approval" => 0,
             "gradepass" => 0,
             "cmidnumber" => "",
+            "availabilityconditionsjson" => "",
             "ottflix_ia" => [],
             "submitbutton2" => 1,
         ], $values);

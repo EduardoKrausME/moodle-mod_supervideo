@@ -86,6 +86,26 @@ class marker_util {
     }
 
     /**
+     * Provide the same marker data to web and mobile players.
+     *
+     * @param object $activity Activity record with effective controls.
+     * @param object|null $config Plugin configuration, if available.
+     * @return array
+     */
+    public static function configuration($activity, $config = null): array {
+        $allowed = !empty($activity->showcontrols);
+        if ($config !== null && in_array($activity->origem ?? "", ["upload", "link"], true)) {
+            $allowed = $allowed && in_array("progress", explode(",", (string)($config->controls ?? "")), true);
+        }
+        return [
+            "points" => self::parse($activity->markers ?? ""),
+            "allowed" => $allowed,
+            "buttonlabel" => get_string("markers_jump", "mod_supervideo"),
+            "errorlabel" => get_string("markers_jumperror", "mod_supervideo"),
+        ];
+    }
+
+    /**
      * Convert seconds, MM:SS, or HH:MM:SS into seconds.
      *
      * @param string $value Time value.
@@ -97,6 +117,9 @@ class marker_util {
         }
 
         $parts = array_map('intval', explode(':', trim($value)));
+        if ($parts[0] > 2147483647) {
+            return null;
+        }
         if (count($parts) === 1) {
             return $parts[0];
         }
@@ -104,11 +127,13 @@ class marker_util {
             if ($parts[1] > 59) {
                 return null;
             }
-            return ($parts[0] * 60) + $parts[1];
+            $seconds = ($parts[0] * 60) + $parts[1];
+            return $seconds <= 2147483647 ? $seconds : null;
         }
         if ($parts[1] > 59 || $parts[2] > 59) {
             return null;
         }
-        return ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2];
+        $seconds = ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2];
+        return $seconds <= 2147483647 ? $seconds : null;
     }
 }

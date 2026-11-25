@@ -66,6 +66,10 @@ class provider implements
             "identifier" => "privacy:metadata:ottflix:identifier",
         ], "privacy:metadata:ottflix");
 
+        $collection->add_external_location_link("externalcaptions", [
+            "connection" => "privacy:metadata:externalcaptions:connection",
+        ], "privacy:metadata:externalcaptions");
+
         return $collection;
     }
 
